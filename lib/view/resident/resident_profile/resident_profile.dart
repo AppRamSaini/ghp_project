@@ -124,6 +124,7 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
       buildContext
           .read<ResidentCheckInCubit>()
           .checkInAPI(statusBody: checkInData);
+
     } else {
       switch (lastCheckInDetail.status) {
         case 'checked_in':

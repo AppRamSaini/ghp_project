@@ -387,7 +387,7 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
     return lastCheckinDetail!.checkoutAt == null
         ? MaterialButton(
             height: 32,
-            onPressed: () => Navigator.pushReplacement(
+            onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (_) => ResidentProfileDetails(
@@ -400,7 +400,7 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
                 style: TextStyle(color: Colors.white, fontSize: 12)))
         : MaterialButton(
             height: 32,
-            onPressed: () => Navigator.pushReplacement(
+            onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (_) => ResidentProfileDetails(
@@ -417,7 +417,7 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
 List<Map<String, dynamic>> optionsList = [
   {"icon": Icons.visibility, "menu": "View Details", "menu_id": 0},
   {
-    "icon": Icons.document_scanner_outlined,
+    "icon": Icons.qr_code,
     "menu": "Scan By Manual",
     "menu_id": 1
   },

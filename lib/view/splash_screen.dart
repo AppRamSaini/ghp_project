@@ -19,51 +19,56 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<SlidersCubit>().fetchSlidersAPI();
-    context.read<IncomingRequestCubit>().fetchIncomingRequest();
+    _loadInitialData();
     _startTimer();
   }
 
-  void _startTimer() async {
+  void _loadInitialData() {
+    context.read<SlidersCubit>().fetchSlidersAPI();
+    context.read<IncomingRequestCubit>().fetchIncomingRequest();
+  }
+
+  void _startTimer() {
+    Future.delayed(const Duration(seconds: 2), () {
+      _decideNextScreen();
+    });
+  }
+
+  void _decideNextScreen() {
     final onboarding = LocalStorage.localStorage.getString('onboarding');
     final societyId = LocalStorage.localStorage.getString('societyId');
     final role = LocalStorage.localStorage.getString('role');
 
-    Timer(const Duration(seconds: 2), () {
-      Widget nextScreen;
+    Widget nextScreen;
 
-      // if (onboarding == null && societyId == null) {
-      //   nextScreen = const OnboardingScreen();
-      // } else if (onboarding != null && societyId == null) {
-      //   nextScreen = const SelectSocietyScreen();
-      // } else
-
-      if (societyId != null) {
-        switch (role) {
-          case 'resident':
-          case 'admin':
-            nextScreen = const Dashboard();
-            break;
-          case 'staff':
-            nextScreen = const StaffDashboard();
-            break;
-          case 'staff_security_guard':
-            nextScreen = const SecurityGuardDashboard();
-            break;
-          default:
-            nextScreen = const OnboardingScreen();
-        }
-      } else {
-        nextScreen = const OnboardingScreen();
+    if (societyId != null) {
+      switch (role) {
+        case 'resident':
+        case 'admin':
+          nextScreen = const Dashboard();
+          break;
+        case 'staff':
+          nextScreen = const StaffDashboard();
+          break;
+        case 'staff_security_guard':
+          nextScreen =  SecurityGuardDashboard();
+          break;
+        default:
+          nextScreen = const OnboardingScreen();
       }
+    } else {
+      nextScreen = const OnboardingScreen();
+    }
+
+    if (mounted) {
       _navigateToNextScreen(nextScreen);
-    });
+    }
   }
 
   void _navigateToNextScreen(Widget nextScreen) {
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (builder) => nextScreen),
-      (route) => false,
+      MaterialPageRoute(builder: (context) => nextScreen),
+          (route) => false,
     );
   }
 
@@ -74,21 +79,23 @@ class _SplashScreenState extends State<SplashScreen> {
         BlocListener<IncomingRequestCubit, IncomingRequestState>(
           listener: (context, state) {
             if (state is IncomingRequestLoaded) {
-              print("Loading state triggered");
               IncomingVisitorsModel incomingVisitorsRequest =
                   state.incomingVisitorsRequest;
-              if (incomingVisitorsRequest.lastCheckinDetail!.status ==
-                  'requested') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => VisitorsIncomingRequestPage(
-                      incomingVisitorsRequest: incomingVisitorsRequest,
-                      fromForegroundMsg: true,
-                      setPageValue: (value) {},
+
+              if (incomingVisitorsRequest.lastCheckinDetail?.status == 'requested') {
+                // Prevent multiple pushes
+                if (ModalRoute.of(context)?.isCurrent ?? false) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => VisitorsIncomingRequestPage(
+                        incomingVisitorsRequest: incomingVisitorsRequest,
+                        fromForegroundMsg: true,
+                        setPageValue: (value) {},
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               }
             }
           },

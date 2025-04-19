@@ -255,3 +255,10 @@ AppBar customAppbar(
     ],
   );
 }
+String formatTimeToAMPM(String time) {
+  final inputFormat = DateFormat("HH:mm:ss");
+  final outputFormat = DateFormat("hh:mm a");
+
+  final dateTime = inputFormat.parse(time);
+  return outputFormat.format(dateTime);
+}

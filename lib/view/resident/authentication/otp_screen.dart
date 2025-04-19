@@ -63,7 +63,7 @@ class _OtpScreenState extends State<OtpScreen> {
         return MaterialPageRoute(builder: (_) => const StaffDashboard());
       case 'staff_security_guard':
         return MaterialPageRoute(
-            builder: (_) => const SecurityGuardDashboard());
+            builder: (_) =>  SecurityGuardDashboard());
       default:
         return null;
     }
