@@ -20,9 +20,9 @@ class ResidentProfileDetails extends StatefulWidget {
   final Map<String, dynamic>? residentId;
   ResidentProfileDetails(
       {super.key,
-      this.residentId,
-      this.forQRPage = false,
-      this.forDetails = false});
+        this.residentId,
+        this.forQRPage = false,
+        this.forDetails = false});
 
   @override
   State<ResidentProfileDetails> createState() => _ResidentProfileDetailsState();
@@ -63,7 +63,7 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) =>  SecurityGuardDashboard()),
-        (route) => false);
+            (route) => false);
     return true;
   }
 
@@ -73,7 +73,7 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
           buildContext,
           MaterialPageRoute(
               builder: (_) =>  SecurityGuardDashboard(index: 1)),
-          (route) => false);
+              (route) => false);
     });
   }
 
@@ -138,7 +138,7 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
               .checkInAPI(statusBody: checkInData);
           break;
         default:
-          // Optional: Handle unknown status
+        // Optional: Handle unknown status
           snackBarMsg(context, "Unknown check-in status.");
           break;
       }
@@ -172,24 +172,24 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
         ),
         BlocListener<ResidentCheckOutCubit, ResidentCheckOutState>(
             listener: (_, state) {
-          if (state is ResidentCheckOutLoading) {
-            showLoadingDialog(context, (ctx) {
-              dialogueContext = ctx;
-            });
-          } else if (state is ResidentCheckOutSuccessfully) {
-            snackBar(context, state.successMsg.toString(), Icons.done,
-                AppTheme.guestColor);
-            Navigator.of(dialogueContext).pop();
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              onBack(context);
-            });
-          } else if (state is ResidentCheckOutFailed) {
-            snackBar(context, state.errorMsg.toString(), Icons.warning,
-                AppTheme.redColor);
-            Navigator.of(dialogueContext).pop();
-            onBack(context);
-          }
-        }),
+              if (state is ResidentCheckOutLoading) {
+                showLoadingDialog(context, (ctx) {
+                  dialogueContext = ctx;
+                });
+              } else if (state is ResidentCheckOutSuccessfully) {
+                snackBar(context, state.successMsg.toString(), Icons.done,
+                    AppTheme.guestColor);
+                Navigator.of(dialogueContext).pop();
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  onBack(context);
+                });
+              } else if (state is ResidentCheckOutFailed) {
+                snackBar(context, state.errorMsg.toString(), Icons.warning,
+                    AppTheme.redColor);
+                Navigator.of(dialogueContext).pop();
+                onBack(context);
+              }
+            }),
       ],
       child: WillPopScope(
         onWillPop: onCallBack,
@@ -200,7 +200,7 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
               children: [
                 Padding(
                     padding:
-                        EdgeInsets.only(top: 20.h, left: 6.h, bottom: 20.h),
+                    EdgeInsets.only(top: 20.h, left: 6.h, bottom: 20.h),
                     child: Row(children: [
                       GestureDetector(
                           onTap: () => Navigator.pop(context),
@@ -231,7 +231,7 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
                                     backgroundColor: Colors.deepPurpleAccent));
                           } else if (state is UserProfileLoaded) {
                             User usersData =
-                                state.userProfile.first.data!.user!;
+                            state.userProfile.first.data!.user!;
                             if (!widget.forDetails) {
                               verifyTheUser(context, usersData);
                             }
@@ -249,22 +249,22 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
                                         children: [
                                           usersData.image != null
                                               ? CircleAvatar(
-                                                  radius: 35.h,
-                                                  backgroundImage: NetworkImage(
-                                                      usersData.image
-                                                          .toString()),
-                                                  onBackgroundImageError: (error,
-                                                          stack) =>
-                                                      const AssetImage(
-                                                          'assets/images/default.jpg'))
+                                              radius: 35.h,
+                                              backgroundImage: NetworkImage(
+                                                  usersData.image
+                                                      .toString()),
+                                              onBackgroundImageError: (error,
+                                                  stack) =>
+                                              const AssetImage(
+                                                  'assets/images/default.jpg'))
                                               : CircleAvatar(
-                                                  radius: 35.h,
-                                                  backgroundImage: const AssetImage(
-                                                      'assets/images/default.jpg')),
+                                              radius: 35.h,
+                                              backgroundImage: const AssetImage(
+                                                  'assets/images/default.jpg')),
                                           const SizedBox(width: 10),
                                           Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                   capitalizeWords(usersData.name
@@ -299,298 +299,298 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(10),
+                                          BorderRadius.circular(10),
                                           border: Border.all(
                                               color: Colors.grey
                                                   .withOpacity(0.1))),
                                       child: Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Text('Date : ',
                                                     style: GoogleFonts.nunitoSans(
                                                         textStyle: TextStyle(
                                                             color:
-                                                                Colors.black45,
+                                                            Colors.black45,
                                                             fontSize: 15.sp,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w500))),
+                                                            FontWeight
+                                                                .w500))),
                                                 Text(
                                                     formatDate(usersData
                                                         .createdAt
                                                         .toString()),
                                                     style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 15.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500)))
+                                                    GoogleFonts.nunitoSans(
+                                                        textStyle: TextStyle(
+                                                            color: Colors
+                                                                .black87,
+                                                            fontSize: 15.sp,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500)))
                                               ]),
                                           Padding(
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 3),
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 3),
                                               child: Divider(
                                                   color: Colors.grey
                                                       .withOpacity(0.1))),
                                           Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Text('Mobile Number : ',
                                                     style: GoogleFonts.nunitoSans(
                                                         textStyle: TextStyle(
                                                             color:
-                                                                Colors.black45,
+                                                            Colors.black45,
                                                             fontSize: 15.sp,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w500))),
+                                                            FontWeight
+                                                                .w500))),
                                                 Text(
                                                     '+91 ${usersData.phone.toString()}',
                                                     style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 15.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500)))
+                                                    GoogleFonts.nunitoSans(
+                                                        textStyle: TextStyle(
+                                                            color: Colors
+                                                                .black87,
+                                                            fontSize: 15.sp,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500)))
                                               ]),
                                           Padding(
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 3),
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 3),
                                               child: Divider(
                                                   color: Colors.grey
                                                       .withOpacity(0.1))),
                                           Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Text('Society Name',
                                                     style: GoogleFonts.nunitoSans(
                                                         textStyle: TextStyle(
                                                             color:
-                                                                Colors.black45,
+                                                            Colors.black45,
                                                             fontSize: 15.sp,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w500))),
+                                                            FontWeight
+                                                                .w500))),
                                                 Text(
                                                     usersData.societyName
                                                         .toString(),
                                                     style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 15.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500)))
+                                                    GoogleFonts.nunitoSans(
+                                                        textStyle: TextStyle(
+                                                            color: Colors
+                                                                .black87,
+                                                            fontSize: 15.sp,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500)))
                                               ]),
                                           Padding(
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 3),
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 3),
                                               child: Divider(
                                                   color: Colors.grey
                                                       .withOpacity(0.1))),
                                           Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Text('Tower Name : ',
                                                     style: GoogleFonts.nunitoSans(
                                                         textStyle: TextStyle(
                                                             color:
-                                                                Colors.black45,
+                                                            Colors.black45,
                                                             fontSize: 15.sp,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w500))),
+                                                            FontWeight
+                                                                .w500))),
                                                 Text(
                                                     usersData.blockName ??
                                                         'N/A',
                                                     style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 15.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500)))
+                                                    GoogleFonts.nunitoSans(
+                                                        textStyle: TextStyle(
+                                                            color: Colors
+                                                                .black87,
+                                                            fontSize: 15.sp,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500)))
                                               ]),
                                           Padding(
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 3),
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 3),
                                               child: Divider(
                                                   color: Colors.grey
                                                       .withOpacity(0.1))),
                                           Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Text('Floor No : ',
                                                     style: GoogleFonts.nunitoSans(
                                                         textStyle: TextStyle(
                                                             color:
-                                                                Colors.black45,
+                                                            Colors.black45,
                                                             fontSize: 15.sp,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w500))),
+                                                            FontWeight
+                                                                .w500))),
                                                 Text(
                                                     usersData.floorNumber ??
                                                         'N/A',
                                                     style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize: 15.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600)))
+                                                    GoogleFonts.nunitoSans(
+                                                        textStyle: TextStyle(
+                                                            color: Colors
+                                                                .black,
+                                                            fontSize: 15.sp,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w600)))
                                               ]),
                                           Padding(
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 3),
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 3),
                                               child: Divider(
                                                   color: Colors.grey
                                                       .withOpacity(0.1))),
                                           Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Text('Property No : ',
                                                     style: GoogleFonts.nunitoSans(
                                                         textStyle: TextStyle(
                                                             color:
-                                                                Colors.black45,
+                                                            Colors.black45,
                                                             fontSize: 15.sp,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w500))),
+                                                            FontWeight
+                                                                .w500))),
                                                 Text(usersData.aprtNo ?? 'N/A',
                                                     style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 15.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500)))
+                                                    GoogleFonts.nunitoSans(
+                                                        textStyle: TextStyle(
+                                                            color: Colors
+                                                                .black87,
+                                                            fontSize: 15.sp,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500)))
                                               ]),
                                           usersData.lastCheckinDetail != null
                                               ? Column(
+                                            children: [
+                                              Padding(
+                                                  padding:
+                                                  const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 3),
+                                                  child: Divider(
+                                                      color: Colors.grey
+                                                          .withOpacity(
+                                                          0.1))),
+                                              Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                                   children: [
-                                                    Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 3),
-                                                        child: Divider(
-                                                            color: Colors.grey
-                                                                .withOpacity(
-                                                                    0.1))),
-                                                    Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                              'Last Check-IN : ',
-                                                              style: GoogleFonts.nunitoSans(
-                                                                  textStyle: TextStyle(
-                                                                      color: Colors
-                                                                          .black45,
-                                                                      fontSize:
-                                                                          15.sp,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500))),
-                                                          Text(
-                                                              formatDate(usersData
-                                                                  .lastCheckinDetail!
-                                                                  .checkinAt
-                                                                  .toString()),
-                                                              style: GoogleFonts.nunitoSans(
-                                                                  textStyle: TextStyle(
-                                                                      color: Colors
-                                                                          .black87,
-                                                                      fontSize:
-                                                                          15.sp,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500)))
-                                                        ]),
-                                                    Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 3),
-                                                        child: Divider(
-                                                            color: Colors.grey
-                                                                .withOpacity(
-                                                                    0.1))),
-                                                    Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                              'Last Check-Out : ',
-                                                              style: GoogleFonts.nunitoSans(
-                                                                  textStyle: TextStyle(
-                                                                      color: Colors
-                                                                          .black45,
-                                                                      fontSize:
-                                                                          15.sp,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500))),
-                                                          Text(
-                                                              usersData.lastCheckinDetail!
-                                                                          .checkoutAt !=
-                                                                      null
-                                                                  ? formatDate(usersData
-                                                                      .lastCheckinDetail!
-                                                                      .checkoutAt
-                                                                      .toString())
-                                                                  : 'N/A',
-                                                              style: GoogleFonts.nunitoSans(
-                                                                  textStyle: TextStyle(
-                                                                      color: Colors
-                                                                          .black87,
-                                                                      fontSize:
-                                                                          15.sp,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500)))
-                                                        ]),
-                                                  ],
-                                                )
+                                                    Text(
+                                                        'Last Check-IN : ',
+                                                        style: GoogleFonts.nunitoSans(
+                                                            textStyle: TextStyle(
+                                                                color: Colors
+                                                                    .black45,
+                                                                fontSize:
+                                                                15.sp,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w500))),
+                                                    Text(
+                                                        formatDate(usersData
+                                                            .lastCheckinDetail!
+                                                            .checkinAt
+                                                            .toString()),
+                                                        style: GoogleFonts.nunitoSans(
+                                                            textStyle: TextStyle(
+                                                                color: Colors
+                                                                    .black87,
+                                                                fontSize:
+                                                                15.sp,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w500)))
+                                                  ]),
+                                              Padding(
+                                                  padding:
+                                                  const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 3),
+                                                  child: Divider(
+                                                      color: Colors.grey
+                                                          .withOpacity(
+                                                          0.1))),
+                                              Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                        'Last Check-Out : ',
+                                                        style: GoogleFonts.nunitoSans(
+                                                            textStyle: TextStyle(
+                                                                color: Colors
+                                                                    .black45,
+                                                                fontSize:
+                                                                15.sp,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w500))),
+                                                    Text(
+                                                        usersData.lastCheckinDetail!
+                                                            .checkoutAt !=
+                                                            null
+                                                            ? formatDate(usersData
+                                                            .lastCheckinDetail!
+                                                            .checkoutAt
+                                                            .toString())
+                                                            : 'N/A',
+                                                        style: GoogleFonts.nunitoSans(
+                                                            textStyle: TextStyle(
+                                                                color: Colors
+                                                                    .black87,
+                                                                fontSize:
+                                                                15.sp,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w500)))
+                                                  ]),
+                                            ],
+                                          )
                                               : const SizedBox()
                                         ],
                                       ),
