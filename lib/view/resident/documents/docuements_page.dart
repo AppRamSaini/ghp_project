@@ -50,7 +50,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             title: Text('Documents',
                 style: GoogleFonts.nunitoSans(
                     textStyle: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w600)))),
         body: SafeArea(

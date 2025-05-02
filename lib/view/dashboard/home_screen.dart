@@ -1,6 +1,9 @@
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
+import 'package:ghp_society_management/view/dashboard/view_all_features.dart';
 import 'package:ghp_society_management/view/resident/bills/my_bills.dart';
 import 'package:ghp_society_management/view/resident/complaint/comlaint_page.dart';
 import 'package:ghp_society_management/view/resident/event/event_screen.dart';
@@ -32,6 +35,21 @@ class _HomeScreenState extends State<HomeScreen> {
     // context.read<UserProfileCubit>().fetchUserProfile();
   }
 
+  List colors = [
+    AppTheme.color1,
+    AppTheme.color2,
+    AppTheme.color3,
+    AppTheme.color4
+  ];
+
+  List dataList = [
+    {"icon": ImageAssets.member1, "title": "Members"},
+    {"icon": ImageAssets.complaint1, "title": "Complaints"},
+    {"icon": ImageAssets.visitors1, "title": "Visitors"},
+    {"icon": ImageAssets.parcel1, "title": "Parcels"},
+  ];
+
+  List pagesList = [MemberScreen(),ComplaintScreen(),VisitorScreen(),ParcelListingPage()];
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -42,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
         //     String status = checkBillStatus(
         //         context, state.userProfile.first.data!.unpaidBills!.first);
         //   }
+
         // }),
         BlocListener<LogoutCubit, LogoutState>(
           listener: (context, state) async {
@@ -91,13 +110,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               state.userProfile.first.data!.unpaidBills!.first);
                     }
                   });
-
-                  // Future.delayed(const Duration(milliseconds: 5),(){
-                  //   checkPaymentReminder(
-                  //       context: context,
-                  //       myUnpaidBill:
-                  //       state.userProfile.first.data!.unpaidBills!.first);
-                  // });
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Row(
@@ -137,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             .toString(),
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors.white,
+                                                color: Colors.black87,
                                                 fontSize: 15.sp,
                                                 fontWeight: FontWeight.w600,
                                                 overflow:
@@ -148,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             .toUpperCase(),
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors.white,
+                                                color: Colors.black87,
                                                 fontSize: 10.sp,
                                                 fontWeight: FontWeight.w500)))
                                   ],
@@ -189,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Text("Loading...",
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors.white,
+                                                color: Colors.black87,
                                                 fontSize: 15.sp,
                                                 fontWeight: FontWeight.w600,
                                                 overflow:
@@ -198,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Text('TOWER LOADING...',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors.white,
+                                                color: Colors.black87,
                                                 fontSize: 11.sp,
                                                 fontWeight: FontWeight.w500)))
                                   ],
@@ -215,415 +227,157 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
             )),
-        body: SafeArea(
+        body: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 15.h),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (builder) => const MemberScreen()));
-                          },
-                          child: Column(children: [
-                            Image.asset(ImageAssets.membersImage, height: 60.h),
-                            SizedBox(height: 5.h),
-                            Text('Members',
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w500)))
-                          ])),
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (builder) =>
-                                    const ServiceProviderScreen()));
-                          },
-                          child: Column(children: [
-                            Image.asset(ImageAssets.serviceImage, height: 60.h),
-                            SizedBox(height: 5.h),
-                            Text('Service Provider',
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w500)))
-                          ])),
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (builder) => const ComplaintScreen()));
-                          },
-                          child: Column(children: [
-                            Image.asset(ImageAssets.complaintImage,
-                                height: 60.h),
-                            SizedBox(height: 5.h),
-                            Text('Complaints',
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w500)))
-                          ])),
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (builder) => const EventScreen()));
-                          },
-                          child: Column(children: [
-                            Image.asset(ImageAssets.eventImage, height: 60.h),
-                            SizedBox(height: 5.h),
-                            Text('Event',
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w500)))
-                          ]))
-                    ]),
-              ),
               SizedBox(height: 10.h),
-              showLess
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (builder) => NoticeBoardScreen(
-                                        isResidentSide: true)));
-                              },
-                              child: Column(children: [
-                                Image.asset(ImageAssets.noticeImage,
-                                    height: 60.h),
-                                SizedBox(height: 5.h),
-                                Text('Notice Board',
-                                    style: GoogleFonts.nunitoSans(
-                                        textStyle: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w500)))
-                              ])),
-                          GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (builder) => const SosScreen(),
-                                ));
-                              },
-                              child: Column(children: [
-                                Image.asset(ImageAssets.sosImage, height: 60.h),
-                                SizedBox(height: 5.h),
-                                Text('SOS',
-                                    style: GoogleFonts.nunitoSans(
-                                        textStyle: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w500)))
-                              ])),
-                          GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (builder) => const RentScreen()));
-                              },
-                              child: Column(children: [
-                                Image.asset(ImageAssets.rentImage,
-                                    height: 60.h),
-                                SizedBox(height: 5.h),
-                                Text('Rent/Sell',
-                                    style: GoogleFonts.nunitoSans(
-                                        textStyle: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w500)))
-                              ])),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                showLess = false;
-                              });
-                            },
-                            child: Column(
-                              children: [
-                                Image.asset(ImageAssets.moreImage,
-                                    height: 60.h),
-                                SizedBox(height: 5.h),
-                                Text('More',
-                                    style: GoogleFonts.nunitoSans(
-                                        textStyle: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w500)))
-                              ],
+              const SlidersManagement(),
+              SizedBox(height: 10.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Text('All Features',
+                        style: GoogleFonts.cormorant(
+                          textStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => ViewAllFeatures()));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: AppTheme.blueColor)),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 12.w, vertical: 5.h),
+                          child: Center(
+                            child: Text(
+                              'View All',
+                              style: GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                  color: AppTheme.blueColor,
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
-                          )
-                        ],
-                      ),
-                    )
-                  : SizedBox(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (builder) =>
-                                                NoticeBoardScreen()));
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Image.asset(ImageAssets.noticeImage,
-                                          height: 60.h),
-                                      SizedBox(height: 5.h),
-                                      Text('Notice Board',
-                                          style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (builder) => const SosScreen(),
-                                    ));
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Image.asset(ImageAssets.sosImage,
-                                          height: 60.h),
-                                      SizedBox(height: 5.h),
-                                      Text('SOS',
-                                          style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (builder) => RentScreen(),
-                                    ));
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        ImageAssets.rentImage,
-                                        height: 60.h,
-                                      ),
-                                      SizedBox(
-                                        height: 5.h,
-                                      ),
-                                      Text('Rent/Sell',
-                                          style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (builder) =>
-                                                const ReferPropertyScreen()));
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        ImageAssets.referImage,
-                                        height: 60.h,
-                                      ),
-                                      SizedBox(
-                                        height: 5.h,
-                                      ),
-                                      Text('Refer',
-                                          style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 15.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (builder) =>
-                                                const VisitorScreen()));
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Image.asset(ImageAssets.visitorsImage,
-                                          height: 60.h),
-                                      SizedBox(height: 5.h),
-                                      Text('Visitors',
-                                          style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (builder) =>
-                                            const PollScreen(),
-                                      ));
-                                    },
-                                    child: Column(children: [
-                                      Image.asset(ImageAssets.pollsImage,
-                                          height: 60.h),
-                                      SizedBox(height: 5.h),
-                                      Text('Polls',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12.sp,
-                                                  fontWeight: FontWeight.w500)))
-                                    ])),
-                                GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (builder) =>
-                                                  const ParcelListingPage()));
-                                    },
-                                    child: Column(children: [
-                                      Image.asset(ImageAssets.parcelImage,
-                                          height: 60.h),
-                                      SizedBox(height: 5.h),
-                                      Text('Parcel',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12.sp,
-                                                  fontWeight: FontWeight.w500)))
-                                    ])),
-                                GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        showLess = true;
-                                      });
-                                    },
-                                    child: Column(children: [
-                                      Image.asset(ImageAssets.moreImage,
-                                          height: 60.h),
-                                      SizedBox(height: 5.h),
-                                      Text('Show Less',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w500,
-                                          )))
-                                    ])),
-                              ],
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 10.h),
-                      const SlidersManagement(),
-                      SizedBox(height: 10.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  ),
+                ],
+              ),
+              MasonryGridView.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                shrinkWrap: true,
+                physics: BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(10),
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  double height;
+                  // Define heights based on index
+                  if (index % 3 == 0) {
+                    height = size.height * 0.2; // 0, 3, 6...
+                  } else if (index % 3 == 1) {
+                    height = size.height * 0.26; // 1, 4, 7...
+                  } else if (index % 3 == 2) {
+                    height = size.height * 0.26; // 1, 4, 7...
+                  } else {
+                    height = size.height * 0.2; // optional for others
+                  }
+
+                  return GestureDetector(
+                    onTap: ()=> Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => pagesList[index])),
+                    child: Container(
+                      height: height,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: colors[index % colors.length],
+                          border: Border.all(
+                              color: colors[index % colors.length], width: 2)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 12.0),
-                            child: Text('Upcoming Bills',
-                                style: GoogleFonts.nunitoSans(
-                                  textStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              widget.onChanged(1);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    border:
-                                        Border.all(color: AppTheme.blueColor)),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 20.w, vertical: 8.h),
-                                  child: Center(
-                                    child: Text(
-                                      'View All',
-                                      style: GoogleFonts.nunitoSans(
-                                        textStyle: TextStyle(
-                                          color: AppTheme.blueColor,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                          Image.asset(dataList[index]['icon']),
+                          Text(
+                            dataList[index]['title'].toString(),
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.nunitoSans(
+                              textStyle: TextStyle(
+                                color: AppTheme.backgroundColor,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      MyBillsPage(types: 'unpaid')
-                    ],
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height: 10.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Text('Upcoming Bills',
+                        style: GoogleFonts.cormorant(
+                          textStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )),
                   ),
-                ),
-              )
+                  GestureDetector(
+                    onTap: () {
+                      widget.onChanged(1);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: AppTheme.blueColor)),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 12.w, vertical: 5.h),
+                          child: Center(
+                            child: Text(
+                              'View All',
+                              style: GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                  color: AppTheme.blueColor,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              MyBillsPage(types: 'unpaid')
             ],
           ),
         ),

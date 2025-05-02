@@ -62,7 +62,7 @@ class _SettingScreenState extends State<SettingScreen> {
     ];
 
     List<Widget> residentScreens = [
-      ResidentProfileDetails(),
+      ResidentProfileDetails(forDetails: true),
       const DailyHelpListingHistoryResidentSide(),
       const SizedBox(), // Logout handled separately
       NotificationScreen(),
@@ -128,7 +128,7 @@ class _SettingScreenState extends State<SettingScreen> {
             title: Text('Settings',
                 style: GoogleFonts.nunitoSans(
                     textStyle: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w600)))),
         body: SafeArea(

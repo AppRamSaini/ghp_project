@@ -84,7 +84,7 @@ class _BillScreenState extends State<BillScreen> {
             title: Text('Bills',
                 style: GoogleFonts.nunitoSans(
                     textStyle: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w600)))),
         body: SafeArea(
@@ -230,14 +230,19 @@ class _BillScreenState extends State<BillScreen> {
                               final bill = state.bills[index];
                               int delay = bill.dueDateRemainDays!;
                               String delayData() {
-                                if (delay > 0) {
-                                  return "Due in ${bill.dueDateRemainDays} Days";
+                                final remainDays = bill.dueDateRemainDays ?? 0;
+                                final delayDays = bill.dueDateDelayDays ?? 0;
+
+                                if (delay != null && delay > 0) {
+                                  return "Due in $remainDays ${remainDays > 1 ? 'days' : 'day'}";
+                                } else if (delayDays == 0) {
+                                  return 'Today is the last day';
                                 } else {
-                                  return bill.dueDateDelayDays == 0
-                                      ? 'Today Is Last Day'
-                                      : "${bill.dueDateDelayDays} Days Delay";
+                                  return "$delayDays ${delayDays > 1 ? 'days' : 'day'} overdue";
                                 }
                               }
+
+
 
                               return Container(
                                 margin: const EdgeInsets.symmetric(

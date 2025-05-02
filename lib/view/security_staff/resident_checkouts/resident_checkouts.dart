@@ -79,7 +79,7 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
               : Text('Resident Checkouts History',
                   style: GoogleFonts.nunitoSans(
                       textStyle: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 18.sp,
                           fontWeight: FontWeight.w600))),
           actions: [

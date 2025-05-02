@@ -7,6 +7,9 @@ class AppTheme {
   static var latoRegular = "Lato_Regular";
 
   static var primaryColor = Color(0XFF8077F5);
+  static var white = Color(0XFFFFFFFF);
+  static const  splashColor = Color(0xFFEBE5FB);
+
   static var staffPrimaryColor = Color(0XFF6459CC);
 
   static var secondaryColor = Color(0xFFF2F1FE);
@@ -29,24 +32,19 @@ class AppTheme {
   static var takeButtonColor = Color(0xFFFAB36C);
   static var resolvedButtonColor = Color(0xFF5075D0);
   static var blueColor = Color(0xFF0159A8);
+
+  static var color1 = Color(0xFF4900FF).withOpacity(0.1);
+  static var color2 = Color(0xFFFFA1A1).withOpacity(0.1);
+  static var color3 = Color(0xFFE1488C).withOpacity(0.1);
+  static var color4 = Color(0xFF785CB7).withOpacity(0.1);
+  static var color5 = Color(0xFFE1488C).withOpacity(0.1);
+  static var color6 = Color(0xFFFF0000).withOpacity(0.1);
+  static var color7 = Color(0xFF55CAFF).withOpacity(0.1);
+  static var color8 = Color(0xFF5CDE46).withOpacity(0.1);
+  static var color9 = Color(0xFF076AFF).withOpacity(0.1);
+  static var color10 = Color(0xFF57C8E8).withOpacity(0.1);
+  static var color11 = Color(0xFFECBE45).withOpacity(0.1);
+
+
 }
 
-String convertDateTimeFormat(DateTime inputDate) {
-  String formattedDate = DateFormat('dd MMMM, y').format(inputDate);
-
-  String formattedTime = DateFormat('hh:mm a').format(inputDate);
-
-  return '$formattedDate $formattedTime';
-}
-
-String convertDateFormat(DateTime inputDate) {
-  String formattedDate = DateFormat('dd MMMM, y').format(inputDate);
-
-  return formattedDate;
-}
-
-String convertTimeFormat(DateTime inputDate) {
-  String formattedTime = DateFormat('hh:mm a').format(inputDate);
-
-  return formattedTime;
-}

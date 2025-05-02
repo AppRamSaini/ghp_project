@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_document_picker/flutter_document_picker.dart';
+// import 'package:flutter_document_picker/flutter_document_picker.dart';
+// import 'package:flutter_document_picker/flutter_document_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
@@ -14,7 +16,7 @@ import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+// import 'package:video_thumbnail/video_thumbnail.dart';
 
 class RegisterComplaintScreen extends StatefulWidget {
   final String categoryId;
@@ -446,32 +448,32 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
       return;
     }
 
-    // FilePickerResult? result = await FilePicker.platform
-    //     .pickFiles(type: FileType.custom, allowedExtensions: ['mp3', 'aac']);
-    // if (result != null) {
-    //   setState(() {
-    //     audioFile = File(result.files.single.path!);
-    //     audioList.add(audioFile!);
-    //   });
-    // }
-    try {
-      final String? path = await FlutterDocumentPicker.openDocument(
-        params: FlutterDocumentPickerParams(
-          allowedMimeTypes: [
-            'audio/mpeg', // MP3 Files
-            'audio/aac',  // AAC Files
-          ],
-        ),
-      );
-
-      if (path != null) {
-        File audioFile = File(path);
-        audioList.add(audioFile);
-        print("Selected Audio File: ${audioFile.path}");
-      }
-    } catch (e) {
-      print("Error picking file: $e");
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['mp3', 'aac']);
+    if (result != null) {
+      setState(() {
+        audioFile = File(result.files.single.path!);
+        audioList.add(audioFile!);
+      });
     }
+    // try {
+    //   final String? path = await FlutterDocumentPicker.openDocument(
+    //     params: FlutterDocumentPickerParams(
+    //       allowedMimeTypes: [
+    //         'audio/mpeg', // MP3 Files
+    //         'audio/aac',  // AAC Files
+    //       ],
+    //     ),
+    //   );
+    //
+    //   if (path != null) {
+    //     File audioFile = File(path);
+    //     audioList.add(audioFile);
+    //     print("Selected Audio File: ${audioFile.path}");
+    //   }
+    // } catch (e) {
+    //   print("Error picking file: $e");
+    // }
   }
 
   /// GET IMAGE BY GALLERY
@@ -514,7 +516,7 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
         videoList.add(File(galleryFile!.path));
       });
       // Generate the thumbnail
-      generateThumbnail(galleryFile!.path);
+      // generateThumbnail(galleryFile!.path);
     } else {
       snackbarMessage(context, "No video selected.");
     }
@@ -528,21 +530,21 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
         duration: const Duration(seconds: 2)));
   }
 
-  Future generateThumbnail(String videoPath) async {
-    final tempDir = await getTemporaryDirectory();
-    final thumbPath = await VideoThumbnail.thumbnailFile(
-        video: videoPath,
-        thumbnailPath: tempDir.path,
-        imageFormat: ImageFormat.PNG,
-        maxHeight: 200,
-        quality: 75);
-    if (thumbPath != null) {
-      thumbnailFile = File(thumbPath);
-      setState(() {});
-    }
-
-    return thumbnailFile;
-  }
+  // Future generateThumbnail(String videoPath) async {
+  //   final tempDir = await getTemporaryDirectory();
+  //   final thumbPath = await VideoThumbnail.thumbnailFile(
+  //       video: videoPath,
+  //       thumbnailPath: tempDir.path,
+  //       imageFormat: ImageFormat.PNG,
+  //       maxHeight: 200,
+  //       quality: 75);
+  //   if (thumbPath != null) {
+  //     thumbnailFile = File(thumbPath);
+  //     setState(() {});
+  //   }
+  //
+  //   return thumbnailFile;
+  // }
 
   /// Function to build media grid for images, videos, and audio
   Widget _buildMediaGrid(

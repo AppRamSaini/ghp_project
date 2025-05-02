@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_document_picker/flutter_document_picker.dart';
+// import 'package:flutter_document_picker/flutter_document_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
@@ -511,42 +512,42 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
                                   documentFiles.add(File(result!.path));
                                 }
                               } else {
-                                // FilePickerResult? result =
-                                //     await FilePicker.platform.pickFiles(
-                                //   type: FileType.custom,
-                                //   allowedExtensions: [
-                                //     'pdf',
-                                //     'doc',
-                                //     'docx',
-                                //     'txt'
-                                //   ],
-                                // );
-                                //
-                                // if (result != null) {
-                                //   File file = File(result.files.single.path!);
-                                //   documentFiles.add(File(file.path));
-                                // }
+                                FilePickerResult? result =
+                                    await FilePicker.platform.pickFiles(
+                                  type: FileType.custom,
+                                  allowedExtensions: [
+                                    'pdf',
+                                    'doc',
+                                    'docx',
+                                    'txt'
+                                  ],
+                                );
 
-                                try {
-                                  final String? path = await FlutterDocumentPicker.openDocument(
-                                    params: FlutterDocumentPickerParams(
-                                      allowedMimeTypes: [
-                                        'application/pdf',
-                                        'application/msword',
-                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                                        'text/plain',
-                                      ],
-                                    ),
-                                  );
-
-                                  if (path != null) {
-                                    File file = File(path);
-                                    documentFiles.add(file);
-                                    print("Selected File: ${file.path}");
-                                  }
-                                } catch (e) {
-                                  print("Error picking file: $e");
+                                if (result != null) {
+                                  File file = File(result.files.single.path!);
+                                  documentFiles.add(File(file.path));
                                 }
+                                //
+                                // try {
+                                //   final String? path = await FlutterDocumentPicker.openDocument(
+                                //     params: FlutterDocumentPickerParams(
+                                //       allowedMimeTypes: [
+                                //         'application/pdf',
+                                //         'application/msword',
+                                //         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                //         'text/plain',
+                                //       ],
+                                //     ),
+                                //   );
+                                //
+                                //   if (path != null) {
+                                //     File file = File(path);
+                                //     documentFiles.add(file);
+                                //     print("Selected File: ${file.path}");
+                                //   }
+                                // } catch (e) {
+                                //   print("Error picking file: $e");
+                                // }
                               }
                               Navigator.of(context).pop();
                               setState(() {});

@@ -219,13 +219,13 @@ AppBar customAppbar(
     Function(bool)? onPressButton,
     Function? onChanged}) {
   return AppBar(
-    iconTheme: const IconThemeData(color: Colors.white),
+    iconTheme: const IconThemeData(color: Colors.black),
     title: searchBarOpen
         ? const SizedBox()
         : Text(title,
             style: GoogleFonts.nunitoSans(
                 textStyle: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w600))),
     actions: [
@@ -261,4 +261,26 @@ String formatTimeToAMPM(String time) {
 
   final dateTime = inputFormat.parse(time);
   return outputFormat.format(dateTime);
+}
+
+
+
+String convertDateTimeFormat(DateTime inputDate) {
+  String formattedDate = DateFormat('dd MMMM, y').format(inputDate);
+
+  String formattedTime = DateFormat('hh:mm a').format(inputDate);
+
+  return '$formattedDate $formattedTime';
+}
+
+String convertDateFormat(DateTime inputDate) {
+  String formattedDate = DateFormat('dd MMMM, y').format(inputDate);
+
+  return formattedDate;
+}
+
+String convertTimeFormat(DateTime inputDate) {
+  String formattedTime = DateFormat('hh:mm a').format(inputDate);
+
+  return formattedTime;
 }

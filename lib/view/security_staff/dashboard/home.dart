@@ -68,12 +68,10 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
             } else if (state is LogoutFailed) {
               snackBar(context, 'User logout failed', Icons.warning,
                   AppTheme.redColor);
-
               Navigator.of(dialogueContext).pop();
             } else if (state is LogoutInternetError) {
               snackBar(context, 'Internet connection failed', Icons.wifi_off,
                   AppTheme.redColor);
-
               Navigator.of(dialogueContext).pop();
             } else if (state is LogoutSessionError) {
               Navigator.of(dialogueContext).pop();
@@ -101,8 +99,8 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                   onTap: () {
                                     // Future.delayed(Duration.zero,
                                     //     () => overDueBillAlertDialog(context));
-                                    // profileViewAlertDialog(
-                                    //     context, state.userProfile.first);
+                                    profileViewAlertDialog(
+                                        context, state.userProfile.first);
                                   },
                                   child: state.userProfile.first.data!.user!
                                               .image !=
@@ -131,7 +129,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                             .toString(),
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors.white,
+                                                color: Colors.black,
                                                 fontSize: 15.sp,
                                                 fontWeight: FontWeight.w600,
                                                 overflow:
@@ -140,7 +138,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                     Text('Security Staff',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors.white,
+                                                color: Colors.black,
                                                 fontSize: 10.sp,
                                                 fontWeight: FontWeight.w500)))
                                   ],

@@ -32,7 +32,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 
-
+	<key>UIBackgroundModes</key>
+    <array>
+      <string>fetch</string>
+      <string>remote-notification</string>
+    </array>
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <false/>
 
 	<key>NSLocationWhenInUseUsageDescription</key>
     <string>We need your location to provide better services.</string>

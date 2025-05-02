@@ -10,6 +10,7 @@ import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/verify_otp/verify_otp_cubit.dart';
+import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
 import 'package:ghp_society_management/view/security_staff/dashboard/bottom_navigation.dart';
 import 'package:ghp_society_management/view/Staff/bottom_nav_screen.dart';
@@ -76,23 +77,25 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     final defaultPinTheme = PinTheme(
-        width: 100.w,
+        width: 70.w,
         height: 60.h,
-        textStyle: const TextStyle(
-            fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+        textStyle:  TextStyle(
+            fontSize: 22, color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
         decoration: BoxDecoration(
-            color: AppTheme.primaryLiteColor,
+            color: AppTheme.white,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppTheme.remainingColor)));
+            border: Border.all(color: AppTheme.primaryColor)));
 
     return BlocListener<VerifyOtpCubit, VerifyOtpState>(
       listener: _handleStateChanges,
       child: Scaffold(
-        backgroundColor: AppTheme.primaryColor,
         body: Stack(
           alignment: Alignment.topCenter,
           children: [
-            Image.asset(ImageAssets.loginImage, height: 400.h),
+            Image.asset(ImageAssets.loginImage,
+                height: size.height * 0.5,
+                width: size.width,
+                fit: BoxFit.cover),
             _buildOtpInputSection(defaultPinTheme),
           ],
         ),
@@ -106,25 +109,17 @@ class _OtpScreenState extends State<OtpScreen> {
         const Spacer(flex: 5),
         Expanded(
           flex: 6,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            width: double.infinity,
-            decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius:
-                BorderRadius.vertical(top: Radius.circular(20.r))),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildTitle(),
-                const Spacer(),
-                _buildOtpField(defaultPinTheme),
-                const Spacer(flex: 2),
-                _buildLoginButton(),
-                const Spacer(),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildTitle(),
+            SizedBox(height: size.height*0.03),
+              _buildOtpField(defaultPinTheme),
+              SizedBox(height: size.height*0.02),
+              _buildLoginButton(),
+              const Spacer(),
+            ],
           ),
         ),
       ],
@@ -134,21 +129,21 @@ class _OtpScreenState extends State<OtpScreen> {
   Widget _buildTitle() {
     return Column(
       children: [
-        SizedBox(height: 20.h),
+        SizedBox(height: 50.h),
         Text(
           "Enter Your OTP",
-          style: GoogleFonts.nunitoSans(
-            color: Colors.white,
+          style: GoogleFonts.cormorant(
+            color: Colors.black,
             fontSize: 24.sp,
             fontWeight: FontWeight.w600,
           ),
         ),
         SizedBox(height: 10.h),
         Text(
-          "OTP is sent to your number \n+91-${widget.phoneNumber}",
+          "We've sent an OTP to +91 ${widget.phoneNumber}",
           textAlign: TextAlign.center,
           style: GoogleFonts.nunitoSans(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 15.sp,
             fontWeight: FontWeight.w500,
           ),
@@ -184,21 +179,21 @@ class _OtpScreenState extends State<OtpScreen> {
         }
       },
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 15),
         child: Container(
           width: double.infinity,
-          height: 50.h,
+          height: 52.h,
           decoration: BoxDecoration(
               color: AppTheme.primaryColor,
               borderRadius: BorderRadius.circular(30)),
           child: Center(
             child: Text(
-              'Login',
+              'Log In',
               style: GoogleFonts.nunitoSans(
                 textStyle: TextStyle(
                   color: Colors.white,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -211,51 +206,66 @@ class _OtpScreenState extends State<OtpScreen> {
   Widget _buildOtpField(PinTheme defaultPinTheme) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
-      child: Pinput(
-        controller: _otpController,
-        defaultPinTheme: defaultPinTheme,
-        separatorBuilder: (_) => const SizedBox(width: 20),
-        hapticFeedbackType: HapticFeedbackType.lightImpact,
-        onCompleted: (pin) async {
-          FirebaseMessaging messaging = FirebaseMessaging.instance;
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Enter Otp',
+            style: GoogleFonts.nunitoSans(
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500
 
-          // Push Notification की परमिशन पहले लें
-          await messaging.requestPermission(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
+            ))
+          ),
+          SizedBox(height: 10),
+          Pinput(
+            controller: _otpController,
+            defaultPinTheme: defaultPinTheme,
+            separatorBuilder: (_) => const SizedBox(width: 20),
+            hapticFeedbackType: HapticFeedbackType.lightImpact,
+            onCompleted: (pin) async {
+              FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-          String? token;
+              // Push Notification की परमिशन पहले लें
+              await messaging.requestPermission(
+                alert: true,
+                badge: true,
+                sound: true,
+              );
 
-          if (Platform.isIOS) {
-            // iOS के लिए APNS Token प्राप्त करें
-            token = await messaging.getAPNSToken();
-            print("APNS Token: $token");
-          } else {
-            // Android के लिए FCM Token प्राप्त करें
-            token = await messaging.getToken();
-            print("FCM Token: $token");
-          }
+              String? token;
 
-          // अगर कोई टोकन null आ रहा है, तो इसे Default Empty String से हैंडल करें
-          context
-              .read<VerifyOtpCubit>()
-              .verifyOtp(widget.phoneNumber, pin, token ?? "rees");
+              if (Platform.isIOS) {
+                // iOS के लिए APNS Token प्राप्त करें
+                token = await messaging.getAPNSToken();
+                print("APNS Token: $token");
+              } else {
+                // Android के लिए FCM Token प्राप्त करें
+                token = await messaging.getToken();
+                print("FCM Token: $token");
+              }
 
-          print('Token Sent: $token');
-        },
-        cursor: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 9),
-              width: 22,
-              height: 1,
-              color: AppTheme.redColor,
+              // अगर कोई टोकन null आ रहा है, तो इसे Default Empty String से हैंडल करें
+              context
+                  .read<VerifyOtpCubit>()
+                  .verifyOtp(widget.phoneNumber, pin, token ?? "rees");
+
+              print('Token Sent: $token');
+            },
+            cursor: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(bottom: 9),
+                  width: 22,
+                  height: 1,
+                  color: AppTheme.primaryColor,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

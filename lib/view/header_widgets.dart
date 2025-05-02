@@ -119,7 +119,7 @@ Widget chatIcon(int unreadCount, BuildContext context, String userId,
         Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: CircleAvatar(
-                backgroundColor: Colors.white,
+                backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
                 child: Image.asset(ImageAssets.messageImage,
                     height: 20.h, color: AppTheme.resolvedButtonColor))),
         if (unreadCount > 0)
@@ -293,7 +293,7 @@ Widget headerWidget(BuildContext context, userId, userName, userImage,
                     }
                   },
                   child: CircleAvatar(
-                      backgroundColor: Colors.white,
+                      backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
                       child: Image.asset(ImageAssets.bellImage,
                           height: 20.h, color: AppTheme.resolvedButtonColor)))),
           counts > 0
@@ -321,7 +321,7 @@ Widget headerWidget(BuildContext context, userId, userName, userImage,
           }
         },
         child: CircleAvatar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
           child: Image.asset(
             ImageAssets.staffLogoutImage,
             height: 20.h,

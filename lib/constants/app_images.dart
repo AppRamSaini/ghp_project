@@ -1,7 +1,8 @@
 class ImageAssets {
-  static const String appLogo = 'assets/images/app_icon.png';
+  static const String appLogo = 'assets/images/app_icon1.png';
+  static const String bg = 'assets/images/bg.png';
   static const String societyImage = 'assets/images/office.png';
-  static const String loginImage = 'assets/images/login.png';
+  static const String loginImage = 'assets/images/login1.png';
   static const String homeImage = 'assets/images/home.png';
   static const String settingImage = 'assets/images/settings.png';
   static const String documentImage = 'assets/images/document.png';
@@ -13,7 +14,6 @@ class ImageAssets {
   static const String headsetImage = 'assets/images/headset.png';
   static const String serviceRequestImage = 'assets/images/serviceRequest.png';
   static const String markDoneImage = 'assets/images/done.png';
-
   static const String messageImage = 'assets/images/message.png';
   static const String complaintImage = 'assets/images/Complaints.png';
   static const String eventImage = 'assets/images/Event.png';
@@ -46,4 +46,15 @@ class ImageAssets {
   static const String cameraImage = 'assets/images/camera.png';
   static const String parcelImage = 'assets/images/parcel.png';
   static const String parcelIcon = 'assets/images/parcel_icon.png';
+  static const String member1 = 'assets/images/member1.png';
+  static const String complaint1 = 'assets/images/complaint.png';
+  static const String visitors1 = 'assets/images/visitor1.png';
+  static const String parcel1 = 'assets/images/parcel1.png';
+  static const String rent1 = 'assets/images/rent1.png';
+  static const String sos1 = 'assets/images/sos1.png';
+  static const String refer1 = 'assets/images/refer1.png';
+  static const String notice1 = 'assets/images/notice1.png';
+  static const String service1 = 'assets/images/service1.png';
+  static const String polls1 = 'assets/images/polls1.png';
+  static const String events1 = 'assets/images/event1.png';
 }

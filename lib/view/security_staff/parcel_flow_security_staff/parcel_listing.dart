@@ -240,7 +240,7 @@ class _ParcelListingSecurityStaffSideState
             title: Text('Parcels',
                 style: GoogleFonts.nunitoSans(
                     textStyle: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600))),
             actions: [
@@ -559,20 +559,22 @@ class _ParcelListingSecurityStaffSideState
                                         textStyle: TextStyle(
                                             color: Colors.black54,
                                             fontSize: 13.sp))),
-                                Text(status().toString(),
-                                    style: GoogleFonts.nunitoSans(
-                                        textStyle: TextStyle(
-                                            color: parcelData.handoverStatus ==
-                                                        'pending' ||
-                                                    parcelData.checkinDetail!
-                                                            .checkoutAt ==
-                                                        null
-                                                ? Colors.red
-                                                : parcelData.handoverStatus ==
-                                                        'received'
-                                                    ? Colors.orange
-                                                    : Colors.green,
-                                            fontSize: 13.sp))),
+                                Text(
+                                  status().toString(),
+                                  style: GoogleFonts.nunitoSans(
+                                    textStyle: TextStyle(
+                                      color: parcelData.handoverStatus == 'pending' ||
+                                          parcelData.checkinDetail == null ||
+                                          parcelData.checkinDetail!.checkoutAt == null
+                                          ? Colors.red
+                                          : parcelData.handoverStatus == 'received'
+                                          ? Colors.orange
+                                          : Colors.green,
+                                      fontSize: 13.sp,
+                                    ),
+                                  ),
+                                ),
+
                               ],
                             ),
                             Divider(color: Colors.green.withOpacity(0.1)),

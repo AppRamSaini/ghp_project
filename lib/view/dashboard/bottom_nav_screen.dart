@@ -130,6 +130,7 @@ class DashboardState extends State<Dashboard> {
           ),
           bottomNavigationBar: BottomNavyBar(
             selectedIndex: currentIndex,
+
             onItemSelected: (index) {
               setState(() => currentIndex = index);
               _pageController!.jumpToPage(index);
@@ -196,7 +197,8 @@ class DashboardState extends State<Dashboard> {
                   ),
                   activeColor: AppTheme.blueColor),
               BottomNavyBarItem(
-                  title: Text('Setting',
+                textAlign: TextAlign.center,
+                  title: Text('Settings',
                       style: GoogleFonts.nunitoSans(
                           textStyle: TextStyle(
                               color: Colors.black,

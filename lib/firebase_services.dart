@@ -10,13 +10,13 @@ import 'package:vibration/vibration.dart';
 
 // Initialize global variables
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-// Initialize Firebase Analytics
-// AnalyticsFirebaseAnalytics analytics = FirebaseAnalytics.instance;
+// // Initialize Firebase Analytics
+// FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 // FirebaseAnalyticsObserver analyticsObserver =
-//     FirebaseAnalyticsObserver(analytics: analytics);
+// FirebaseAnalyticsObserver(analytics: analytics);
 
 class FirebaseNotificationService {
   static bool _isRingtonePlaying = false;
@@ -131,7 +131,7 @@ class FirebaseNotificationService {
 
   static void checkInitialMessage() async {
     RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
+    await FirebaseMessaging.instance.getInitialMessage();
 
     if (initialMessage != null) {
       print("🚀 App Opened from Terminated State: ${initialMessage.data}");
@@ -142,7 +142,7 @@ class FirebaseNotificationService {
   /// Show local notification with action buttons (Allow and Decline)
   static void showLocalNotification(RemoteMessage message) {
     const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
+    AndroidNotificationDetails(
       'visitor_channel_id',
       'Visitor Notifications',
       importance: Importance.high,
@@ -157,7 +157,7 @@ class FirebaseNotificationService {
     );
 
     const NotificationDetails notificationDetails =
-        NotificationDetails(android: androidDetails);
+    NotificationDetails(android: androidDetails);
 
     flutterLocalNotificationsPlugin.show(
       message.hashCode,
@@ -203,26 +203,26 @@ class FirebaseNotificationService {
   /// Initialize the notification handler
   static void initializeNotificationHandler() {
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
+    InitializationSettings(android: initializationSettingsAndroid);
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse response) async {
-      print('Notification action clicked: ${response.payload}');
+          print('Notification action clicked: ${response.payload}');
 
-      // Handle actions based on the actionId
-      if (response.actionId == 'ALLOW_ACTION') {
-        print('Allow button clicked');
-        _handleApiCall('allowed'); // Call API or perform action
-      } else if (response.actionId == 'DECLINE_ACTION') {
-        print('Decline button clicked');
-        _handleApiCall('not_allowed'); // Call API or perform action
-      }
-      _stopVibrationAndRingtone();
-    });
+          // Handle actions based on the actionId
+          if (response.actionId == 'ALLOW_ACTION') {
+            print('Allow button clicked');
+            _handleApiCall('allowed'); // Call API or perform action
+          } else if (response.actionId == 'DECLINE_ACTION') {
+            print('Decline button clicked');
+            _handleApiCall('not_allowed'); // Call API or perform action
+          }
+          _stopVibrationAndRingtone();
+        });
   }
 
   /// Handle API calls for Allow/Decline actions
@@ -230,7 +230,7 @@ class FirebaseNotificationService {
     print('Calling API with action: $action');
     try {
       final String visitorsID =
-          LocalStorage.localStorage.getString("visitor_id").toString();
+      LocalStorage.localStorage.getString("visitor_id").toString();
       var data = {
         "visitor_id": visitorsID.toString(),
         "status": action
@@ -246,7 +246,7 @@ class FirebaseNotificationService {
   /// for background notifications
   static Future<void> showNotification(RemoteMessage message) async {
     const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
+    AndroidNotificationDetails(
       'high_importance_channel',
       'High Importance Notifications',
       importance: Importance.high,
@@ -255,7 +255,7 @@ class FirebaseNotificationService {
     );
 
     const NotificationDetails notificationDetails =
-        NotificationDetails(android: androidDetails);
+    NotificationDetails(android: androidDetails);
 
     await flutterLocalNotificationsPlugin.show(
       message.hashCode,
@@ -278,10 +278,10 @@ class FirebaseNotificationService {
 
   static void initialize2() {
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
+    InitializationSettings(android: initializationSettingsAndroid);
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }

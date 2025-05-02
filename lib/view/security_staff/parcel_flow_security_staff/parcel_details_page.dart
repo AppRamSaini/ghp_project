@@ -241,21 +241,17 @@ class _ParcelDetailsSecurityStaffSideState
                                         status(),
                                         style: GoogleFonts.nunitoSans(
                                           textStyle: TextStyle(
-                                              color: requestData
-                                                              .handoverStatus ==
-                                                          'pending' ||
-                                                      requestData.checkinDetail!
-                                                              .checkoutAt ==
-                                                          null
-                                                  ? Colors.red
-                                                  : requestData
-                                                              .handoverStatus ==
-                                                          'received'
-                                                      ? Colors.orange
-                                                      : Colors.green,
-                                              fontSize: 15.sp),
+                                            color: requestData.handoverStatus == 'pending' ||
+                                                requestData.checkinDetail?.checkoutAt == null
+                                                ? Colors.red
+                                                : requestData.handoverStatus == 'received'
+                                                ? Colors.orange
+                                                : Colors.green,
+                                            fontSize: 15.sp,
+                                          ),
                                         ),
                                       )
+
                                     ],
                                   ),
                                   SizedBox(height: 10.h),

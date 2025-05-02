@@ -274,7 +274,7 @@ class DailyHelpListingHistoryResidentSideState
                                                                     FontWeight
                                                                         .w500))),
                                                     Text(
-                                                        "Role : ${newHistoryLogs[index].role.toString().replaceAll("_", ' ')}",
+                                                        "Role : ${newHistoryLogs[index].role.toString().replaceAll("_", ' ').replaceAll('staff', '')}",
                                                         style: GoogleFonts.ptSans(
                                                             textStyle: TextStyle(
                                                                 color: Colors
