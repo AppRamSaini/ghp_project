@@ -192,10 +192,10 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
                       fit: BoxFit.cover)),
             )),
         const SizedBox(height: 20),
-        Text(name.toString(),
+        Text(name??'',
             style: const TextStyle(color: Colors.white, fontSize: 16)),
         Text(
-          mobile.toString(),
+          mobile??'',
           style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
       ],
@@ -207,12 +207,12 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          Text(type.toString(),
+          Text(type??'Sos Request',
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.white, fontSize: 16)),
           const SizedBox(height: 5),
           Text(
-            '"$description"',
+            description??'SOS Emergency Request',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white.withOpacity(0.8),

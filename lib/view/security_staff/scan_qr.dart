@@ -105,7 +105,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                                       forQRPage: true,
                                       forDetailsPage: false,
                                       fromResidentPage:
-                                          widget.fromResidentSide)));
+                                      widget.fromResidentSide)));
                         });
                       } else {
                         throw Exception("Key '-->>' not found.");
