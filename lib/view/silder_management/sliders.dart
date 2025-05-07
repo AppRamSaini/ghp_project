@@ -57,7 +57,7 @@ class _SlidersManagementState extends State<SlidersManagement> {
                               padding: EdgeInsets.all(8.w),
                               child: Image.asset(ImageAssets.appLogo,
                                   height: size.height * 0.06)),
-                          SizedBox(height: size.height * 0.01),
+                          SizedBox(height: size.height * 0.02),
                           Text("LOCATION",
                               style: const TextStyle(
                                   color: Colors.deepPurpleAccent,

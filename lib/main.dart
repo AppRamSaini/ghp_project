@@ -34,7 +34,9 @@ Future<void> requestNotificationPermission() async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
   await LocalStorage.init();
 
   await requestNotificationPermission();
@@ -73,13 +75,16 @@ class _MyAppState extends State<MyApp> {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
+              scaffoldBackgroundColor: Colors.white,
               useMaterial3: true,
               appBarTheme: const AppBarTheme(
-                iconTheme: IconThemeData(color: Colors.white),
+                backgroundColor: Colors.white,
+                centerTitle: false,
+                iconTheme: IconThemeData(color: Colors.black),
               ),
             ),
             navigatorKey: navigatorKey,
-            // navigatorObservers: [analyticsObserver],
+            navigatorObservers: [analyticsObserver],
             home: SplashScreen(),
           );
         },

@@ -1,5 +1,5 @@
 import 'dart:async';
-// import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
@@ -12,9 +12,9 @@ import 'package:vibration/vibration.dart';
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-// FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-// FirebaseAnalyticsObserver analyticsObserver =
-// FirebaseAnalyticsObserver(analytics: analytics);
+FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+FirebaseAnalyticsObserver analyticsObserver =
+FirebaseAnalyticsObserver(analytics: analytics);
 
 class FirebaseNotificationService {
   static bool _isRingtonePlaying = false;

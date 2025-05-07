@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/logout/logout_cubit.dart';
 import 'package:ghp_society_management/controller/user_profile/user_profile_cubit.dart';
+import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
+import 'package:ghp_society_management/view/dashboard/view_all_features.dart';
 import 'package:ghp_society_management/view/header_widgets.dart';
+import 'package:ghp_society_management/view/resident/complaint/comlaint_page.dart';
 import 'package:ghp_society_management/view/resident/event/event_screen.dart';
 import 'package:ghp_society_management/view/resident/member/members_screen.dart';
 import 'package:ghp_society_management/view/resident/notice_board/notice_board_screen.dart';
@@ -38,6 +42,36 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
     super.initState();
     context.read<UserProfileCubit>().fetchUserProfile();
   }
+
+
+
+  List colors = [
+    AppTheme.color1,
+    AppTheme.color2,
+    AppTheme.color3,
+    AppTheme.color4,
+    AppTheme.color5,
+    AppTheme.color6,
+    AppTheme.color7,
+    AppTheme.color8,
+    AppTheme.color9,
+    AppTheme.color10,
+  ];
+
+  List dataList = [
+    {"icon": ImageAssets.member1, "title": "Members"},
+    {"icon": ImageAssets.events1, "title": "Events"},
+    {"icon": ImageAssets.sos1, "title": "SOS"},
+    {"icon": ImageAssets.notice1, "title": "Notice Board"},
+  ];
+  List pagesList = [
+    MemberScreen(),
+    EventScreen(),
+    SosScreen(),
+    NoticeBoardScreen(),
+  ];
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -216,161 +250,64 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                 context, MaterialPageRoute(builder: (_) => AddVisitorScreen())),
             child: const Icon(Icons.add, color: Colors.white)),
         body: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (builder) => const MemberScreen()));
-                    },
-                    child: Column(children: [
-                      Image.asset(ImageAssets.membersImage, height: 60.h),
-                      SizedBox(height: 5.h),
-                      Text('Members',
-                          style: GoogleFonts.nunitoSans(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.035),
+            child: Column(
+              children: [
+                SizedBox(height: 20.h),
+                MasonryGridView.count(
+                  crossAxisCount: 4,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  padding:  EdgeInsets.zero,
+                  itemCount: dataList.length,
+                  itemBuilder: (context, index) {
+                    double height;
+                    height = size.height * 0.09; // optional for others
+                    return Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.push(context,
+                              MaterialPageRoute(builder: (_) => pagesList[index])),
+                          child: Container(
+                              margin: EdgeInsets.only(bottom: 5),
+                              height: height,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: colors[index % colors.length],
+                                  border: Border.all(
+                                      color: colors[index % colors.length], width: 2)),
+                              child: Image.asset(dataList[index]['icon'])),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 5),
+                          child: Text(
+                            dataList[index]['title'].toString(),
+                            textAlign: TextAlign.center,
+                            overflow:TextOverflow.ellipsis,
+                            style: GoogleFonts.nunitoSans(
                               textStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500)))
-                    ])),
-                GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (builder) => const EventScreen()));
-                    },
-                    child: Column(children: [
-                      Image.asset(ImageAssets.eventImage, height: 60.h),
-                      SizedBox(height: 5.h),
-                      Text('Event',
-                          style: GoogleFonts.nunitoSans(
-                              textStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500)))
-                    ])),
-                GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (builder) => const SosScreen()));
-                    },
-                    child: Column(children: [
-                      Image.asset(ImageAssets.sosImage, height: 60.h),
-                      SizedBox(height: 5.h),
-                      Text('SOS',
-                          style: GoogleFonts.nunitoSans(
-                              textStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500))),
-                    ])),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (builder) => NoticeBoardScreen(
-                              isResidentSide: true,
-                            )));
-                  },
-                  child: Column(
-                    children: [
-                      Image.asset(ImageAssets.noticeImage, height: 60.h),
-                      SizedBox(height: 5.h),
-                      Text('Notice Board',
-                          style: GoogleFonts.nunitoSans(
-                            textStyle: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w500,
+                                color: AppTheme.backgroundColor,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          )),
-                    ],
-                  ),
-                )
-              ]),
-              // SizedBox(height: 10.h),
-              // Padding(
-              //   padding: const EdgeInsets.only(left: 12),
-              //   child:
-              //       Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              //     GestureDetector(
-              //         onTap: () {
-              //           Navigator.of(context).push(MaterialPageRoute(
-              //               builder: (builder) =>
-              //                   const DailyHelpListingHistory()));
-              //         },
-              //         child: Column(children: [
-              //           Image.asset(ImageAssets.membersImage, height: 60.h),
-              //           SizedBox(height: 5.h),
-              //           Text('Daily Help',
-              //               style: GoogleFonts.nunitoSans(
-              //                   textStyle: TextStyle(
-              //                       color: Colors.white,
-              //                       fontSize: 12.sp,
-              //                       fontWeight: FontWeight.w500)))
-              //         ])),
-              //     /*    GestureDetector(
-              //         onTap: () {
-              //           Navigator.of(context).push(MaterialPageRoute(
-              //               builder: (builder) => const EventScreen()));
-              //         },
-              //         child: Column(children: [
-              //           Image.asset(ImageAssets.eventImage, height: 60.h),
-              //           SizedBox(height: 5.h),
-              //           Text('Event',
-              //               style: GoogleFonts.nunitoSans(
-              //                   textStyle: TextStyle(
-              //                       color: Colors.white,
-              //                       fontSize: 12.sp,
-              //                       fontWeight: FontWeight.w500)))
-              //         ])),
-              //     GestureDetector(
-              //         onTap: () {
-              //           Navigator.of(context).push(MaterialPageRoute(
-              //               builder: (builder) => const SosScreen()));
-              //         },
-              //         child: Column(children: [
-              //           Image.asset(ImageAssets.sosImage, height: 60.h),
-              //           SizedBox(height: 5.h),
-              //           Text('SOS',
-              //               style: GoogleFonts.nunitoSans(
-              //                   textStyle: TextStyle(
-              //                       color: Colors.white,
-              //                       fontSize: 12.sp,
-              //                       fontWeight: FontWeight.w500))),
-              //         ])),
-              //     GestureDetector(
-              //       onTap: () {
-              //         Navigator.of(context).push(MaterialPageRoute(
-              //             builder: (builder) => NoticeBoardScreen(
-              //                   isResidentSide: true,
-              //                 )));
-              //       },
-              //       child: Column(
-              //         children: [
-              //           Image.asset(ImageAssets.noticeImage, height: 60.h),
-              //           SizedBox(height: 5.h),
-              //           Text('Notice Board',
-              //               style: GoogleFonts.nunitoSans(
-              //                 textStyle: TextStyle(
-              //                   color: Colors.white,
-              //                   fontSize: 12.sp,
-              //                   fontWeight: FontWeight.w500,
-              //                 ),
-              //               )),
-              //         ],
-              //       ),
-              //     )*/
-              //   ]),
-              // ),
-              SizedBox(height: 20.h),
-              const Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: VisitorsTabBar(),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-              )
-            ],
+                SizedBox(height: size.height * 0.02),
+
+
+                const Expanded(
+                  child: VisitorsTabBar(),
+                )
+              ],
+            ),
           ),
         ),
       ),

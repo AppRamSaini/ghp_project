@@ -102,8 +102,6 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ],
       child: Scaffold(
-        backgroundColor: AppTheme.splashColor,
-
         body: Center(
           child: Padding(
             padding: EdgeInsets.all(8.w),

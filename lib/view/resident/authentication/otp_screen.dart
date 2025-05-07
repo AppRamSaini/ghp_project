@@ -77,8 +77,8 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     final defaultPinTheme = PinTheme(
-        width: 70.w,
-        height: 60.h,
+        width: 60,
+        height: 60,
         textStyle:  TextStyle(
             fontSize: 22, color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
         decoration: BoxDecoration(
@@ -89,47 +89,31 @@ class _OtpScreenState extends State<OtpScreen> {
     return BlocListener<VerifyOtpCubit, VerifyOtpState>(
       listener: _handleStateChanges,
       child: Scaffold(
-        body: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Image.asset(ImageAssets.loginImage,
-                height: size.height * 0.5,
-                width: size.width,
-                fit: BoxFit.cover),
-            _buildOtpInputSection(defaultPinTheme),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Image.asset(ImageAssets.loginImage,
+                  height: size.height * 0.5,
+                  width: size.width,
+                  fit: BoxFit.cover),
+              _buildTitle(),
+              SizedBox(height: size.height*0.03),
+              _buildOtpField(defaultPinTheme),
+              SizedBox(height: size.height*0.02),
+              _buildLoginButton(),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildOtpInputSection(PinTheme defaultPinTheme) {
-    return Column(
-      children: [
-        const Spacer(flex: 5),
-        Expanded(
-          flex: 6,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildTitle(),
-            SizedBox(height: size.height*0.03),
-              _buildOtpField(defaultPinTheme),
-              SizedBox(height: size.height*0.02),
-              _buildLoginButton(),
-              const Spacer(),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+
 
   Widget _buildTitle() {
     return Column(
       children: [
-        SizedBox(height: 50.h),
+        SizedBox(height: 20.h),
         Text(
           "Enter Your OTP",
           style: GoogleFonts.cormorant(
@@ -182,7 +166,7 @@ class _OtpScreenState extends State<OtpScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 15),
         child: Container(
           width: double.infinity,
-          height: 52.h,
+          height: 50,
           decoration: BoxDecoration(
               color: AppTheme.primaryColor,
               borderRadius: BorderRadius.circular(30)),

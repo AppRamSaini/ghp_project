@@ -7,6 +7,7 @@ import 'package:ghp_society_management/controller/visitors/chek_in_check_out/che
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/visitors_scan/scan_visitors_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/visitor_request/not_responding/not_responde_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/visitor_request/resend_request/resend_request_cubit.dart';
+import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/visitors_listing_model.dart';
 import 'package:ghp_society_management/timer_countdown.dart';
 import 'package:ghp_society_management/view/security_staff/dashboard/home.dart';
@@ -254,63 +255,177 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                 bloc: _visitorsListingCubit,
                 builder: (context, state) {
                   if (state is VisitorsListingLoaded) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        visitorsCardWidget(
-                            names: "Today Visitors",
-                            counts: state.todayVisitors.toString(),
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const VisitorsListPage(
-                                        index: 0, type: 'T_V')))),
-                        const SizedBox(width: 10),
-                        visitorsCardWidget(
-                          names: "Past Visitors",
-                          counts: state.pastVisitors.toString(),
+                    return
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
                           onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  const VisitorsListPage(index: 1, type: 'P_V'),
-                            ),
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const VisitorsListPage(
+                                          index: 0, type: 'T_V'))),
+                            child: Container(
+                                width: size.width * 0.44,
+                                margin: EdgeInsets.only(bottom: 5),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: AppTheme.color1,
+                                    border:
+                                    Border.all(color: AppTheme.color1, width: 2)),
+                                child:
+
+                                Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text(state.todayVisitors.toString(),
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 26.sp,
+                                                fontWeight: FontWeight.w600)),
+                                        Image.asset(ImageAssets.visitors1,
+                                            height: size.height * 0.08),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10,bottom: 10),
+                                      child: Text('Today visitors',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.w600)),
+                                    ),
+                                  ],
+                                )),
                           ),
-                        )
-                      ],
-                    );
+                          GestureDetector(
+
+                  onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const VisitorsListPage(index: 1, type: 'P_V'),
+                          ),
+                        ),
+                            child: Container(
+                                width: size.width * 0.44,
+                                margin: EdgeInsets.only(bottom: 5),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: AppTheme.color3,
+                                    border:
+                                    Border.all(color: AppTheme.color3, width: 2)),
+                                child:
+                                Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text(state.pastVisitors.toString(),
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 26.sp,
+                                                fontWeight: FontWeight.w600)),
+                                        Image.asset(ImageAssets.visitors1,
+                                            height: size.height * 0.08),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10,bottom: 10),
+                                      child: Text('Past visitors',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.w600)),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                        ],
+                      );
                   } else {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        visitorsCardWidget(
-                            names: "Today Visitors",
-                            counts: '0',
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const VisitorsListPage(
-                                        index: 0, type: 'T_V')))),
-                        const SizedBox(width: 10),
-                        visitorsCardWidget(
-                          names: "Past Visitors",
-                          counts: '0',
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  const VisitorsListPage(index: 1, type: 'P_V'),
-                            ),
-                          ),
-                        )
-                      ],
-                    );
+                    return
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                              width: size.width * 0.44,
+                              margin: EdgeInsets.only(bottom: 5),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: AppTheme.color1,
+                                  border:
+                                  Border.all(color: AppTheme.color1, width: 2)),
+                              child:
+                              Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text('0',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 26.sp,
+                                              fontWeight: FontWeight.w600)),
+                                      Image.asset(ImageAssets.visitors1,
+                                          height: size.height * 0.08),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10,bottom: 10),
+                                    child: Text('Today visitors',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w600)),
+                                  ),
+                                ],
+                              )),
+                          Container(
+                              width: size.width * 0.44,
+                              margin: EdgeInsets.only(bottom: 5),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: AppTheme.color3,
+                                  border:
+                                  Border.all(color: AppTheme.color3, width: 2)),
+                              child:
+                              Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text('0',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 26.sp,
+                                              fontWeight: FontWeight.w600)),
+                                      Image.asset(ImageAssets.visitors1,
+                                          height: size.height * 0.08),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10,bottom: 10),
+                                    child: Text('Past visitors',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w600)),
+                                  ),
+                                ],
+                              )),
+                        ],
+                      );
                   }
                 },
               ),
               const SizedBox(height: 20),
               TabBar(
                 isScrollable: true,
+
                 tabAlignment: TabAlignment.start,
                 automaticIndicatorColorAdjustment: true,
                 physics: const BouncingScrollPhysics(),
