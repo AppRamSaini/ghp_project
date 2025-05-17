@@ -246,376 +246,357 @@ class DailyHelpProfileDetailsState extends State<DailyHelpProfileDetails> {
       child: WillPopScope(
         onWillPop: onCallBack,
         child: Scaffold(
-          backgroundColor: AppTheme.backgroundColor,
-          body: SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                    padding:
-                        EdgeInsets.only(top: 20.h, left: 6.h, bottom: 20.h),
-                    child: Row(children: [
-                      GestureDetector(
-                          onTap: () {
-                            onCallBack();
-                          },
-                          child: const Icon(Icons.arrow_back,
-                              color: Colors.white)),
-                      SizedBox(width: 10.w),
-                      Text('Profile Details',
-                          style: GoogleFonts.nunitoSans(
-                              textStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w600))),
-                    ])),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
-                    child: RefreshIndicator(
-                      onRefresh: onRefresh,
-                      child: BlocBuilder<DailyHelpHistoryDetailsCubit,
-                              DailyHelpHistoryDetailsState>(
-                          bloc: _dailyHelpHistoryDetailsCubit,
-                          builder: (context, state) {
-                            if (state is DailyHelpHistoryDetailsLoading) {
-                              return const Center(
-                                  child: CircularProgressIndicator.adaptive(
-                                      backgroundColor:
-                                          Colors.deepPurpleAccent));
-                            } else if (state is DailyHelpHistoryDetailsLoaded) {
-                              Data? usersData =
-                                  state.dailyHelpMemberDetailsModal.data;
+          appBar: AppBar(
+              title: Text('Profile Details',
+                  style: GoogleFonts.nunitoSans(
+                      textStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600)))),
+          body: RefreshIndicator(
+            onRefresh: onRefresh,
+            child: BlocBuilder<DailyHelpHistoryDetailsCubit,
+                    DailyHelpHistoryDetailsState>(
+                bloc: _dailyHelpHistoryDetailsCubit,
+                builder: (context, state) {
+                  if (state is DailyHelpHistoryDetailsLoading) {
+                    return const Center(
+                        child: CircularProgressIndicator.adaptive(
+                            backgroundColor: Colors.deepPurpleAccent));
+                  } else if (state is DailyHelpHistoryDetailsLoaded) {
+                    Data? usersData = state.dailyHelpMemberDetailsModal.data;
 
-                              print(
-                                  '-------------->>>>>>>>>>>>${widget.fromResidentPage}  - ${widget.forDetailsPage}   ${widget.forQRPage}');
-                              if (!widget.forDetailsPage) {
-                                print('fffffffffff');
-                                verifyTheUser(
-                                    context, usersData!.user!, usersData.logs!,
-                                    forResidentSide: widget.fromResidentPage);
-                              }
-                              return SingleChildScrollView(
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Column(
+                    print(
+                        '-------------->>>>>>>>>>>>${widget.fromResidentPage}  - ${widget.forDetailsPage}   ${widget.forQRPage}');
+                    if (!widget.forDetailsPage) {
+                      print('fffffffffff');
+                      verifyTheUser(context, usersData!.user!, usersData.logs!,
+                          forResidentSide: widget.fromResidentPage);
+                    }
+                    return SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 10.h),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: Colors.grey.withOpacity(0.1))),
+                              child: Row(
+                                children: [
+                                  usersData!.user!.image != null
+                                      ? CircleAvatar(
+                                          radius: 30.h,
+                                          backgroundImage: NetworkImage(
+                                              usersData.user!.image.toString()),
+                                          onBackgroundImageError: (error,
+                                                  stack) =>
+                                              const AssetImage(
+                                                  'assets/images/default.jpg'))
+                                      : CircleAvatar(
+                                          radius: 32.h,
+                                          backgroundImage: const AssetImage(
+                                              'assets/images/default.jpg')),
+                                  const SizedBox(width: 10),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(height: 10.h),
-                                      Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1))),
-                                        child: Row(
-                                          children: [
-                                            usersData!.user!.image != null
-                                                ? CircleAvatar(
-                                                    radius: 35.h,
-                                                    backgroundImage:
-                                                        NetworkImage(usersData
-                                                            .user!.image
-                                                            .toString()),
-                                                    onBackgroundImageError: (error,
-                                                            stack) =>
-                                                        const AssetImage(
-                                                            'assets/images/default.jpg'))
-                                                : CircleAvatar(
-                                                    radius: 35.h,
-                                                    backgroundImage:
-                                                        const AssetImage(
-                                                            'assets/images/default.jpg')),
-                                            const SizedBox(width: 10),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                    capitalizeWords(usersData
-                                                        .user!.name
-                                                        .toString()),
-                                                    style: GoogleFonts.nunitoSans(
-                                                        textStyle: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 16.sp,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500))),
-                                                Text(
-                                                    "Role Type : ${usersData.user!.role.toString().replaceAll('_', ' ')}",
-                                                    style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black54,
-                                                                fontSize:
-                                                                    14.sp))),
-                                                Text(
-                                                    "Shift Time : ${usersData.user!.staff!.shiftFrom != null ? formatShiftTime(usersData.user!.staff!.shiftFrom!.toString()) : ''} - ${usersData.user!.staff!.shiftTo != null ? formatShiftTime(usersData.user!.staff!.shiftTo.toString()) : ''}",
-                                                    style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .green,
-                                                                fontSize:
-                                                                    14.sp))),
-                                              ],
-                                            ),
-                                            const SizedBox(width: 5)
-                                          ],
+                                      Text(
+                                          capitalizeWords(
+                                              usersData.user!.name.toString()),
+                                          style: GoogleFonts.nunitoSans(
+                                              textStyle: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 14,
+                                                  fontWeight:
+                                                      FontWeight.w500))),
+                                      Text(
+                                          "Role Type : ${usersData.user!.role.toString().replaceAll('_', ' ')}",
+                                          style: GoogleFonts.nunitoSans(
+                                              textStyle: TextStyle(
+                                                  color: Colors.black54,
+                                                  fontSize: 12))),
+                                      Text(
+                                          "Shift Time : ${usersData.user!.staff!.shiftFrom != null ? formatShiftTime(usersData.user!.staff!.shiftFrom!.toString()) : ''} - ${usersData.user!.staff!.shiftTo != null ? formatShiftTime(usersData.user!.staff!.shiftTo.toString()) : ''}",
+                                          style: GoogleFonts.nunitoSans(
+                                              textStyle: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 12))),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 5)
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 20.h),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: Colors.grey.withOpacity(0.1))),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Date Of Joining : ',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black45,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500))),
+                                        Text(
+                                            formatDateOnly(usersData
+                                                .user!.staff!.dateOfJoin
+                                                .toString()),
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black87,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500)))
+                                      ]),
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 3),
+                                      child: Divider(
+                                          color: Colors.grey.withOpacity(0.1))),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('End Of Contract : ',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black45,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500))),
+                                        Text(
+                                            formatDateOnly(usersData
+                                                .user!.staff!.contractEndDate
+                                                .toString()),
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black87,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500)))
+                                      ]),
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 3),
+                                      child: Divider(
+                                          color: Colors.grey.withOpacity(0.1))),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Mobile Number : ',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black45,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500))),
+                                        Text(
+                                            '+91 ${usersData.user!.phone.toString()}',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black87,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500)))
+                                      ]),
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 3),
+                                      child: Divider(
+                                          color: Colors.grey.withOpacity(0.1))),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Gender :',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black45,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500))),
+                                        Text(
+                                            usersData.user!.staff!.gender
+                                                .toString()
+                                                .toUpperCase(),
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    fontStyle: FontStyle.italic,
+                                                    color: Colors.black87,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500)))
+                                      ]),
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 3),
+                                      child: Divider(
+                                          color: Colors.grey.withOpacity(0.1))),
+                                  const SizedBox(height: 15),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Center(
+                                          child: Text("Checkout info",
+                                              style: GoogleFonts.nunitoSans(
+                                                  textStyle: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500)))),
+                                      GestureDetector(
+                                        onTap: () {
+                                          selectDateRange(context);
+                                        },
+                                        child: Container(
+                                          margin: const EdgeInsets.only(
+                                              left: 5, bottom: 5),
+                                          decoration: BoxDecoration(
+                                              color: Colors.transparent,
+                                              border: Border.all(
+                                                  color:
+                                                      const Color(0xFFD9D9D9)),
+                                              borderRadius:
+                                                  BorderRadius.circular(6.r)),
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10.0.w,
+                                                vertical: 8),
+                                            child: Center(
+                                                child: Text(
+                                              fromDate == null
+                                                  ? 'YY-MM-DD  to  YY-MM-DD'
+                                                  : "${formatDateOnly(fromDate.toString())} - ${formatDateOnly(toDate.toString())}",
+                                              style: GoogleFonts.poppins(
+                                                color: const Color.fromARGB(
+                                                    255, 102, 101, 101),
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            )),
+                                          ),
                                         ),
                                       ),
-                                      SizedBox(height: 20.h),
-                                      Container(
-                                        padding: const EdgeInsets.all(10),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            usersData.logs!.isEmpty
+                                ? const Center(
+                                    child: Text('Check-out History Not Found!',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.deepPurpleAccent)))
+                                : ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: usersData.logs!.length,
+                                    itemBuilder: (_, index) {
+                                      List<LastCheckinDetail> staffLog =
+                                          usersData
+                                              .logs![index].securityStaffLogs!;
+                                      List<LastCheckinDetail> memberLogs =
+                                          usersData.logs![index].memberLogs!;
+
+                                      return Container(
+                                        margin:
+                                            const EdgeInsets.only(bottom: 10),
                                         decoration: BoxDecoration(
                                             borderRadius:
-                                                BorderRadius.circular(10),
+                                                BorderRadius.circular(8),
                                             border: Border.all(
                                                 color: Colors.grey
-                                                    .withOpacity(0.1))),
+                                                    .withOpacity(0.2))),
+                                        padding: const EdgeInsets.all(8),
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
                                           children: [
-                                            Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text('Date Of Joining : ',
-                                                      style: GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black45,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500))),
-                                                  Text(
-                                                      formatDateOnly(usersData
-                                                          .user!
-                                                          .staff!
-                                                          .dateOfJoin
-                                                          .toString()),
-                                                      style: GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black87,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500)))
-                                                ]),
-                                            Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 3),
-                                                child: Divider(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.1))),
-                                            Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text('End Of Contract : ',
-                                                      style: GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black45,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500))),
-                                                  Text(
-                                                      formatDateOnly(usersData
-                                                          .user!
-                                                          .staff!
-                                                          .contractEndDate
-                                                          .toString()),
-                                                      style: GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black87,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500)))
-                                                ]),
-                                            Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 3),
-                                                child: Divider(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.1))),
-                                            Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text('Mobile Number : ',
-                                                      style: GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black45,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500))),
-                                                  Text(
-                                                      '+91 ${usersData.user!.phone.toString()}',
-                                                      style: GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black87,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500)))
-                                                ]),
-                                            Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 3),
-                                                child: Divider(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.1))),
-                                            Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text('Gender :',
-                                                      style: GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black45,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500))),
-                                                  Text(
-                                                      usersData
-                                                          .user!.staff!.gender
-                                                          .toString()
-                                                          .toUpperCase(),
-                                                      style: GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              fontStyle:
-                                                                  FontStyle
-                                                                      .italic,
-                                                              color: Colors
-                                                                  .black87,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500)))
-                                                ]),
-                                            Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 3),
-                                                child: Divider(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.1))),
-                                            const SizedBox(height: 15),
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Center(
-                                                    child: Text("Checkout info",
-                                                        style: GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize: 16.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500)))),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    selectDateRange(context);
-                                                  },
-                                                  child: Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            left: 5, bottom: 5),
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.transparent,
-                                                        border: Border.all(
-                                                            color: const Color(
-                                                                0xFFD9D9D9)),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(6.r)),
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  10.0.w,
-                                                              vertical: 8),
-                                                      child: Center(
-                                                          child: Text(
-                                                        fromDate == null
-                                                            ? 'YY-MM-DD  to  YY-MM-DD'
-                                                            : "${formatDateOnly(fromDate.toString())} - ${formatDateOnly(toDate.toString())}",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          color: const Color
-                                                              .fromARGB(255,
-                                                              102, 101, 101),
-                                                          fontSize: 11.sp,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                      )),
-                                                    ),
-                                                  ),
-                                                ),
+                                                Text("Check-out by Staff ",
+                                                    style: GoogleFonts.nunitoSans(
+                                                        textStyle: TextStyle(
+                                                            color: Colors
+                                                                .deepPurpleAccent,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500))),
+                                                Text(
+                                                    staffLog.isNotEmpty
+                                                        ? formatCheckoutDate(
+                                                            staffLog[0]
+                                                                .checkinAt
+                                                                .toString())
+                                                        : "N/A",
+                                                    style: const TextStyle(
+                                                        fontSize: 14))
                                               ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      usersData.logs!.isEmpty
-                                          ? const Center(
-                                              child: Text(
-                                                  'Check-out History Not Found!',
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors
-                                                          .deepPurpleAccent)))
-                                          : ListView.builder(
+                                            const SizedBox(height: 10),
+                                            ListView.builder(
                                               shrinkWrap: true,
                                               physics:
                                                   const BouncingScrollPhysics(),
-                                              itemCount: usersData.logs!.length,
-                                              itemBuilder: (_, index) {
-                                                List<LastCheckinDetail>
-                                                    staffLog = usersData
-                                                        .logs![index]
-                                                        .securityStaffLogs!;
-                                                List<LastCheckinDetail>
-                                                    memberLogs = usersData
-                                                        .logs![index]
-                                                        .memberLogs!;
+                                              itemCount: staffLog.length,
+                                              itemBuilder: (_, staffIndex) {
+                                                checkOut() {
+                                                  DateTime outTime;
+
+                                                  if (staffLog[staffIndex]
+                                                          .checkoutAt !=
+                                                      null) {
+                                                    outTime = DateTime.parse(
+                                                        staffLog[staffIndex]
+                                                            .checkoutAt
+                                                            .toString());
+                                                    return formatTime(outTime);
+                                                  } else {
+                                                    return 'N/A';
+                                                  }
+                                                }
+
+                                                checkIn() {
+                                                  DateTime inTime;
+                                                  if (staffLog[staffIndex]
+                                                          .checkinAt !=
+                                                      null) {
+                                                    inTime = DateTime.parse(
+                                                        staffLog[staffIndex]
+                                                            .checkinAt!
+                                                            .toString());
+                                                    return formatTime(inTime);
+                                                  } else {
+                                                    return 'N/A';
+                                                  }
+                                                }
 
                                                 return Container(
                                                   margin: const EdgeInsets.only(
-                                                      bottom: 10),
+                                                      bottom: 5),
                                                   decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -624,351 +605,261 @@ class DailyHelpProfileDetailsState extends State<DailyHelpProfileDetails> {
                                                           color: Colors.grey
                                                               .withOpacity(
                                                                   0.2))),
-                                                  padding:
-                                                      const EdgeInsets.all(8),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                              "Check-out by Staff ",
-                                                              style: GoogleFonts.nunitoSans(
-                                                                  textStyle: TextStyle(
-                                                                      color: Colors
-                                                                          .deepPurpleAccent,
-                                                                      fontSize:
-                                                                          14.sp,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500))),
-                                                          Text(
-                                                              staffLog.isNotEmpty
-                                                                  ? formatCheckoutDate(
-                                                                      staffLog[
-                                                                              0]
-                                                                          .checkinAt
-                                                                          .toString())
-                                                                  : "N/A",
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          14))
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      ListView.builder(
-                                                        shrinkWrap: true,
-                                                        physics:
-                                                            const BouncingScrollPhysics(),
-                                                        itemCount:
-                                                            staffLog.length,
-                                                        itemBuilder:
-                                                            (_, staffIndex) {
-                                                          checkOut() {
-                                                            DateTime outTime;
-
-                                                            if (staffLog[
-                                                                        staffIndex]
-                                                                    .checkoutAt !=
-                                                                null) {
-                                                              outTime = DateTime
-                                                                  .parse(staffLog[
-                                                                          staffIndex]
-                                                                      .checkoutAt
-                                                                      .toString());
-                                                              return formatTime(
-                                                                  outTime);
-                                                            } else {
-                                                              return 'N/A';
-                                                            }
-                                                          }
-
-                                                          checkIn() {
-                                                            DateTime inTime;
-                                                            if (staffLog[
-                                                                        staffIndex]
-                                                                    .checkinAt !=
-                                                                null) {
-                                                              inTime = DateTime
-                                                                  .parse(staffLog[
-                                                                          staffIndex]
-                                                                      .checkinAt!
-                                                                      .toString());
-                                                              return formatTime(
-                                                                  inTime);
-                                                            } else {
-                                                              return 'N/A';
-                                                            }
-                                                          }
-
-                                                          return Container(
-                                                            margin:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    bottom: 5),
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
-                                                                border: Border.all(
-                                                                    color: Colors
-                                                                        .grey
-                                                                        .withOpacity(
-                                                                            0.2))),
-                                                            child: ListTile(
-                                                              dense: true,
-                                                              title: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Text(
-                                                                      'Check-IN : ${checkIn()}'
-                                                                          .toUpperCase(),
-                                                                      style: const TextStyle(
-                                                                          fontSize:
-                                                                              12)),
-                                                                  Text(
-                                                                    'Check-OUT : ${checkOut()}'
-                                                                        .toUpperCase(),
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontSize:
-                                                                          12,
-                                                                    ),
-                                                                  )
-                                                                ],
-                                                              ),
-                                                              subtitle: Column(
-                                                                children: [
-                                                                  Divider(
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .withOpacity(
-                                                                              0.2)),
-                                                                  Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                          "Entry By : ${staffLog[staffIndex].checkinType ?? 'N/A'}"),
-                                                                      Text(
-                                                                          "Exit By : ${staffLog[staffIndex].checkoutType ?? 'N/A'}")
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      Column(
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Text(
-                                                                  "Check-out by Resident ",
-                                                                  style: GoogleFonts.nunitoSans(
-                                                                      textStyle: TextStyle(
-                                                                          color: Colors
-                                                                              .deepPurpleAccent,
-                                                                          fontSize: 14
-                                                                              .sp,
-                                                                          fontWeight:
-                                                                              FontWeight.w500))),
-                                                              Text(
-                                                                  memberLogs
-                                                                          .isNotEmpty
-                                                                      ? formatCheckoutDate(memberLogs[
-                                                                              0]
-                                                                          .checkinAt
-                                                                          .toString())
-                                                                      : "N/A",
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          14))
-                                                            ],
+                                                  child: ListTile(
+                                                    dense: true,
+                                                    title: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                            'Check-IN : ${checkIn()}'
+                                                                .toUpperCase(),
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        12)),
+                                                        Text(
+                                                          'Check-OUT : ${checkOut()}'
+                                                              .toUpperCase(),
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 12,
                                                           ),
-                                                          const SizedBox(
-                                                              height: 10),
-                                                          ListView.builder(
-                                                            shrinkWrap: true,
-                                                            physics:
-                                                                const BouncingScrollPhysics(),
-                                                            itemCount:
-                                                                memberLogs
-                                                                    .length,
-                                                            itemBuilder: (_,
-                                                                residentIndex) {
-                                                              checkOut() {
-                                                                DateTime
-                                                                    outTime;
-                                                                if (memberLogs[
-                                                                            residentIndex]
-                                                                        .checkoutAt !=
-                                                                    null) {
-                                                                  outTime = DateTime.parse(memberLogs[
-                                                                          residentIndex]
-                                                                      .checkoutAt
-                                                                      .toString());
-                                                                  return formatTime(
-                                                                      outTime);
-                                                                } else {
-                                                                  return 'N/A';
-                                                                }
-                                                              }
-
-                                                              checkIn() {
-                                                                DateTime inTime;
-                                                                if (memberLogs[
-                                                                            residentIndex]
-                                                                        .checkinAt !=
-                                                                    null) {
-                                                                  inTime = DateTime.parse(memberLogs[
-                                                                          residentIndex]
-                                                                      .checkinAt!
-                                                                      .toString());
-                                                                  return formatTime(
-                                                                      inTime);
-                                                                } else {
-                                                                  return 'N/A';
-                                                                }
-                                                              }
-
-                                                              return Container(
-                                                                margin:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        bottom:
-                                                                            10),
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            8),
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .grey
-                                                                            .withOpacity(0.2))),
-                                                                child: ListTile(
-                                                                  dense: true,
-                                                                  title: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                          'IN-Time : ${checkIn()}'
-                                                                              .toUpperCase(),
-                                                                          style:
-                                                                              const TextStyle(fontSize: 12)),
-                                                                      Text(
-                                                                        'OUT-Time : ${checkOut()}'
-                                                                            .toUpperCase(),
-                                                                        style:
-                                                                            const TextStyle(
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                  subtitle:
-                                                                      Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Divider(
-                                                                          color: Colors
-                                                                              .grey
-                                                                              .withOpacity(0.2)),
-                                                                      Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.spaceBetween,
-                                                                        children: [
-                                                                          Text(
-                                                                              "Entry By : ${memberLogs[residentIndex].checkinType ?? 'N/A'}"),
-                                                                          Text(
-                                                                              "Exit By : ${memberLogs[residentIndex].checkoutType ?? 'N/A'}")
-                                                                        ],
-                                                                      ),
-                                                                      widget.fromResidentPage
-                                                                          ? const SizedBox()
-                                                                          : Divider(
-                                                                              color: Colors.grey.withOpacity(0.2)),
-                                                                      widget.fromResidentPage
-                                                                          ? const SizedBox()
-                                                                          : Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                              children: [
-                                                                                Column(
-                                                                                  children: [
-                                                                                    Text(memberLogs[residentIndex].dailyHelpMemberDetails!.name.toString(), style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black, fontSize: 11.sp, fontWeight: FontWeight.w600))),
-                                                                                    Text("Name", style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black54, fontSize: 12.sp, fontWeight: FontWeight.w400))),
-                                                                                  ],
-                                                                                ),
-                                                                                Column(
-                                                                                  children: [
-                                                                                    Text("+91 ${memberLogs[residentIndex].dailyHelpMemberDetails!.phone}", style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black, fontSize: 12.sp, fontWeight: FontWeight.w600))),
-                                                                                    Text("Phone", style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black54, fontSize: 11.sp, fontWeight: FontWeight.w400))),
-                                                                                  ],
-                                                                                ),
-                                                                                Column(
-                                                                                  children: [
-                                                                                    Text("${memberLogs[residentIndex].dailyHelpMemberDetails!.member!.blockName.toString()}, ${memberLogs[residentIndex].dailyHelpMemberDetails!.member!.aprtNo.toString()}", style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black, fontSize: 11.sp, fontWeight: FontWeight.w600))),
-                                                                                    Text("Tower Name", style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black54, fontSize: 12.sp, fontWeight: FontWeight.w400))),
-                                                                                  ],
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
+                                                        )
+                                                      ],
+                                                    ),
+                                                    subtitle: Column(
+                                                      children: [
+                                                        Divider(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.2)),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                                "Entry By : ${staffLog[staffIndex].checkinType ?? 'N/A'}"),
+                                                            Text(
+                                                                "Exit By : ${staffLog[staffIndex].checkoutType ?? 'N/A'}")
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 );
                                               },
-                                            )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            } else if (state is DailyHelpHistoryDetailsError) {
-                              if (widget.forQRPage) {
-                                onBack(context);
-                              }
-                              return Center(
-                                  child: Text(state.errorMsg.toString(),
-                                      style: const TextStyle(
-                                          color: Colors.deepPurpleAccent)));
-                            } else {
-                              if (widget.forQRPage) {
-                                onBack(context);
-                              }
-                              return const SizedBox();
-                            }
-                          }),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                        "Check-out by Resident ",
+                                                        style: GoogleFonts.nunitoSans(
+                                                            textStyle: TextStyle(
+                                                                color: Colors
+                                                                    .deepPurpleAccent,
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500))),
+                                                    Text(
+                                                        memberLogs.isNotEmpty
+                                                            ? formatCheckoutDate(
+                                                                memberLogs[0]
+                                                                    .checkinAt
+                                                                    .toString())
+                                                            : "N/A",
+                                                        style: const TextStyle(
+                                                            fontSize: 14))
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 10),
+                                                ListView.builder(
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      const BouncingScrollPhysics(),
+                                                  itemCount: memberLogs.length,
+                                                  itemBuilder:
+                                                      (_, residentIndex) {
+                                                    checkOut() {
+                                                      DateTime outTime;
+                                                      if (memberLogs[
+                                                                  residentIndex]
+                                                              .checkoutAt !=
+                                                          null) {
+                                                        outTime = DateTime
+                                                            .parse(memberLogs[
+                                                                    residentIndex]
+                                                                .checkoutAt
+                                                                .toString());
+                                                        return formatTime(
+                                                            outTime);
+                                                      } else {
+                                                        return 'N/A';
+                                                      }
+                                                    }
+
+                                                    checkIn() {
+                                                      DateTime inTime;
+                                                      if (memberLogs[
+                                                                  residentIndex]
+                                                              .checkinAt !=
+                                                          null) {
+                                                        inTime = DateTime.parse(
+                                                            memberLogs[
+                                                                    residentIndex]
+                                                                .checkinAt!
+                                                                .toString());
+                                                        return formatTime(
+                                                            inTime);
+                                                      } else {
+                                                        return 'N/A';
+                                                      }
+                                                    }
+
+                                                    return Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              bottom: 10),
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          border: Border.all(
+                                                              color: Colors.grey
+                                                                  .withOpacity(
+                                                                      0.2))),
+                                                      child: ListTile(
+                                                        dense: true,
+                                                        title: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                                'IN-Time : ${checkIn()}'
+                                                                    .toUpperCase(),
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            12)),
+                                                            Text(
+                                                              'OUT-Time : ${checkOut()}'
+                                                                  .toUpperCase(),
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 12,
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                        subtitle: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Divider(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.2)),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                    "Entry By : ${memberLogs[residentIndex].checkinType ?? 'N/A'}"),
+                                                                Text(
+                                                                    "Exit By : ${memberLogs[residentIndex].checkoutType ?? 'N/A'}")
+                                                              ],
+                                                            ),
+                                                            widget.fromResidentPage
+                                                                ? const SizedBox()
+                                                                : Divider(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .withOpacity(
+                                                                            0.2)),
+                                                            widget.fromResidentPage
+                                                                ? const SizedBox()
+                                                                : Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Column(
+                                                                        children: [
+                                                                          Text(
+                                                                              memberLogs[residentIndex].dailyHelpMemberDetails!.name.toString(),
+                                                                              style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black, fontSize: 11, fontWeight: FontWeight.w600))),
+                                                                          Text(
+                                                                              "Name",
+                                                                              style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black54, fontSize: 12, fontWeight: FontWeight.w400))),
+                                                                        ],
+                                                                      ),
+                                                                      Column(
+                                                                        children: [
+                                                                          Text(
+                                                                              "+91 ${memberLogs[residentIndex].dailyHelpMemberDetails!.phone}",
+                                                                              style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w600))),
+                                                                          Text(
+                                                                              "Phone",
+                                                                              style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black54, fontSize: 11, fontWeight: FontWeight.w400))),
+                                                                        ],
+                                                                      ),
+                                                                      Column(
+                                                                        children: [
+                                                                          Text(
+                                                                              "${memberLogs[residentIndex].dailyHelpMemberDetails!.member!.blockName.toString()}, ${memberLogs[residentIndex].dailyHelpMemberDetails!.member!.aprtNo.toString()}",
+                                                                              style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black, fontSize: 11, fontWeight: FontWeight.w600))),
+                                                                          Text(
+                                                                              "Tower Name",
+                                                                              style: GoogleFonts.ptSans(textStyle: TextStyle(color: Colors.black54, fontSize: 12, fontWeight: FontWeight.w400))),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  )
+                          ],
+                        ),
+                      ),
+                    );
+                  } else if (state is DailyHelpHistoryDetailsError) {
+                    if (widget.forQRPage) {
+                      onBack(context);
+                    }
+                    return Center(
+                        child: Text(state.errorMsg.toString(),
+                            style: const TextStyle(
+                                color: Colors.deepPurpleAccent)));
+                  } else {
+                    if (widget.forQRPage) {
+                      onBack(context);
+                    }
+                    return const SizedBox();
+                  }
+                }),
           ),
         ),
       ),

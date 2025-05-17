@@ -85,7 +85,7 @@ class _BillScreenState extends State<BillScreen> {
                 style: GoogleFonts.nunitoSans(
                     textStyle: TextStyle(
                         color: Colors.black,
-                        fontSize: 20.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w600)))),
         body: SafeArea(
           child: Container(
@@ -115,14 +115,14 @@ class _BillScreenState extends State<BillScreen> {
                                 'Total Paid Amount : ₹ ${_myBillsCubit.paidAmount.toString()}/-',
                                 style: TextStyle(
                                     color: AppTheme.primaryColor,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500)),
                             const SizedBox(height: 3),
                             Text(
                                 'Total UnPaid Amount : ₹ ${_myBillsCubit.amount.toString()}/-',
                                 style: TextStyle(
                                     color: AppTheme.primaryColor,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500)),
                           ],
                         );
@@ -151,7 +151,7 @@ class _BillScreenState extends State<BillScreen> {
                   ),
                   SizedBox(height: 10.h),
                   SizedBox(
-                    height: 50.h,
+                    height: 50,
                     width: MediaQuery.of(context).size.width,
                     child: ListView.builder(
                       padding: const EdgeInsets.only(left: 5),
@@ -280,8 +280,8 @@ class _BillScreenState extends State<BillScreen> {
                                                             .withOpacity(0.5)
                                                         : Colors.cyanAccent
                                                             .withOpacity(0.5)))),
-                                        title: Text(bill.service!.name.toString(), style: const TextStyle(color: Colors.black, fontSize: 16)),
-                                        subtitle: Text(bill.invoiceNumber.toString(), style: const TextStyle(color: Colors.deepPurpleAccent, fontSize: 12)),
+                                        title: Text(bill.service!.name.toString(), style: const TextStyle(color: Colors.black, fontSize: 14)),
+                                        subtitle: Text(bill.invoiceNumber.toString(), style: const TextStyle(color: Colors.deepPurpleAccent, fontSize: 10)),
                                         trailing: Container(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7), decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: bill.status == 'paid' ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3)), child: Text(bill.status == 'paid' ? "Paid" : "Unpaid", style: TextStyle(color: bill.status == 'paid' ? Colors.green : Colors.red, fontWeight: FontWeight.w600)))),
                                     Divider(
                                         height: 0,

@@ -51,7 +51,7 @@ void logOutPermissionDialog(BuildContext context, {bool isLogout = true}) =>
                       child: const Text('CANCEL',
                           style: TextStyle(
                               color: Colors.red,
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500)),
                     ),
                     const SizedBox(width: 20),
@@ -64,7 +64,7 @@ void logOutPermissionDialog(BuildContext context, {bool isLogout = true}) =>
                         isLogout ? 'LOGOUT' : 'YES , CHANGE',
                         style: const TextStyle(
                             color: Colors.deepPurpleAccent,
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500),
                       ),
                     )
@@ -99,7 +99,7 @@ void visitorsDeletePermissionDialog(
                   'Are you sure you want to delete this',
                   style: GoogleFonts.nunitoSans(
                     color: Colors.black,
-                    fontSize: 16.sp,
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -113,7 +113,7 @@ void visitorsDeletePermissionDialog(
                           child: const Text('CANCEL',
                               style: TextStyle(
                                   color: Colors.red,
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500))),
                       const SizedBox(width: 20),
                       GestureDetector(
@@ -122,7 +122,7 @@ void visitorsDeletePermissionDialog(
                           'DELETE',
                           style: TextStyle(
                               color: Colors.deepPurpleAccent,
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500),
                         ),
                       )
@@ -190,7 +190,7 @@ void visitorsFeedbackDialog(BuildContext context, VisitorsListing visitors) {
                         subtitle: Text("+91 ${visitors.phone.toString()}",
                             style: GoogleFonts.nunitoSans(
                                 color: Colors.black,
-                                fontSize: 14.sp,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500)),
                         trailing: IconButton(
                             onPressed: () => Navigator.pop(context),
@@ -210,7 +210,7 @@ void visitorsFeedbackDialog(BuildContext context, VisitorsListing visitors) {
                         controller: controller,
                         style: GoogleFonts.nunitoSans(
                             color: Colors.black,
-                            fontSize: 15.sp,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500),
                         validator: (text) {
                           if (text == null || text.isEmpty) {
@@ -229,7 +229,7 @@ void visitorsFeedbackDialog(BuildContext context, VisitorsListing visitors) {
                           filled: true,
                           hintStyle: TextStyle(
                               color: Colors.grey,
-                              fontSize: 14.sp,
+                              fontSize: 14,
                               fontWeight: FontWeight.w400),
                           fillColor: Colors.transparent,
                           errorBorder: OutlineInputBorder(
@@ -384,7 +384,7 @@ void acceptIncomingRequestDialog(BuildContext context, {bool isAccept = true}) {
                                   controller: controller,
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.black,
-                                      fontSize: 15.sp,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   validator: (text) {
                                     if (text == null || text.isEmpty) {
@@ -403,7 +403,7 @@ void acceptIncomingRequestDialog(BuildContext context, {bool isAccept = true}) {
                                     filled: true,
                                     hintStyle: TextStyle(
                                         color: Colors.grey,
-                                        fontSize: 14.sp,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w400),
                                     fillColor: Colors.transparent,
                                     errorBorder: OutlineInputBorder(
@@ -532,7 +532,7 @@ void memberDetailsDialog(BuildContext context, PropertyNumber members) {
                           '+91 ${members.memberInfo!.phone.toString()}',
                           style: GoogleFonts.nunitoSans(
                               color: Colors.black,
-                              fontSize: 14.sp,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500)),
                       trailing: CircleAvatar(
                           backgroundColor: Colors.blue,
@@ -709,7 +709,7 @@ void parcelComplaintsDialog(BuildContext context, String parcelId) {
                         controller: controller,
                         style: GoogleFonts.nunitoSans(
                             color: Colors.black,
-                            fontSize: 15.sp,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500),
                         validator: (text) {
                           if (text == null || text.isEmpty) {
@@ -728,7 +728,7 @@ void parcelComplaintsDialog(BuildContext context, String parcelId) {
                           filled: true,
                           hintStyle: TextStyle(
                               color: Colors.grey,
-                              fontSize: 14.sp,
+                              fontSize: 14,
                               fontWeight: FontWeight.w400),
                           fillColor: Colors.transparent,
                           errorBorder: OutlineInputBorder(
@@ -903,7 +903,7 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                             Text('Parcel ID',
                                 style: GoogleFonts.nunitoSans(
                                     color: Colors.black,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500)),
                             const SizedBox(height: 2),
                             TextFormField(
@@ -911,7 +911,7 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                               controller: parcelIDController,
                               style: GoogleFonts.nunitoSans(
                                   color: Colors.black,
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500),
                               validator: (text) {
                                 if (text == null || text.isEmpty) {
@@ -928,7 +928,7 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                 filled: true,
                                 hintStyle: TextStyle(
                                     color: Colors.grey,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w400),
                                 fillColor: Colors.transparent,
                                 errorBorder: OutlineInputBorder(
@@ -961,13 +961,13 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                             Text('Deliver Name',
                                 style: GoogleFonts.nunitoSans(
                                     color: Colors.black,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500)),
                             TextFormField(
                               controller: name,
                               style: GoogleFonts.nunitoSans(
                                   color: Colors.black,
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500),
                               validator: (text) {
                                 if (text == null || text.isEmpty) {
@@ -984,7 +984,7 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                 filled: true,
                                 hintStyle: TextStyle(
                                     color: Colors.grey,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w400),
                                 fillColor: Colors.transparent,
                                 errorBorder: OutlineInputBorder(
@@ -1017,13 +1017,13 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                             Text('Deliver contact numbe',
                                 style: GoogleFonts.nunitoSans(
                                     color: Colors.black,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500)),
                             TextFormField(
                               controller: phone,
                               style: GoogleFonts.nunitoSans(
                                   color: Colors.black,
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500),
                               validator: (text) {
                                 if (text == null || text.isEmpty) {
@@ -1043,7 +1043,7 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                 filled: true,
                                 hintStyle: TextStyle(
                                     color: Colors.grey,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w400),
                                 fillColor: Colors.transparent,
                                 errorBorder: OutlineInputBorder(
@@ -1262,7 +1262,7 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                           Text("Profile Overview",
                               style: GoogleFonts.nunitoSans(
                                   color: Colors.black,
-                                  fontSize: 18.sp,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w600)),
                           GestureDetector(
                               onTap: () {
@@ -1281,12 +1281,12 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                           children: [
                             profileDetails.data!.user!.image != null
                                 ? CircleAvatar(
-                                    radius: 35.h,
+                                    radius: 30,
                                     backgroundImage: NetworkImage(profileDetails
                                         .data!.user!.image
                                         .toString()))
                                 : const CircleAvatar(
-                                    radius: 35,
+                                    radius: 30,
                                     backgroundImage: AssetImage(
                                         'assets/images/default.jpg')),
                             SizedBox(width: 10.w),
@@ -1299,13 +1299,13 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                                           .toString(),
                                       style: GoogleFonts.nunitoSans(
                                           color: Colors.black,
-                                          fontSize: 15.sp,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.w600)),
                                   Text(
                                       "Role : ${capitalizeWords(profileDetails.data!.user!.role.toString()).replaceAll("_", ' ')}",
                                       style: GoogleFonts.nunitoSans(
                                           color: Colors.pink,
-                                          fontSize: 12.sp,
+                                          fontSize: 12,
                                           fontWeight: FontWeight.w600)),
                                   profileDetails.data!.user!.role == 'staff'
                                       ? Text(
@@ -1352,6 +1352,7 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                               ),
                             )
                           : const SizedBox(),
+                      
                     ],
                   ),
                 ),
@@ -1373,9 +1374,10 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Status :',
+
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.black,
-                                      fontSize: 14.sp,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500)),
                               Text(
                                   capitalizeWords(profileDetails
@@ -1383,7 +1385,7 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                                       .toString()),
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.green,
-                                      fontSize: 14.sp,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w600))
                             ],
                           ),
@@ -1394,13 +1396,13 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                               Text('Phone :',
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.black,
-                                      fontSize: 14.sp,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500)),
                               Text(
                                   "+91 ${profileDetails.data!.user!.phone.toString()}",
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.black,
-                                      fontSize: 14.sp,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w600))
                             ],
                           ),
@@ -1411,12 +1413,12 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                               Text('Email ID : ',
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.black,
-                                      fontSize: 14.sp,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500)),
                               Text(profileDetails.data!.user!.email.toString(),
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.black,
-                                      fontSize: 14.sp,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w600))
                             ],
                           ),
@@ -1431,14 +1433,14 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                                         Text('Unit Type : ',
                                             style: GoogleFonts.nunitoSans(
                                                 color: Colors.black,
-                                                fontSize: 14.sp,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w500)),
                                         Text(
                                             profileDetails.data!.user!.unitType
                                                 .toString(),
                                             style: GoogleFonts.nunitoSans(
                                                 color: Colors.black,
-                                                fontSize: 14.sp,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w600))
                                       ],
                                     ),
@@ -1453,7 +1455,7 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                               Text('Society Name : ',
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.black,
-                                      fontSize: 14.sp,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500)),
                               Text(
                                   profileDetails.data!.user!.societyName
@@ -1461,7 +1463,7 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                                       .toString(),
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.deepPurpleAccent,
-                                      fontSize: 14.sp,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w600))
                             ],
                           ),
@@ -1594,7 +1596,7 @@ void referPropertyDialog(
                         title: Text('Property Details',
                             style: GoogleFonts.nunitoSans(
                                 color: Colors.black,
-                                fontSize: 18.sp,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w600)),
                         trailing: IconButton(
                             onPressed: () => Navigator.pop(context),
@@ -1607,11 +1609,11 @@ void referPropertyDialog(
                           Text('Referred Name : ',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black45, fontSize: 15.sp))),
+                                      color: Colors.black45, fontSize: 15))),
                           Text(referPropertyList.name.toString(),
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black87, fontSize: 15.sp)))
+                                      color: Colors.black87, fontSize: 15)))
                         ]),
                     Divider(color: Colors.grey.withOpacity(0.1)),
                     Row(
@@ -1620,11 +1622,11 @@ void referPropertyDialog(
                           Text('Phone Number : ',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black45, fontSize: 15.sp))),
+                                      color: Colors.black45, fontSize: 14))),
                           Text("+91 ${referPropertyList.phone.toString()}",
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black87, fontSize: 15.sp)))
+                                      color: Colors.black87, fontSize: 14)))
                         ]),
                     Divider(color: Colors.grey.withOpacity(0.1)),
                     Row(
@@ -1633,11 +1635,11 @@ void referPropertyDialog(
                           Text('Unit Type : ',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black45, fontSize: 15.sp))),
+                                      color: Colors.black45, fontSize: 14))),
                           Text(referPropertyList.unitType.toString(),
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black87, fontSize: 15.sp)))
+                                      color: Colors.black87, fontSize: 14)))
                         ]),
                     Divider(color: Colors.grey.withOpacity(0.1)),
                     Row(
@@ -1646,11 +1648,11 @@ void referPropertyDialog(
                           Text('Minimum Budget : ',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black45, fontSize: 15.sp))),
+                                      color: Colors.black45, fontSize: 14))),
                           Text("₹ ${referPropertyList.minBudget.toString()}",
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black87, fontSize: 15.sp)))
+                                      color: Colors.black87, fontSize: 14)))
                         ]),
                     Divider(color: Colors.grey.withOpacity(0.1)),
                     Row(
@@ -1659,11 +1661,11 @@ void referPropertyDialog(
                           Text('Max Budget : ',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black45, fontSize: 15.sp))),
+                                      color: Colors.black45, fontSize: 14))),
                           Text("₹ ${referPropertyList.maxBudget.toString()}",
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black87, fontSize: 15.sp)))
+                                      color: Colors.black87, fontSize: 14)))
                         ]),
                     Divider(color: Colors.grey.withOpacity(0.1)),
                     Row(
@@ -1672,11 +1674,11 @@ void referPropertyDialog(
                           Text('BHK Type : ',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black45, fontSize: 15.sp))),
+                                      color: Colors.black45, fontSize: 14))),
                           Text(referPropertyList.bhk.toString(),
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black87, fontSize: 15.sp)))
+                                      color: Colors.black87, fontSize: 14)))
                         ]),
                     Divider(color: Colors.grey.withOpacity(0.1)),
                     Row(
@@ -1685,11 +1687,11 @@ void referPropertyDialog(
                           Text('Property Facing : ',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black45, fontSize: 15.sp))),
+                                      color: Colors.black45, fontSize: 14))),
                           Text(referPropertyList.propertyFancing.toString(),
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black87, fontSize: 15.sp)))
+                                      color: Colors.black87, fontSize: 14)))
                         ]),
                     Divider(color: Colors.grey.withOpacity(0.1)),
                     Row(
@@ -1698,11 +1700,11 @@ void referPropertyDialog(
                           Text('Property Status : ',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black45, fontSize: 15.sp))),
+                                      color: Colors.black45, fontSize: 14))),
                           Text(referPropertyList.propertyStatus.toString(),
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black87, fontSize: 15.sp)))
+                                      color: Colors.black87, fontSize: 14)))
                         ]),
                     Divider(color: Colors.grey.withOpacity(0.1)),
                     Row(
@@ -1712,13 +1714,13 @@ void referPropertyDialog(
                           Text('Remark : ',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black45, fontSize: 15.sp))),
+                                      color: Colors.black45, fontSize: 14))),
                           Expanded(
                             child: Text(referPropertyList.remark.toString(),
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
                                         color: Colors.black87,
-                                        fontSize: 15.sp))),
+                                        fontSize: 14))),
                           )
                         ]),
                     Divider(color: Colors.grey.withOpacity(0.1)),
@@ -1726,13 +1728,14 @@ void referPropertyDialog(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Location : ',
+
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black45, fontSize: 15.sp))),
+                                      color: Colors.black45, fontSize: 14))),
                           Text(referPropertyList.location.toString(),
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black87, fontSize: 15.sp)))
+                                      color: Colors.black87, fontSize: 14)))
                         ]),
                   ],
                 ),

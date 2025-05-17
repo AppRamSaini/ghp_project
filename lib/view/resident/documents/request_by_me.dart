@@ -50,7 +50,6 @@ class _OutgoingDocumentsScreenState extends State<OutgoingDocumentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
       floatingActionButton: FloatingActionButton(
           backgroundColor: AppTheme.primaryColor,
           onPressed: () {
@@ -58,416 +57,311 @@ class _OutgoingDocumentsScreenState extends State<OutgoingDocumentsScreen> {
                 builder: (builder) => const SendDocumentsRequestScree()));
           },
           child: const Icon(Icons.add, color: Colors.white)),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    searchBarOpen
-                        ? const SizedBox()
-                        : Row(children: [
-                            GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                  outgoingDocumentsCubit
-                                      .getOutgoingDocumentsAPI('all');
-                                },
-                                child: const Icon(Icons.arrow_back,
-                                    color: Colors.white)),
-                            SizedBox(width: 10.w),
-                            Text('Request By Me',
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20.sp,
-                                        fontWeight: FontWeight.w600)))
-                          ]),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: SearchBarAnimation(
-                        searchBoxColour: AppTheme.primaryLiteColor,
-                        buttonColour: AppTheme.primaryLiteColor,
-                        searchBoxWidth: MediaQuery.of(context).size.width / 1.1,
-                        isSearchBoxOnRightSide: false,
-                        textEditingController: textController,
-                        isOriginalAnimation: true,
-                        enableKeyboardFocus: true,
-                        cursorColour: Colors.grey,
-                        enteredTextStyle: GoogleFonts.nunitoSans(
-                            textStyle: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600)),
-                        onExpansionComplete: () {
-                          setState(() {
-                            searchBarOpen = true;
-                          });
-                        },
-                        onCollapseComplete: () async {
-                          setState(() {
-                            searchBarOpen = false;
-                          });
-                          fetchData();
-                        },
-                        onPressButton: (isSearchBarOpens) {
-                          setState(() {
-                            searchBarOpen = true;
-                          });
-                        },
-                        onChanged: (value) {
-                          context
-                              .read<OutgoingDocumentsCubit>()
-                              .searchOutgoingDocuments(value);
-                        },
-                        trailingWidget: const Icon(Icons.search,
-                            size: 20, color: Colors.white),
-                        secondaryButtonWidget: const Icon(Icons.close,
-                            size: 20, color: Colors.white),
-                        buttonWidget: const Icon(Icons.search,
-                            size: 20, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+      appBar: customAppbar(
+        context: context,
+        title: 'Request by me',
+        textController: textController,
+        searchBarOpen: searchBarOpen,
+        onExpansionComplete: () {
+          setState(() {
+            searchBarOpen = true;
+          });
+        },
+        onCollapseComplete: () async {
+          setState(() {
+            searchBarOpen = false;
+          });
+          fetchData();
+        },
+        onPressButton: (isSearchBarOpens) {
+          setState(() {
+            searchBarOpen = true;
+          });
+        },
+        onChanged: (value) {
+          outgoingDocumentsCubit.searchOutgoingDocuments(value);
+        },
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<SendDocsRequestCubit, SendDocsRequestState>(
+                listener: (context, state) async {
+              if (state is SendDocsRequestSuccessfully) {
+                fetchData();
+              }
+            }),
+            BlocListener<DownloadDocumentCubit, DownloadDocumentState>(
+              listener: (context, state) {
+                if (state is DownloadDocumentLoading) {
+                  showLoadingDialog(context, (ctx) {
+                    dialogueContext = ctx;
+                  });
+                } else if (state is DownloadDocumentSuccess) {
+                  Navigator.of(context).pop();
+                  snackBar(context, state.successMsg.toString(), Icons.done,
+                      Colors.green);
+                } else if (state is DownloadDocumentFailed) {
+                  Navigator.of(context).pop();
+                  snackBar(context, state.errorMsg.toString(), Icons.warning,
+                      Colors.red);
+                } else if (state is DownloadDocumentTimeout) {
+                  Navigator.of(context).pop();
+                  snackBar(context, state.errorMsg.toString(), Icons.warning,
+                      Colors.red);
+                } else if (state is DownloadDocumentInternetError) {
+                  Navigator.of(context).pop();
+                  snackBar(context, state.errorMsg.toString(), Icons.wifi,
+                      Colors.red);
+                }
+              },
             ),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20))),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: MultiBlocListener(
-                    listeners: [
-                      BlocListener<SendDocsRequestCubit, SendDocsRequestState>(
-                          listener: (context, state) async {
-                        if (state is SendDocsRequestSuccessfully) {
-                          fetchData();
-                        }
-                      }),
-                      BlocListener<DownloadDocumentCubit,
-                          DownloadDocumentState>(
-                        listener: (context, state) {
-                          if (state is DownloadDocumentLoading) {
-                            showLoadingDialog(context, (ctx) {
-                              dialogueContext = ctx;
-                            });
-                          } else if (state is DownloadDocumentSuccess) {
-                            Navigator.of(context).pop();
-                            snackBar(context, state.successMsg.toString(),
-                                Icons.done, Colors.green);
-                          } else if (state is DownloadDocumentFailed) {
-                            Navigator.of(context).pop();
-                            snackBar(context, state.errorMsg.toString(),
-                                Icons.warning, Colors.red);
-                          } else if (state is DownloadDocumentTimeout) {
-                            Navigator.of(context).pop();
-                            snackBar(context, state.errorMsg.toString(),
-                                Icons.warning, Colors.red);
-                          } else if (state is DownloadDocumentInternetError) {
-                            Navigator.of(context).pop();
-                            snackBar(context, state.errorMsg.toString(),
-                                Icons.wifi, Colors.red);
-                          }
-                        },
-                      ),
-                      BlocListener<DeleteRequestCubit, DeleteRequestState>(
-                          listener: (context, state) async {
-                        if (state is DeleteRequestLoading) {
-                          showLoadingDialog(context, (ctx) {
-                            dialogueContext = ctx;
+            BlocListener<DeleteRequestCubit, DeleteRequestState>(
+                listener: (context, state) async {
+              if (state is DeleteRequestLoading) {
+                showLoadingDialog(context, (ctx) {
+                  dialogueContext = ctx;
+                });
+              } else if (state is DeleteRequestSuccessfully) {
+                snackBar(context, state.successMsg.toString(), Icons.done,
+                    AppTheme.guestColor);
+                fetchData();
+                Navigator.of(dialogueContext).pop();
+              } else if (state is DeleteRequestFailed) {
+                snackBar(context, state.errorMsg.toString(), Icons.warning,
+                    AppTheme.redColor);
+                Navigator.of(dialogueContext).pop();
+              } else if (state is DeleteRequestInternetError) {
+                snackBar(context, state.errorMsg.toString(), Icons.wifi_off,
+                    AppTheme.redColor);
+                Navigator.of(dialogueContext).pop();
+              } else if (state is DeleteRequestLogout) {
+                Navigator.of(dialogueContext).pop();
+                sessionExpiredDialog(context);
+              }
+            })
+          ],
+          child: Column(
+            children: [
+              SizedBox(
+                height: 50,
+                width: MediaQuery.of(context).size.width,
+                child: ListView.builder(
+                    itemCount: filterList.length,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedFilter = index;
+                            outgoingDocumentsCubit.getOutgoingDocumentsAPI(
+                                filterTypes[index].toString());
                           });
-                        } else if (state is DeleteRequestSuccessfully) {
-                          snackBar(context, state.successMsg.toString(),
-                              Icons.done, AppTheme.guestColor);
-                          fetchData();
-                          Navigator.of(dialogueContext).pop();
-                        } else if (state is DeleteRequestFailed) {
-                          snackBar(context, state.errorMsg.toString(),
-                              Icons.warning, AppTheme.redColor);
-                          Navigator.of(dialogueContext).pop();
-                        } else if (state is DeleteRequestInternetError) {
-                          snackBar(context, state.errorMsg.toString(),
-                              Icons.wifi_off, AppTheme.redColor);
-                          Navigator.of(dialogueContext).pop();
-                        } else if (state is DeleteRequestLogout) {
-                          Navigator.of(dialogueContext).pop();
-                          sessionExpiredDialog(context);
-                        }
-                      })
-                    ],
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 55.h,
-                          width: MediaQuery.of(context).size.width,
-                          child: ListView.builder(
-                              itemCount: filterList.length,
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedFilter = index;
-                                      outgoingDocumentsCubit
-                                          .getOutgoingDocumentsAPI(
-                                              filterTypes[index].toString());
-                                    });
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.all(5.w),
-                                    decoration: BoxDecoration(
-                                      color: selectedFilter == index
-                                          ? AppTheme.primaryColor
-                                          : Colors.transparent,
-                                      border: Border.all(
-                                          color: selectedFilter == index
-                                              ? AppTheme.primaryColor
-                                              : Colors.grey),
-                                      borderRadius: BorderRadius.circular(10.r),
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 20.0.w, right: 20.w),
-                                      child: Center(
-                                          child: Text(
-                                        filterList[index],
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(5.w),
+                          decoration: BoxDecoration(
+                            color: selectedFilter == index
+                                ? AppTheme.primaryColor
+                                : Colors.transparent,
+                            border: Border.all(
+                                color: selectedFilter == index
+                                    ? AppTheme.primaryColor
+                                    : Colors.grey),
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 20.0.w, right: 20.w),
+                            child: Center(
+                                child: Text(
+                              filterList[index],
+                              style: GoogleFonts.poppins(
+                                color: selectedFilter == index
+                                    ? Colors.white
+                                    : Colors.black54,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            )),
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+              SizedBox(height: 20.h),
+              Expanded(
+                child:
+                    BlocBuilder<OutgoingDocumentsCubit, OutgoingDocumentsState>(
+                  bloc: outgoingDocumentsCubit,
+                  builder: (context, state) {
+                    if (state is OutgoingDocumentsSearchLoaded) {
+                      List<RequestData> documentsList = state.searchList;
+                      if (documentsList.isEmpty) {
+                        return const Center(
+                            child: Text("Documents not found!",
+                                style:
+                                    TextStyle(color: Colors.deepPurpleAccent)));
+                      }
+
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: documentsList.length,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 10),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: ListTile(
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              // leading: Image.asset(ImageAssets.settingLogo,
+                              //     height: 30),
+                              title: Text(
+                                  documentsList[index].subject.toString(),
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400)),
+                              subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        "Doc Type: ${documentsList[index].documentType ?? ''}",
                                         style: GoogleFonts.poppins(
-                                          color: selectedFilter == index
-                                              ? Colors.white
-                                              : Colors.black54,
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      )),
+                                            color: Colors.black45,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w400)),
+                                    Text(
+                                        "Date: ${DateFormat('d MMM, yyyy').format(documentsList[index].createdAt!)}",
+                                        style: GoogleFonts.poppins(
+                                            color: Colors.black45,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w400))
+                                  ]),
+                              trailing: CircleAvatar(
+                                backgroundColor:
+                                    Colors.deepPurpleAccent.withOpacity(0.1),
+                                child: const Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  size: 20,
+                                  color: Colors.deepPurpleAccent,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } else if (state is OutgoingDocumentsLoaded) {
+                      List<RequestData> documentsList = state.outgoingDocuments;
+                      if (documentsList.isEmpty) {
+                        return const Center(
+                            child: Text("Documents not found!",
+                                style:
+                                    TextStyle(color: Colors.deepPurpleAccent)));
+                      }
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: documentsList.length,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 10),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(10.r)),
+                            child: ListTile(
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              leading: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Image.asset(ImageAssets.settingLogo,
+                                        height: 50,
+                                        color: documentsList[index].status ==
+                                                'requested'
+                                            ? Colors.deepPurpleAccent
+                                            : Colors.blue)
+                                  ]),
+                              title: Text(
+                                documentsList[index].subject.toString(),
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Doc Type: ${documentsList[index].documentType ?? ''}",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.black45,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
                                     ),
                                   ),
-                                );
-                              }),
-                        ),
-                        SizedBox(height: 20.h),
-                        Expanded(
-                          child: BlocBuilder<OutgoingDocumentsCubit,
-                              OutgoingDocumentsState>(
-                            bloc: outgoingDocumentsCubit,
-                            builder: (context, state) {
-                              if (state is OutgoingDocumentsSearchLoaded) {
-                                List<RequestData> documentsList =
-                                    state.searchList;
-                                if (documentsList.isEmpty) {
-                                  return const Center(
-                                      child: Text("Documents not found!",
-                                          style: TextStyle(
-                                              color: Colors.deepPurpleAccent)));
-                                }
-
-                                return ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: documentsList.length,
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      margin: const EdgeInsets.only(bottom: 10),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                              color: Colors.grey[300]!),
-                                          borderRadius:
-                                              BorderRadius.circular(10.r)),
-                                      child: ListTile(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                        leading: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Image.asset(
-                                                  ImageAssets.settingLogo,
-                                                  height: 50.h)
-                                            ]),
-                                        title: Text(
-                                            documentsList[index]
-                                                .subject
-                                                .toString(),
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.poppins(
-                                                color: Colors.black,
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.w400)),
-                                        subtitle: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                  "Doc Type: ${documentsList[index].documentType ?? ''}",
-                                                  style: GoogleFonts.poppins(
-                                                      color: Colors.black45,
-                                                      fontSize: 12.sp,
-                                                      fontWeight:
-                                                          FontWeight.w400)),
-                                              Text(
-                                                  "Date: ${DateFormat('d MMM, yyyy').format(documentsList[index].createdAt!)}",
-                                                  style: GoogleFonts.poppins(
-                                                      color: Colors.black45,
-                                                      fontSize: 12.sp,
-                                                      fontWeight:
-                                                          FontWeight.w400))
-                                            ]),
-                                        trailing: CircleAvatar(
-                                          backgroundColor: Colors
-                                              .deepPurpleAccent
-                                              .withOpacity(0.1),
-                                          child: const Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            size: 20,
-                                            color: Colors.deepPurpleAccent,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              } else if (state is OutgoingDocumentsLoaded) {
-                                List<RequestData> documentsList =
-                                    state.outgoingDocuments;
-                                if (documentsList.isEmpty) {
-                                  return const Center(
-                                      child: Text("Documents not found!",
-                                          style: TextStyle(
-                                              color: Colors.deepPurpleAccent)));
-                                }
-                                return ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: documentsList.length,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      margin: const EdgeInsets.only(bottom: 10),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                              color: Colors.grey[300]!),
-                                          borderRadius:
-                                              BorderRadius.circular(10.r)),
-                                      child: ListTile(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                        leading: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Image.asset(
-                                                  ImageAssets.settingLogo,
-                                                  height: 50.h,
-                                                  color: documentsList[index]
-                                                              .status ==
-                                                          'requested'
-                                                      ? Colors.deepPurpleAccent
-                                                      : Colors.blue)
-                                            ]),
-                                        title: Text(
-                                          documentsList[index]
-                                              .subject
-                                              .toString(),
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.poppins(
-                                            color: Colors.black,
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                        subtitle: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Doc Type: ${documentsList[index].documentType ?? ''}",
-                                              style: GoogleFonts.poppins(
-                                                color: Colors.black45,
-                                                fontSize: 12.sp,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                            Text(
-                                              "Date: ${DateFormat('d MMM, yyyy').format(documentsList[index].createdAt!)}",
-                                              style: GoogleFonts.poppins(
-                                                color: Colors.black45,
-                                                fontSize: 12.sp,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: CircleAvatar(
-                                          backgroundColor: Colors
-                                              .deepPurpleAccent
-                                              .withOpacity(0.1),
-                                          child: popMenus(
-                                            requestData: documentsList[index],
-                                            context: context,
-                                            options:
-                                                documentsList[index].status ==
-                                                        'requested'
-                                                    ? optionsList
-                                                    : optionsList2,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              } else if (state is OutgoingDocumentsLoading) {
-                                return const Center(
-                                    child: CircularProgressIndicator.adaptive(
-                                        backgroundColor:
-                                            Colors.deepPurpleAccent));
-                              } else if (state is OutgoingDocumentsFailed) {
-                                return Padding(
-                                    padding: const EdgeInsets.all(25),
-                                    child: Center(
-                                        child: Text(state.errorMsg.toString(),
-                                            style: const TextStyle(
-                                                color:
-                                                    Colors.deepPurpleAccent))));
-                              } else if (state
-                                  is OutgoingDocumentsInternetError) {
-                                return Padding(
-                                    padding: const EdgeInsets.all(25),
-                                    child: Center(
-                                        child: Text(state.errorMsg.toString(),
-                                            style: const TextStyle(
-                                                color: Colors.red))));
-                              } else {
-                                return const SizedBox();
-                              }
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+                                  Text(
+                                    "Date: ${DateFormat('d MMM, yyyy').format(documentsList[index].createdAt!)}",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.black45,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: CircleAvatar(
+                                backgroundColor:
+                                    Colors.deepPurpleAccent.withOpacity(0.1),
+                                child: popMenus(
+                                  requestData: documentsList[index],
+                                  context: context,
+                                  options:
+                                      documentsList[index].status == 'requested'
+                                          ? optionsList
+                                          : optionsList2,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } else if (state is OutgoingDocumentsLoading) {
+                      return const Center(
+                          child: CircularProgressIndicator.adaptive(
+                              backgroundColor: Colors.deepPurpleAccent));
+                    } else if (state is OutgoingDocumentsFailed) {
+                      return Padding(
+                          padding: const EdgeInsets.all(25),
+                          child: Center(
+                              child: Text(state.errorMsg.toString(),
+                                  style: const TextStyle(
+                                      color: Colors.deepPurpleAccent))));
+                    } else if (state is OutgoingDocumentsInternetError) {
+                      return Padding(
+                          padding: const EdgeInsets.all(25),
+                          child: Center(
+                              child: Text(state.errorMsg.toString(),
+                                  style: const TextStyle(color: Colors.red))));
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
                 ),
-              ),
-            ),
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

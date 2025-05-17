@@ -7,7 +7,6 @@ import 'package:ghp_society_management/controller/my_bills/my_bills_cubit.dart';
 import 'package:ghp_society_management/payment_gateway_service.dart';
 import 'package:ghp_society_management/view/resident/bills/bill_detail_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
-
 import '../../../model/user_profile_model.dart';
 
 class MyBillsPage extends StatefulWidget {

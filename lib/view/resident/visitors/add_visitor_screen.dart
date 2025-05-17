@@ -499,597 +499,688 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
           }
         },),
      ],
-        child: Scaffold(
-          backgroundColor: AppTheme.backgroundColor,
-          body: SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                    padding: EdgeInsets.only(top: 20.h, left: 6.h, bottom: 20.h),
-                    child: Row(children: [
-                      GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child:
-                          const Icon(Icons.arrow_back, color: Colors.white)),
-                      SizedBox(width: 10.w),
-                      Text('Add Visitors',
-                          style:GoogleFonts.nunitoSans(
-                              textStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.w600)))
-                    ])),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Form(
-                          key: formkey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 10.h),
-                              widget.isTypeResidence
-                                  ? const SizedBox()
-                                  : Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  Text('Search Residence',
-                                      style:GoogleFonts.nunitoSans(
-                                          textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.sp,
-                                              fontWeight:
-                                              FontWeight.w500))),
-                                  SizedBox(height: 10.h),
-                                  TextFormField(
-                                    onTap:(){
-                                      _searchMemberCubit.fetchSearchMember('');
-                                      _showSearchDialog();
-                                    },
-                                    readOnly: true,
+        child: Scaffold(appBar: AppBar(title: Text('Add Visitors',
+            style:GoogleFonts.nunitoSans(
+                textStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600)))),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Form(
+                key: formkey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10.h),
+                    widget.isTypeResidence
+                        ? const SizedBox()
+                        : Column(
+                      crossAxisAlignment:
+                      CrossAxisAlignment.start,
+                      children: [
+                        Text('Search Residence',
+                            style:GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                    fontWeight:
+                                    FontWeight.w500))),
+                        SizedBox(height: 10.h),
+                        TextFormField(
+                          onTap:(){
+                            _searchMemberCubit.fetchSearchMember('');
+                            _showSearchDialog();
+                          },
+                          readOnly: true,
+                          style: const TextStyle(
+                              color: Colors.black87, fontSize: 16),
+                          controller: residenceController,
+                          // initialList: searchDataList
+                          //     .map((item) => item.label)
+                          //     .toList(),
+                          // getSelectedValue: (value) {
+                          //   SearchItem selectedItem =
+                          //       searchDataList.firstWhere(
+                          //           (item) => item.label == value.label);
+                          //   setState(() {
+                          //     residenceID = selectedItem.id.toString();
+                          //     blocController.text =
+                          //         selectedItem.block.toString();
+                          //     flatController.text =
+                          //         selectedItem.flat.toString();
+                          //     floorController.text =
+                          //         selectedItem.floor.toString();
+                          //   });
+                          // },
+                          decoration: InputDecoration(
+                            hintText: 'Search residence',
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 12.h, horizontal: 10.0),
+                            filled: true,
+                            hintStyle: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 15,
+                                fontWeight: FontWeight.normal),
+                            fillColor: AppTheme.greyColor,
+                            errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide:
+                                BorderSide(color: AppTheme.greyColor)),
+                            focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide:
+                                BorderSide(color: AppTheme.greyColor)),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide:
+                                BorderSide(color: AppTheme.greyColor)),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide:
+                                BorderSide(color: AppTheme.greyColor)),
+                          ),
+                          // scrollbarDecoration: ScrollbarDecoration(
+                          //     controller: ScrollController(),
+                          //     theme: const ScrollbarThemeData(
+                          //         radius: Radius.circular(5))),
+                          // future: () async {
+                          //   return await fetchData(
+                          //       residenceController.text.toString());
+                          // },
+                        ),
+
+                        SizedBox(height: 10.h),
+                      ],
+                    ),
+                    Text('Type of Visitor',
+                        style:GoogleFonts.nunitoSans(
+                            textStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500))),
+                    SizedBox(height: 10.h),
+                    BlocBuilder<VisitorsElementCubit,
+                        VisitorsElementState>(
+                      builder: (context, state) {
+                        if (state is VisitorsElementLoaded) {
+                          return DropdownButton2<String>(
+                            underline:
+                            Container(color: Colors.transparent),
+                            isExpanded: true,
+                            value: typeOfVisitor,
+                            hint: Text('Select visitors',
+                                style:GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal
+                                  )
+                                )),
+                            items: state
+                                .visitorsElement.first.data.visitorTypes
+                                .map((item) =>
+                                DropdownMenuItem<String>(
+                                  value: item.type,
+                                  child: Text(
+                                    item.type,
                                     style: const TextStyle(
-                                        color: Colors.black87, fontSize: 16),
-                                    controller: residenceController,
-                                    // initialList: searchDataList
-                                    //     .map((item) => item.label)
-                                    //     .toList(),
-                                    // getSelectedValue: (value) {
-                                    //   SearchItem selectedItem =
-                                    //       searchDataList.firstWhere(
-                                    //           (item) => item.label == value.label);
-                                    //   setState(() {
-                                    //     residenceID = selectedItem.id.toString();
-                                    //     blocController.text =
-                                    //         selectedItem.block.toString();
-                                    //     flatController.text =
-                                    //         selectedItem.flat.toString();
-                                    //     floorController.text =
-                                    //         selectedItem.floor.toString();
-                                    //   });
-                                    // },
-                                    decoration: InputDecoration(
-                                      hintText: 'Search residence',
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 12.h, horizontal: 10.0),
+                                        fontSize: 14,
+                                        color: Colors.black),
+                                  ),
+                                ))
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                typeOfVisitor =
+                                    value;
+                              });
+                            },
+                            iconStyleData: const IconStyleData(
+                                icon: Icon(Icons.arrow_drop_down,
+                                    color: Colors.black45),
+                                iconSize: 24),
+                            buttonStyleData: ButtonStyleData(
+                                decoration: BoxDecoration(
+                                    color: AppTheme.greyColor,
+                                    borderRadius:
+                                    BorderRadius.circular(10))),
+                            dropdownStyleData: DropdownStyleData(
+                              maxHeight:
+                              MediaQuery
+                                  .sizeOf(context)
+                                  .height / 2,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                    10), // Set border radius for dropdown
+                              ),
+                            ),
+                            menuItemStyleData: const MenuItemStyleData(
+                              padding:
+                              EdgeInsets.symmetric(horizontal: 16),
+                            ),
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Text('Visiting Frequency ',
+                        style:GoogleFonts.nunitoSans(
+                          textStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )),
+                    SizedBox(
+                      height: 10.h
+                    ),
+                    BlocBuilder<VisitorsElementCubit,
+                        VisitorsElementState>(
+                      builder: (context, state) {
+                        if (state is VisitorsElementLoaded) {
+                          return DropdownButton2<String>(
+                              underline:
+                              Container(color: Colors.transparent),
+                              isExpanded: true,
+                              value: visitorFrequency,
+                              hint: Text('Select Visitor Frequency',
+                                  style:GoogleFonts.nunitoSans(
+                                    textStyle: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  )),
+                              items: state.visitorsElement.first.data
+                                  .visitingFrequencies
+                                  .map((item) =>
+                                  DropdownMenuItem<String>(
+                                    value: item.frequency,
+                                    child: Text(
+                                      item.frequency,
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black),
+                                    ),
+                                  ))
+                                  .toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  visitorFrequency = value;
+                                });
+                              },
+                              iconStyleData: const IconStyleData(
+                                  icon: Icon(Icons.arrow_drop_down,
+                                      color: Colors.black45),
+                                  iconSize: 24),
+                              buttonStyleData: ButtonStyleData(
+                                  decoration: BoxDecoration(
+                                      color: AppTheme.greyColor,
+                                      borderRadius:
+                                      BorderRadius.circular(10))),
+                              dropdownStyleData: DropdownStyleData(
+                                  maxHeight: MediaQuery
+                                      .sizeOf(context)
+                                      .height /
+                                      2,
+                                  decoration: BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.circular(10))),
+                              menuItemStyleData:
+                              const MenuItemStyleData(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16)));
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    ),
+                    SizedBox(height: 10.h),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment
+                            .start,
+                        children: [
+                          Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Visitor Name',
+                                    style:GoogleFonts.nunitoSans(
+                                      textStyle: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight
+                                            .w500,
+                                      ),
+                                    )),
+                                // SizedBox(
+                                //     height: 45,
+                                //     width: 45,
+                                //     child: FloatingActionButton(
+                                //         backgroundColor:
+                                //         AppTheme.primaryColor,
+                                //         shape: RoundedRectangleBorder(
+                                //             borderRadius:
+                                //             BorderRadius
+                                //                 .circular(
+                                //                 50)),
+                                //         onPressed: () {
+                                //           if (formkey2
+                                //               .currentState!
+                                //               .validate()) {
+                                //             addUserToList();
+                                //           }
+                                //         },
+                                //         child: const Icon(
+                                //             Icons.add,
+                                //             color: Colors.white)
+                                //     )
+                                // )
+                              ]),
+                          SizedBox(height: 10.h),
+                          SizedBox(
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
+                              child: TextFormField(
+                                  controller: visitorName,
+                                  style:GoogleFonts.nunitoSans(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  keyboardType: TextInputType
+                                      .text,
+                                  validator: (text) {
+                                    if (text == null ||
+                                        text.isEmpty) {
+                                      return 'Please enter visitor name';
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                      hintText: 'Enter visitor name',
+                                      contentPadding: EdgeInsets
+                                          .symmetric(
+                                          vertical: 12.h,
+                                          horizontal: 10.0),
+                                      filled: true,
+                                      hintStyle: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight
+                                            .normal,
+                                      ),
+                                      fillColor: AppTheme
+                                          .greyColor,
+                                      errorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              15.0),
+                                          borderSide: BorderSide(
+                                              color: AppTheme
+                                                  .greyColor
+                                          )
+                                      ),
+                                      focusedErrorBorder:
+                                      OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              15.0),
+                                          borderSide: BorderSide(
+                                              color: AppTheme
+                                                  .greyColor
+                                          )
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              15.0),
+                                          borderSide: BorderSide(
+                                              color: AppTheme
+                                                  .greyColor
+                                          )
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              15.0),
+                                          borderSide: BorderSide(
+                                              color: AppTheme
+                                                  .greyColor
+                                          )
+                                      )
+                                  )
+                              )
+                          ),
+                          SizedBox(height: 10.h),
+                          Text('Number',
+                              style:GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight
+                                          .w500))),
+                          SizedBox(height: 10.h),
+                          SizedBox(
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
+                              child: TextFormField(
+                                  controller: number,
+                                  style:GoogleFonts.nunitoSans(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  keyboardType: TextInputType
+                                      .number,
+                                  validator: (text) {
+                                    if (text == null ||
+                                        text.isEmpty) {
+                                      return 'Please enter number';
+                                    } else
+                                    if (text.length > 10 ||
+                                        text.length < 10) {
+                                      return 'Number length must be equal to 10';
+                                    }
+                                    return null;
+                                  },
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(
+                                        10),
+                                    FilteringTextInputFormatter
+                                        .digitsOnly
+                                  ],
+                                  decoration: InputDecoration(
+                                      hintText: 'Enter mobile number',
+                                      contentPadding: EdgeInsets
+                                          .symmetric(
+                                          vertical: 12.h,
+                                          horizontal: 10.0),
                                       filled: true,
                                       hintStyle: TextStyle(
                                           color: Colors.grey,
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.normal),
-                                      fillColor: AppTheme.greyColor,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight
+                                              .normal
+                                      ),
+                                      fillColor: AppTheme
+                                          .greyColor,
                                       errorBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(15.0),
-                                          borderSide:
-                                          BorderSide(color: AppTheme.greyColor)),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(15.0),
-                                          borderSide:
-                                          BorderSide(color: AppTheme.greyColor)),
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              15.0),
+                                          borderSide: BorderSide(
+                                              color: AppTheme
+                                                  .greyColor
+                                          )
+                                      ),
+                                      focusedErrorBorder:
+                                      OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              15.0),
+                                          borderSide: BorderSide(
+                                              color: AppTheme
+                                                  .greyColor
+                                          )
+                                      ),
                                       focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(15.0),
-                                          borderSide:
-                                          BorderSide(color: AppTheme.greyColor)),
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              15.0),
+                                          borderSide: BorderSide(
+                                              color: AppTheme
+                                                  .greyColor
+                                          )
+                                      ),
                                       enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(15.0),
-                                          borderSide:
-                                          BorderSide(color: AppTheme.greyColor)),
-                                    ),
-                                    // scrollbarDecoration: ScrollbarDecoration(
-                                    //     controller: ScrollController(),
-                                    //     theme: const ScrollbarThemeData(
-                                    //         radius: Radius.circular(5))),
-                                    // future: () async {
-                                    //   return await fetchData(
-                                    //       residenceController.text.toString());
-                                    // },
-                                  ),
-
-                                  SizedBox(height: 10.h),
-                                ],
-                              ),
-                              Text('Type of Visitor',
-                                  style:GoogleFonts.nunitoSans(
-                                      textStyle: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w500))),
-                              SizedBox(height: 10.h),
-                              BlocBuilder<VisitorsElementCubit,
-                                  VisitorsElementState>(
-                                builder: (context, state) {
-                                  if (state is VisitorsElementLoaded) {
-                                    return DropdownButton2<String>(
-                                      underline:
-                                      Container(color: Colors.transparent),
-                                      isExpanded: true,
-                                      value: typeOfVisitor,
-                                      hint: Text('Select visitors',
-                                          style:GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.normal
-                                            )
-                                          )),
-                                      items: state
-                                          .visitorsElement.first.data.visitorTypes
-                                          .map((item) =>
-                                          DropdownMenuItem<String>(
-                                            value: item.type,
-                                            child: Text(
-                                              item.type,
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.black),
-                                            ),
-                                          ))
-                                          .toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          typeOfVisitor =
-                                              value;
-                                        });
-                                      },
-                                      iconStyleData: const IconStyleData(
-                                          icon: Icon(Icons.arrow_drop_down,
-                                              color: Colors.black45),
-                                          iconSize: 24),
-                                      buttonStyleData: ButtonStyleData(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              15.0),
+                                          borderSide: BorderSide(
+                                              color: AppTheme
+                                                  .greyColor
+                                          )
+                                      )
+                                  )
+                              )
+                          ),
+                   /*       Wrap(
+                              children: List.generate(
+                                  usersList.length,
+                                      (index) =>
+                                      Container(
+                                          margin: const EdgeInsets
+                                              .only(
+                                              top: 5, right: 5),
+                                          padding:
+                                          const EdgeInsets
+                                              .symmetric(
+                                              horizontal: 10,
+                                              vertical: 6),
                                           decoration: BoxDecoration(
-                                              color: AppTheme.greyColor,
                                               borderRadius:
-                                              BorderRadius.circular(10))),
-                                      dropdownStyleData: DropdownStyleData(
-                                        maxHeight:
-                                        MediaQuery
-                                            .sizeOf(context)
-                                            .height / 2,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              10), // Set border radius for dropdown
-                                        ),
-                                      ),
-                                      menuItemStyleData: const MenuItemStyleData(
-                                        padding:
-                                        EdgeInsets.symmetric(horizontal: 16),
-                                      ),
-                                    );
-                                  } else {
-                                    return const SizedBox();
-                                  }
-                                },
-                              ),
-                              SizedBox(
-                                height: 10.h,
-                              ),
-                              Text('Visiting Frequency ',
-                                  style:GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  )),
-                              SizedBox(
-                                height: 10.h
-                              ),
-                              BlocBuilder<VisitorsElementCubit,
-                                  VisitorsElementState>(
-                                builder: (context, state) {
-                                  if (state is VisitorsElementLoaded) {
-                                    return DropdownButton2<String>(
-                                        underline:
-                                        Container(color: Colors.transparent),
-                                        isExpanded: true,
-                                        value: visitorFrequency,
-                                        hint: Text('Select Visitor Frequency',
-                                            style:GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 15.sp,
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                            )),
-                                        items: state.visitorsElement.first.data
-                                            .visitingFrequencies
-                                            .map((item) =>
-                                            DropdownMenuItem<String>(
-                                              value: item.frequency,
-                                              child: Text(
-                                                item.frequency,
-                                                style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black),
-                                              ),
-                                            ))
-                                            .toList(),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            visitorFrequency = value;
-                                          });
-                                        },
-                                        iconStyleData: const IconStyleData(
-                                            icon: Icon(Icons.arrow_drop_down,
-                                                color: Colors.black45),
-                                            iconSize: 24),
-                                        buttonStyleData: ButtonStyleData(
-                                            decoration: BoxDecoration(
-                                                color: AppTheme.greyColor,
-                                                borderRadius:
-                                                BorderRadius.circular(10))),
-                                        dropdownStyleData: DropdownStyleData(
-                                            maxHeight: MediaQuery
-                                                .sizeOf(context)
-                                                .height /
-                                                2,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.circular(10))),
-                                        menuItemStyleData:
-                                        const MenuItemStyleData(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 16)));
-                                  } else {
-                                    return const SizedBox();
-                                  }
-                                },
-                              ),
-                              SizedBox(height: 10.h),
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment
-                                      .start,
-                                  children: [
-                                    Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('Visitor Name',
-                                              style:GoogleFonts.nunitoSans(
-                                                textStyle: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 15.sp,
-                                                  fontWeight: FontWeight
-                                                      .w500,
-                                                ),
-                                              )),
-                                          // SizedBox(
-                                          //     height: 45,
-                                          //     width: 45,
-                                          //     child: FloatingActionButton(
-                                          //         backgroundColor:
-                                          //         AppTheme.primaryColor,
-                                          //         shape: RoundedRectangleBorder(
-                                          //             borderRadius:
-                                          //             BorderRadius
-                                          //                 .circular(
-                                          //                 50)),
-                                          //         onPressed: () {
-                                          //           if (formkey2
-                                          //               .currentState!
-                                          //               .validate()) {
-                                          //             addUserToList();
-                                          //           }
-                                          //         },
-                                          //         child: const Icon(
-                                          //             Icons.add,
-                                          //             color: Colors.white)
-                                          //     )
-                                          // )
-                                        ]),
-                                    SizedBox(height: 10.h),
-                                    SizedBox(
-                                        width: MediaQuery
-                                            .of(context)
-                                            .size
-                                            .width,
-                                        child: TextFormField(
-                                            controller: visitorName,
-                                            style:GoogleFonts.nunitoSans(
-                                              color: Colors.black,
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            keyboardType: TextInputType
-                                                .text,
-                                            validator: (text) {
-                                              if (text == null ||
-                                                  text.isEmpty) {
-                                                return 'Please enter visitor name';
-                                              }
-                                              return null;
-                                            },
-                                            decoration: InputDecoration(
-                                                hintText: 'Enter visitor name',
-                                                contentPadding: EdgeInsets
-                                                    .symmetric(
-                                                    vertical: 12.h,
-                                                    horizontal: 10.0),
-                                                filled: true,
-                                                hintStyle: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 15.sp,
-                                                  fontWeight: FontWeight
-                                                      .normal,
-                                                ),
-                                                fillColor: AppTheme
-                                                    .greyColor,
-                                                errorBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        15.0),
-                                                    borderSide: BorderSide(
+                                              BorderRadius
+                                                  .circular(
+                                                  30),
+                                              border: Border
+                                                  .all(
+                                                  color: AppTheme
+                                                      .primaryColor
+                                                      .withOpacity(
+                                                      0.6))),
+                                          child: Row(
+                                              mainAxisSize:
+                                              MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                    usersList[index]['name']
+                                                        .toString(),
+                                                    style: TextStyle(
                                                         color: AppTheme
-                                                            .greyColor
-                                                    )
-                                                ),
-                                                focusedErrorBorder:
-                                                OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        15.0),
-                                                    borderSide: BorderSide(
+                                                            .primaryColor,
+                                                        fontSize: 14)),
+                                                Text(
+                                                    " , ${usersList[index]['phone']
+                                                        .toString()}",
+                                                    style: TextStyle(
                                                         color: AppTheme
-                                                            .greyColor
-                                                    )
-                                                ),
-                                                focusedBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        15.0),
-                                                    borderSide: BorderSide(
+                                                            .primaryColor,
+                                                        fontSize: 14)),
+                                                const SizedBox(
+                                                    width: 5),
+                                                GestureDetector(
+                                                    onTap: () =>
+                                                        removeUser(
+                                                            index),
+                                                    child: Icon(
+                                                        Icons
+                                                            .clear,
                                                         color: AppTheme
-                                                            .greyColor
-                                                    )
-                                                ),
-                                                enabledBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        15.0),
-                                                    borderSide: BorderSide(
-                                                        color: AppTheme
-                                                            .greyColor
-                                                    )
+                                                            .primaryColor)
                                                 )
-                                            )
-                                        )
-                                    ),
-                                    SizedBox(height: 10.h),
-                                    Text('Number',
-                                        style:GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 15.sp,
-                                                fontWeight: FontWeight
-                                                    .w500))),
-                                    SizedBox(height: 10.h),
-                                    SizedBox(
-                                        width: MediaQuery
-                                            .of(context)
-                                            .size
-                                            .width,
-                                        child: TextFormField(
-                                            controller: number,
-                                            style:GoogleFonts.nunitoSans(
-                                              color: Colors.black,
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            keyboardType: TextInputType
-                                                .number,
-                                            validator: (text) {
-                                              if (text == null ||
-                                                  text.isEmpty) {
-                                                return 'Please enter number';
-                                              } else
-                                              if (text.length > 10 ||
-                                                  text.length < 10) {
-                                                return 'Number length must be equal to 10';
-                                              }
-                                              return null;
-                                            },
-                                            inputFormatters: [
-                                              LengthLimitingTextInputFormatter(
-                                                  10),
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly
-                                            ],
-                                            decoration: InputDecoration(
-                                                hintText: 'Enter mobile number',
-                                                contentPadding: EdgeInsets
-                                                    .symmetric(
-                                                    vertical: 12.h,
-                                                    horizontal: 10.0),
-                                                filled: true,
-                                                hintStyle: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 15.sp,
-                                                    fontWeight: FontWeight
-                                                        .normal
-                                                ),
-                                                fillColor: AppTheme
-                                                    .greyColor,
-                                                errorBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        15.0),
-                                                    borderSide: BorderSide(
-                                                        color: AppTheme
-                                                            .greyColor
-                                                    )
-                                                ),
-                                                focusedErrorBorder:
-                                                OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        15.0),
-                                                    borderSide: BorderSide(
-                                                        color: AppTheme
-                                                            .greyColor
-                                                    )
-                                                ),
-                                                focusedBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        15.0),
-                                                    borderSide: BorderSide(
-                                                        color: AppTheme
-                                                            .greyColor
-                                                    )
-                                                ),
-                                                enabledBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        15.0),
-                                                    borderSide: BorderSide(
-                                                        color: AppTheme
-                                                            .greyColor
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    ),
-                             /*       Wrap(
-                                        children: List.generate(
-                                            usersList.length,
-                                                (index) =>
-                                                Container(
-                                                    margin: const EdgeInsets
-                                                        .only(
-                                                        top: 5, right: 5),
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 6),
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                        BorderRadius
-                                                            .circular(
-                                                            30),
-                                                        border: Border
-                                                            .all(
-                                                            color: AppTheme
-                                                                .primaryColor
-                                                                .withOpacity(
-                                                                0.6))),
-                                                    child: Row(
-                                                        mainAxisSize:
-                                                        MainAxisSize.min,
-                                                        children: [
-                                                          Text(
-                                                              usersList[index]['name']
-                                                                  .toString(),
-                                                              style: TextStyle(
-                                                                  color: AppTheme
-                                                                      .primaryColor,
-                                                                  fontSize: 14)),
-                                                          Text(
-                                                              " , ${usersList[index]['phone']
-                                                                  .toString()}",
-                                                              style: TextStyle(
-                                                                  color: AppTheme
-                                                                      .primaryColor,
-                                                                  fontSize: 14)),
-                                                          const SizedBox(
-                                                              width: 5),
-                                                          GestureDetector(
-                                                              onTap: () =>
-                                                                  removeUser(
-                                                                      index),
-                                                              child: Icon(
-                                                                  Icons
-                                                                      .clear,
-                                                                  color: AppTheme
-                                                                      .primaryColor)
-                                                          )
-                                                        ]
-                                                    )
-                                                ))
-                                    )*/
-                                  ]
-                              ),
-                              SizedBox(height: 10.h),
-                              Text('No. of visitors',
+                                              ]
+                                          )
+                                      ))
+                          )*/
+                        ]
+                    ),
+                    SizedBox(height: 10.h),
+                    Text('No. of visitors',
+                        style:GoogleFonts.nunitoSans(
+                            textStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500
+                            )
+                        )),
+                    SizedBox(
+                        height: 10.h
+                    ),
+                    SizedBox(
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
+                        child: TextFormField(
+                          readOnly: true,
+                            controller: visitorsCount,
+                            style:GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500
+                            ),
+                            keyboardType: TextInputType
+                                .number,
+                            validator: (text) {
+                              if (text == null ||
+                                  text.isEmpty) {
+                                return 'Please enter number';
+                              }
+                              return null;
+                            },
+                            inputFormatters: [
+                              FilteringTextInputFormatter
+                                  .digitsOnly
+                            ],
+                            decoration: InputDecoration(
+                                hintText: 'Visitors Counts',
+                                contentPadding: EdgeInsets
+                                    .symmetric(
+                                    vertical: 12.h,
+                                    horizontal: 10.0),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight
+                                        .normal
+                                ),
+                                fillColor: AppTheme
+                                    .greyColor,
+                                errorBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme
+                                            .greyColor
+                                    )
+                                ),
+                                focusedErrorBorder:
+                                OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme
+                                            .greyColor
+                                    )
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme
+                                            .greyColor
+                                    )
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme
+                                            .greyColor
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    SizedBox(
+                        height: 10.h
+                    ),
+                    Row(
+                        children: [
+                          Expanded(
+                              child: Text('Date',
                                   style:GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 15.sp,
+                                          fontSize: 15,
                                           fontWeight: FontWeight.w500
                                       )
-                                  )),
-                              SizedBox(
-                                  height: 10.h
-                              ),
-                              SizedBox(
-                                  width: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .width,
+                                  ))
+                          ),
+                          Expanded(
+                              child: Text('Time',
+                                  style:GoogleFonts.nunitoSans(
+                                      textStyle: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500
+                                      )
+                                  ))
+                          )
+                        ]
+                    ),
+                    SizedBox(height: 10.h),
+                    Row(
+                        children: [
+                          Expanded(
+                              child: SizedBox(
                                   child: TextFormField(
-                                    readOnly: true,
-                                      controller: visitorsCount,
+                                      // onTap: () {
+                                      //   _selectDate(context);
+                                      // },
+                                      readOnly: true,
+                                      controller: date,
                                       style:GoogleFonts.nunitoSans(
                                         color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w500
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                      keyboardType: TextInputType
-                                          .number,
+                                      keyboardType: TextInputType.text,
                                       validator: (text) {
                                         if (text == null ||
                                             text.isEmpty) {
-                                          return 'Please enter number';
+                                          return 'Please enter date';
                                         }
                                         return null;
                                       },
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter
-                                            .digitsOnly
-                                      ],
                                       decoration: InputDecoration(
-                                          hintText: 'Visitors Counts',
+                                          hintText: 'Select Date',
                                           contentPadding: EdgeInsets
                                               .symmetric(
                                               vertical: 12.h,
                                               horizontal: 10.0),
+                                          prefixIcon: GestureDetector(
+                                              onTap: () {
+                                              if(widget.isTypeResidence){
+                                                _selectDate(context);
+                                              }
+                                              },
+                                              child: const Icon(Icons
+                                                  .calendar_month)),
                                           filled: true,
                                           hintStyle: TextStyle(
                                               color: Colors.grey,
-                                              fontSize: 15.sp,
+                                              fontSize: 15,
                                               fontWeight: FontWeight
                                                   .normal
                                           ),
-                                          fillColor: AppTheme
-                                              .greyColor,
+                                          fillColor: AppTheme.greyColor,
                                           errorBorder: OutlineInputBorder(
                                               borderRadius:
                                               BorderRadius.circular(
@@ -1099,8 +1190,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                                       .greyColor
                                               )
                                           ),
-                                          focusedErrorBorder:
-                                          OutlineInputBorder(
+                                          focusedErrorBorder: OutlineInputBorder(
                                               borderRadius:
                                               BorderRadius.circular(
                                                   15.0),
@@ -1129,565 +1219,449 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                           )
                                       )
                                   )
-                              ),
-                              SizedBox(
-                                  height: 10.h
-                              ),
-                              Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text('Date',
-                                            style:GoogleFonts.nunitoSans(
-                                                textStyle: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 15.sp,
-                                                    fontWeight: FontWeight.w500
-                                                )
-                                            ))
-                                    ),
-                                    Expanded(
-                                        child: Text('Time',
-                                            style:GoogleFonts.nunitoSans(
-                                                textStyle: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 15.sp,
-                                                    fontWeight: FontWeight.w500
-                                                )
-                                            ))
-                                    )
-                                  ]
-                              ),
-                              SizedBox(height: 10.h),
-                              Row(
-                                  children: [
-                                    Expanded(
-                                        child: SizedBox(
-                                            child: TextFormField(
-                                                // onTap: () {
-                                                //   _selectDate(context);
-                                                // },
-                                                readOnly: true,
-                                                controller: date,
-                                                style:GoogleFonts.nunitoSans(
-                                                  color: Colors.black,
-                                                  fontSize: 15.sp,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                                keyboardType: TextInputType.text,
-                                                validator: (text) {
-                                                  if (text == null ||
-                                                      text.isEmpty) {
-                                                    return 'Please enter date';
-                                                  }
-                                                  return null;
-                                                },
-                                                decoration: InputDecoration(
-                                                    hintText: 'Select Date',
-                                                    contentPadding: EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 12.h,
-                                                        horizontal: 10.0),
-                                                    prefixIcon: GestureDetector(
-                                                        onTap: () {
-                                                        if(widget.isTypeResidence){
-                                                          _selectDate(context);
-                                                        }
-                                                        },
-                                                        child: const Icon(Icons
-                                                            .calendar_month)),
-                                                    filled: true,
-                                                    hintStyle: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 15.sp,
-                                                        fontWeight: FontWeight
-                                                            .normal
-                                                    ),
-                                                    fillColor: AppTheme.greyColor,
-                                                    errorBorder: OutlineInputBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                        borderSide: BorderSide(
-                                                            color: AppTheme
-                                                                .greyColor
-                                                        )
-                                                    ),
-                                                    focusedErrorBorder: OutlineInputBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                        borderSide: BorderSide(
-                                                            color: AppTheme
-                                                                .greyColor
-                                                        )
-                                                    ),
-                                                    focusedBorder: OutlineInputBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                        borderSide: BorderSide(
-                                                            color: AppTheme
-                                                                .greyColor
-                                                        )
-                                                    ),
-                                                    enabledBorder: OutlineInputBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                        borderSide: BorderSide(
-                                                            color: AppTheme
-                                                                .greyColor
-                                                        )
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    ),
-                                    SizedBox(
-                                        width: 10.w
-                                    ),
-                                    Expanded(
-                                        child: SizedBox(
-                                            child: TextFormField(
-                                                readOnly: true,
-                                                controller: time,
-                                                style:GoogleFonts.nunitoSans(
-                                                  color: Colors.black,
-                                                  fontSize: 15.sp,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                                keyboardType: TextInputType.text,
-                                                validator: (text) {
-                                                  if (text == null ||
-                                                      text.isEmpty) {
-                                                    return 'Please enter time';
-                                                  }
-                                                  return null;
-                                                },
-                                                decoration: InputDecoration(
-                                                    hintText: 'Select Time',
-                                                    contentPadding: EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 12.h,
-                                                        horizontal: 10.0),
-                                                    prefixIcon: GestureDetector(
-                                                        onTap: () {
-                                                      if(widget.isTypeResidence){
-                                                        if(date!.text.isEmpty){
-                                                          snackBar(context, 'Kindly select first date!', Icons.info,
-                                                              AppTheme.redColor);
-                                                        }else{
-                                                          _selectTime(context);
-                                                        }
-
-                                                      }
-                                                        },
-                                                        child: const Icon(
-                                                            Icons.timelapse)),
-                                                    filled: true,
-                                                    hintStyle: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: 15.sp,
-                                                        fontWeight: FontWeight
-                                                            .normal
-                                                    ),
-                                                    fillColor: AppTheme.greyColor,
-                                                    errorBorder: OutlineInputBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                        borderSide: BorderSide(
-                                                            color: AppTheme
-                                                                .greyColor
-                                                        )
-                                                    ),
-                                                    focusedErrorBorder: OutlineInputBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                        borderSide: BorderSide(
-                                                            color: AppTheme
-                                                                .greyColor
-                                                        )
-                                                    ),
-                                                    focusedBorder: OutlineInputBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                        borderSide: BorderSide(
-                                                            color: AppTheme
-                                                                .greyColor
-                                                        )
-                                                    ),
-                                                    enabledBorder: OutlineInputBorder(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                        borderSide: BorderSide(
-                                                            color: AppTheme
-                                                                .greyColor
-                                                        )
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    )
-                                  ]
-                              ),
-                              SizedBox(height: 10.h),
-                              Text('Vehicle Number',
-                                  style:GoogleFonts.nunitoSans(
-                                      textStyle: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w500
-                                      )
-                                  )),
-                              SizedBox(height: 10.h),
-                              SizedBox(
-                                  width: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .width,
+                              )
+                          ),
+                          SizedBox(
+                              width: 10.w
+                          ),
+                          Expanded(
+                              child: SizedBox(
                                   child: TextFormField(
-                                      controller: vehicleNumber,
+                                      readOnly: true,
+                                      controller: time,
                                       style:GoogleFonts.nunitoSans(
                                         color: Colors.black,
-                                        fontSize: 15.sp,
+                                        fontSize: 15,
                                         fontWeight: FontWeight.w500,
                                       ),
                                       keyboardType: TextInputType.text,
-                                      inputFormatters: [
-                                        VehicleNumberFormatter(), // Custom formatter
-                                        LengthLimitingTextInputFormatter(13), // Max length = 13
-                                      ],
-                                      decoration: InputDecoration(
-                                          hintText: 'Enter vehicle number',
-                                          contentPadding: EdgeInsets.symmetric(
-                                              vertical: 12.h, horizontal: 10.0),
-                                          filled: true,
-                                          hintStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.normal
-                                          ),
-                                          fillColor: AppTheme.greyColor,
-                                          errorBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  15.0),
-                                              borderSide: BorderSide(
-                                                  color: AppTheme.greyColor
-                                              )
-                                          ),
-                                          focusedErrorBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  15.0),
-                                              borderSide: BorderSide(
-                                                  color: AppTheme.greyColor
-                                              )
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  15.0),
-                                              borderSide: BorderSide(
-                                                  color: AppTheme.greyColor
-                                              )
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  15.0),
-                                              borderSide: BorderSide(
-                                                  color: AppTheme.greyColor
-                                              )
-                                          )
-                                      )
-                                  )
-                              ),
-                              SizedBox(
-                                  height: 10.h
-                              ),
-                              Text('Purpose of Visit ',
-                                  style:GoogleFonts.nunitoSans(
-                                      textStyle: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w500
-                                      )
-                                  )),
-                              SizedBox(
-                                  height: 10.h
-                              ),
-                              SizedBox(
-                                  width: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .width,
-                                  child: TextFormField(
-                                      controller: purposeController,
-                                      style:GoogleFonts.nunitoSans(
-                                          color: Colors.black,
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w500
-                                      ),
-                                      maxLines: null,
-                                      minLines: 3,
-
-                                      keyboardType: TextInputType.multiline,
                                       validator: (text) {
-                                        if (text == null || text.isEmpty) {
-                                          return 'Please enter purpose of visit';
+                                        if (text == null ||
+                                            text.isEmpty) {
+                                          return 'Please enter time';
                                         }
                                         return null;
                                       },
-
                                       decoration: InputDecoration(
-                                          hintText: 'Describe the purpose...',
-                                          contentPadding: EdgeInsets.symmetric(
-                                              vertical: 12.h, horizontal: 10.0),
+                                          hintText: 'Select Time',
+                                          contentPadding: EdgeInsets
+                                              .symmetric(
+                                              vertical: 12.h,
+                                              horizontal: 10.0),
+                                          prefixIcon: GestureDetector(
+                                              onTap: () {
+                                            if(widget.isTypeResidence){
+                                              if(date!.text.isEmpty){
+                                                snackBar(context, 'Kindly select first date!', Icons.info,
+                                                    AppTheme.redColor);
+                                              }else{
+                                                _selectTime(context);
+                                              }
+
+                                            }
+                                              },
+                                              child: const Icon(
+                                                  Icons.timelapse)),
                                           filled: true,
                                           hintStyle: TextStyle(
                                               color: Colors.grey,
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.normal
+                                              fontSize: 15,
+                                              fontWeight: FontWeight
+                                                  .normal
                                           ),
                                           fillColor: AppTheme.greyColor,
                                           errorBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(
+                                              borderRadius:
+                                              BorderRadius.circular(
                                                   15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme.greyColor
+                                                  color: AppTheme
+                                                      .greyColor
                                               )
                                           ),
                                           focusedErrorBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(
+                                              borderRadius:
+                                              BorderRadius.circular(
                                                   15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme.greyColor
+                                                  color: AppTheme
+                                                      .greyColor
                                               )
                                           ),
                                           focusedBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(
+                                              borderRadius:
+                                              BorderRadius.circular(
                                                   15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme.greyColor
+                                                  color: AppTheme
+                                                      .greyColor
                                               )
                                           ),
                                           enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(
+                                              borderRadius:
+                                              BorderRadius.circular(
                                                   15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme.greyColor
+                                                  color: AppTheme
+                                                      .greyColor
                                               )
                                           )
                                       )
                                   )
-                              ),
-                              SizedBox(
-                                  height: 10.h
-                              ),
-                              Text('Valid Till',
-                                  style:GoogleFonts.nunitoSans(
-                                      textStyle: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w500
-                                      )
-                                  )),
-                              SizedBox(
-                                  height: 10.h
-                              ),
-                              BlocBuilder<VisitorsElementCubit,
-                                  VisitorsElementState>(
-                                  builder: (context, state) {
-                                    if (state is VisitorsElementLoaded) {
-                                      return DropdownButton2<String>(
-                                          underline:
-                                          Container(color: Colors.transparent),
-                                          isExpanded: true,
-                                          value: validTill,
-                                          items: state.visitorsElement.first.data
-                                              .visitorValidity
-                                              .map((item) =>
-                                              DropdownMenuItem<String>(
-                                                  value: item.type,
-                                                  child: Text(
-                                                      item.type,
-                                                      style: const TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.black)
-                                                  )
-                                              ))
-                                              .toList(),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              validTill =
-                                                  value;
-                                            });
-                                          },
-                                          hint: Text('Select Valid till',
-                                              style:GoogleFonts.nunitoSans(
-                                                  textStyle: TextStyle(
-                                                      color: Colors.grey,
-                                                      fontSize: 15.sp,
-                                                      fontWeight: FontWeight
-                                                          .normal
-                                                  )
-                                              )),
-                                          iconStyleData: const IconStyleData(
-                                              icon: Icon(
-                                                  Icons.arrow_drop_down,
-                                                  color: Colors.black45
-                                              ),
-                                              iconSize: 24
-                                          ),
-                                          buttonStyleData: ButtonStyleData(
-                                              decoration: BoxDecoration(
-                                                  color: AppTheme.greyColor,
-                                                  // Background color for the button
-                                                  borderRadius: BorderRadius
-                                                      .circular(
-                                                      10)
-                                              )
-                                          ),
-                                          dropdownStyleData: DropdownStyleData(
-                                              maxHeight:
-                                              MediaQuery
-                                                  .sizeOf(context)
-                                                  .height / 2,
-                                              decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius
-                                                      .circular(10)
-                                              )
-                                          ),
-                                          menuItemStyleData: const MenuItemStyleData(
-                                              padding:
-                                              EdgeInsets.symmetric(horizontal: 16)
-                                          )
-                                      );
-                                    } else {
-                                      return const SizedBox();
-                                    }
-                                  }
-                              ),
-                              const SizedBox(height: 15),
-                              Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(vertical: 10),
-                                  child: Text('Upload Photos',
-                                      style:GoogleFonts.nunitoSans(
-                                          textStyle: TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.w400)))),
-                              uploadWidget(context: context, onTap: () {
-                                uploadFileWidget(context: context,
-                                    fromCamera: (){
-                                      fromCamera(context);
-                                    },
-                                    fromGallery: (){
-                                  fromGallery(context);});
-                              }, onRemove: (index) {
-                                setState(() =>
-                                    croppedImagesList!.removeAt(index));
-                              }, croppedImagesList: croppedImagesList),
-                              SizedBox(height: 30.h),
-                              GestureDetector(
-                                onTap: () {
-
-                                  if (formkey.currentState!.validate()) {
-                                    if (typeOfVisitor == null) {
-                                      snackBar(
-                                          context,
-                                          'Kindly select type of visitors',
-                                          Icons.done,
-                                          AppTheme.redColor);
-                                    }
-                                    else
-                                    // if (residenceController.text == '' &&
-                                    //     widget.isTypeResidence == false) {
-                                    //   snackBar(
-                                    //       context,
-                                    //       'Kindly select residence name',
-                                    //       Icons.done,
-                                    //       AppTheme.redColor);
-                                    // } else
-                                      if (visitorFrequency == null) {
-                                      snackBar(
-                                          context,
-                                          'Kindly select visitors frequency',
-                                          Icons.done,
-                                          AppTheme.redColor);
-                                    }  else if (validTill == null) {
-                                      snackBar(
-                                          context,
-                                          'Kindly select valid time',
-                                          Icons.done,
-                                          AppTheme.redColor);
-                                    }
-                                    else if (croppedImagesList!.isEmpty) {
-                                      snackBar(
-                                          context,
-                                          'Kindly upload visitors picture',
-                                          Icons.done,
-                                          AppTheme.redColor);
-                                    }
-                                    else {
-                                      documentFiles.clear();
-                                      for (int i = 0; i < croppedImagesList!.length; i++) {
-                                        documentFiles.add(File(croppedImagesList![i].path));
-                                      }
-                                      addUserToList();
-                                      context
-                                          .read<CreateVisitorsCubit>()
-                                          .createVisitors(
-                                          visitorsType:
-                                          typeOfVisitor.toString(),
-                                          visitingFrequency:
-                                          visitorFrequency.toString(),
-                                          noOFVisitors: visitorsCount.text.toString(),
-                                          date: date!.text.toString(),
-                                          vehicleNumber:
-                                          vehicleNumber!.text.toString(),
-                                          purposeOfVisit:
-                                          purposeController!.text.toString(),
-                                          validTill: validTill.toString(),
-                                          time: time!.text.toString(),
-                                          files: documentFiles,
-                                          visitors: usersList,
-                                          userId: residenceId.toString()
-                                      );
-                                    }
-                                  }
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 50.h,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(30),
-                                        color: AppTheme.primaryColor),
-                                    child: Center(
-                                      child: Text('Submit ',
-                                        style:GoogleFonts.nunitoSans(
-                                          textStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              )
+                          )
+                        ]
+                    ),
+                    SizedBox(height: 10.h),
+                    Text('Vehicle Number',
+                        style:GoogleFonts.nunitoSans(
+                            textStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500
+                            )
+                        )),
+                    SizedBox(height: 10.h),
+                    SizedBox(
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
+                        child: TextFormField(
+                            controller: vehicleNumber,
+                            style:GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            keyboardType: TextInputType.text,
+                            inputFormatters: [
+                              VehicleNumberFormatter(), // Custom formatter
+                              LengthLimitingTextInputFormatter(13), // Max length = 13
                             ],
+                            decoration: InputDecoration(
+                                hintText: 'Enter vehicle number',
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12.h, horizontal: 10.0),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal
+                                ),
+                                fillColor: AppTheme.greyColor,
+                                errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor
+                                    )
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor
+                                    )
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor
+                                    )
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    SizedBox(
+                        height: 10.h
+                    ),
+                    Text('Purpose of Visit ',
+                        style:GoogleFonts.nunitoSans(
+                            textStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500
+                            )
+                        )),
+                    SizedBox(
+                        height: 10.h
+                    ),
+                    SizedBox(
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
+                        child: TextFormField(
+                            controller: purposeController,
+                            style:GoogleFonts.nunitoSans(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500
+                            ),
+                            maxLines: null,
+                            minLines: 3,
+
+                            keyboardType: TextInputType.multiline,
+                            validator: (text) {
+                              if (text == null || text.isEmpty) {
+                                return 'Please enter purpose of visit';
+                              }
+                              return null;
+                            },
+
+                            decoration: InputDecoration(
+                                hintText: 'Describe the purpose...',
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12.h, horizontal: 10.0),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal
+                                ),
+                                fillColor: AppTheme.greyColor,
+                                errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor
+                                    )
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor
+                                    )
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor
+                                    )
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    SizedBox(
+                        height: 10.h
+                    ),
+                    Text('Valid Till',
+                        style:GoogleFonts.nunitoSans(
+                            textStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500
+                            )
+                        )),
+                    SizedBox(
+                        height: 10.h
+                    ),
+                    BlocBuilder<VisitorsElementCubit,
+                        VisitorsElementState>(
+                        builder: (context, state) {
+                          if (state is VisitorsElementLoaded) {
+                            return DropdownButton2<String>(
+                                underline:
+                                Container(color: Colors.transparent),
+                                isExpanded: true,
+                                value: validTill,
+                                items: state.visitorsElement.first.data
+                                    .visitorValidity
+                                    .map((item) =>
+                                    DropdownMenuItem<String>(
+                                        value: item.type,
+                                        child: Text(
+                                            item.type,
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black)
+                                        )
+                                    ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    validTill =
+                                        value;
+                                  });
+                                },
+
+                                hint: Text('Select Valid till',
+                                    style:GoogleFonts.nunitoSans(
+                                        textStyle: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight
+                                                .normal
+                                        )
+                                    )),
+                                iconStyleData: const IconStyleData(
+                                    icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45
+                                    ),
+                                    iconSize: 24
+                                ),
+                                buttonStyleData: ButtonStyleData(
+                                    decoration: BoxDecoration(
+                                        color: AppTheme.greyColor,
+                                        // Background color for the button
+                                        borderRadius: BorderRadius
+                                            .circular(
+                                            10)
+                                    )
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                    maxHeight:
+                                    MediaQuery
+                                        .sizeOf(context)
+                                        .height / 2,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius
+                                            .circular(10)
+                                    )
+                                ),
+                                menuItemStyleData: const MenuItemStyleData(
+                                    padding:
+                                    EdgeInsets.symmetric(horizontal: 16)
+                                )
+                            );
+                          } else {
+                            return const SizedBox();
+                          }
+                        }
+                    ),
+                    const SizedBox(height: 15),
+                    Padding(
+                        padding:
+                        const EdgeInsets.symmetric(vertical: 10),
+                        child: Text('Upload Photos',
+                            style:GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w400)))),
+                    uploadWidget(context: context, onTap: () {
+                      uploadFileWidget(context: context,
+                          fromCamera: (){
+                            fromCamera(context);
+                          },
+                          fromGallery: (){
+                        fromGallery(context);});
+                    }, onRemove: (index) {
+                      setState(() =>
+                          croppedImagesList!.removeAt(index));
+                    }, croppedImagesList: croppedImagesList),
+                    SizedBox(height: 30.h),
+                    GestureDetector(
+                      onTap: () {
+
+                        if (formkey.currentState!.validate()) {
+                          if (typeOfVisitor == null) {
+                            snackBar(
+                                context,
+                                'Kindly select type of visitors',
+                                Icons.done,
+                                AppTheme.redColor);
+                          }
+                          else
+                          // if (residenceController.text == '' &&
+                          //     widget.isTypeResidence == false) {
+                          //   snackBar(
+                          //       context,
+                          //       'Kindly select residence name',
+                          //       Icons.done,
+                          //       AppTheme.redColor);
+                          // } else
+                            if (visitorFrequency == null) {
+                            snackBar(
+                                context,
+                                'Kindly select visitors frequency',
+                                Icons.done,
+                                AppTheme.redColor);
+                          }  else if (validTill == null) {
+                            snackBar(
+                                context,
+                                'Kindly select valid time',
+                                Icons.done,
+                                AppTheme.redColor);
+                          }
+                          else if (croppedImagesList!.isEmpty) {
+                            snackBar(
+                                context,
+                                'Kindly upload visitors picture',
+                                Icons.done,
+                                AppTheme.redColor);
+                          }
+                          else {
+                            documentFiles.clear();
+                            for (int i = 0; i < croppedImagesList!.length; i++) {
+                              documentFiles.add(File(croppedImagesList![i].path));
+                            }
+                            addUserToList();
+                            context
+                                .read<CreateVisitorsCubit>()
+                                .createVisitors(
+                                visitorsType:
+                                typeOfVisitor.toString(),
+                                visitingFrequency:
+                                visitorFrequency.toString(),
+                                noOFVisitors: visitorsCount.text.toString(),
+                                date: date!.text.toString(),
+                                vehicleNumber:
+                                vehicleNumber!.text.toString(),
+                                purposeOfVisit:
+                                purposeController!.text.toString(),
+                                validTill: validTill.toString(),
+                                time: time!.text.toString(),
+                                files: documentFiles,
+                                visitors: usersList,
+                                userId: residenceId.toString()
+                            );
+                          }
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Container(
+                          width: double.infinity,
+                          height: 50.h,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: AppTheme.primaryColor),
+                          child: Center(
+                            child: Text('Submit ',
+                              style:GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

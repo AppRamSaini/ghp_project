@@ -11,6 +11,26 @@ import 'package:vibration/vibration.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
+
+
+
+
+Future<void> setupLocalNotifications() async {
+  const AndroidInitializationSettings androidInitSettings =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  final InitializationSettings initSettings = InitializationSettings(
+    android: androidInitSettings,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initSettings);
+}
+
+
+
+
+
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 FirebaseAnalyticsObserver analyticsObserver =
@@ -179,4 +199,9 @@ class FirebaseNotificationService {
       print("API Error: $e");
     }
   }
+
+
+
+
+
 }

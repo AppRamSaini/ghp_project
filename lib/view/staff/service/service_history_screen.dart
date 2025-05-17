@@ -130,268 +130,266 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
         }
       },
       child: Scaffold(
-          appBar: AppBar(
-              title: Text('Service History',
-                  style: GoogleFonts.nunitoSans(
-                      textStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w600)))),
-          body: RefreshIndicator(
-            onRefresh: () async {
-              selectedFilter = 0;
-              endDate = null;
-              startDate = null;
-              setState(() {});
-              _serviceRequestHistoryCubit.serviceRequestHistory(
-                  startDate: null,
-                  filter: types[selectedFilter].toString(),
-                  endDate: null);
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                  child: Row(
-                    children: List.generate(
-                        filterList.length,
+        appBar: AppBar(
+          title: Text(
+            'Service History',
+            style: GoogleFonts.nunitoSans(
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            selectedFilter = 0;
+            endDate = null;
+            startDate = null;
+            setState(() {});
+            _serviceRequestHistoryCubit.serviceRequestHistory(
+              startDate: null,
+              filter: types[selectedFilter].toString(),
+              endDate: null,
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                child: Row(
+                  children: List.generate(
+                    filterList.length,
                         (index) => Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedFilter = index;
-
-                                    _serviceRequestHistoryCubit
-                                        .serviceRequestHistory(
-                                            filter: types[selectedFilter]
-                                                .toString(),
-                                            startDate: startDate,
-                                            endDate: endDate);
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 12),
-                                  margin: EdgeInsets.all(5.w),
-                                  decoration: BoxDecoration(
-                                      color: selectedFilter == index
-                                          ? AppTheme.primaryColor
-                                          : Colors.transparent,
-                                      border: Border.all(
-                                          color: selectedFilter == index
-                                              ? AppTheme.primaryColor
-                                              : const Color(0xFFD9D9D9)),
-                                      borderRadius: BorderRadius.circular(6.r)),
-                                  child: Center(
-                                      child: Text(
-                                    filterList[index],
-                                    style: GoogleFonts.poppins(
-                                      color: selectedFilter == index
-                                          ? Colors.white
-                                          : const Color.fromARGB(
-                                              255, 102, 101, 101),
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  )),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedFilter = index;
+                            _serviceRequestHistoryCubit.serviceRequestHistory(
+                              filter: types[selectedFilter].toString(),
+                              startDate: startDate,
+                              endDate: endDate,
+                            );
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          margin: EdgeInsets.all(5.w),
+                          decoration: BoxDecoration(
+                            color: selectedFilter == index
+                                ? AppTheme.primaryColor
+                                : Colors.transparent,
+                            border: Border.all(
+                              color: selectedFilter == index
+                                  ? AppTheme.primaryColor
+                                  : const Color(0xFFD9D9D9),
+                            ),
+                            borderRadius: BorderRadius.circular(6.r),
+                          ),
+                          child: Center(
+                            child: Text(
+                              filterList[index],
+                              style: GoogleFonts.poppins(
+                                color: selectedFilter == index
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 102, 101, 101),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          startingDate(context);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(left: 5, bottom: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(color: const Color(0xFFD9D9D9)),
+                            borderRadius: BorderRadius.circular(6.r),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10.0.w, vertical: 10),
+                            child: Row(
+                              children: [
+                                Image.asset('assets/images/calendar2.png',
+                                    height: 22.h),
+                                SizedBox(width: 10.w),
+                                Text(
+                                  startDate == null
+                                      ? 'yy-mm-dd'
+                                      : startDate.toString(),
+                                  style: GoogleFonts.poppins(
+                                    color: const Color.fromARGB(255, 102, 101, 101),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
-                              ),
-                            )),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            startingDate(context);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(left: 5, bottom: 5),
-                            decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border:
-                                    Border.all(color: const Color(0xFFD9D9D9)),
-                                borderRadius: BorderRadius.circular(6.r)),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.0.w, vertical: 11),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Image.asset('assets/images/calendar2.png',
-                                      height: 22.h),
-                                  SizedBox(width: 10.w),
-                                  Center(
-                                      child: Text(
-                                    startDate == null
-                                        ? 'yy-mm-dd'
-                                        : startDate.toString(),
-                                    style: GoogleFonts.poppins(
-                                      color: const Color.fromARGB(
-                                          255, 102, 101, 101),
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  )),
-                                ],
-                              ),
+                              ],
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(width: 20.w),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            if (startDate != null) {
-                              endingDate(context);
-                            } else {
-                              snackBar(
-                                  context,
-                                  'Please select starting date first',
-                                  Icons.info_outline,
-                                  AppTheme.redColor);
-                            }
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(left: 5, bottom: 5),
-                            decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border:
-                                    Border.all(color: const Color(0xFFD9D9D9)),
-                                borderRadius: BorderRadius.circular(6.r)),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.0.w, vertical: 11),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Image.asset('assets/images/calendar2.png',
-                                      height: 22.h),
-                                  SizedBox(width: 10.w),
-                                  Center(
-                                      child: Text(
-                                    endDate == null
-                                        ? 'yy-mm-dd'
-                                        : endDate.toString(),
-                                    style: GoogleFonts.poppins(
-                                      color: const Color.fromARGB(
-                                          255, 102, 101, 101),
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  )),
-                                ],
-                              ),
+                    ),
+                    SizedBox(width: 20.w),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          if (startDate != null) {
+                            endingDate(context);
+                          } else {
+                            snackBar(
+                                context,
+                                'Please select starting date first',
+                                Icons.info_outline,
+                                AppTheme.redColor);
+                          }
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(left: 5, bottom: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(color: const Color(0xFFD9D9D9)),
+                            borderRadius: BorderRadius.circular(6.r),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10.0.w, vertical: 10),
+                            child: Row(
+                              children: [
+                                Image.asset('assets/images/calendar2.png',
+                                    height: 22.h),
+                                SizedBox(width: 10.w),
+                                Text(
+                                  endDate == null ? 'yy-mm-dd' : endDate.toString(),
+                                  style: GoogleFonts.poppins(
+                                    color: const Color.fromARGB(255, 102, 101, 101),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 5.h),
-                BlocBuilder<ServiceRequestHistoryCubit,
+              ),
+              SizedBox(height: 5.h),
+              Expanded(
+                child: BlocBuilder<ServiceRequestHistoryCubit,
                     ServiceRequestHistoryState>(
                   bloc: _serviceRequestHistoryCubit,
                   builder: (context, state) {
                     if (state is ServiceRequestHistoryLoaded) {
-                      return Expanded(
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: state.serviceHistory.length + 1,
-                          itemBuilder: (context, index) {
-                            if (index == state.serviceHistory.length) {
-                              return state is ServiceRequestHistoryLoadingMore
-                                  ? const Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Center(
-                                          child: CircularProgressIndicator()))
-                                  : const SizedBox.shrink();
-                            }
-                            List<ServiceHistoryModel> requestList =
-                                state.serviceHistory;
+                      return ListView.builder(
+                        controller: _scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: state.serviceHistory.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == state.serviceHistory.length) {
+                            return state is ServiceRequestHistoryLoadingMore
+                                ? const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child:
+                              Center(child: CircularProgressIndicator()),
+                            )
+                                : const SizedBox.shrink();
+                          }
 
-                            String status =
-                                requestList[index].status!.toString();
+                          List<ServiceHistoryModel> requestList =
+                              state.serviceHistory;
+                          String status = requestList[index].status!.toString();
 
-                            dateTypes() {
-                              if (status == 'assigned') {
-                                DateTime assignedDate =
-                                    requestList[index].createdAt!;
-                                String day = assignedDate.day.toString();
-                                return Text(
-                                    "Assigned At: $day ${monthYear(assignedDate)}",
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 14));
-                              } else if (status == 'in_progress') {
-                                DateTime startDate =
-                                    requestList[index].startAt!;
-                                String day = startDate.day.toString();
-                                return Text(
-                                    "Start At: $day ${monthYear(startDate)}",
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 14));
-                              } else {
-                                DateTime completeDate =
-                                    requestList[index].resolvedOrCancelledAt!;
-                                String day = completeDate.day.toString();
-                                return Text(
-                                    "Complete At: $day ${monthYear(completeDate)}",
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 14));
-                              }
-                            }
-
-                            getStatus() {
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                    color: status == 'assigned'
-                                        ? Colors.blue.withOpacity(0.2)
-                                        : status == 'in_progress'
-                                            ? Colors.deepPurpleAccent
-                                                .withOpacity(0.2)
-                                            : Colors.green.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(4)),
-                                child: Text(
-                                    capitalizeWords(status.toString())
-                                        .replaceFirst("_", " "),
-                                    style: TextStyle(
-                                        color: status == 'assigned'
-                                            ? Colors.blue
-                                            : status == 'in_progress'
-                                                ? Colors.deepPurpleAccent
-                                                : Colors.green,
-                                        fontSize: 14)),
+                          Widget dateTypes() {
+                            if (status == 'assigned') {
+                              DateTime assignedDate = requestList[index].createdAt!;
+                              return Text(
+                                "Assigned At: ${assignedDate.day} ${monthYear(assignedDate)}",
+                                style: const TextStyle(
+                                    color: Colors.black87, fontSize: 12),
+                              );
+                            } else if (status == 'in_progress') {
+                              DateTime startDate = requestList[index].startAt!;
+                              return Text(
+                                "Start At: ${startDate.day} ${monthYear(startDate)}",
+                                style: const TextStyle(
+                                    color: Colors.black87, fontSize: 12),
+                              );
+                            } else {
+                              DateTime completeDate =
+                              requestList[index].resolvedOrCancelledAt!;
+                              return Text(
+                                "Complete At: ${completeDate.day} ${monthYear(completeDate)}",
+                                style: const TextStyle(
+                                    color: Colors.black87, fontSize: 12),
                               );
                             }
+                          }
 
-                            return Padding(
+                          Widget getStatus() {
+                            return Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.r),
-                                    border: Border.all(
-                                        color: const Color(0xFFE5E5E5))),
-                                child: ListTile(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
+                              decoration: BoxDecoration(
+                                color: status == 'assigned'
+                                    ? Colors.blue.withOpacity(0.2)
+                                    : status == 'in_progress'
+                                    ? Colors.deepPurpleAccent.withOpacity(0.2)
+                                    : Colors.green.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                capitalizeWords(status).replaceFirst("_", " "),
+                                style: TextStyle(
+                                  color: status == 'assigned'
+                                      ? Colors.blue
+                                      : status == 'in_progress'
+                                      ? Colors.deepPurpleAccent
+                                      : Colors.green,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            );
+                          }
+
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.r),
+                                border: Border.all(color: const Color(0xFFE5E5E5)),
+                              ),
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
                                     dense: true,
                                     leading: Container(
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10.r),
-                                          color: const Color(0xFFF2F1FE)),
+                                        borderRadius: BorderRadius.circular(10.r),
+                                        color: const Color(0xFFF2F1FE),
+                                      ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(12.0),
                                         child: Image.asset(
@@ -401,159 +399,83 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                                         ),
                                       ),
                                     ),
-                                    title: Row(
+                                    title: Text(
+                                      requestList[index].area.toString(),
+                                      style: GoogleFonts.nunitoSans(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    subtitle: dateTypes(),
+                                    trailing: GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (builder) => ServiceDetailScreen(
+                                            data: requestList[index],
+                                          ),
+                                        ));
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 18,
+                                        backgroundColor:
+                                        Colors.grey.withOpacity(0.1),
+                                        child: const Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          size: 16,
+                                          color: Colors.black45,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    height: 0.5,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Flexible(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                  requestList[index]
-                                                      .area
-                                                      .toString(),
-                                                  style: GoogleFonts.nunitoSans(
-                                                      color: Colors.black,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600)),
-                                              Text(
-                                                "Complaint By : ${requestList[index].member!.name.toString()}",
-                                                style: GoogleFonts.nunitoSans(
-                                                    color: Colors.pink,
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                            ],
+                                        Text(
+                                          "Complaint By : ${requestList[index].member!.name}",
+                                          style: GoogleFonts.nunitoSans(
+                                            color: Colors.pink,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (builder) =>
-                                                        ServiceDetailScreen(
-                                                            data: state
-                                                                    .serviceHistory[
-                                                                index])));
-                                          },
-                                          child: CircleAvatar(
-                                              radius: 18,
-                                              backgroundColor:
-                                                  Colors.grey.withOpacity(0.1),
-                                              child: const Icon(
-                                                  Icons
-                                                      .arrow_forward_ios_rounded,
-                                                  size: 16,
-                                                  color: Colors.black45)),
-                                        )
-                                        /*Column(
-                                              mainAxisSize:
-                                                  MainAxisSize.min,
-                                              children: [
-                                                CircleAvatar(
-                                                    radius: 16,
-                                                    child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(1),
-                                                        child: CircleAvatar(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .white,
-                                                            child: Text(
-                                                                day
-                                                                    .toString(),
-                                                                style: GoogleFonts.nunitoSans(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontSize:
-                                                                        15,
-                                                                    fontWeight:
-                                                                        FontWeight.bold))))),
-                                                Text(
-                                                    monthYear(
-                                                        assignedDate),
-                                                    style: GoogleFonts
-                                                        .nunitoSans(
-                                                            color: Colors
-                                                                .black,
-                                                            fontSize: 12))
-                                              ],
-                                            )*/
-                                      ],
-                                    ),
-                                    subtitle: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        dateTypes(),
                                         getStatus(),
                                       ],
-                                    )),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       );
                     } else if (state is ServiceRequestHistoryLoading) {
-                      return SizedBox(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 5,
-                            ),
-                            const CircularProgressIndicator(),
-                          ],
-                        ),
-                      );
-                    }
-                    if (state is ServiceRequestHistoryFailed) {
-                      return SizedBox(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                                height: MediaQuery.of(context).size.height / 5),
-                            Center(
-                                child: Text(state.errorMsg.toString(),
-                                    style: const TextStyle(
-                                        color: Colors.deepPurpleAccent)))
-                          ],
+                      return Center(child: CircularProgressIndicator());
+                    } else if (state is ServiceRequestHistoryFailed) {
+                      return Center(
+                        child: Text(
+                          state.errorMsg.toString(),
+                          style: const TextStyle(color: Colors.deepPurpleAccent),
                         ),
                       );
                     } else {
-                      return SizedBox(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                                height: MediaQuery.of(context).size.height / 5),
-                            const Center(
-                                child: Text(
-                              'Internet connection error',
-                              style: TextStyle(color: Colors.red),
-                            )),
-                          ],
-                        ),
-                      );
+                      return const SizedBox.shrink();
                     }
                   },
                 ),
-              ],
-            ),
-          )),
+              ),
+            ],
+          ),
+        ),
+      )
+      ,
     );
   }
 

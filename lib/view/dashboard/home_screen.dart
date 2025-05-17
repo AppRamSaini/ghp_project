@@ -6,15 +6,8 @@ import 'package:ghp_society_management/model/user_profile_model.dart';
 import 'package:ghp_society_management/view/dashboard/view_all_features.dart';
 import 'package:ghp_society_management/view/resident/bills/my_bills.dart';
 import 'package:ghp_society_management/view/resident/complaint/comlaint_page.dart';
-import 'package:ghp_society_management/view/resident/event/event_screen.dart';
 import 'package:ghp_society_management/view/resident/member/members_screen.dart';
-import 'package:ghp_society_management/view/resident/notice_board/notice_board_screen.dart';
-import 'package:ghp_society_management/view/resident/polls/poll_screen.dart';
-import 'package:ghp_society_management/view/resident/refer_property/refer_property_screen.dart';
-import 'package:ghp_society_management/view/resident/rent/property_screens.dart';
-import 'package:ghp_society_management/view/resident/service_provider/service_provider_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
-import 'package:ghp_society_management/view/resident/sos/sos_screen.dart';
 import 'package:ghp_society_management/view/resident/visitors/visitor_screen.dart';
 import 'package:ghp_society_management/view/society/select_society_screen.dart';
 import '../resident/parcel_flow/parcel_listing.dart';
@@ -150,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.black87,
-                                                fontSize: 15.sp,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w600,
                                                 overflow:
                                                     TextOverflow.ellipsis))),
@@ -161,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.black87,
-                                                fontSize: 10.sp,
+                                                fontSize: 10,
                                                 fontWeight: FontWeight.w500)))
                                   ],
                                 ),
@@ -202,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.black87,
-                                                fontSize: 15.sp,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w600,
                                                 overflow:
                                                     TextOverflow.ellipsis))),
@@ -211,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.black87,
-                                                fontSize: 11.sp,
+                                                fontSize: 10,
                                                 fontWeight: FontWeight.w500)))
                                   ],
                                 ),
@@ -252,7 +245,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (_) => ViewAllFeatures()));
                     },
-                    child: Padding(
+                    child:
+
+                    Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Container(
                         decoration: BoxDecoration(
@@ -260,14 +255,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             border: Border.all(color: AppTheme.blueColor)),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 12.w, vertical: 5.h),
+                              horizontal: 12.w, vertical: 5),
                           child: Center(
                             child: Text(
                               'View All',
                               style: GoogleFonts.nunitoSans(
                                 textStyle: TextStyle(
                                   color: AppTheme.blueColor,
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -320,7 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: GoogleFonts.nunitoSans(
                               textStyle: TextStyle(
                                 color: AppTheme.backgroundColor,
-                                fontSize: 16.sp,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -350,7 +345,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       widget.onChanged(1);
                     },
-                    child: Padding(
+                    child:
+
+
+                    Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Container(
                         decoration: BoxDecoration(
@@ -358,14 +356,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             border: Border.all(color: AppTheme.blueColor)),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 12.w, vertical: 5.h),
+                              horizontal: 12.w, vertical: 5),
                           child: Center(
                             child: Text(
                               'View All',
                               style: GoogleFonts.nunitoSans(
                                 textStyle: TextStyle(
                                   color: AppTheme.blueColor,
-                                  fontSize: 14.sp,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),

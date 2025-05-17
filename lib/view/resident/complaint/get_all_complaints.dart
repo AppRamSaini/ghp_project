@@ -234,8 +234,8 @@ class GetAllComplaintScreenState extends State<GetAllComplaintScreen> {
           }
         }),
         leading: Padding(
-            padding: const EdgeInsets.only(left: 8),
-            child: Image.asset(ImageAssets.noticeBoardImage, height: 40.h)),
+            padding: const EdgeInsets.only(left: 5),
+            child: Image.asset(ImageAssets.noticeBoardImage, height: 35.h)),
         trailing: lst[index].status == 'requested'
             ? GestureDetector(
                 onTap: () {
@@ -283,7 +283,7 @@ class GetAllComplaintScreenState extends State<GetAllComplaintScreen> {
                                 : Colors.black,
                             fontSize: 10)))),
         tilePadding: EdgeInsets.zero,
-        subtitle: Text(date().toString()),
+        subtitle: Text(date().toString(),style: TextStyle(fontSize: 12),),
         title: Padding(
             padding: const EdgeInsets.only(right: 8),
             child: Text(lst[index].area.toString(),

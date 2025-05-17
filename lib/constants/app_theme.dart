@@ -6,7 +6,7 @@ class AppTheme {
   static var latoLight = "Lato_Light";
   static var latoRegular = "Lato_Regular";
 
-  static var primaryColor = Color(0XFF8077F5);
+  static var primaryColor = Color(0xFF785CB7);
   static var white = Color(0XFFFFFFFF);
   static const  splashColor = Color(0xFFEBE5FB);
 

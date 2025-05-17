@@ -37,8 +37,8 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
   @override
   void initState() {
     super.initState();
-    documentName.text = widget.incomingRequestData.subject.toString();
-    description.text = widget.incomingRequestData.description.toString();
+    documentName.text = widget.incomingRequestData.subject??'Upload documents';
+    description.text = widget.incomingRequestData.description??'Upload documents description';
     documentsType.text = widget.incomingRequestData.fileType != null
         ? widget.incomingRequestData.fileType.toString()
         : 'docs';
@@ -70,7 +70,14 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppTheme.backgroundColor,
+        appBar: AppBar(title: Text('Upload Document',
+            style: GoogleFonts.nunitoSans(
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500
+              )
+            ))),
         bottomNavigationBar: Container(
           color: Colors.white,
           child: GestureDetector(
@@ -89,7 +96,7 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
               padding: const EdgeInsets.all(12.0),
               child: Container(
                 width: double.infinity,
-                height: 50.h,
+                height: 50,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     color: AppTheme.primaryColor),
@@ -107,360 +114,322 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
             ),
           ),
         ),
-        body: SafeArea(
-            child: Form(
-              key: formkey,
+        body: Form(
+          key: formkey,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20.h),
-                  Row(children: [
-                    SizedBox(width: 10.w),
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Icon(Icons.arrow_back, color: Colors.white)),
-                    SizedBox(width: 10.w),
-                    Expanded(
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Upload Document',
-                                  style: GoogleFonts.nunitoSans(
-                                      textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20.sp,
-                                          fontWeight: FontWeight.w600)))
-                            ])),
-                    SizedBox(width: 10.w)
-                  ]),
-                  SizedBox(height: 20.h),
-                  Expanded(
-                    child: Container(
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
+                  SizedBox(height: 10.h),
+                  Text('Document Name',
+
+                      style: GoogleFonts.nunitoSans(
+                        textStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )),
+                  SizedBox(height: 10.h),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: documentName,
+                      style: GoogleFonts.nunitoSans(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      keyboardType: TextInputType.text,
+                      validator: (text) {
+                        if (text == null || text.isEmpty) {
+                          return 'Please enter document name';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 12.h, horizontal: 10.0),
+                        filled: true,
+                        hintText: "Eg.  A-101",
+                        hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400),
+                        fillColor: AppTheme.greyColor,
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
                           ),
                         ),
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 10.h),
-                                Text('Document Name',
-                                    style: GoogleFonts.nunitoSans(
-                                      textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    )),
-                                SizedBox(height: 10.h),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: TextFormField(
-                                    readOnly: true,
-                                    controller: documentName,
-                                    style: GoogleFonts.nunitoSans(
-                                      color: Colors.black,
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    keyboardType: TextInputType.text,
-                                    validator: (text) {
-                                      if (text == null || text.isEmpty) {
-                                        return 'Please enter document name';
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 12.h, horizontal: 10.0),
-                                      filled: true,
-                                      hintText: "Eg.  A-101",
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w400),
-                                      fillColor: AppTheme.greyColor,
-                                      errorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 10.h),
-                                Text('Document Type',
-                                    style: GoogleFonts.nunitoSans(
-                                      textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    )),
-                                SizedBox(height: 10.h),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: TextFormField(
-                                    readOnly: true,
-                                    controller: documentsType,
-                                    style: GoogleFonts.nunitoSans(
-                                      color: Colors.black,
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    keyboardType: TextInputType.text,
-                                    validator: (text) {
-                                      if (text == null || text.isEmpty) {
-                                        return 'Please enter document name';
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 12.h, horizontal: 10.0),
-                                      filled: true,
-                                      hintText: "Eg.  A-101",
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w400),
-                                      fillColor: AppTheme.greyColor,
-                                      errorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 10.h),
-                                Text('Description',
-                                    style: GoogleFonts.nunitoSans(
-                                      textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    )),
-                                SizedBox(
-                                  height: 10.h,
-                                ),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: TextFormField(
-                                    readOnly: true,
-                                    controller: description,
-                                    maxLines: 5,
-                                    style: GoogleFonts.nunitoSans(
-                                      color: Colors.black,
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    keyboardType: TextInputType.multiline,
-                                    validator: (text) {
-                                      if (text == null || text.isEmpty) {
-                                        return 'Please enter description';
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      hintText: 'Write description here..',
-                                      filled: true,
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w400),
-                                      fillColor: AppTheme.greyColor,
-                                      errorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10.h,
-                                ),
-                                Text('Documents',
-                                    style: GoogleFonts.nunitoSans(
-                                      textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    )),
-                                Text('Upload related attachment files',
-                                    style: GoogleFonts.nunitoSans(
-                                      textStyle: TextStyle(
-                                        color: AppTheme.primaryColor,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    )),
-                                SizedBox(height: 10.h),
-                                Row(children: [
-                                  GestureDetector(
-                                    onTap: () async {
-                                      showBottomSheet(context);
-                                    },
-                                    child: DottedBorder(
-                                      borderType: BorderType.RRect,
-                                      radius: const Radius.circular(12),
-                                      dashPattern: const [8, 2],
-                                      color: AppTheme.primaryColor,
-                                      strokeWidth: 1,
-                                      child: SizedBox(
-                                        width: 100.w,
-                                        height: 115.h,
-                                        child: Icon(
-                                          Icons.add,
-                                          color: AppTheme.primaryColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                      child: SizedBox(
-                                        width: MediaQuery.of(context).size.width,
-                                        height: 120.h,
-                                        child: ListView.builder(
-                                            shrinkWrap: true,
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount: documentFiles.length,
-                                            itemBuilder: (context, index) {
-                                              return Padding(
-                                                padding: EdgeInsets.only(left: 8.w),
-                                                child: Stack(
-                                                  alignment: Alignment.topRight,
-                                                  children: [
-                                                    Container(
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                            BorderRadius.circular(
-                                                                10),
-                                                            border: Border.all(
-                                                                color: AppTheme
-                                                                    .primaryColor)),
-                                                        width: 100.w,
-                                                        height: 120.h,
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                          BorderRadius.circular(10),
-                                                          child: (documentFiles[index]
-                                                              .path
-                                                              .contains('.pdf'))
-                                                              ? SfPdfViewer.file(
-                                                              documentFiles[index])
-                                                              : Image.file(
-                                                              documentFiles[index],
-                                                              fit: BoxFit.cover),
-                                                        )),
-                                                    Padding(
-                                                      padding:
-                                                      const EdgeInsets.all(8.0),
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          documentFiles.removeAt(index);
-                                                          setState(() {});
-                                                        },
-                                                        child: Container(
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                              BorderRadius.circular(
-                                                                  1000),
-                                                              color:
-                                                              const Color.fromARGB(
-                                                                  255,
-                                                                  143,
-                                                                  40,
-                                                                  32)),
-                                                          child: const Icon(
-                                                            CupertinoIcons.minus,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            }),
-                                      ))
-                                ]),
-                              ],
-                            ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
                           ),
-                        )),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
+                  SizedBox(height: 10.h),
+                  Text('Document Type',
+                      style: GoogleFonts.nunitoSans(
+                        textStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )),
+                  SizedBox(height: 10.h),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: documentsType,
+                      style: GoogleFonts.nunitoSans(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      keyboardType: TextInputType.text,
+                      validator: (text) {
+                        if (text == null || text.isEmpty) {
+                          return 'Please enter document name';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 12.h, horizontal: 10.0),
+                        filled: true,
+                        hintText: "Eg.  A-101",
+                        hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400),
+                        fillColor: AppTheme.greyColor,
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Text('Description',
+                      style: GoogleFonts.nunitoSans(
+                        textStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: description,
+                      maxLines: 5,
+                      style: GoogleFonts.nunitoSans(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      keyboardType: TextInputType.multiline,
+                      validator: (text) {
+                        if (text == null || text.isEmpty) {
+                          return 'Please enter description';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Write description here..',
+                        filled: true,
+                        hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400),
+                        fillColor: AppTheme.greyColor,
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Text('Documents',
+                      style: GoogleFonts.nunitoSans(
+                        textStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )),
+                  Text('Upload related attachment files',
+                      style: GoogleFonts.nunitoSans(
+                        textStyle: TextStyle(
+                          color: AppTheme.primaryColor,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )),
+                  SizedBox(height: 10.h),
+                  Row(children: [
+                    GestureDetector(
+                      onTap: () async {
+                        showBottomSheet(context);
+                      },
+                      child: DottedBorder(
+                        borderType: BorderType.RRect,
+                        radius: const Radius.circular(12),
+                        dashPattern: const [8, 2],
+                        color: AppTheme.primaryColor,
+                        strokeWidth: 1,
+                        child: SizedBox(
+                          width: 100.w,
+                          height: 115.h,
+                          child: Icon(
+                            Icons.add,
+                            color: AppTheme.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: 120.h,
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: documentFiles.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.only(left: 8.w),
+                                  child: Stack(
+                                    alignment: Alignment.topRight,
+                                    children: [
+                                      Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  10),
+                                              border: Border.all(
+                                                  color: AppTheme
+                                                      .primaryColor)),
+                                          width: 100.w,
+                                          height: 120.h,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                            child: (documentFiles[index]
+                                                .path
+                                                .contains('.pdf'))
+                                                ? SfPdfViewer.file(
+                                                documentFiles[index])
+                                                : Image.file(
+                                                documentFiles[index],
+                                                fit: BoxFit.cover),
+                                          )),
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.all(8.0),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            documentFiles.removeAt(index);
+                                            setState(() {});
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    1000),
+                                                color:
+                                                const Color.fromARGB(
+                                                    255,
+                                                    143,
+                                                    40,
+                                                    32)),
+                                            child: const Icon(
+                                              CupertinoIcons.minus,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        ))
+                  ]),
                 ],
               ),
-            )),
+            ),
+          ),
+        ),
       ),
     );
   }

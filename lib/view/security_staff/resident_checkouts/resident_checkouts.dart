@@ -68,64 +68,39 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
             onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const ResidentsListPage())),
-            backgroundColor: AppTheme.blueColor,
+                MaterialPageRoute(builder: (_) => const ResidentsListPage
+                  ())),
+            backgroundColor: AppTheme.primaryColor,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             child: const Icon(Icons.person, color: Colors.white)),
-        appBar: AppBar(
-          title: searchBarOpen
-              ? const SizedBox()
-              : Text('Resident Checkouts History',
-                  style: GoogleFonts.nunitoSans(
-                      textStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w600))),
-          actions: [
-            SearchBarAnimation(
-              searchBoxColour: Colors.white,
-              buttonColour: AppTheme.primaryLiteColor,
-              searchBoxWidth:
-                  MediaQuery.of(context).size.width * 0.95, // Fix Overflow
-              isSearchBoxOnRightSide: false,
-              textEditingController: textController,
-              isOriginalAnimation: true,
-              enableKeyboardFocus: true,
-              enteredTextStyle: GoogleFonts.nunitoSans(
-                  textStyle: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600)),
-              onExpansionComplete: () {
-                setState(() {
-                  searchBarOpen = true;
-                });
-              },
-              onCollapseComplete: () {
-                setState(() {
-                  searchBarOpen = false;
-                  textController.clear();
-                  _staffSideResidentCheckoutsHistoryCubit.searchQueryData('');
-                });
-              },
-              onPressButton: (isSearchBarOpens) {
-                setState(() {
-                  searchBarOpen = true;
-                });
-              },
-              onChanged: (value) {
-                _staffSideResidentCheckoutsHistoryCubit.searchQueryData(value);
-              },
-              trailingWidget:
-                  const Icon(Icons.search, size: 20, color: Colors.white),
-              secondaryButtonWidget:
-                  const Icon(Icons.close, size: 20, color: Colors.white),
-              buttonWidget:
-                  const Icon(Icons.search, size: 20, color: Colors.white),
-            ),
-          ],
-        ),
+        appBar: customAppbar(context: context,searchBarOpen: searchBarOpen,
+            title: "Resident Checkouts History", textController: textController,
+          onExpansionComplete: () {
+            setState(() {
+              searchBarOpen = true;
+            });
+          },
+          onCollapseComplete: () {
+            setState(() {
+              searchBarOpen = false;
+              textController.clear();
+              _staffSideResidentCheckoutsHistoryCubit.searchQueryData('');
+            });
+          },
+          onPressButton: (isSearchBarOpens) {
+            setState(() {
+              searchBarOpen = true;
+            });
+          },
+          onChanged: (value) {
+            _staffSideResidentCheckoutsHistoryCubit.searchQueryData(value);
+          },)
+
+
+
+
+        ,
         body: RefreshIndicator(
           onRefresh: onRefresh,
           child: BlocBuilder<StaffSideResidentCheckoutsHistoryCubit,

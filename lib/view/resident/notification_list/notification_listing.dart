@@ -58,165 +58,137 @@ class _NotificationListingState extends State<NotificationListing> {
 
   @override
   Widget build(BuildContext context) {
-    print("-----------${widget.index}");
     return WillPopScope(
       onWillPop: onBack,
       child: Scaffold(
-        backgroundColor: AppTheme.backgroundColor,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-                  child: Row(children: [
-                    GestureDetector(
-                        onTap: () => onBack(),
-                        child:
-                            const Icon(Icons.arrow_back, color: Colors.white)),
-                    const SizedBox(width: 10),
-                    const Text('Notifications',
+        appBar: AppBar(title: Text('Notifications',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600))),
+        body: RefreshIndicator(
+          onRefresh: onRefresh,
+          child: BlocBuilder<NotificationListingCubit,
+              NotificationListingState>(
+            bloc: _notificationListingCubit,
+            builder: (context, state) {
+              if (state is NotificationListingLoading &&
+                  _notificationListingCubit
+                      .notificationList.isEmpty) {
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
+              }
+
+              if (state is NotificationListingFailed) {
+                return Center(
+                    child: Text(state.errorMsg,
+                        style: const TextStyle(
+                            color: Colors.deepPurpleAccent)));
+              }
+
+              if (state is NotificationListingEmpty) {
+                return const Center(
+                    child: Text("No notifications found",
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600))
-                  ])),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20))),
-                  child: RefreshIndicator(
-                    onRefresh: onRefresh,
-                    child: BlocBuilder<NotificationListingCubit,
-                        NotificationListingState>(
-                      bloc: _notificationListingCubit,
-                      builder: (context, state) {
-                        if (state is NotificationListingLoading &&
-                            _notificationListingCubit
-                                .notificationList.isEmpty) {
-                          return const Center(
-                              child: CircularProgressIndicator.adaptive());
-                        }
+                            color: Colors.deepPurpleAccent)));
+              }
+              if (state is NotificationListingInternetError) {
+                return Center(
+                    child: Text(state.errorMsg.toString(),
+                        style: const TextStyle(color: Colors.red)));
+              }
 
-                        if (state is NotificationListingFailed) {
-                          return Center(
-                              child: Text(state.errorMsg,
-                                  style: const TextStyle(
-                                      color: Colors.deepPurpleAccent)));
-                        }
+              if (state is NotificationListingLoaded) {
+                _notificationListingCubit.readNotifications();
+              }
 
-                        if (state is NotificationListingEmpty) {
-                          return const Center(
-                              child: Text("No notifications found",
-                                  style: TextStyle(
-                                      color: Colors.deepPurpleAccent)));
-                        }
-                        if (state is NotificationListingInternetError) {
-                          return Center(
-                              child: Text(state.errorMsg.toString(),
-                                  style: const TextStyle(color: Colors.red)));
-                        }
+              var documentsList =
+                  _notificationListingCubit.notificationList;
+              return ListView.builder(
+                controller: _scrollController,
+                itemCount: documentsList.length + 1,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  if (index == documentsList.length) {
+                    return _notificationListingCubit.state
+                            is NotificationListingLoadingMore
+                        ? const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(
+                                child: CircularProgressIndicator()))
+                        : const SizedBox.shrink();
+                  }
 
-                        if (state is NotificationListingLoaded) {
-                          _notificationListingCubit.readNotifications();
-                        }
+                  String formattedDate =
+                      DateFormat('dd MMM yyyy hh:mm a')
+                          .format(documentsList[index].createdAt!);
 
-                        var documentsList =
-                            _notificationListingCubit.notificationList;
-                        return ListView.builder(
-                          controller: _scrollController,
-                          itemCount: documentsList.length + 1,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            if (index == documentsList.length) {
-                              return _notificationListingCubit.state
-                                      is NotificationListingLoadingMore
-                                  ? const Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Center(
-                                          child: CircularProgressIndicator()))
-                                  : const SizedBox.shrink();
-                            }
-
-                            String formattedDate =
-                                DateFormat('dd MMM yyyy hh:mm a')
-                                    .format(documentsList[index].createdAt!);
-
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border:
-                                        Border.all(color: Colors.grey[300]!)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                  return Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border:
+                              Border.all(color: Colors.grey[300]!)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+                            Row(children: [
+                              CircleAvatar(
+                                  child: Image.asset(
+                                      "assets/images/bell.png",
+                                      color: Colors.deepPurpleAccent,
+                                      height: 22.h)),
+                              SizedBox(width: 10.w),
+                              Expanded(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(children: [
-                                        CircleAvatar(
-                                            child: Image.asset(
-                                                "assets/images/bell.png",
-                                                color: Colors.deepPurpleAccent,
-                                                height: 22.h)),
-                                        SizedBox(width: 10.w),
-                                        Expanded(
-                                            child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                              Text(
-                                                  documentsList[index]
-                                                      .notification!
-                                                      .title!
-                                                      .toString(),
-                                                  style: GoogleFonts.nunitoSans(
-                                                      textStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 14.sp,
-                                                          fontWeight: FontWeight
-                                                              .w500))),
-                                              Text(formattedDate,
-                                                  style: GoogleFonts.nunitoSans(
-                                                      textStyle: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12.sp,
-                                                    fontWeight: FontWeight.w400,
-                                                  )))
-                                            ]))
-                                      ]),
-                                      const Divider(thickness: 0.3),
-                                      Text(
-                                          documentsList[index]
-                                              .notification!
-                                              .body
-                                              .toString(),
-                                          style: GoogleFonts.nunitoSans(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                    Text(
+                                        documentsList[index]
+                                            .notification!
+                                            .title!
+                                            .toString(),
+                                        style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          )),
-                                    ],
+                                                color: Colors.black,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight
+                                                    .w500))),
+                                    Text(formattedDate,
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w400,
+                                        )))
+                                  ]))
+                            ]),
+                            const Divider(thickness: 0.3),
+                            Text(
+                                documentsList[index]
+                                    .notification!
+                                    .body
+                                    .toString(),
+                                style: GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
                                   ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
+                                )),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ],
+                  );
+                },
+              );
+            },
           ),
         ),
       ),

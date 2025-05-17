@@ -64,20 +64,16 @@ class _ViewAllFeaturesState extends State<ViewAllFeatures> {
     PollScreen()
   ];
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('All Features',
             style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                color: AppTheme.backgroundColor,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            )),
+                textStyle: TextStyle(
+                    color: AppTheme.backgroundColor,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600))),
       ),
       body: MasonryGridView.count(
         crossAxisCount: 3,
@@ -90,7 +86,7 @@ class _ViewAllFeaturesState extends State<ViewAllFeatures> {
         itemBuilder: (context, index) {
           double height;
 
-          height = size.height * 0.14; // optional for others
+          height = size.height * 0.13; // optional for others
 
           return Column(
             children: [
@@ -115,7 +111,7 @@ class _ViewAllFeaturesState extends State<ViewAllFeatures> {
                   style: GoogleFonts.nunitoSans(
                     textStyle: TextStyle(
                       color: AppTheme.backgroundColor,
-                      fontSize: 16.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

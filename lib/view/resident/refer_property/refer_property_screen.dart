@@ -100,7 +100,13 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
         })
       ],
       child: Scaffold(
-        backgroundColor: AppTheme.backgroundColor,
+
+        appBar: AppBar(title:    Text('Refer Property ',
+            style: GoogleFonts.nunitoSans(
+                textStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600)))),
         floatingActionButton: FloatingActionButton(
             elevation: 0.0,
             backgroundColor: AppTheme.primaryColor,
@@ -109,233 +115,201 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
                   builder: (builder) => RegisterReferPropertyScreen()));
             },
             child: const Icon(Icons.add, color: Colors.white)),
-        body: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(height: 20.h),
-              Row(children: [
-                SizedBox(width: 10.w),
-                GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Icon(Icons.arrow_back, color: Colors.white)),
-                SizedBox(width: 10.w),
-                Text('Refer Property ',
-                    style: GoogleFonts.nunitoSans(
-                        textStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w600))),
-                SizedBox(width: 10.w)
-              ]),
-              SizedBox(height: 20.h),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20))),
-                  child: RefreshIndicator(
-                    onRefresh: onRefresh,
-                    child: BlocBuilder<GetReferPropertyCubit,
-                        GetReferPropertyState>(
-                      bloc: _getReferPropertyCubit,
-                      builder: (context, state) {
-                        if (state is GetReferPropertyLoading &&
-                            _getReferPropertyCubit.referPropertyList.isEmpty) {
-                          return const Center(
-                              child: CircularProgressIndicator.adaptive());
-                        }
 
-                        if (state is GetReferPropertyFailed) {
-                          return Center(
-                              child: Text(state.errorMsg,
-                                  style: const TextStyle(
-                                      color: Colors.deepPurpleAccent)));
-                        }
 
-                        if (state is GetReferPropertyInternetError) {
-                          return Center(
-                              child: Text(state.errorMsg.toString(),
-                                  style: const TextStyle(color: Colors.red)));
-                        }
+        body: RefreshIndicator(
+          onRefresh: onRefresh,
+          child: BlocBuilder<GetReferPropertyCubit,
+              GetReferPropertyState>(
+            bloc: _getReferPropertyCubit,
+            builder: (context, state) {
+              if (state is GetReferPropertyLoading &&
+                  _getReferPropertyCubit.referPropertyList.isEmpty) {
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
+              }
 
-                        var getPropertyList =
-                            _getReferPropertyCubit.referPropertyList;
+              if (state is GetReferPropertyFailed) {
+                return Center(
+                    child: Text(state.errorMsg,
+                        style: const TextStyle(
+                            color: Colors.deepPurpleAccent)));
+              }
 
-                        return ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: getPropertyList.length + 1,
-                          padding: const EdgeInsets.only(bottom: 120),
-                          shrinkWrap: true,
-                          itemBuilder: ((context, index) {
-                            if (index == getPropertyList.length) {
-                              return _getReferPropertyCubit.state
-                                      is GetReferPropertyLoadingMore
-                                  ? const Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Center(
-                                          child: CircularProgressIndicator
-                                              .adaptive()))
-                                  : const SizedBox.shrink();
-                            }
+              if (state is GetReferPropertyInternetError) {
+                return Center(
+                    child: Text(state.errorMsg.toString(),
+                        style: const TextStyle(color: Colors.red)));
+              }
 
-                            final referProperty = getPropertyList[index];
-                            return Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border:
-                                        Border.all(color: Colors.grey[300]!)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+              var getPropertyList =
+                  _getReferPropertyCubit.referPropertyList;
+
+              return ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: getPropertyList.length + 1,
+                padding: const EdgeInsets.only(bottom: 120),
+                shrinkWrap: true,
+                itemBuilder: ((context, index) {
+                  if (index == getPropertyList.length) {
+                    return _getReferPropertyCubit.state
+                            is GetReferPropertyLoadingMore
+                        ? const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(
+                                child: CircularProgressIndicator
+                                    .adaptive()))
+                        : const SizedBox.shrink();
+                  }
+
+                  final referProperty = getPropertyList[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border:
+                              Border.all(color: Colors.grey[300]!)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Image.asset(
+                                    ImageAssets.noticeBoardImage,
+                                    height: 40.h),
+                                SizedBox(width: 10.w),
+                                Expanded(
                                   child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
+                                      Text(
+                                          "Looking for ${referProperty!.unitType}",
+                                          style: GoogleFonts.nunitoSans(
+                                              textStyle: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 14,
+                                                  fontWeight:
+                                                      FontWeight
+                                                          .w600))),
                                       Row(
+                                        mainAxisSize:
+                                            MainAxisSize.min,
                                         children: [
-                                          Image.asset(
-                                              ImageAssets.noticeBoardImage,
-                                              height: 50.h),
-                                          SizedBox(width: 10.w),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                    "Looking for ${referProperty!.unitType}",
-                                                    style: GoogleFonts.nunitoSans(
-                                                        textStyle: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 15.sp,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600))),
-                                                Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text("Refer for ",
-                                                        style: GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400))),
-                                                    Text(
-                                                        referProperty.name
-                                                            .toString(),
-                                                        style: GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .deepPurpleAccent,
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400))),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(width: 10.w),
-                                          referPropertyMenuIcons(
-                                              options: optionsList,
-                                              context: context,
-                                              requestData: referProperty)
-                                        ],
-                                      ),
-                                      Divider(
-                                          color: Colors.grey.withOpacity(0.2)),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                  "₹ ${referProperty.maxBudget.toString()}",
-                                                  style: GoogleFonts.nunitoSans(
-                                                      textStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 12.sp,
-                                                          fontWeight: FontWeight
-                                                              .w600))),
-                                              Text("Max Budget",
-                                                  style: GoogleFonts.nunitoSans(
-                                                      textStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 14.sp,
-                                                          fontWeight: FontWeight
-                                                              .w500))),
-                                            ],
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                  "₹ ${referProperty.minBudget.toString()}",
-                                                  style: GoogleFonts.nunitoSans(
-                                                      textStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 12.sp,
-                                                          fontWeight: FontWeight
-                                                              .w600))),
-                                              Text("Min Budget",
-                                                  style: GoogleFonts.nunitoSans(
-                                                      textStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 14.sp,
-                                                          fontWeight: FontWeight
-                                                              .w600))),
-                                            ],
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                  referProperty.unitType
-                                                      .toString(),
-                                                  style: GoogleFonts.nunitoSans(
-                                                      textStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 12.sp,
-                                                          fontWeight: FontWeight
+                                          Text("Refer for ",
+                                              style: GoogleFonts.nunitoSans(
+                                                  textStyle: TextStyle(
+                                                      color: Colors
+                                                          .black,
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight
                                                               .w400))),
-                                              Text("Property Type",
-                                                  style: GoogleFonts.nunitoSans(
-                                                      textStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 14.sp,
-                                                          fontWeight: FontWeight
-                                                              .w600))),
-                                            ],
-                                          ),
+                                          Text(
+                                              referProperty.name
+                                                  .toString(),
+                                              style: GoogleFonts.nunitoSans(
+                                                  textStyle: TextStyle(
+                                                      color: Colors
+                                                          .deepPurpleAccent,
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight
+                                                              .w400))),
                                         ],
                                       ),
                                     ],
                                   ),
                                 ),
-                              ),
-                            );
-                          }),
-                        );
-                      },
+                                SizedBox(width: 10.w),
+                                referPropertyMenuIcons(
+                                    options: optionsList,
+                                    context: context,
+                                    requestData: referProperty)
+                              ],
+                            ),
+                            Divider(
+                                color: Colors.grey.withOpacity(0.2)),
+                            Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                        "₹ ${referProperty.maxBudget.toString()}",
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight
+                                                    .w500))),
+                                    Text("Max Budget",
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight
+                                                    .w600))),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                        "₹ ${referProperty.minBudget.toString()}",
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight
+                                                    .w500))),
+                                    Text("Min Budget",
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight
+                                                    .w600))),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                        referProperty.unitType
+                                            .toString(),
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight
+                                                    .w400))),
+                                    Text("Property Type",
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight
+                                                    .w600))),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ],
+                  );
+                }),
+              );
+            },
           ),
         ),
       ),

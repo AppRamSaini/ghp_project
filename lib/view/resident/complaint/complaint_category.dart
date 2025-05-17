@@ -177,9 +177,7 @@ class _ComplaintCategoryPageState extends State<ComplaintCategoryPage> {
                                             },
                                             child: Container(
                                                 decoration: BoxDecoration(
-                                                    color: Colors
-                                                        .deepPurpleAccent
-                                                        .withOpacity(0.8),
+                                                    color: AppTheme.primaryColor,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             30)),

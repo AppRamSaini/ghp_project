@@ -298,7 +298,7 @@ class _SlidersManagementState extends State<SlidersManagement> {
               : Column(
                   children: [
                     SizedBox(
-                      height: 180.h,
+                      height: 160.h,
                       child: PageView.builder(
                         controller: _pageController,
                         itemCount: slidersList.length,
@@ -316,14 +316,14 @@ class _SlidersManagementState extends State<SlidersManagement> {
                                 ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: FadeInImage(
-                                        height: 180.h,
+                                        height: 160.h,
                                         width: double.infinity,
                                         fit: BoxFit.fill,
                                         imageErrorBuilder: (_, child,
                                                 stackTrack) =>
                                             Image.asset(
                                                 'assets/images/default.jpg',
-                                                height: 180.h,
+                                                height: 160.h,
                                                 width: double.infinity,
                                                 fit: BoxFit.cover),
                                         image: NetworkImage(slidersList[index]
@@ -332,7 +332,7 @@ class _SlidersManagementState extends State<SlidersManagement> {
                                         placeholder: const AssetImage(
                                             'assets/images/default.jpg'))),
                                 Container(
-                                    height: 180.h,
+                                    height: 160.h,
                                     width: MediaQuery.sizeOf(context).width,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),

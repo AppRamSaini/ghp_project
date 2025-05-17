@@ -11,6 +11,7 @@ import 'package:ghp_society_management/view/resident/parcel_flow/create_parcel.d
 import 'package:ghp_society_management/view/resident/parcel_flow/parcel_management.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:intl/intl.dart';
+import 'package:searchbar_animation/const/colours.dart';
 
 class ParcelListingPage extends StatefulWidget {
   const ParcelListingPage({super.key});
@@ -63,7 +64,7 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
   // popup menu filter
   Widget popMenusForFilter({required BuildContext context}) {
     return CircleAvatar(
-      backgroundColor: Colors.white10,
+      backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
       child: PopupMenuButton(
         elevation: 10,
         padding: EdgeInsets.zero,
@@ -209,7 +210,6 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
         }),
       ],
       child: Scaffold(
-        backgroundColor: AppTheme.backgroundColor,
         floatingActionButton: BlocBuilder<UserProfileCubit, UserProfileState>(
           bloc: _userProfileCubit,
           builder: (context, profileState) {
@@ -251,299 +251,268 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
             );
           },
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(children: [
-                        GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Icon(Icons.arrow_back,
-                                color: Colors.white)),
-                        SizedBox(width: 10.w),
-                        Text('Parcels',
-                            style: GoogleFonts.nunitoSans(
-                                textStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20.sp,
-                                    fontWeight: FontWeight.w600))),
-                      ]),
-                      popMenusForFilter(context: context)
-                    ],
-                  )),
-              SizedBox(height: 20.h),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20))),
-                  child: RefreshIndicator(
-                    onRefresh: onRefresh,
-                    child: BlocBuilder<ParcelListingCubit, ParcelListingState>(
-                      bloc: _parcelListingCubit,
-                      builder: (context, state) {
-                        if (state is ParcelListingLoading &&
-                            _parcelListingCubit.parcelListing.isEmpty) {
-                          return const Center(
-                              child: CircularProgressIndicator.adaptive());
+
+        appBar: AppBar(title: Text('Parcels',
+            style: GoogleFonts.nunitoSans(
+                textStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600))),actions: [ Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: popMenusForFilter(context: context),
+                    )]),
+        body: RefreshIndicator(
+          onRefresh: onRefresh,
+          child: BlocBuilder<ParcelListingCubit, ParcelListingState>(
+            bloc: _parcelListingCubit,
+            builder: (context, state) {
+              if (state is ParcelListingLoading &&
+                  _parcelListingCubit.parcelListing.isEmpty) {
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
+              }
+
+              if (state is ParcelListingFailed) {
+                return Center(
+                    child: Text(state.errorMsg,
+                        style: const TextStyle(
+                            color: Colors.deepPurpleAccent)));
+              }
+
+              if (state is ParcelListingInternetError) {
+                return Center(
+                    child: Text(state.errorMsg.toString(),
+                        style: const TextStyle(color: Colors.red)));
+              }
+
+              var parcelsList = _parcelListingCubit.parcelListing;
+
+              return ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: parcelsList.length + 1,
+                padding: const EdgeInsets.only(bottom: 120),
+                shrinkWrap: true,
+                itemBuilder: ((context, index) {
+                  if (index == parcelsList.length) {
+                    return _parcelListingCubit.state
+                            is NotificationListingLoadingMore
+                        ? const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(
+                                child: CircularProgressIndicator
+                                    .adaptive()))
+                        : const SizedBox.shrink();
+                  }
+
+                  final parcels = parcelsList[index];
+                  String formattedDate =
+                      DateFormat('dd MMM yyyy').format(parcels.date!);
+                  String timeString = parcels.time!;
+                  DateTime parsedTime =
+                      DateFormat("HH:mm:ss").parse(timeString);
+                  String formattedTime =
+                      DateFormat.jm().format(parsedTime);
+                  String status() {
+                    if (parcels.handoverStatus == "pending") {
+                      if (parcels.checkinDetail != null) {
+                        if (parcels.checkinDetail!.status ==
+                            'checked_in') {
+                          return "Parcel Arrived";
                         }
+                        return parcels.entryByRole ==
+                                'staff_security_guard'
+                            ? "Received By Staff"
+                            : "Not Received";
+                      }
+                      return parcels.entryByRole ==
+                              'staff_security_guard'
+                          ? "Received By Staff"
+                          : "Pending";
+                    } else if (parcels.handoverStatus == 'received') {
+                      return 'Received By Staff';
+                    }
+                    return "Received";
+                  }
 
-                        if (state is ParcelListingFailed) {
-                          return Center(
-                              child: Text(state.errorMsg,
-                                  style: const TextStyle(
-                                      color: Colors.deepPurpleAccent)));
-                        }
-
-                        if (state is ParcelListingInternetError) {
-                          return Center(
-                              child: Text(state.errorMsg.toString(),
-                                  style: const TextStyle(color: Colors.red)));
-                        }
-
-                        var parcelsList = _parcelListingCubit.parcelListing;
-
-                        return ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: parcelsList.length + 1,
-                          padding: const EdgeInsets.only(bottom: 120),
-                          shrinkWrap: true,
-                          itemBuilder: ((context, index) {
-                            if (index == parcelsList.length) {
-                              return _parcelListingCubit.state
-                                      is NotificationListingLoadingMore
-                                  ? const Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Center(
-                                          child: CircularProgressIndicator
-                                              .adaptive()))
-                                  : const SizedBox.shrink();
-                            }
-
-                            final parcels = parcelsList[index];
-                            String formattedDate =
-                                DateFormat('dd MMM yyyy').format(parcels.date!);
-                            String timeString = parcels.time!;
-                            DateTime parsedTime =
-                                DateFormat("HH:mm:ss").parse(timeString);
-                            String formattedTime =
-                                DateFormat.jm().format(parsedTime);
-                            String status() {
-                              if (parcels.handoverStatus == "pending") {
-                                if (parcels.checkinDetail != null) {
-                                  if (parcels.checkinDetail!.status ==
-                                      'checked_in') {
-                                    return "Parcel Arrived";
-                                  }
-                                  return parcels.entryByRole ==
-                                          'staff_security_guard'
-                                      ? "Received By Staff"
-                                      : "Not Received";
-                                }
-                                return parcels.entryByRole ==
-                                        'staff_security_guard'
-                                    ? "Received By Staff"
-                                    : "Pending";
-                              } else if (parcels.handoverStatus == 'received') {
-                                return 'Received By Staff';
-                              }
-                              return "Received";
-                            }
-
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border:
-                                        Border.all(color: Colors.grey[300]!)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border:
+                              Border.all(color: Colors.grey[300]!)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.circular(10),
+                                    child: FadeInImage(
+                                        placeholder: const AssetImage(
+                                            "assets/images/default.jpg"),
+                                        imageErrorBuilder: (context,
+                                            error, stackTrace) {
+                                          return Image.asset(
+                                              "assets/images/default.jpg",
+                                              height: 70,
+                                              width: 70,
+                                              fit: BoxFit.cover);
+                                        },
+                                        image: NetworkImage(parcels
+                                            .deliveryAgentImage
+                                            .toString()),
+                                        fit: BoxFit.cover,
+                                        height: 70,
+                                        width: 70)),
+                                const SizedBox(width: 10),
+                                Expanded(
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .spaceBetween,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: FadeInImage(
-                                                  placeholder: const AssetImage(
-                                                      "assets/images/default.jpg"),
-                                                  imageErrorBuilder: (context,
-                                                      error, stackTrace) {
-                                                    return Image.asset(
-                                                        "assets/images/default.jpg",
-                                                        height: 70,
-                                                        width: 70,
-                                                        fit: BoxFit.cover);
-                                                  },
-                                                  image: NetworkImage(parcels
-                                                      .deliveryAgentImage
-                                                      .toString()),
-                                                  fit: BoxFit.cover,
-                                                  height: 70,
-                                                  width: 70)),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  if (parcels
+                                                          .parcelComplaint !=
+                                                      null) {
+                                                    readComplaintDialog(
+                                                        context,
+                                                        parcels
+                                                            .parcelComplaint!
+                                                            .description
+                                                            .toString());
+                                                  }
+                                                },
+                                                child: Row(
                                                   children: [
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            if (parcels
-                                                                    .parcelComplaint !=
-                                                                null) {
-                                                              readComplaintDialog(
-                                                                  context,
-                                                                  parcels
-                                                                      .parcelComplaint!
-                                                                      .description
-                                                                      .toString());
-                                                            }
-                                                          },
-                                                          child: Row(
-                                                            children: [
-                                                              Text(
-                                                                  parcels
-                                                                      .parcelid
-                                                                      .toString(),
-                                                                  style: GoogleFonts.nunitoSans(
-                                                                      textStyle: TextStyle(
-                                                                          color: Colors
-                                                                              .deepPurpleAccent,
-                                                                          fontSize: 16
-                                                                              .sp,
-                                                                          fontWeight: FontWeight
-                                                                              .w500)),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis),
-                                                              parcels.parcelComplaint ==
-                                                                      null
-                                                                  ? const SizedBox()
-                                                                  : const Icon(
-                                                                      Icons
-                                                                          .info_outline,
-                                                                      color: Colors
-                                                                          .red,
-                                                                      size: 15),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 2.h),
-                                                        Text(
-                                                            parcels.parcelName
-                                                                .toString(),
-                                                            style: GoogleFonts.nunitoSans(
-                                                                textStyle: TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontSize:
-                                                                        14.sp,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500)),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis),
-                                                        SizedBox(height: 2.h),
-                                                      ],
-                                                    ),
-                                                    popMenusForStaff(
-                                                        options:
-                                                            parcels.handoverStatus !=
-                                                                    'pending'
-                                                                ? optionList0
-                                                                : optionList,
-                                                        context: context,
-                                                        requestData: parcels)
+                                                    Text(
+                                                        parcels
+                                                            .parcelid
+                                                            .toString(),
+                                                        style: GoogleFonts.nunitoSans(
+                                                            textStyle: TextStyle(
+                                                                color: Colors
+                                                                    .deepPurpleAccent,
+                                                                fontSize: 14
+                                                                    .sp,
+                                                                fontWeight: FontWeight
+                                                                    .w500)),
+                                                        overflow:
+                                                            TextOverflow
+                                                                .ellipsis),
+                                                    parcels.parcelComplaint ==
+                                                            null
+                                                        ? const SizedBox()
+                                                        : const Icon(
+                                                            Icons
+                                                                .info_outline,
+                                                            color: Colors
+                                                                .red,
+                                                            size: 12),
                                                   ],
                                                 ),
-                                                Text(
-                                                  'Arrive At : $formattedDate  |  $formattedTime',
+                                              ),
+                                              SizedBox(height: 2.h),
+                                              Text(
+                                                  parcels.parcelName
+                                                      .toString(),
                                                   style: GoogleFonts.nunitoSans(
                                                       textStyle: TextStyle(
-                                                          color: Colors.black54,
-                                                          fontSize: 14.sp,
+                                                          color: Colors
+                                                              .black,
+                                                          fontSize:
+                                                              12,
                                                           fontWeight:
-                                                              FontWeight.w400)),
-                                                ),
-                                              ],
-                                            ),
+                                                              FontWeight
+                                                                  .w500)),
+                                                  overflow:
+                                                      TextOverflow
+                                                          .ellipsis),
+                                              SizedBox(height: 2.h),
+                                            ],
                                           ),
+                                          popMenusForStaff(
+                                              options:
+                                                  parcels.handoverStatus !=
+                                                          'pending'
+                                                      ? optionList0
+                                                      : optionList,
+                                              context: context,
+                                              requestData: parcels)
                                         ],
                                       ),
-                                      SizedBox(height: 5.h),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 3),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                                'Created By : ${capitalizeWords(parcels.entryByRole.toString().replaceAll("_", " ").replaceAll("staff", ''))}',
-                                                style: GoogleFonts.nunitoSans(
-                                                    textStyle: TextStyle(
-                                                        color: Colors.black54,
-                                                        fontSize: 14.sp))),
-                                            Text(
-                                              status(),
-                                              style: GoogleFonts.nunitoSans(
-                                                  textStyle: TextStyle(
-                                                      color: parcels
-                                                                  .handoverStatus ==
-                                                              'pending'
-                                                          ? Colors.red
-                                                          : parcels.handoverStatus ==
-                                                                  'received'
-                                                              ? Colors.orange
-                                                              : Colors.green,
-                                                      fontSize: 15.sp)),
-                                            ),
-                                          ],
-                                        ),
+                                      Text(
+                                        'Arrive At : $formattedDate  |  $formattedTime',
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 12,
+                                                fontWeight:
+                                                    FontWeight.w400)),
                                       ),
                                     ],
                                   ),
                                 ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 3),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                      'Created By : ${capitalizeWords(parcels.entryByRole.toString().replaceAll("_", " ").replaceAll("staff", ''))}',
+                                      style: GoogleFonts.nunitoSans(
+                                          textStyle: TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 12))),
+                                  Text(
+                                    status(),
+                                    style: GoogleFonts.nunitoSans(
+                                        textStyle: TextStyle(
+                                            color: parcels
+                                                        .handoverStatus ==
+                                                    'pending'
+                                                ? Colors.red
+                                                : parcels.handoverStatus ==
+                                                        'received'
+                                                    ? Colors.orange
+                                                    : Colors.green,
+                                            fontSize: 14)),
+                                  ),
+                                ],
                               ),
-                            );
-                          }),
-                        );
-                      },
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ],
+                  );
+                }),
+              );
+            },
           ),
         ),
       ),

@@ -68,7 +68,7 @@ class StaffDashboardState extends State<StaffDashboard> {
                     padding: const EdgeInsets.only(left: 5.0),
                     child: Image.asset(ImageAssets.homeImage,
                         height: 18.h, color: Colors.black)),
-                activeColor: AppTheme.blueColor),
+                activeColor: AppTheme.primaryColor),
             BottomNavyBarItem(
                 title: Text('Service History',
                     style: GoogleFonts.nunitoSans(
@@ -80,7 +80,7 @@ class StaffDashboardState extends State<StaffDashboard> {
                     padding: const EdgeInsets.only(left: 5.0),
                     child: Image.asset(ImageAssets.serviceHistoryImage,
                         height: 18.h, color: Colors.black)),
-                activeColor: AppTheme.blueColor),
+                activeColor: AppTheme.primaryColor),
             BottomNavyBarItem(
                 title: Text('Help & Support',
                     style: GoogleFonts.nunitoSans(
@@ -92,8 +92,9 @@ class StaffDashboardState extends State<StaffDashboard> {
                     padding: const EdgeInsets.only(left: 5.0),
                     child: Image.asset(ImageAssets.headsetImage,
                         height: 18.h, color: Colors.black)),
-                activeColor: AppTheme.blueColor),
+                activeColor: AppTheme.primaryColor),
             BottomNavyBarItem(
+              textAlign: TextAlign.center,
                 title: Text('Setting',
                     style: GoogleFonts.nunitoSans(
                         textStyle: TextStyle(
@@ -104,7 +105,7 @@ class StaffDashboardState extends State<StaffDashboard> {
                     padding: const EdgeInsets.only(left: 5.0),
                     child: Image.asset(ImageAssets.settingImage,
                         height: 18.h, color: Colors.black)),
-                activeColor: AppTheme.blueColor),
+                activeColor: AppTheme.primaryColor),
           ],
         ),
       ),

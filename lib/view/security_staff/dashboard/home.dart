@@ -290,8 +290,8 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                             style: GoogleFonts.nunitoSans(
                               textStyle: TextStyle(
                                 color: AppTheme.backgroundColor,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),

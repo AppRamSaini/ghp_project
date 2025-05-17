@@ -10,8 +10,6 @@ import 'package:ghp_society_management/view/resident/sos/sos_detail_screen.dart'
 import 'package:ghp_society_management/view/resident/sos/sos_history.dart';
 import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:searchbar_animation/const/colours.dart';
-import 'package:searchbar_animation/searchbar_animation.dart';
 
 class SosScreen extends StatefulWidget {
   const SosScreen({super.key});
@@ -21,12 +19,21 @@ class SosScreen extends StatefulWidget {
 }
 
 class _SosScreenState extends State<SosScreen> {
-  TextEditingController textController = TextEditingController();
-  bool searchBarOpen = false;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  GlobalKey<RefreshIndicatorState>();
+
   @override
   void initState() {
-    context.read<SosCategoryCubit>().fetchSosCategory();
+    _loadData();
     super.initState();
+  }
+
+  Future<void> _loadData() async {
+    await context.read<SosCategoryCubit>().fetchSosCategory();
+  }
+
+  Future<void> _onRefresh() async {
+    await _loadData();
   }
 
   @override
@@ -38,261 +45,202 @@ class _SosScreenState extends State<SosScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColours.white,
         appBar: AppBar(
-          title: Text('SOS',
-              style: GoogleFonts.nunitoSans(
-                  textStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600))),
-
-          //   actions: [
-          //   searchBarOpen
-          //       ? const SizedBox()
-          //       : Row(children: [
-          //     GestureDetector(
-          //         onTap: () {
-          //           Navigator.of(context).pop();
-          //         },
-          //         child: const Icon(Icons.arrow_back,
-          //             color: Colors.white)),
-          //     SizedBox(width: 10.w),
-          //     Text('SOS',
-          //         style: GoogleFonts.nunitoSans(
-          //             textStyle: TextStyle(
-          //                 color: Colors.white,
-          //                 fontSize: 20.sp,
-          //                 fontWeight: FontWeight.w600)))
-          //   ]),
-          //   Padding(
-          //       padding: const EdgeInsets.only(right: 8.0),
-          //       child: SearchBarAnimation(
-          //           searchBoxColour: AppTheme.primaryLiteColor,
-          //           buttonColour: AppTheme.primaryLiteColor,
-          //           searchBoxWidth:
-          //           MediaQuery.of(context).size.width / 1.1,
-          //           isSearchBoxOnRightSide: false,
-          //           textEditingController: textController,
-          //           isOriginalAnimation: true,
-          //           enableKeyboardFocus: true,
-          //           cursorColour: Colors.grey,
-          //           enteredTextStyle: GoogleFonts.nunitoSans(
-          //               textStyle: TextStyle(
-          //                   color: Colors.white,
-          //                   fontSize: 14.sp,
-          //                   fontWeight: FontWeight.w600)),
-          //           onExpansionComplete: () {
-          //             setState(() {
-          //               searchBarOpen = true;
-          //             });
-          //           },
-          //           onCollapseComplete: () {
-          //             setState(() {
-          //               searchBarOpen = false;
-          //             });
-          //             context
-          //                 .read<SosCategoryCubit>()
-          //                 .fetchSosCategory();
-          //             textController.clear();
-          //           },
-          //           onPressButton: (isSearchBarOpens) {
-          //             setState(() {
-          //               searchBarOpen = true;
-          //             });
-          //           },
-          //           onChanged: (value) {
-          //             context
-          //                 .read<SosCategoryCubit>()
-          //                 .searchSos(value);
-          //           },
-          //           trailingWidget: const Icon(Icons.search,
-          //               size: 20, color: Colors.white),
-          //           secondaryButtonWidget: const Icon(
-          //               Icons.close,
-          //               size: 20,
-          //               color: Colors.white),
-          //           buttonWidget: const Icon(Icons.search,
-          //               size: 20, color: Colors.white)))
-          // ],
-        ),
-        floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.deepPurpleAccent,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(100)),
-            onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const SosHistoryPage())),
-            child: const Icon(Icons.history, color: Colors.white)),
-        body: SafeArea(
-          child: BlocBuilder<SosCategoryCubit, SosCategoryState>(
-            builder: (context, state) {
-              if (state is SosCategorySearchLoaded) {
-                return state.sosCategory.isEmpty
-                    ? const Center(
-                        child: Text('Category Not Found!',
-                            style: TextStyle(color: Colors.deepPurpleAccent)))
-                    : MasonryGridView.count(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 5,
-                        shrinkWrap: true,
-                        physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(top: 15),
-                        itemCount: state.sosCategory.length,
-                        itemBuilder: (context, index) {
-                          double height;
-                          height = size.height * 0.09; // optional for others
-
-                          return GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (builder) => SosDetailScreen(
-                                        sosCategory:
-                                            state.sosCategory[index]!)));
-                              },
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                          boxShadow: const [
-                                            BoxShadow(
-                                                color: Colors.black45,
-                                                blurRadius: 5,
-                                                offset: Offset(1, 1))
-                                          ]),
-                                      child: ClipOval(
-                                          child: CachedNetworkImage(
-                                              imageUrl: state
-                                                  .sosCategory[index]!.image,
-                                              width: 90.w,
-                                              height: 90.h,
-                                              fit: BoxFit.cover,
-                                              progressIndicatorBuilder:
-                                                  (context, url, progress) =>
-                                                      Center(
-                                                          child: Image.asset(
-                                                        width: 90.w,
-                                                        height: 90.h,
-                                                        'assets/images/default.jpg',
-                                                        fit: BoxFit.cover,
-                                                      )),
-                                              errorWidget: (context, url,
-                                                      error) =>
-                                                  Container(
-                                                      width: 90.w,
-                                                      height: 90.h,
-                                                      color: Colors.grey[300],
-                                                      child: Icon(
-                                                          Icons.broken_image,
-                                                          color:
-                                                              Colors.grey[600],
-                                                          size: 50)))),
-                                    ),
-                                    Text(state.sosCategory[index]!.name,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12.sp,
-                                                fontWeight: FontWeight.w600)))
-                                  ]));
-                        });
-              } else if (state is SosCategoryLoaded) {
-                return MasonryGridView.count(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 5,
-                    shrinkWrap: true,
-                    physics: BouncingScrollPhysics(),
-                    padding: EdgeInsets.only(top: 15),
-                    itemCount:
-                        state.sosCategory.first.data!.sosCategories.length,
-                    itemBuilder: (context, index) {
-                      double height;
-                      height = size.height * 0.09; // optional for others
-
-                      final sosCategories =
-                          state.sosCategory.first.data!.sosCategories;
-                      return GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (builder) => SosDetailScreen(
-                                    sosCategory: sosCategories[index])));
-                          },
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      boxShadow: const [
-                                        BoxShadow(
-                                            color: Colors.black45,
-                                            blurRadius: 5,
-                                            offset: Offset(1, 1))
-                                      ]),
-                                  child: ClipOval(
-                                    child: CachedNetworkImage(
-                                      imageUrl: sosCategories[index].image,
-                                      width: 90,
-                                      height: 90,
-                                      fit: BoxFit.cover,
-                                      progressIndicatorBuilder:
-                                          (context, url, progress) => Center(
-                                        child: Image.asset(
-                                          width: 90,
-                                          height: 90,
-                                          'assets/images/default.jpg',
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          Container(
-                                        width: 90,
-                                        height: 90,
-                                        color: Colors.grey[300],
-                                        child: Icon(
-                                          Icons.broken_image,
-                                          color: Colors.grey[600],
-                                          size: 50,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Text(sosCategories[index].name,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.nunitoSans(
-                                        textStyle: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w600,
-                                    )))
-                              ]));
-                    });
-              } else if (state is SosCategoryFailed) {
-                return Center(
-                    child: Text(state.errorMsg.toString(),
-                        style:
-                            const TextStyle(color: Colors.deepPurpleAccent)));
-              } else if (state is SosCategoryLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is SosCategoryInternetError) {
-                return const Center(
-                    child: Text('Internet connection error',
-                        style: TextStyle(
-                            color: Colors.red))); // Handle internet error
-              } else {
-                return const SizedBox();
-              }
-            },
+          title: Text(
+            'SOS',
+            style: GoogleFonts.nunitoSans(
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: AppTheme.primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(100),
+          ),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const SosHistoryPage()),
+          ),
+          child: const Icon(Icons.history, color: Colors.white),
+        ),
+        body: RefreshIndicator(
+          key: _refreshIndicatorKey,
+          onRefresh: _onRefresh,
+          color: AppTheme.primaryColor,
+          backgroundColor: Colors.white,
+          strokeWidth: 3.0,
+          displacement: 40.0,
+          edgeOffset: 0,
+          child: _buildContent(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    return BlocBuilder<SosCategoryCubit, SosCategoryState>(
+      builder: (context, state) {
+        if (state is SosCategoryLoading && !_isRefreshing(state)) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is SosCategorySearchLoaded) {
+          return _buildSearchResults(state);
+        } else if (state is SosCategoryLoaded) {
+          return _buildCategoryGrid(state);
+        } else if (state is SosCategoryFailed) {
+          return _buildErrorState(state);
+        } else if (state is SosCategoryInternetError) {
+          return _buildInternetError();
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
+  }
+
+  bool _isRefreshing(SosCategoryState state) {
+    // Check if we're in a refresh state (you might need to modify your cubit to track this)
+    return false; // Modify based on your state implementation
+  }
+
+  Widget _buildSearchResults(SosCategorySearchLoaded state) {
+    return state.sosCategory.isEmpty
+        ? Center(
+      child: Text(
+        'Category Not Found!',
+        style: TextStyle(
+          color: Colors.deepPurpleAccent,
+          fontSize: 16.sp,
+        ),
+      ),
+    )
+        : _buildMasonryGrid(state.sosCategory);
+  }
+
+  Widget _buildCategoryGrid(SosCategoryLoaded state) {
+    return _buildMasonryGrid(state.sosCategory.first.data!.sosCategories);
+  }
+
+  Widget _buildMasonryGrid(List<dynamic> items) {
+    return MasonryGridView.count(
+      crossAxisCount: 3,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 5,
+      shrinkWrap: true,
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.only(top: 15.h),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (builder) => SosDetailScreen(sosCategory: item),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+          Container(
+          decoration: BoxDecoration(
+          color: Colors.white,
+            borderRadius: BorderRadius.circular(100),
+            boxShadow: const [
+            BoxShadow(
+              color: Colors.black45,
+              blurRadius: 5,
+              offset: Offset(1, 1)),
+              ],
+            ),
+            child: ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: item.image,
+                width: 90,
+                height: 90,
+                fit: BoxFit.cover,
+                progressIndicatorBuilder: (context, url, progress) => Center(
+                  child: Image.asset(
+                    width: 90,
+                    height: 90,
+                    'assets/images/default.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  width: 90,
+                  height: 90,
+                  color: Colors.grey[300],
+                  child: Icon(
+                    Icons.broken_image,
+                    color: Colors.grey[600],
+                    size: 50,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            item.name,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.nunitoSans(
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          ],
+        ),
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorState(SosCategoryFailed state) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            state.errorMsg.toString(),
+            style: TextStyle(
+              color: Colors.deepPurpleAccent,
+              fontSize: 16.sp,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          ElevatedButton(
+            onPressed: _onRefresh,
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInternetError() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Internet connection error',
+            style: TextStyle(color: Colors.red),
+          ),
+          SizedBox(height: 16.h),
+          ElevatedButton(
+            onPressed: _onRefresh,
+            child: const Text('Retry'),
+          ),
+        ],
       ),
     );
   }

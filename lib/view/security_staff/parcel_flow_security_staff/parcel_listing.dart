@@ -65,7 +65,7 @@ class _ParcelListingSecurityStaffSideState
   // popup menu filter
   Widget popMenusForFilter({required BuildContext context}) {
     return CircleAvatar(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
       child: PopupMenuButton(
         elevation: 10,
         padding: EdgeInsets.zero,
@@ -241,13 +241,12 @@ class _ParcelListingSecurityStaffSideState
                 style: GoogleFonts.nunitoSans(
                     textStyle: TextStyle(
                         color: Colors.black,
-                        fontSize: 18.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w600))),
             actions: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: popMenusForFilter(context: context),
-              )
+                  padding: const EdgeInsets.all(8.0),
+                  child: popMenusForFilter(context: context))
             ]),
         floatingActionButton: FloatingActionButton(
             shape: RoundedRectangleBorder(
@@ -563,18 +562,22 @@ class _ParcelListingSecurityStaffSideState
                                   status().toString(),
                                   style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
-                                      color: parcelData.handoverStatus == 'pending' ||
-                                          parcelData.checkinDetail == null ||
-                                          parcelData.checkinDetail!.checkoutAt == null
+                                      color: parcelData.handoverStatus ==
+                                                  'pending' ||
+                                              parcelData.checkinDetail ==
+                                                  null ||
+                                              parcelData.checkinDetail!
+                                                      .checkoutAt ==
+                                                  null
                                           ? Colors.red
-                                          : parcelData.handoverStatus == 'received'
-                                          ? Colors.orange
-                                          : Colors.green,
+                                          : parcelData.handoverStatus ==
+                                                  'received'
+                                              ? Colors.orange
+                                              : Colors.green,
                                       fontSize: 13.sp,
                                     ),
                                   ),
                                 ),
-
                               ],
                             ),
                             Divider(color: Colors.green.withOpacity(0.1)),

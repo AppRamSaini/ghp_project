@@ -53,8 +53,8 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
           title: Text('Help & Support',
               style: GoogleFonts.nunitoSans(
                   textStyle: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.sp,
+                      color: Colors.black,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w600)))),
       body: Expanded(
         child: Container(
@@ -73,7 +73,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                   Text('Get In Touch',
                       style: GoogleFonts.nunitoSans(
                           color: Colors.black,
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600)),
                   BlocBuilder<ContactCubit, ContactState>(
                     builder: (context, state) {
@@ -106,7 +106,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                                       getInTouchTitle[0],
                                       style: GoogleFonts.nunitoSans(
                                         color: Colors.black,
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -114,7 +114,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                                       state.contact.first.data.contact.phone,
                                       style: GoogleFonts.nunitoSans(
                                         color: const Color(0XFF404040),
-                                        fontSize: 13,
+                                        fontSize: 12,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -149,7 +149,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                                       getInTouchTitle[1],
                                       style: GoogleFonts.nunitoSans(
                                         color: Colors.black,
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -157,7 +157,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                                       state.contact.first.data.contact.email,
                                       style: GoogleFonts.nunitoSans(
                                         color: const Color(0XFF404040),
-                                        fontSize: 13,
+                                        fontSize: 12,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -190,7 +190,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                   Text('FAQs',
                       style: GoogleFonts.nunitoSans(
                           color: Colors.black,
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600)),
                   SizedBox(height: 10.h),
                   ListView.builder(

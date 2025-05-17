@@ -1,7 +1,6 @@
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/model/service_request_model.dart';
-import 'package:ghp_society_management/model/user_profile_model.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:ghp_society_management/view/society/select_society_screen.dart';
@@ -181,7 +180,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                   .toString(),
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors.white,
+                                                      color: Colors.black,
                                                       fontSize: 15.sp,
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -194,7 +193,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                   .toString(),
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors.white,
+                                                      color: Colors.black,
                                                       fontSize: 10.sp,
                                                       fontWeight:
                                                           FontWeight.w500)))
@@ -242,7 +241,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                           Text("Loading...",
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors.white,
+                                                      color: Colors.black,
                                                       fontSize: 15.sp,
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -252,7 +251,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                           Text('TOWER LOADING...',
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors.white,
+                                                      color: Colors.black,
                                                       fontSize: 11.sp,
                                                       fontWeight:
                                                           FontWeight.w500)))
@@ -301,7 +300,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 18.sp,
+                                          fontSize: 16.sp,
                                           fontWeight: FontWeight.w600))),
                               SizedBox(height: 10.h),
                               if (runningServiceList.isEmpty)
@@ -377,7 +376,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                                     color: Colors
                                                                         .black,
                                                                     fontSize:
-                                                                        18.sp,
+                                                                        16.sp,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w600)),
@@ -398,7 +397,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                             style: GoogleFonts.nunitoSans(
                                                                 color: AppTheme
                                                                     .staffPrimaryColor,
-                                                                fontSize: 10.sp,
+                                                                fontSize: 10,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600)),
@@ -456,7 +455,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                                   color: AppTheme
                                                                       .staffPrimaryColor,
                                                                   fontSize:
-                                                                      12.sp)),
+                                                                      12)),
                                                       Text(
                                                           '${formattedDate.toString()} ${formatTime(startDate).toString()}',
                                                           style: GoogleFonts
@@ -464,7 +463,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                                   color: AppTheme
                                                                       .staffPrimaryColor,
                                                                   fontSize:
-                                                                      12.sp,
+                                                                      12,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w600)),
@@ -497,7 +496,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                                   color: Colors
                                                                       .white,
                                                                   fontSize:
-                                                                      14.sp),
+                                                                      12),
                                                         ),
                                                       ),
                                                     ),
@@ -516,7 +515,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 18.sp,
+                                          fontSize: 16.sp,
                                           fontWeight: FontWeight.w600))),
                               SizedBox(height: 10.h),
                               requestServicesList.isEmpty

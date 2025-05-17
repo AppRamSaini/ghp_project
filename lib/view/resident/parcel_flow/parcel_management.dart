@@ -48,14 +48,15 @@ List<Map<String, dynamic>> optionList3 = [
   {"icon": Icons.call, "menu": "Call to Resident", "menu_id": 0},
 ];
 Widget popMenusForStaff(
+
     {bool isStaffSide = false,
     required List<Map<String, dynamic>> options,
     required BuildContext context,
     required ParcelListing requestData}) {
   return CircleAvatar(
-    backgroundColor: Colors.deepPurpleAccent,
+    backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
     child: CircleAvatar(
-      backgroundColor: Colors.white,
+      backgroundColor:AppTheme.primaryColor.withOpacity(0.05),
       child: PopupMenuButton(
         elevation: 10,
         padding: EdgeInsets.zero,

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/controller/select_society/select_society_cubit.dart';
 import 'package:ghp_society_management/view/resident/authentication/login_screen.dart';
@@ -50,65 +51,29 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: searchBarOpen
-            ? const SizedBox()
-            : Text('Select Society',
-                style: GoogleFonts.nunitoSans(
-                    textStyle: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600))),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: SearchBarAnimation(
-              searchBoxColour: AppTheme.white,
-              buttonColour: AppTheme.primaryColor,
-              searchBoxWidth: MediaQuery.of(context).size.width / 1.1,
-              isSearchBoxOnRightSide: false,
-              textEditingController: textController,
-              isOriginalAnimation: true,
-              enableKeyboardFocus: true,
-              hintTextColour:  AppTheme.primaryColor,
-              hintText: "Search society name...",
-              cursorColour: AppTheme.primaryColor,
-              enteredTextStyle: GoogleFonts.nunitoSans(
-                  textStyle: TextStyle(
-                      color: AppTheme.primaryColor,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600)),
-              onExpansionComplete: () {
-                setState(() {
-                  searchBarOpen = true;
-                });
-              },
-              onCollapseComplete: () {
-                setState(() {
-                  searchBarOpen = false;
-                  _selectSocietyCubit.fetchSocietyList();
-                  textController.clear();
-                });
-              },
-              onPressButton: (isSearchBarOpens) {
-                setState(() {
-                  searchBarOpen = true;
-                });
-              },
-              onChanged: (value) {
-                _selectSocietyCubit.searchSociety(value);
-              },
-              trailingWidget:
-
-                   Icon(Icons.search, size: 20, color: AppTheme.primaryColor),
-              secondaryButtonWidget:
-                  const Icon(Icons.close, size: 20, color: Colors.white),
-              buttonWidget:
-                   Icon(Icons.search, size: 20, color: AppTheme.white),
-            ),
-          )
-        ],
-      ),
+      appBar: customAppbar(context: context, title: "Select Society",
+        searchBarOpen: searchBarOpen,
+        textController: textController,
+        onExpansionComplete: () {
+        setState(() {
+          searchBarOpen = true;
+        });
+      },
+        onCollapseComplete: () {
+          setState(() {
+            searchBarOpen = false;
+            _selectSocietyCubit.fetchSocietyList();
+            textController.clear();
+          });
+        },
+        onPressButton: (isSearchBarOpens) {
+          setState(() {
+            searchBarOpen = true;
+          });
+        },
+        onChanged: (value) {
+          _selectSocietyCubit.searchSociety(value);
+        },),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: onRefresh,

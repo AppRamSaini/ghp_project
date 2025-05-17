@@ -180,7 +180,73 @@ class _VisitorScreenState extends State<VisitorScreen> {
         })
       ],
       child: Scaffold(
-        backgroundColor: AppTheme.backgroundColor,
+        appBar: AppBar(
+          title: Text('Visitors',
+              style: GoogleFonts.nunitoSans(
+                  textStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600))),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: BlocBuilder<IncomingRequestCubit, IncomingRequestState>(
+                builder: (context, state) {
+                  if (state is IncomingRequestLoaded) {
+                    IncomingVisitorsModel incomingVisitorsRequest =
+                        state.incomingVisitorsRequest;
+                    if (incomingVisitorsRequest.lastCheckinDetail!.status ==
+                        'requested') {
+                      return Stack(
+                        alignment: Alignment.topLeft,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: RippleAnimation(
+                                color: Colors.red,
+                                delay: const Duration(milliseconds: 300),
+                                repeat: true,
+                                minRadius: 20,
+                                maxRadius: 50,
+                                ripplesCount: 6,
+                                duration: const Duration(milliseconds: 1800),
+                                child: CircleAvatar(
+                                  radius: 19,
+                                  child: CircleAvatar(
+                                      radius: 18,
+                                      backgroundColor: AppTheme.primaryColor,
+                                      child: const Icon(
+                                          Icons.notification_important_outlined,
+                                          color: Colors.white,
+                                          size: 19)),
+                                )),
+                          ),
+                          CircleAvatar(
+                            radius: 11,
+                            child: Text("1",
+                                style: GoogleFonts.nunitoSans(
+                                    textStyle: const TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.w600))),
+                          )
+                        ],
+                      );
+                    }
+                  }
+
+                  return CircleAvatar(
+                    radius: 19,
+                    child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: AppTheme.primaryColor,
+                        child: const Icon(Icons.notification_important_outlined,
+                            color: Colors.white, size: 19)),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
         floatingActionButton: BlocBuilder<UserProfileCubit, UserProfileState>(
             bloc: _userProfileCubit,
             builder: (context, profileState) {
@@ -200,116 +266,37 @@ class _VisitorScreenState extends State<VisitorScreen> {
                   backgroundColor: AppTheme.primaryColor,
                   onPressed: () {
                     if (profileState is UserProfileLoaded) {
-                      List<UnpaidBill> billData =
-                          profileState.userProfile.first.data!.unpaidBills!;
+                      final profile = profileState.userProfile.first;
 
-                      if (billData.isNotEmpty || billData != null) {
-                        String status =
-                            checkBillStatus(context, billData.first);
+                      final List<UnpaidBill>? billData = profile.data?.unpaidBills;
+
+                      if (billData != null && billData.isNotEmpty) {
+                        String status = checkBillStatus(context, billData.first);
 
                         if (status == 'overdue') {
                           overDueBillAlertDialog(context, billData.first);
                         } else {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (builder) =>
-                                  AddVisitorScreen(isTypeResidence: true)));
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => AddVisitorScreen(isTypeResidence: true),
+                            ),
+                          );
                         }
                       } else {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (builder) =>
-                                AddVisitorScreen(isTypeResidence: true)));
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => AddVisitorScreen(isTypeResidence: true),
+                          ),
+                        );
                       }
                     }
+
                   },
                   child: const Icon(Icons.add, color: Colors.white));
             }),
         body: SafeArea(
           child: Column(
             children: [
-              const SizedBox(height: 10),
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(children: [
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child:
-                            const Icon(Icons.arrow_back, color: Colors.white)),
-                    SizedBox(width: 10.w),
-                    Text('Visitors',
-                        style: GoogleFonts.nunitoSans(
-                            textStyle: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.w600))),
-                    const Spacer(),
-                    BlocBuilder<IncomingRequestCubit, IncomingRequestState>(
-                      builder: (context, state) {
-                        if (state is IncomingRequestLoaded) {
-                          IncomingVisitorsModel incomingVisitorsRequest =
-                              state.incomingVisitorsRequest;
-                          if (incomingVisitorsRequest
-                                  .lastCheckinDetail!.status ==
-                              'requested') {
-                            return Stack(
-                              alignment: Alignment.topLeft,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 5),
-                                    child: RippleAnimation(
-                                        color: Colors.red,
-                                        delay:
-                                            const Duration(milliseconds: 300),
-                                        repeat: true,
-                                        minRadius: 20,
-                                        maxRadius: 50,
-                                        ripplesCount: 6,
-                                        duration:
-                                            const Duration(milliseconds: 1800),
-                                        child: CircleAvatar(
-                                          radius: 19,
-                                          child: CircleAvatar(
-                                              radius: 18,
-                                              backgroundColor:
-                                                  AppTheme.backgroundColor,
-                                              child: const Icon(
-                                                  Icons
-                                                      .notification_important_outlined,
-                                                  color: Colors.white,
-                                                  size: 19)),
-                                        )),
-                                  ),
-                                ),
-                                CircleAvatar(
-                                  radius: 11,
-                                  child: Text("1",
-                                      style: GoogleFonts.nunitoSans(
-                                          textStyle: const TextStyle(
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.w600))),
-                                )
-                              ],
-                            );
-                          }
-                        }
-
-                        return CircleAvatar(
-                          radius: 19,
-                          child: CircleAvatar(
-                              radius: 18,
-                              backgroundColor: AppTheme.backgroundColor,
-                              child: const Icon(
-                                  Icons.notification_important_outlined,
-                                  color: Colors.white,
-                                  size: 19)),
-                        );
-                      },
-                    ),
-                  ])),
-              SizedBox(height: 15.h),
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -448,7 +435,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                                                   TextStyle(
                                                                 color: Colors
                                                                     .black,
-                                                                fontSize: 15.sp,
+                                                                fontSize: 15,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600,
@@ -513,7 +500,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                                                 color: Colors
                                                                     .black54,
                                                                 fontSize:
-                                                                    13.sp)))
+                                                                    12)))
                                                   ]),
 
                                                   Wrap(
@@ -525,7 +512,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                                           textStyle: TextStyle(
                                                             color:
                                                                 Colors.black54,
-                                                            fontSize: 13.sp,
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                       ),
@@ -537,7 +524,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                                         GoogleFonts.nunitoSans(
                                                       textStyle: TextStyle(
                                                         color: Colors.black54,
-                                                        fontSize: 13.sp,
+                                                        fontSize: 12,
                                                         fontWeight:
                                                             FontWeight.w400,
                                                       ),
@@ -565,7 +552,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                               style: GoogleFonts.nunitoSans(
                                                 textStyle: TextStyle(
                                                   color: Colors.black87,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
@@ -612,23 +599,23 @@ colorStatus(VisitorsListing visitors) {
 Widget status(VisitorsListing visitors) {
   if (visitors.lastCheckinDetail == null) {
     return const Text("Not Arrived",
-        style: TextStyle(color: Colors.deepOrange, fontSize: 14));
+        style: TextStyle(color: Colors.deepOrange, fontSize: 12));
   } else if (visitors.lastCheckinDetail.status == 'not_responded') {
     return const Text("Not Respond",
-        style: TextStyle(color: Colors.orange, fontSize: 14));
+        style: TextStyle(color: Colors.orange, fontSize: 12));
   } else if (visitors.lastCheckinDetail.status == 'not_allowed') {
     return const Text("Not Allowed",
-        style: TextStyle(color: Colors.red, fontSize: 14));
+        style: TextStyle(color: Colors.red, fontSize: 12));
   } else if (visitors.lastCheckinDetail.status == 'allowed' ||
       visitors.lastCheckinDetail.status == 'checked_in') {
     return const Text("Arrived",
-        style: TextStyle(color: Colors.green, fontSize: 14));
+        style: TextStyle(color: Colors.green, fontSize: 12));
   } else if (visitors.lastCheckinDetail.status == 'checked_out') {
     return const Text("Completed",
-        style: TextStyle(color: Colors.teal, fontSize: 14));
+        style: TextStyle(color: Colors.teal, fontSize: 12));
   }
   return const Text("Not Arrived",
-      style: TextStyle(color: Colors.deepOrange, fontSize: 14));
+      style: TextStyle(color: Colors.deepOrange, fontSize: 12));
 }
 
 /// VISITORS MODELS  SHEET

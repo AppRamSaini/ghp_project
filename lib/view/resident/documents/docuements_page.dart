@@ -51,7 +51,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                 style: GoogleFonts.nunitoSans(
                     textStyle: TextStyle(
                         color: Colors.black,
-                        fontSize: 20.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w600)))),
         body: SafeArea(
           child: RefreshIndicator(
@@ -152,7 +152,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             title,
             style: GoogleFonts.poppins(
               color: Colors.black,
-              fontSize: 14.sp,
+              fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
           ),

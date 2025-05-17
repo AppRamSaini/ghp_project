@@ -208,53 +208,63 @@ String formatShiftTime(String shiftTime) {
   return DateFormat('hh:mm a').format(dateTime); // Convert to AM/PM format
 }
 
+
+
 // CUSTOM APPBAR
 AppBar customAppbar(
     {required BuildContext context,
-    required String title,
-    required bool searchBarOpen,
-    required TextEditingController textController,
-    Function()? onExpansionComplete,
-    Function()? onCollapseComplete,
-    Function(bool)? onPressButton,
-    Function? onChanged}) {
+      required String title,
+      bool searchBarOpen = false,
+      required TextEditingController textController,
+      Function()? onExpansionComplete,
+      Function()? onCollapseComplete,
+      Function(bool)? onPressButton,
+      String hintText = "Search Here",
+      Function? onChanged}) {
   return AppBar(
     iconTheme: const IconThemeData(color: Colors.black),
     title: searchBarOpen
         ? const SizedBox()
         : Text(title,
-            style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600))),
+        style: GoogleFonts.nunitoSans(
+            textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600))),
     actions: [
       SearchBarAnimation(
-        searchBoxColour: Colors.white,
-        buttonColour: AppTheme.primaryLiteColor,
-        searchBoxWidth:
-            MediaQuery.of(context).size.width * 0.92, // Fix Overflow
+        searchBoxColour: AppTheme.white,
+        buttonColour: AppTheme.primaryColor,
+        cursorColour: AppTheme.primaryColor,
         isSearchBoxOnRightSide: false,
         textEditingController: textController,
         isOriginalAnimation: true,
         enableKeyboardFocus: true,
+        hintTextColour: AppTheme.primaryColor,
+        trailingWidget:
+        Icon(Icons.search, size: 20, color: AppTheme.primaryColor),
+        secondaryButtonWidget:
+        const Icon(Icons.close, size: 20, color: Colors.white),
+        buttonWidget: Icon(Icons.search, size: 20, color: AppTheme.white),
+        searchBoxWidth: MediaQuery.of(context).size.width / 1.1,
+
         enteredTextStyle: GoogleFonts.nunitoSans(
             textStyle: TextStyle(
-                color: Colors.black,
+                color: AppTheme.primaryColor,
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600)),
+        hintText: hintText,
         onExpansionComplete: onExpansionComplete,
         onCollapseComplete: onCollapseComplete,
         onPressButton: onPressButton,
         onChanged: onChanged,
-        trailingWidget: const Icon(Icons.search, size: 20, color: Colors.white),
-        secondaryButtonWidget:
-            const Icon(Icons.close, size: 20, color: Colors.white),
-        buttonWidget: const Icon(Icons.search, size: 20, color: Colors.white),
       ),
     ],
   );
 }
+
+
+
 String formatTimeToAMPM(String time) {
   final inputFormat = DateFormat("HH:mm:ss");
   final outputFormat = DateFormat("hh:mm a");

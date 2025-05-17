@@ -54,7 +54,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   void handleTap(BuildContext context, int index) {
     List<Widget> staffScreens = [
-      ResidentProfileDetails(),
+      ResidentProfileDetails(forDetails: true),
       const SizedBox(),
       NotificationScreen(),
       const EmergencyContactScreen(),
@@ -129,7 +129,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 style: GoogleFonts.nunitoSans(
                     textStyle: TextStyle(
                         color: Colors.black,
-                        fontSize: 20.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w600)))),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -144,8 +144,9 @@ class _SettingScreenState extends State<SettingScreen> {
                     builder: (context, state) {
                       if (state is UserProfileLoaded) {
                         return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Row(
+                          padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
+                          child:
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
@@ -154,7 +155,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     state.userProfile.first.data!.user!.image !=
                                             null
                                         ? CircleAvatar(
-                                            radius: 32.h,
+                                            radius: 28,
                                             backgroundImage: NetworkImage(state
                                                 .userProfile
                                                 .first
@@ -163,7 +164,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                                 .image
                                                 .toString()))
                                         : const CircleAvatar(
-                                            radius: 32,
+                                            radius: 25,
                                             backgroundImage: AssetImage(
                                                 'assets/images/default.jpg')),
                                     const SizedBox(width: 10),
@@ -179,18 +180,18 @@ class _SettingScreenState extends State<SettingScreen> {
                                                 style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
                                                     color: Colors.black,
-                                                    fontSize: 16.sp,
+                                                    fontSize: 15.sp,
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                                 )),
-                                            Text(
-                                                "+91 ${state.userProfile.first.data!.user!.phone.toString()}",
-                                                style: GoogleFonts.nunitoSans(
-                                                    textStyle: TextStyle(
-                                                        color: Colors.black87,
-                                                        fontSize: 13.sp,
-                                                        fontWeight:
-                                                            FontWeight.w500))),
+                                            // Text(
+                                            //     "+91 ${state.userProfile.first.data!.user!.phone.toString()}",
+                                            //     style: GoogleFonts.nunitoSans(
+                                            //         textStyle: TextStyle(
+                                            //             color: Colors.black87,
+                                            //             fontSize: 10.sp,
+                                            //             fontWeight:
+                                            //                 FontWeight.w500))),
                                             Text(
                                                 widget.forStaffSide
                                                     ? capitalizeWords(state
@@ -206,7 +207,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                                 style: GoogleFonts.nunitoSans(
                                                     textStyle: TextStyle(
                                                         color: Colors.black87,
-                                                        fontSize: 13.sp,
+                                                        fontSize: 10,
                                                         fontWeight:
                                                             FontWeight.w500)))
                                           ]),
@@ -215,7 +216,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 ),
                               ),
                               widget.forStaffSide
-                                  ? const SizedBox(height: 100)
+                                  ? const SizedBox(height: 80)
                                   : GestureDetector(
                                       onTap: () => Navigator.of(context).push(
                                           MaterialPageRoute(
@@ -227,8 +228,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                                           .data!
                                                           .user!))),
                                       child: SizedBox(
-                                          height: 100,
-                                          width: 80,
+                                          height: 80,
+                                          width: 70,
                                           child: Image.asset(
                                               'assets/images/qr-image.png')),
                                     )
@@ -311,7 +312,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                   Row(
                                     children: [
                                       Image.asset(ImageAssets.settingLogo,
-                                          height: 40.h),
+                                          height: 35.h),
                                       SizedBox(width: 10.w),
                                       Expanded(
                                           child: Column(
@@ -344,7 +345,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                                           30)),
                                               color: AppTheme.primaryColor,
                                               child: const Text("Edit Profile",
-                                                  style: TextStyle(
+                                                  style: TextStyle(fontSize: 12,
                                                       color: Colors.white)))
                                           : Container(
                                               decoration: BoxDecoration(

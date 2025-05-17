@@ -27,152 +27,115 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
-    _getNotificationSettingsCubit = GetNotificationSettingsCubit()
-      ..fetchGetNotificationSettingsAPI();
+    _getNotificationSettingsCubit = GetNotificationSettingsCubit();
+    _getNotificationSettingsCubit.fetchGetNotificationSettingsAPI();
   }
 
   BuildContext? dialogueContext;
 
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 20.h),
-            Row(
-              children: [
-                widget.isStaffSide
-                    ? const SizedBox()
-                    : Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: Text(
-                    'Notification Settings',
-                    style: GoogleFonts.nunitoSans(
-                      textStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20.h),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20))),
-                child: BlocListener<UpdateNotificationSettingsCubit,
-                    UpdateNotificationSettingsState>(
-                  listener: (context, state) {
-                    if (state is UpdateNotificationSettingsLoading) {
-                      /*  showLoadingDialog(context, (ctx) {
-                        dialogueContext = ctx;
-                      });*/
-                    } else if (state
-                        is UpdateNotificationSettingsSuccessfully) {
-                      // snackBar(context, state.message.toString(), Icons.done,
-                      //     AppTheme.guestColor);
+      appBar: AppBar(title: Text(
+        'Notification Settings',
+        style: GoogleFonts.nunitoSans(
+          textStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      )),
+      body: BlocListener<UpdateNotificationSettingsCubit,
+          UpdateNotificationSettingsState>(
+        listener: (context, state) {
+          if (state is UpdateNotificationSettingsLoading) {
+            /*  showLoadingDialog(context, (ctx) {
+              dialogueContext = ctx;
+            });*/
+          } else if (state
+              is UpdateNotificationSettingsSuccessfully) {
+            // snackBar(context, state.message.toString(), Icons.done,
+            //     AppTheme.guestColor);
 
-                      // Navigator.of(dialogueContext!).pop();
-                      // Update the toggle state only upon success
+            // Navigator.of(dialogueContext!).pop();
+            // Update the toggle state only upon success
+            setState(() {
+              toggleStates[updatingSetting] =
+                  updateValue == 'enabled';
+              updatingSetting = '';
+            });
+          } else if (state
+              is UpdateNotificationSettingsInternetError) {
+            snackBar(context, state.errorMessage.toString(),
+                Icons.done, AppTheme.redColor);
+
+            // Navigator.of(dialogueContext!).pop();
+          }
+        },
+        child: BlocBuilder<GetNotificationSettingsCubit,
+            GetNotificationSettingsState>(
+          bloc: _getNotificationSettingsCubit,
+          builder: (context, state) {
+            if (state is GetNotificationSettingsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is GetNotificationSettingsLoaded) {
+              List<NotificationSetting> data =
+                  state.notificationSettings;
+              for (var setting in data) {
+                toggleStates[setting.name] ??=
+                    setting.status == "enabled";
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 15, vertical: 5),
+                itemCount: data.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  String formattedTitle = data[index]
+                      .name
+                      .replaceAll('_', ' ')
+                      .split(' ')
+                      .map((word) =>
+                          word[0].toUpperCase() + word.substring(1))
+                      .join(' ');
+
+                  return _buildSwitchRow(
+                    formattedTitle,
+                    toggleStates[data[index].name] ?? false,
+                    (value) {
                       setState(() {
-                        toggleStates[updatingSetting] =
-                            updateValue == 'enabled';
-                        updatingSetting = '';
+                        updatingSetting = data[index].name;
+                        updateValue = value ? 'enabled' : 'disabled';
+                        var bodyData = {
+                          "name": data[index].name,
+                          "status": updateValue
+                        };
+                        context
+                            .read<UpdateNotificationSettingsCubit>()
+                            .updateNotificationSettingsAPI(bodyData);
                       });
-                    } else if (state
-                        is UpdateNotificationSettingsInternetError) {
-                      snackBar(context, state.errorMessage.toString(),
-                          Icons.done, AppTheme.redColor);
-
-                      // Navigator.of(dialogueContext!).pop();
-                    }
-                  },
-                  child: BlocBuilder<GetNotificationSettingsCubit,
-                      GetNotificationSettingsState>(
-                    bloc: _getNotificationSettingsCubit,
-                    builder: (context, state) {
-                      if (state is GetNotificationSettingsLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (state is GetNotificationSettingsLoaded) {
-                        List<NotificationSetting> data =
-                            state.notificationSettings;
-                        for (var setting in data) {
-                          toggleStates[setting.name] ??=
-                              setting.status == "enabled";
-                        }
-
-                        return ListView.builder(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 5),
-                          itemCount: data.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            String formattedTitle = data[index]
-                                .name
-                                .replaceAll('_', ' ')
-                                .split(' ')
-                                .map((word) =>
-                                    word[0].toUpperCase() + word.substring(1))
-                                .join(' ');
-
-                            return _buildSwitchRow(
-                              formattedTitle,
-                              toggleStates[data[index].name] ?? false,
-                              (value) {
-                                setState(() {
-                                  updatingSetting = data[index].name;
-                                  updateValue = value ? 'enabled' : 'disabled';
-                                  var bodyData = {
-                                    "name": data[index].name,
-                                    "status": updateValue
-                                  };
-                                  context
-                                      .read<UpdateNotificationSettingsCubit>()
-                                      .updateNotificationSettingsAPI(bodyData);
-                                });
-                              },
-                            );
-                          },
-                        );
-                      } else if (state is GetNotificationSettingsFailed) {
-                        return Center(
-                            child: Text(state.errorMessage.toString(),
-                                style: const TextStyle(
-                                    color: Colors.deepPurpleAccent)));
-                      } else if (state
-                          is GetNotificationSettingsInternetError) {
-                        return Center(
-                            child: Text(state.errorMessage.toString(),
-                                style: const TextStyle(color: Colors.red)));
-                      }
-                      return const SizedBox();
                     },
-                  ),
-                ),
-              ),
-            ),
-          ],
+                  );
+                },
+              );
+            } else if (state is GetNotificationSettingsFailed) {
+              return Center(
+                  child: Text(state.errorMessage.toString(),
+                      style: const TextStyle(
+                          color: Colors.deepPurpleAccent)));
+            } else if (state
+                is GetNotificationSettingsInternetError) {
+              return Center(
+                  child: Text(state.errorMessage.toString(),
+                      style: const TextStyle(color: Colors.red)));
+            }
+            return const SizedBox();
+          },
         ),
       ),
     );
@@ -180,30 +143,33 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   Widget _buildSwitchRow(
       String title, bool switchValue, ValueChanged<bool> onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
+    return Card(
+      color: AppTheme.white,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.nunitoSans(
+                textStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-          ),
-          Transform.scale(
-            scale: 0.7,
-            child: CupertinoSwitch(
-              activeColor: AppTheme.primaryColor,
-              value: switchValue,
-              onChanged: onChanged,
+            Transform.scale(
+              scale: 0.7,
+              child: CupertinoSwitch(
+                activeColor: AppTheme.primaryColor,
+                value: switchValue,
+                onChanged: onChanged,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
