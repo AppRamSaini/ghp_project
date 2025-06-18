@@ -1,5 +1,5 @@
 class ImageAssets {
-  static const String appLogo = 'assets/images/app_icon1.png';
+  static const String appLogo = 'assets/images/new_logo.png';
   static const String bg = 'assets/images/bg.png';
   static const String societyImage = 'assets/images/office.png';
   static const String loginImage = 'assets/images/login1.png';
@@ -57,4 +57,5 @@ class ImageAssets {
   static const String service1 = 'assets/images/service1.png';
   static const String polls1 = 'assets/images/polls1.png';
   static const String events1 = 'assets/images/event1.png';
+  static const String billFrame = 'assets/images/bill_frame.png';
 }

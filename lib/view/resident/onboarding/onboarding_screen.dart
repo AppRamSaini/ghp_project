@@ -6,7 +6,7 @@ import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/controller/sliders/sliders_cubit.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/view/silder_management/sliders.dart';
-import 'package:ghp_society_management/view/society/select_society_screen.dart';
+import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OnboardingScreen extends StatefulWidget {

@@ -1,4 +1,4 @@
-package com.fp.ghp_society_app
+package com.fp.ghpsocietyapp
 
 import io.flutter.embedding.android.FlutterActivity
 

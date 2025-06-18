@@ -48,7 +48,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     )));
           },
           child: const Icon(Icons.add, color: Colors.white)),
-      body: Padding(
+      body:
+
+
+      Padding(
         padding: const EdgeInsets.all(12),
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance

@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        package="com.fp.ghp_society_app">
+        package="com.fp.ghpsocietyapp">
 
         <!-- ✅ Required Permissions -->
         <uses-permission android:name="android.permission.INTERNET" />

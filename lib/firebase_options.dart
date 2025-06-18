@@ -41,48 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBlLlnP7ueMzVFsOc8gbW_3eTluqAiSEig',
-    appId: '1:254957530147:web:4d667d084dc9a12423d596',
-    messagingSenderId: '254957530147',
-    projectId: 'ghp-society-ms',
-    authDomain: 'ghp-society-ms.firebaseapp.com',
-    storageBucket: 'ghp-society-ms.appspot.com',
-    measurementId: 'G-C52N4Z8ZGK',
+    apiKey: 'AIzaSyDY8MTQBpyTWtT7wiw7t-P4qvRZsQsjhk0',
+    appId: '1:722059750239:web:723578fe8bae973ceca4ea',
+    messagingSenderId: '722059750239',
+    projectId: 'ghpsocietyapp-64319',
+    authDomain: 'ghpsocietyapp-64319.firebaseapp.com',
+    storageBucket: 'ghpsocietyapp-64319.firebasestorage.app',
+    measurementId: 'G-9G1K25YRK7',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCNLmI5goNLYGFMWXD7caRt0MBK_Sdpa_E',
-    appId: '1:254957530147:android:7e42ede66896865923d596',
-    messagingSenderId: '254957530147',
-    projectId: 'ghp-society-ms',
-    storageBucket: 'ghp-society-ms.appspot.com',
+    apiKey: 'AIzaSyBfw9RO0bf4YvvrhrFAGpFGnDCt-kbNPI0',
+    appId: '1:722059750239:android:44fb32e09cbad6edeca4ea',
+    messagingSenderId: '722059750239',
+    projectId: 'ghpsocietyapp-64319',
+    storageBucket: 'ghpsocietyapp-64319.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC-sWOYV49KfJ_e372ylZ7WJRYsl3REOPE',
-    appId: '1:254957530147:ios:33fb8178fb0146d223d596',
-    messagingSenderId: '254957530147',
-    projectId: 'ghp-society-ms',
-    storageBucket: 'ghp-society-ms.appspot.com',
-    iosBundleId: 'com.gsm.ghpSocietyManagement',
+    apiKey: 'AIzaSyDUE7l564Ph6zZBNKkEQMGQfbd_1oGAwiY',
+    appId: '1:722059750239:ios:10cf19b709cf9c3deca4ea',
+    messagingSenderId: '722059750239',
+    projectId: 'ghpsocietyapp-64319',
+    storageBucket: 'ghpsocietyapp-64319.firebasestorage.app',
+    iosBundleId: 'com.fp.ghpsocietyapp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC-sWOYV49KfJ_e372ylZ7WJRYsl3REOPE',
-    appId: '1:254957530147:ios:33fb8178fb0146d223d596',
-    messagingSenderId: '254957530147',
-    projectId: 'ghp-society-ms',
-    storageBucket: 'ghp-society-ms.appspot.com',
-    iosBundleId: 'com.gsm.ghpSocietyManagement',
+    apiKey: 'AIzaSyDUE7l564Ph6zZBNKkEQMGQfbd_1oGAwiY',
+    appId: '1:722059750239:ios:10cf19b709cf9c3deca4ea',
+    messagingSenderId: '722059750239',
+    projectId: 'ghpsocietyapp-64319',
+    storageBucket: 'ghpsocietyapp-64319.firebasestorage.app',
+    iosBundleId: 'com.fp.ghpsocietyapp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBlLlnP7ueMzVFsOc8gbW_3eTluqAiSEig',
-    appId: '1:254957530147:web:cb8e9e95eedcff7023d596',
-    messagingSenderId: '254957530147',
-    projectId: 'ghp-society-ms',
-    authDomain: 'ghp-society-ms.firebaseapp.com',
-    storageBucket: 'ghp-society-ms.appspot.com',
-    measurementId: 'G-V8QLRJ0NRP',
+    apiKey: 'AIzaSyDY8MTQBpyTWtT7wiw7t-P4qvRZsQsjhk0',
+    appId: '1:722059750239:web:8259b02d3b72833beca4ea',
+    messagingSenderId: '722059750239',
+    projectId: 'ghpsocietyapp-64319',
+    authDomain: 'ghpsocietyapp-64319.firebaseapp.com',
+    storageBucket: 'ghpsocietyapp-64319.firebasestorage.app',
+    measurementId: 'G-VFD3WB88GZ',
   );
 }

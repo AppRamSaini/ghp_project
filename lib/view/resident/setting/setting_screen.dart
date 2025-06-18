@@ -11,7 +11,7 @@ import 'package:ghp_society_management/view/resident/setting/notification_screen
 import 'package:ghp_society_management/view/resident/setting/privacy_policy.dart';
 import 'package:ghp_society_management/view/resident/setting/term_of_use.dart';
 import 'package:ghp_society_management/view/security_staff/daliy_help/daily_helps_members.dart';
-import 'package:ghp_society_management/view/society/select_society_screen.dart';
+import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   bool forStaffSide;

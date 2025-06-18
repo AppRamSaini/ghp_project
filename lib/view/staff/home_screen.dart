@@ -3,7 +3,7 @@ import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/model/service_request_model.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
-import 'package:ghp_society_management/view/society/select_society_screen.dart';
+import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 import 'package:ghp_society_management/view/staff/mark_done_screen.dart';
 import 'package:pinput/pinput.dart';
 

@@ -57,29 +57,18 @@ class _MessagingScreenState extends State<MessagingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppTheme.backgroundColor,
-        body: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(height: 20.h),
-              Row(children: [
-                SizedBox(width: 10.w),
-                GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Icon(Icons.arrow_back, color: Colors.white)),
-                SizedBox(width: 10.w),
-                widget.userImage.isEmpty
-                    ? Image.asset(ImageAssets.chatImage, height: 50.h)
-                    : CircleAvatar(
-                        radius: 25.r,
-                        backgroundColor: Colors.transparent,
-                        backgroundImage: NetworkImage(widget.userImage)),
-                SizedBox(width: 10.w),
-                Expanded(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+
+        appBar: AppBar(
+          leading: widget.userImage.isEmpty
+              ? Image.asset(ImageAssets.chatImage, height: 50.h)
+              : CircleAvatar(
+              radius: 25.r,
+              backgroundColor: Colors.transparent,
+              backgroundImage: NetworkImage(widget.userImage)),
+            title:  Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(widget.userName.toString(),
                           style: GoogleFonts.nunitoSans(
                               textStyle: TextStyle(
@@ -88,233 +77,219 @@ class _MessagingScreenState extends State<MessagingScreen> {
                                   fontWeight: FontWeight.w600))),
                       Text(
                           widget.userCategory.isEmpty ||
-                                  widget.userCategory == null
+                              widget.userCategory == null
                               ? "Resident"
                               : capitalizeWords(widget.userCategory
-                                  .toString()
-                                  .replaceAll("_", ' ')),
+                              .toString()
+                              .replaceAll("_", ' ')),
                           style: GoogleFonts.nunitoSans(
                               textStyle: TextStyle(
                                   color: Colors.green,
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w600)))
-                    ]))
-              ]),
-              SizedBox(height: 20.h),
-              Expanded(
-                child: Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: StreamBuilder(
-                              stream: context
-                                  .read<GroupCubit>()
-                                  .getGroupMessages(widget.groupId),
-                              builder: (context, snapshot) {
-                                print(widget.groupId);
-                                if (snapshot.data == null ||
-                                    snapshot.data!.isEmpty) {
-                                  return const Center(
-                                      child: Text("No messages available"));
-                                } else {
-                                  WidgetsBinding.instance.addPostFrameCallback(
-                                      (_) => _scrollToBottom());
-                                  context
-                                      .read<GroupCubit>()
-                                      .markAllMessagesAsRead(
-                                          widget.groupId, widget.userId);
+                    ]))),
+        body: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder(
+                  stream: context
+                      .read<GroupCubit>()
+                      .getGroupMessages(widget.groupId),
+                  builder: (context, snapshot) {
+                    print(widget.groupId);
+                    if (snapshot.data == null ||
+                        snapshot.data!.isEmpty) {
+                      return const Center(
+                          child: Text("No messages available"));
+                    } else {
+                      WidgetsBinding.instance.addPostFrameCallback(
+                          (_) => _scrollToBottom());
+                      context
+                          .read<GroupCubit>()
+                          .markAllMessagesAsRead(
+                              widget.groupId, widget.userId);
 
-                                  var messages = snapshot.data!;
-                                  return ListView.builder(
-                                    controller: _scrollController,
-                                    shrinkWrap: true,
-                                    itemCount: messages.length,
-                                    itemBuilder: (context, index) {
-                                      final message = messages[index];
-                                      final isMe =
-                                          message.senderId == widget.userId;
-                                      return Align(
-                                        alignment: isMe
-                                            ? Alignment.centerRight
-                                            : Alignment.centerLeft,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(12),
-                                          child: Column(
-                                            crossAxisAlignment: isMe
-                                                ? CrossAxisAlignment.end
-                                                : CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 5,
-                                                        horizontal: 15),
-                                                decoration: BoxDecoration(
+                      var messages = snapshot.data!;
+                      return ListView.builder(
+                        controller: _scrollController,
+                        shrinkWrap: true,
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          final message = messages[index];
+                          final isMe =
+                              message.senderId == widget.userId;
+                          return Align(
+                            alignment: isMe
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: isMe
+                                    ? CrossAxisAlignment.end
+                                    : CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.symmetric(
+                                            vertical: 5,
+                                            horizontal: 15),
+                                    decoration: BoxDecoration(
+                                        color: isMe
+                                            ? const Color(
+                                                0xFF8077F5)
+                                            : Colors.grey[200],
+                                        borderRadius:
+                                            BorderRadius.only(
+                                          topLeft: Radius.circular(
+                                              isMe ? 0 : 20),
+                                          topRight:
+                                              const Radius.circular(
+                                                  20),
+                                          bottomLeft:
+                                              const Radius.circular(
+                                                  20),
+                                          bottomRight:
+                                              Radius.circular(
+                                                  isMe ? 20 : 0),
+                                        )),
+                                    child: Column(
+                                      crossAxisAlignment: isMe
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment
+                                              .start,
+                                      children: [
+                                        Text(
+                                            messages[index]
+                                                .message!,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: isMe
+                                                    ? Colors.white
+                                                    : Colors
+                                                        .black)),
+                                        const SizedBox(height: 5),
+                                        Row(
+                                          mainAxisSize:
+                                              MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                                _formatDate(message
+                                                    .timestamp!
+                                                    .toDate()),
+                                                style: TextStyle(
+                                                    fontSize: 8,
                                                     color: isMe
-                                                        ? const Color(
-                                                            0xFF8077F5)
-                                                        : Colors.grey[200],
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft: Radius.circular(
-                                                          isMe ? 0 : 20),
-                                                      topRight:
-                                                          const Radius.circular(
-                                                              20),
-                                                      bottomLeft:
-                                                          const Radius.circular(
-                                                              20),
-                                                      bottomRight:
-                                                          Radius.circular(
-                                                              isMe ? 20 : 0),
-                                                    )),
-                                                child: Column(
-                                                  crossAxisAlignment: isMe
-                                                      ? CrossAxisAlignment.end
-                                                      : CrossAxisAlignment
-                                                          .start,
-                                                  children: [
-                                                    Text(
-                                                        messages[index]
-                                                            .message!,
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: isMe
-                                                                ? Colors.white
-                                                                : Colors
-                                                                    .black)),
-                                                    const SizedBox(height: 5),
-                                                    Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Text(
-                                                            _formatDate(message
-                                                                .timestamp!
-                                                                .toDate()),
-                                                            style: TextStyle(
-                                                                fontSize: 8,
-                                                                color: isMe
-                                                                    ? Colors
-                                                                        .white
-                                                                    : Colors
-                                                                        .black)),
-                                                        SizedBox(width: 5.w),
-                                                        if (isMe) ...[
-                                                          message.readBy.any(
-                                                                  (id) =>
-                                                                      id !=
-                                                                      widget
-                                                                          .userId)
-                                                              ? Icon(
-                                                                  Icons
-                                                                      .done_all,
-                                                                  size: 15.sp,
-                                                                  color: Colors
-                                                                      .white)
-                                                              : Icon(Icons.done,
-                                                                  size: 15.sp,
-                                                                  color: Colors
-                                                                      .white),
-                                                        ]
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                                        ? Colors
+                                                            .white
+                                                        : Colors
+                                                            .black)),
+                                            SizedBox(width: 5.w),
+                                            if (isMe) ...[
+                                              message.readBy.any(
+                                                      (id) =>
+                                                          id !=
+                                                          widget
+                                                              .userId)
+                                                  ? Icon(
+                                                      Icons
+                                                          .done_all,
+                                                      size: 15.sp,
+                                                      color: Colors
+                                                          .white)
+                                                  : Icon(Icons.done,
+                                                      size: 15.sp,
+                                                      color: Colors
+                                                          .white),
+                                            ]
+                                          ],
                                         ),
-                                      );
-                                    },
-                                  );
-                                }
-                              }),
-                        ),
-                        Container(
-                          color: Colors.white,
-                          child: Container(
-                              color: Colors.white,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  title: TextFormField(
-                                    style: GoogleFonts.nunitoSans(
-                                        color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w500),
-                                    controller: messagingController,
-                                    keyboardType: TextInputType.text,
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      filled: true,
-                                      hintText: "Type here..",
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w400),
-                                      fillColor: AppTheme.greyColor,
-                                      errorBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0),
-                                        borderSide: BorderSide(
-                                          color: AppTheme.greyColor,
-                                        ),
-                                      ),
+                                      ],
                                     ),
                                   ),
-                                  trailing: GestureDetector(
-                                      onTap: () {
-                                        if (messagingController
-                                            .text.isNotEmpty) {
-                                          context
-                                              .read<GroupCubit>()
-                                              .sendGroupMessage(
-                                                  messagingController.text,
-                                                  widget.groupId,
-                                                  widget.userName,
-                                                  widget.userId);
-                                          messagingController.clear();
-                                        }
-                                      },
-                                      child: Image.asset(
-                                          ImageAssets.sendMessageImage,
-                                          fit: BoxFit.cover,
-                                          color: Colors.deepPurpleAccent)))),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  }),
+            ),
+            Container(
+              color: Colors.white,
+              child: Container(
+                  color: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10),
+                  child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: TextFormField(
+                        style: GoogleFonts.nunitoSans(
+                            color: Colors.black,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500),
+                        controller: messagingController,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          filled: true,
+                          hintText: "Type here..",
+                          hintStyle: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400),
+                          fillColor: AppTheme.greyColor,
+                          errorBorder: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(30.0),
+                            borderSide: BorderSide(
+                              color: AppTheme.greyColor,
+                            ),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(30.0),
+                            borderSide: BorderSide(
+                              color: AppTheme.greyColor,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(30.0),
+                            borderSide: BorderSide(
+                              color: AppTheme.greyColor,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(30.0),
+                            borderSide: BorderSide(
+                              color: AppTheme.greyColor,
+                            ),
+                          ),
                         ),
-                      ],
-                    )),
-              ),
-            ],
-          ),
+                      ),
+                      trailing: GestureDetector(
+                          onTap: () {
+                            if (messagingController
+                                .text.isNotEmpty) {
+                              context
+                                  .read<GroupCubit>()
+                                  .sendGroupMessage(
+                                      messagingController.text,
+                                      widget.groupId,
+                                      widget.userName,
+                                      widget.userId);
+                              messagingController.clear();
+                            }
+                          },
+                          child: Image.asset(
+                              ImageAssets.sendMessageImage,
+                              fit: BoxFit.cover,
+                              color: Colors.deepPurpleAccent)))),
+            ),
+          ],
         ));
   }
 

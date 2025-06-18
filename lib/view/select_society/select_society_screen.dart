@@ -51,14 +51,16 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: customAppbar(context: context, title: "Select Society",
+      appBar: customAppbar(
+        context: context,
+        title: "Select Society",
         searchBarOpen: searchBarOpen,
         textController: textController,
         onExpansionComplete: () {
-        setState(() {
-          searchBarOpen = true;
-        });
-      },
+          setState(() {
+            searchBarOpen = true;
+          });
+        },
         onCollapseComplete: () {
           setState(() {
             searchBarOpen = false;
@@ -73,7 +75,8 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
         },
         onChanged: (value) {
           _selectSocietyCubit.searchSociety(value);
-        },),
+        },
+      ),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: onRefresh,
@@ -88,8 +91,8 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                 if (state is SelectSocietyFailed) {
                   return Center(
                       child: Text(state.errorMsg,
-                          style: const TextStyle(
-                              color: Colors.deepPurpleAccent)));
+                          style:
+                              const TextStyle(color: Colors.deepPurpleAccent)));
                 }
                 if (state is SelectSocietyInternetError) {
                   return Center(
@@ -143,22 +146,19 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                   Color(0xFFFFA1A1), // Pink
                 ];
                 return ListView.builder(
-
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                   controller: _scrollController,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemCount: societyList.length + 1,
                   shrinkWrap: true,
                   itemBuilder: ((context, index) {
                     if (index == societyList.length) {
-                      return _selectSocietyCubit.state
-                              is SelectSocietyLoadMore
+                      return _selectSocietyCubit.state is SelectSocietyLoadMore
                           ? const Padding(
                               padding: EdgeInsets.all(16.0),
                               child: Center(
-                                  child:
-                                      CircularProgressIndicator.adaptive()))
+                                  child: CircularProgressIndicator.adaptive()))
                           : const SizedBox.shrink();
                     }
 
@@ -166,12 +166,11 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                     Color backgroundColor = bgColors[index % bgColors.length];
                     return GestureDetector(
                       onTap: () async {
-                        LocalStorage.localStorage.setString(
-                            'societyId', '${societyList[index].id}');
+                        LocalStorage.localStorage
+                            .setString('societyId', '${societyList[index].id}');
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (builder) => LoginScreen(
-                                societyId:
-                                    societyList[index].id.toString())));
+                                societyId: societyList[index].id.toString())));
                       },
                       child: Container(
                         margin: EdgeInsets.only(top: 10),
@@ -184,11 +183,10 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                             children: [
                               Padding(
                                   padding: const EdgeInsets.all(12.0),
-                                  child: Image.asset(
-                                      ImageAssets.societyImage,
+                                  child: Image.asset(ImageAssets.societyImage,
                                       height: 35.h,
-                                      width: 35.h,color:  backgroundColor.withOpacity(0.5)
-                                  )),
+                                      width: 35.h,
+                                      color: backgroundColor.withOpacity(0.5))),
                               SizedBox(width: 10.w),
                               Expanded(
                                   child: Column(
@@ -200,17 +198,13 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                                             textStyle: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 15.sp,
-                                                fontWeight:
-                                                    FontWeight.w500))),
-                                    Text(
-                                        '${societyList[index].totalTowers} Towers, ${societyList[index].location}',
+                                                fontWeight: FontWeight.w500))),
+                                    Text(societyList[index].location.toString(),
                                         style: GoogleFonts.ptSans(
                                             textStyle: TextStyle(
-                                                color:
-                                                Colors.black87,
+                                                color: Colors.black87,
                                                 fontSize: 12.sp,
-                                                fontWeight:
-                                                    FontWeight.w500)))
+                                                fontWeight: FontWeight.w500)))
                                   ])),
                               Icon(
                                 Icons.navigate_next,

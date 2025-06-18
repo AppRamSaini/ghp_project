@@ -37,7 +37,7 @@ void snackBar(BuildContext context, String title, IconData icon, Color color) {
                   title,
                   style: GoogleFonts.nunitoSans(
                     color: Colors.white,
-                    fontSize: 14.sp,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

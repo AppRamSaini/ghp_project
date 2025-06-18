@@ -114,23 +114,19 @@ class DashboardState extends State<Dashboard> {
           ),
         ],
         child: Scaffold(
-          body: SizedBox.expand(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() => currentIndex = index);
-              },
-              children: <Widget>[
-                HomeScreen(onChanged: onChanged),
-                const BillScreen(),
-                const DocumentsScreen(),
-                SettingScreen()
-              ],
-            ),
+          body: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() => currentIndex = index);
+            },
+            children: <Widget>[
+              HomeScreen(onChanged: onChanged),
+              const DocumentsScreen(),
+              SettingScreen()
+            ],
           ),
           bottomNavigationBar: BottomNavyBar(
             selectedIndex: currentIndex,
-
             onItemSelected: (index) {
               setState(() => currentIndex = index);
               _pageController!.jumpToPage(index);
@@ -151,31 +147,31 @@ class DashboardState extends State<Dashboard> {
                     padding: const EdgeInsets.only(left: 5.0),
                     child: Image.asset(
                       ImageAssets.homeImage,
-                      height: 18.h,
+                      height: 16.h,
                       color: Colors.black,
                     ),
                   ),
                   activeColor: AppTheme.blueColor),
-              BottomNavyBarItem(
-                  title: Text(
-                    'Bills',
-                    style: GoogleFonts.nunitoSans(
-                      textStyle: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  icon: Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Image.asset(
-                      ImageAssets.billImage,
-                      height: 18.h,
-                      color: Colors.black,
-                    ),
-                  ),
-                  activeColor: AppTheme.blueColor),
+              // BottomNavyBarItem(
+              //     title: Text(
+              //       'Bills',
+              //       style: GoogleFonts.nunitoSans(
+              //         textStyle: TextStyle(
+              //           color: Colors.black,
+              //           fontSize: 14.sp,
+              //           fontWeight: FontWeight.w500,
+              //         ),
+              //       ),
+              //     ),
+              //     icon: Padding(
+              //       padding: const EdgeInsets.only(left: 5.0),
+              //       child: Image.asset(
+              //         ImageAssets.billImage,
+              //         height: 18.h,
+              //         color: Colors.black,
+              //       ),
+              //     ),
+              //     activeColor: AppTheme.blueColor),
               BottomNavyBarItem(
                   title: Text(
                     'Documents',
@@ -191,13 +187,13 @@ class DashboardState extends State<Dashboard> {
                     padding: const EdgeInsets.only(left: 5.0),
                     child: Image.asset(
                       ImageAssets.documentImage,
-                      height: 18.h,
+                      height: 16.h,
                       color: Colors.black,
                     ),
                   ),
                   activeColor: AppTheme.blueColor),
               BottomNavyBarItem(
-                textAlign: TextAlign.center,
+                  textAlign: TextAlign.center,
                   title: Text('Settings',
                       style: GoogleFonts.nunitoSans(
                           textStyle: TextStyle(
@@ -207,7 +203,7 @@ class DashboardState extends State<Dashboard> {
                   icon: Padding(
                       padding: const EdgeInsets.only(left: 5.0),
                       child: Image.asset(ImageAssets.settingImage,
-                          height: 18.h, color: Colors.black)),
+                          height: 16.h, color: Colors.black)),
                   activeColor: AppTheme.blueColor),
             ],
           ),

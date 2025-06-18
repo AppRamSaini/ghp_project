@@ -59,6 +59,7 @@ class _BillScreenState extends State<BillScreen> {
     setState(() {});
   }
 
+  bool showingBill = false;
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -70,10 +71,15 @@ class _BillScreenState extends State<BillScreen> {
               List<UnpaidBill> billData =
                   state.userProfile.first.data!.unpaidBills!;
               if (billData.isNotEmpty) {
-                checkPaymentReminder(
-                    context: context,
-                    myUnpaidBill:
-                        state.userProfile.first.data!.unpaidBills!.first);
+                if (!showingBill) {
+                  setState(() {
+                    showingBill = true;
+                  });
+                  checkPaymentReminder(
+                      context: context,
+                      myUnpaidBill:
+                          state.userProfile.first.data!.unpaidBills!.first);
+                }
               }
             });
           }
@@ -241,8 +247,6 @@ class _BillScreenState extends State<BillScreen> {
                                   return "$delayDays ${delayDays > 1 ? 'days' : 'day'} overdue";
                                 }
                               }
-
-
 
                               return Container(
                                 margin: const EdgeInsets.symmetric(

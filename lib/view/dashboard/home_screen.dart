@@ -4,12 +4,14 @@ import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
 import 'package:ghp_society_management/view/dashboard/view_all_features.dart';
+import 'package:ghp_society_management/view/resident/bills/bill_screen.dart';
 import 'package:ghp_society_management/view/resident/bills/my_bills.dart';
 import 'package:ghp_society_management/view/resident/complaint/comlaint_page.dart';
 import 'package:ghp_society_management/view/resident/member/members_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:ghp_society_management/view/resident/visitors/visitor_screen.dart';
-import 'package:ghp_society_management/view/society/select_society_screen.dart';
+import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
+import 'package:searchbar_animation/const/colours.dart';
 import '../resident/parcel_flow/parcel_listing.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -42,7 +44,12 @@ class _HomeScreenState extends State<HomeScreen> {
     {"icon": ImageAssets.parcel1, "title": "Parcels"},
   ];
 
-  List pagesList = [MemberScreen(),ComplaintScreen(),VisitorScreen(),ParcelListingPage()];
+  List pagesList = [
+    MemberScreen(),
+    ComplaintScreen(),
+    VisitorScreen(),
+    ParcelListingPage()
+  ];
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -88,6 +95,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.green,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            onPressed: () => Navigator.push(
+                context, MaterialPageRoute(builder: (_) => BillScreen())),
+            child: Image.asset('assets/images/pay_img.png')),
         appBar: AppBar(
             leadingWidth: double.infinity,
             leading: BlocBuilder<UserProfileCubit, UserProfileState>(
@@ -226,6 +240,8 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: 10.h),
               const SlidersManagement(),
               SizedBox(height: 10.h),
+              MyBillsPage(types: 'all'),
+              SizedBox(height: 10.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -245,9 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (_) => ViewAllFeatures()));
                     },
-                    child:
-
-                    Padding(
+                    child: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Container(
                         decoration: BoxDecoration(
@@ -296,7 +310,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
 
                   return GestureDetector(
-                    onTap: ()=> Navigator.push(context,
+                    onTap: () => Navigator.push(context,
                         MaterialPageRoute(builder: (_) => pagesList[index])),
                     child: Container(
                       height: height,
@@ -327,55 +341,51 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               SizedBox(height: 10.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12.0),
-                    child: Text('Upcoming Bills',
-                        style: GoogleFonts.cormorant(
-                          textStyle: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      widget.onChanged(1);
-                    },
-                    child:
-
-
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: AppTheme.blueColor)),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 12.w, vertical: 5),
-                          child: Center(
-                            child: Text(
-                              'View All',
-                              style: GoogleFonts.nunitoSans(
-                                textStyle: TextStyle(
-                                  color: AppTheme.blueColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              MyBillsPage(types: 'unpaid')
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Padding(
+              //       padding: const EdgeInsets.only(left: 12.0),
+              //       child: Text('Upcoming Bills',
+              //           style: GoogleFonts.cormorant(
+              //             textStyle: TextStyle(
+              //               color: Colors.black,
+              //               fontSize: 18.sp,
+              //               fontWeight: FontWeight.w600,
+              //             ),
+              //           )),
+              //     ),
+              //     GestureDetector(
+              //       onTap: () {
+              //         widget.onChanged(1);
+              //       },
+              //       child: Padding(
+              //         padding: const EdgeInsets.all(12.0),
+              //         child: Container(
+              //           decoration: BoxDecoration(
+              //               borderRadius: BorderRadius.circular(20),
+              //               border: Border.all(color: AppTheme.blueColor)),
+              //           child: Padding(
+              //             padding: EdgeInsets.symmetric(
+              //                 horizontal: 12.w, vertical: 5),
+              //             child: Center(
+              //               child: Text(
+              //                 'View All',
+              //                 style: GoogleFonts.nunitoSans(
+              //                   textStyle: TextStyle(
+              //                     color: AppTheme.blueColor,
+              //                     fontSize: 12,
+              //                     fontWeight: FontWeight.w600,
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),

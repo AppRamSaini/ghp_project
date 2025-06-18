@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/local_storage.dart';
-import 'package:ghp_society_management/view/society/select_society_screen.dart';
+import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 
 void sessionExpiredDialog(BuildContext context) {
   // Show the dialog

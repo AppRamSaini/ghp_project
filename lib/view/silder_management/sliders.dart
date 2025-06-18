@@ -1,14 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ghp_society_management/constants/app_theme.dart';
+import 'dart:async';
+import 'package:flutter/gestures.dart';
 import 'package:ghp_society_management/constants/export.dart';
-import 'package:ghp_society_management/constants/local_storage.dart';
-import 'package:ghp_society_management/controller/sliders/sliders_cubit.dart';
-import 'package:ghp_society_management/controller/user_profile/user_profile_cubit.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/sliders_model.dart';
-import 'package:ghp_society_management/view/society/select_society_screen.dart';
+import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 
 class SlidersManagement extends StatefulWidget {
   final bool forOnBoarding;
@@ -20,8 +15,10 @@ class SlidersManagement extends StatefulWidget {
 }
 
 class _SlidersManagementState extends State<SlidersManagement> {
-  late PageController _pageController;
   int _currentPage = 0;
+  late PageController _pageController;
+  Timer? _autoScrollTimer;
+
   late SlidersCubit _slidersCubit;
 
   @override
@@ -29,14 +26,45 @@ class _SlidersManagementState extends State<SlidersManagement> {
     super.initState();
     context.read<UserProfileCubit>().fetchUserProfile();
     _slidersCubit = SlidersCubit()..fetchSlidersAPI();
-    _pageController = PageController();
+    _pageController = PageController(initialPage: _currentPage);
+    _startAutoScroll();
+
+  }
+
+  void _startAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (!mounted) return;
+
+      List<SliderList> slidersList = _slidersCubit.slidersList;
+
+      if (slidersList.isEmpty || !_pageController.hasClients) return;
+
+      int nextPage = _currentPage + 1;
+      if (nextPage >= slidersList.length) {
+        nextPage =  0;
+      }
+
+      _pageController.animateToPage(
+        nextPage,
+        duration: const Duration(milliseconds: 1200),
+        curve: Curves.easeInOut,
+      );
+
+      setState(() {
+        _currentPage = nextPage;
+      });
+    });
   }
 
   @override
   void dispose() {
+    _autoScrollTimer?.cancel();
     _pageController.dispose();
     super.dispose();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -157,15 +185,42 @@ class _SlidersManagementState extends State<SlidersManagement> {
                     SizedBox(height: 20.h),
                   ],
                 )
-              : Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ClipRRect(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10.0)),
-                      child: Image.asset('assets/images/default.jpg',
-                          height: 180.h,
-                          width: double.infinity,
-                          fit: BoxFit.cover)));
+              : Column(
+                  children: [
+                    Container(
+                        height: MediaQuery.sizeOf(context).height * 0.2,
+                        width: MediaQuery.sizeOf(context).width * 0.98,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        child: ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10.0)),
+                            child: Image.asset('assets/images/default.jpg',
+                                height: MediaQuery.sizeOf(context).height * 0.2,
+                                width: MediaQuery.sizeOf(context).width * 0.98,
+                                fit: BoxFit.cover))),
+                    SizedBox(height: 5.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        4,
+                        (index) => AnimatedContainer(
+                          duration: const Duration(milliseconds: 500),
+                          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                          width: _currentPage == index ? 20.0 : 8.0,
+                          height: _currentPage == index ? 8.0 : 8.0,
+                          decoration: BoxDecoration(
+                              color: _currentPage == index
+                                  ? AppTheme.blueColor
+                                  : const Color(0xFF34306F),
+                              borderRadius: BorderRadius.circular(30)
+                              // shape: BoxShape.circle,
+                              ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
         } else if (state is SlidersLoaded) {
           List<SliderList> slidersList = state.sliders;
           return widget.forOnBoarding
@@ -295,11 +350,17 @@ class _SlidersManagementState extends State<SlidersManagement> {
                     SizedBox(height: 20.h),
                   ],
                 )
-              : Column(
+              :
+
+          Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 160.h,
+                      height: MediaQuery.sizeOf(context).height *
+                          0.2,
+                      width: MediaQuery.sizeOf(context).width * 0.98,
                       child: PageView.builder(
+                        dragStartBehavior: DragStartBehavior.down,
                         controller: _pageController,
                         itemCount: slidersList.length,
                         onPageChanged: (index) {
@@ -309,71 +370,92 @@ class _SlidersManagementState extends State<SlidersManagement> {
                         },
                         itemBuilder: (context, index) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Stack(
-                              alignment: Alignment.centerLeft,
-                              children: [
-                                ClipRRect(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: SizedBox(
+                              height: MediaQuery.sizeOf(context).height * 0.2,
+                              width: MediaQuery.sizeOf(context).width * 0.98,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: FadeInImage(
-                                        height: 160.h,
+                                      height:
+                                          MediaQuery.sizeOf(context).height *
+                                              0.2,
+                                      width: MediaQuery.sizeOf(context).width *
+                                          0.98,
+                                      fit: BoxFit.cover,
+                                      imageErrorBuilder: (_, __, ___) =>
+                                          Image.asset(
+                                        'assets/images/default.jpg',
+                                        height: double.infinity,
                                         width: double.infinity,
-                                        fit: BoxFit.fill,
-                                        imageErrorBuilder: (_, child,
-                                                stackTrack) =>
-                                            Image.asset(
-                                                'assets/images/default.jpg',
-                                                height: 160.h,
-                                                width: double.infinity,
-                                                fit: BoxFit.cover),
-                                        image: NetworkImage(slidersList[index]
-                                            .image
-                                            .toString()),
-                                        placeholder: const AssetImage(
-                                            'assets/images/default.jpg'))),
-                                Container(
-                                    height: 160.h,
-                                    width: MediaQuery.sizeOf(context).width,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      image: NetworkImage(
+                                          slidersList[index].image.toString()),
+                                      placeholder: const AssetImage(
+                                          'assets/images/default.jpg'),
+                                    ),
+                                  ),
+                                  Container(
                                     decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        gradient: LinearGradient(colors: [
-                                          Color(0xFF000000),
-                                          Color(0xFFBDE0FF).withOpacity(0.05),
-                                        ]))),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
+                                      borderRadius: BorderRadius.circular(10),
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          const Color(0xFF000000),
+                                          const Color(0xFFBDE0FF)
+                                              .withOpacity(0.05),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
                                           slidersList[index]
                                               .location
                                               .toString()
                                               .toUpperCase(),
                                           style: const TextStyle(
-                                              color: Colors.deepPurpleAccent,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500)),
-                                      Text(slidersList[index].title.toString(),
+                                            color: Colors.deepPurpleAccent,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        Text(
+                                          slidersList[index].title.toString(),
                                           style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600)),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        slidersList[index].subTitle.toString(),
-                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          slidersList[index]
+                                              .subTitle
+                                              .toString(),
+                                          style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 14,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                )
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         },
@@ -390,12 +472,11 @@ class _SlidersManagementState extends State<SlidersManagement> {
                           width: _currentPage == index ? 20.0 : 8.0,
                           height: _currentPage == index ? 8.0 : 8.0,
                           decoration: BoxDecoration(
-                              color: _currentPage == index
-                                  ? AppTheme.blueColor
-                                  : const Color(0xFF34306F),
-                              borderRadius: BorderRadius.circular(30)
-                              // shape: BoxShape.circle,
-                              ),
+                            color: _currentPage == index
+                                ? AppTheme.blueColor
+                                : const Color(0xFF34306F),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                         ),
                       ),
                     ),

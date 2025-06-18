@@ -21,7 +21,7 @@ import 'package:ghp_society_management/view/resident/sos/sos_screen.dart';
 import 'package:ghp_society_management/view/resident/visitors/add_visitor_screen.dart';
 import 'package:ghp_society_management/view/security_staff/visitors/visitors_tab.dart';
 import 'package:ghp_society_management/view/session_dialogue.dart';
-import 'package:ghp_society_management/view/society/select_society_screen.dart';
+import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SecurityGuardHome extends StatefulWidget {

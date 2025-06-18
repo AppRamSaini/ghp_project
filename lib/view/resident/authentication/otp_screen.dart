@@ -159,7 +159,7 @@ class _OtpScreenState extends State<OtpScreen> {
         // print("------------$token");
         if (_otpController.text.isNotEmpty && _otpController.text.length == 4) {
           context.read<VerifyOtpCubit>().verifyOtp(
-              widget.phoneNumber, _otpController.text, token ?? "rrr");
+              widget.phoneNumber, _otpController.text, token ?? "");
         }
       },
       child: Padding(
@@ -193,7 +193,7 @@ class _OtpScreenState extends State<OtpScreen> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Enter Otp',
+            'ENTER OTP',
             style: GoogleFonts.nunitoSans(
               textStyle: TextStyle(
                 color: Colors.black,

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/controller/my_bills/my_bills_cubit.dart';
 import 'package:ghp_society_management/payment_gateway_service.dart';
 import 'package:ghp_society_management/view/resident/bills/bill_detail_screen.dart';
@@ -24,7 +25,6 @@ class MyBillsPageState extends State<MyBillsPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize cubit and fetch bills based on the types passed
     _myBillsCubit = MyBillsCubit()
       ..fetchMyBills(context: context, billTypes: widget.types);
     _scrollController
@@ -54,7 +54,6 @@ class MyBillsPageState extends State<MyBillsPage> {
   @override
   void didUpdateWidget(covariant MyBillsPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Check if the bill type has changed, then re-fetch data
     if (oldWidget.types != widget.types) {
       _fetchData(); // Re-fetch data based on the new type
     }
@@ -82,84 +81,105 @@ class MyBillsPageState extends State<MyBillsPage> {
               final bill = state.bills[index];
               int delay = bill.dueDateRemainDays!;
               String delayData() {
-                if (delay > 0) {
-                  return "Due in ${bill.dueDateRemainDays} Days";
-                } else {
-                  return bill.dueDateDelayDays == 0
-                      ? 'Today Is Last Day'
-                      : "${bill.dueDateDelayDays} Days Delay";
-                }
+                return convertDateFormat(bill.dueDate!);
+                // if (delay > 0) {
+                //   return "Due in ${bill.dueDateRemainDays} Days";
+                // } else {
+                //   return bill.dueDateDelayDays == 0
+                //       ? 'Today Is Last Day'
+                //       : "${bill.dueDateDelayDays} Days Delay";
+                // }
               }
 
               return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                height: MediaQuery.sizeOf(context).height * 0.16,
+                width: MediaQuery.sizeOf(context).width,
                 decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                    borderRadius: BorderRadius.circular(5)),
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: AssetImage(ImageAssets.billFrame))),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ListTile(
                         dense: true,
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => BillDetailScreen(
-                                    billId: bill.id.toString()))),
+                                builder: (_) =>
+                                    BillDetailScreen(billId: bill.id.toString()))),
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 8),
                         leading: Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5.r),
-                                color: const Color(0xFFF2F1FE)),
+                                color: Colors.black.withOpacity(0.1)),
                             child: Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: Image.asset(ImageAssets.receiptImage,
                                     height: 20.h,
                                     width: 25.h,
-                                    color: bill.status == 'unpaid'
-                                        ? Colors.red.withOpacity(0.5)
-                                        : Colors.cyanAccent.withOpacity(0.5)))),
+                                    color: Colors.white))),
                         title: Text(bill.service!.name.toString(),
                             style: const TextStyle(
-                                color: Colors.black, fontSize: 16)),
-                        subtitle: Text(bill.invoiceNumber.toString(),
-                            style: TextStyle(
-                                color: AppTheme.blueColor, fontSize: 12)),
-                        trailing: GestureDetector(
-                          onTap: () => payBillFun(
-                              double.parse(bill.amount.toString()), context),
-                          child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 7),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: bill.status == 'paid'
-                                      ? Colors.green.withOpacity(0.3)
-                                      : Colors.red.withOpacity(0.3)),
-                              child: Text(
-                                  bill.status == 'paid' ? "Paid" : "Unpaid",
-                                  style: TextStyle(
-                                      color: bill.status == 'paid'
-                                          ? Colors.green
-                                          : Colors.red,
-                                      fontWeight: FontWeight.w600))),
-                        )),
-                    Divider(height: 0, color: Colors.grey.withOpacity(0.2)),
+                                color: Colors.white, fontSize: 14)),
+                        subtitle: bill.status=='paid'?
+                        Text("₹ ${bill.amount} paid On ${delayData()}",
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 10)):
+                        Text("Due On ${delayData()}",
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 10))),
+
+
+                    bill.status=='paid'?
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Text('👍 Thanks for being a wonderful resident!',
+                          style: GoogleFonts.nunitoSans(
+                              textStyle: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold))),
+                    ):
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.white),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                              "Amount ${bill.status == 'paid' ? 'Paid' : "Due"}: ₹${bill.amount.toString().replaceAll('.00', '')}",
-                              style: const TextStyle(
-                                  color: Colors.black, fontSize: 14)),
-                          const SizedBox(width: 20),
-                          bill.status == 'paid'
-                              ? const SizedBox()
-                              : Text(delayData().toString(),
-                                  style: const TextStyle(color: Colors.red))
+                          Text('₹ ${bill.amount}',
+                              style: GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold))),
+                          GestureDetector(
+                            onTap: ()async{
+                              await LocalStorage.localStorage
+                                  .setString('bill_id',
+                                  bill.id.toString());
+                              payBillFun(
+                                  double.parse(bill.amount
+                                      .toString()),
+                                  context);
+                            },
+                            child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 5),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: Colors.green.withOpacity(0.3)),
+                                child: Text('Pay',
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.w600))),
+                          )
                         ],
                       ),
                     )
@@ -193,18 +213,17 @@ class MyBillsPageState extends State<MyBillsPage> {
 /// DUE BILL MANAGEMENT
 void checkPaymentReminder(
     {required BuildContext context, required UnpaidBill myUnpaidBill}) {
-  print("कोई ड्यू मैसेज नहीं दिखाना है।");
   if (myUnpaidBill != null && myUnpaidBill.status == 'unpaid') {
     DateTime today = DateTime.now();
     DateTime dueDate = DateTime.parse(myUnpaidBill.dueDate.toString());
 
     if (today.isAfter(dueDate.add(const Duration(days: 2)))) {
       // 2 दिन बाद → overdue
-      print('calllllllled oooooooo');
+      print('calllllllled ');
       overDueBillAlertDialog(context, myUnpaidBill);
     } else if (today.isAfter(dueDate.subtract(const Duration(days: 3)))) {
       // 3 दिन पहले से लेकर due date + 2 दिन तक → due
-      print('calllllllled 1111111');
+      print('calllllllled ');
       overDueBillAlertDialog(context, myUnpaidBill);
     } else {
       print("कोई ड्यू मैसेज नहीं दिखाना है।");

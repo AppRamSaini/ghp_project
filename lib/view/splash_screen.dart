@@ -107,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen> {
             padding: EdgeInsets.all(8.w),
             child: Image.asset(
               ImageAssets.appLogo,
-              height: 100.h,
+              height: 120.h,
             ),
           ),
         ),

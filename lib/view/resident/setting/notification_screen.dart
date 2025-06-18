@@ -90,7 +90,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     setting.status == "enabled";
               }
 
-              return ListView.builder(
+              return
+
+
+                ListView.builder(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 15, vertical: 5),
                 itemCount: data.length,

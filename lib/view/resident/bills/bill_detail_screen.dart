@@ -246,7 +246,7 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  billDetails.status == 'paid'
+                  billDetails.status == 'unpaid'
                       ? MaterialButton(
                           height: 45,
                           minWidth:
