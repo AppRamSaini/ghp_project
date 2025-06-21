@@ -17,7 +17,7 @@ class PrivacyPolicyCubit extends Cubit<PrivacyPolicyState> {
     emit(PrivacyPolicyLoading());
     try {
       // Fetching the response from the API
-      final response = await apiManager.getRequest("${Config.baseURL}${Routes.privacyPolicy}");
+      final response = await apiManager.getRequest(Routes.privacyPolicy);
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         // Parse the data from the response

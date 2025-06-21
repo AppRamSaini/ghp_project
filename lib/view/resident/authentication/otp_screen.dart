@@ -140,7 +140,6 @@ class _OtpScreenState extends State<OtpScreen> {
     return GestureDetector(
       onTap: () async {
         FirebaseMessaging messaging = FirebaseMessaging.instance;
-
         // Push Notification की परमिशन पहले लें
         await messaging.requestPermission(
             alert: true, badge: true, sound: true);
@@ -156,7 +155,6 @@ class _OtpScreenState extends State<OtpScreen> {
           token = await messaging.getToken();
           print("FCM Token: $token");
         }
-        // print("------------$token");
         if (_otpController.text.isNotEmpty && _otpController.text.length == 4) {
           context.read<VerifyOtpCubit>().verifyOtp(
               widget.phoneNumber, _otpController.text, token ?? "");

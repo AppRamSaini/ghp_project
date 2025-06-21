@@ -22,7 +22,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:async';
 
 /// LOG OUT DIALOG
-void logOutPermissionDialog(BuildContext context, {bool isLogout = true}) =>
+void logOutPermissionDialog(BuildContext context, {bool isLogout = true,}) =>
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -62,6 +62,61 @@ void logOutPermissionDialog(BuildContext context, {bool isLogout = true}) =>
                       },
                       child: Text(
                         isLogout ? 'LOGOUT' : 'YES , CHANGE',
+                        style: const TextStyle(
+                            color: Colors.deepPurpleAccent,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+
+
+/// delete account
+
+void deleteAccountPermissionDialog(BuildContext context) =>
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Are you sure you want to delete your account!',
+                    style: TextStyle(color: Colors.black, fontSize: 16)),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: const Text('CANCEL',
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
+                    ),
+                    const SizedBox(width: 20),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.read<LogoutCubit>().logout();
+                      },
+                      child: Text(
+                        'DELETE',
                         style: const TextStyle(
                             color: Colors.deepPurpleAccent,
                             fontSize: 14,

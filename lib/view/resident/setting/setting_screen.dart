@@ -5,6 +5,7 @@ import 'package:ghp_society_management/view/resident/residents_checkouts/residen
 import 'package:ghp_society_management/view/resident/resident_profile/edit_profile_screen.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_gatepass.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_profile.dart';
+import 'package:ghp_society_management/view/resident/setting/delete_account.dart';
 import 'package:ghp_society_management/view/resident/setting/emergency_contact.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:ghp_society_management/view/resident/setting/notification_screen.dart';
@@ -33,6 +34,7 @@ class _SettingScreenState extends State<SettingScreen> {
     'Terms Of Use',
     'Emergency Contacts',
     'Check-out History',
+    'Delete Account',
     'Log Out'
   ];
 
@@ -41,6 +43,7 @@ class _SettingScreenState extends State<SettingScreen> {
     'Change Society',
     'Notifications Settings',
     'Emergency Contacts',
+    'Delete Account',
     'Log Out'
   ];
 
@@ -58,6 +61,7 @@ class _SettingScreenState extends State<SettingScreen> {
       const SizedBox(),
       NotificationScreen(),
       const EmergencyContactScreen(),
+      DeleteUserAccount(),
       const SizedBox() // Logout handled separately
     ];
 
@@ -70,21 +74,22 @@ class _SettingScreenState extends State<SettingScreen> {
       const TermOfUseScreen(),
       const EmergencyContactScreen(),
       ResidentCheckoutsHistoryDetails(forResident: true, userId: ''),
+      DeleteUserAccount(),
       const SizedBox() // Logout handled separately
     ];
 
     if (widget.forStaffSide) {
       if (index == 1) {
         logOutPermissionDialog(context, isLogout: false);
-      } else if (index == 4) {
+      } else if (index == 5) {
         logOutPermissionDialog(context);
       } else {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (builder) => staffScreens[index]));
       }
     } else {
-      if (index == 2 || index == 8) {
-        logOutPermissionDialog(context, isLogout: index == 8);
+      if (index == 2 || index == 9) {
+        logOutPermissionDialog(context, isLogout: index == 9);
       } else {
         Navigator.of(context).push(
             MaterialPageRoute(builder: (builder) => residentScreens[index]));

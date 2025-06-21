@@ -64,7 +64,7 @@ class Routes {
   static String createComplaints = 'complaint/create';
   static String getSliders = 'sliders';
   static String termsOfConditions = 'terms-of-use';
-  static String privacyPolicy = 'privacy-policy';
+  static String privacyPolicy = 'https://society.ghpjaipur.com/api/user/v1/privacy-policy';
   static String getNotificationSettings = 'settings/notifications';
   static String updateNotificationSettings = 'settings/notification';
   static String visitorsListing(
