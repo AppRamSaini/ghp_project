@@ -330,59 +330,7 @@ class _ParcelListingSecurityStaffSideState
                           return "Delivered";
                         }
                       }
-                      return "Delivered";
-
-                      //
-                      // if (parcelData.handoverStatus == "pending") {
-                      //   if (parcelData.checkinDetail == null) {
-                      //     return 'Pending';
-                      //   }
-                      //   final checkinStatus =
-                      //       parcelData.checkinDetail?.status;
-                      //   final handoverStatus =
-                      //       parcelData.handoverStatus;
-                      //   final entryRole = parcelData.entryByRole;
-                      //
-                      //   if (checkinStatus == 'checked_in' &&
-                      //       handoverStatus != 'delivered') {
-                      //     return "Checked IN";
-                      //   }
-                      //
-                      //   if (handoverStatus == 'received' ||
-                      //       entryRole == 'staff_security_guard') {
-                      //     return 'Not Delivered';
-                      //   }
-                      //
-                      //   if (handoverStatus == 'delivered' &&
-                      //       checkinStatus == 'checked_in') {
-                      //     return 'Not Checkout';
-                      //   }
-                      //
-                      //   return "Pending";
-                      // }else{
-                      //   return "Delivered";
-                      // }
                     }
-
-                    //
-                    //     if (parcelData.checkinDetail!.status ==
-                    //         'checked_in') {
-                    //       return "Checked IN";
-                    //     }
-                    //     return parcelData.entryByRole ==
-                    //             'staff_security_guard'
-                    //         ? "Not Delivered"
-                    //         : "Pending";
-                    //   }
-                    //   return parcelData.entryByRole ==
-                    //           'staff_security_guard'
-                    //       ? "Not Delivered"
-                    //       : "Pending";
-                    // } else if (parcelData.handoverStatus ==
-                    //     'received') {
-                    //   return 'Not Delivered';
-                    // }
-                    // return "Delivered";
 
                     List<Map<String, dynamic>> options() {
                       if (parcelData.handoverStatus == 'pending' &&
@@ -406,285 +354,264 @@ class _ParcelListingSecurityStaffSideState
                     }
 
                     return Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey[300]!)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: FadeInImage(
-                                        placeholder: const AssetImage(
-                                            "assets/images/default.jpg"),
-                                        imageErrorBuilder:
-                                            (context, error, stackTrace) {
-                                          return Image.asset(
-                                            "assets/images/default.jpg",
-                                            height: 70,
-                                            width: 70,
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
-                                        image: NetworkImage(parcelData
-                                            .deliveryAgentImage
-                                            .toString()),
-                                        fit: BoxFit.cover,
-                                        height: 70,
-                                        width: 70)),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    if (parcelData
-                                                            .parcelComplaint !=
-                                                        null) {
-                                                      readComplaintDialog(
-                                                          context,
-                                                          parcelData
-                                                              .parcelComplaint!
-                                                              .description
-                                                              .toString());
-                                                    }
-                                                  },
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                          parcelData.parcelid
-                                                              .toString(),
-                                                          style: GoogleFonts.nunitoSans(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey[300]!)),
+                        child:
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: FadeInImage(
+                                          placeholder: const AssetImage(
+                                              "assets/images/default.jpg"),
+                                          imageErrorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Image.asset(
+                                              "assets/images/default.jpg",
+                                              height: 70,
+                                              width: 70,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                          image: NetworkImage(parcelData
+                                              .deliveryAgentImage
+                                              .toString()),
+                                          fit: BoxFit.cover,
+                                          height: 70,
+                                          width: 70)),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      if (parcelData
+                                                              .parcelComplaint !=
+                                                          null) {
+                                                        readComplaintDialog(
+                                                            context,
+                                                            parcelData
+                                                                .parcelComplaint!
+                                                                .description
+                                                                .toString());
+                                                      }
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                            parcelData.parcelid
+                                                                .toString(),
+                                                            style: GoogleFonts.nunitoSans(
+                                                                textStyle: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        14.sp,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600)),
+                                                            overflow: TextOverflow
+                                                                .ellipsis),
+                                                        parcelData.parcelComplaint ==
+                                                                null
+                                                            ? const SizedBox()
+                                                            : const Icon(
+                                                                Icons
+                                                                    .info_outline,
+                                                                color: Colors.red,
+                                                                size: 15),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 2.h),
+                                                  Text(
+                                                      parcelData.parcelName
+                                                          .toString(),
+                                                      style:
+                                                          GoogleFonts.nunitoSans(
                                                               textStyle: TextStyle(
                                                                   color: Colors
                                                                       .black,
-                                                                  fontSize:
-                                                                      14.sp,
+                                                                  fontSize: 14.sp,
                                                                   fontWeight:
                                                                       FontWeight
-                                                                          .w600)),
-                                                          overflow: TextOverflow
-                                                              .ellipsis),
-                                                      parcelData.parcelComplaint ==
-                                                              null
-                                                          ? const SizedBox()
-                                                          : const Icon(
-                                                              Icons
-                                                                  .info_outline,
-                                                              color: Colors.red,
-                                                              size: 15),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: 2.h),
-                                                Text(
-                                                    parcelData.parcelName
-                                                        .toString(),
-                                                    style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500)),
-                                                    overflow:
-                                                        TextOverflow.ellipsis),
-                                                SizedBox(height: 2.h),
-                                                Text(
-                                                    '$formattedDate | $formattedTime',
-                                                    style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black54,
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400)))
-                                              ]),
-                                          parcelData.entryByRole ==
-                                                  "staff_security_guard"
-                                              ? popMenusForStaff(
-                                                  isStaffSide: true,
-                                                  options: options(),
-                                                  context: context,
-                                                  requestData: parcelData)
-                                              : popMenusForResident(
-                                                  options: parcelData
-                                                              .handoverStatus ==
-                                                          'pending'
-                                                      ? optionList4
-                                                      : parcelData.handoverStatus ==
-                                                              'received'
-                                                          ? optionList2
-                                                          : optionList3,
-                                                  context: context,
-                                                  requestData: parcelData)
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 5.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                    'Created By: ${capitalizeWords(parcelData.entryByRole.toString().replaceAll("_", " ").replaceAll("staff", '').replaceAll("admin", 'Resident'))}',
-                                    style: GoogleFonts.nunitoSans(
-                                        textStyle: TextStyle(
-                                            color: Colors.black54,
-                                            fontSize: 13.sp))),
-                                Text(
-                                  status().toString(),
-                                  style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                      color: parcelData.handoverStatus ==
-                                                  'pending' ||
-                                              parcelData.checkinDetail ==
-                                                  null ||
-                                              parcelData.checkinDetail!
-                                                      .checkoutAt ==
-                                                  null
-                                          ? Colors.red
-                                          : parcelData.handoverStatus ==
-                                                  'received'
-                                              ? Colors.orange
-                                              : Colors.green,
-                                      fontSize: 13.sp,
+                                                                          .w500)),
+                                                      overflow:
+                                                          TextOverflow.ellipsis),
+                                                  SizedBox(height: 2.h),
+                                                  Text(
+                                                      '$formattedDate | $formattedTime',
+                                                      style:
+                                                          GoogleFonts.nunitoSans(
+                                                              textStyle: TextStyle(
+                                                                  color: Colors
+                                                                      .black54,
+                                                                  fontSize: 14.sp,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400)))
+                                                ]),
+                                            parcelData.entryByRole ==
+                                                    "staff_security_guard"
+                                                ? popMenusForStaff(
+                                                    isStaffSide: true,
+                                                    options: options(),
+                                                    context: context,
+                                                    requestData: parcelData)
+                                                : popMenusForResident(
+                                                    options: parcelData
+                                                                .handoverStatus ==
+                                                            'pending'
+                                                        ? optionList4
+                                                        : parcelData.handoverStatus ==
+                                                                'received'
+                                                            ? optionList2
+                                                            : optionList3,
+                                                    context: context,
+                                                    requestData: parcelData)
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            Divider(color: Colors.green.withOpacity(0.1)),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text('Name',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 12.sp))),
-                                      Text(parcelData.member!.name.toString(),
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12.sp,
-                                                  fontWeight: FontWeight.w600)))
-                                    ]),
-                                // Column(
-                                //     crossAxisAlignment:
-                                //         CrossAxisAlignment.center,
-                                //     children: [
-                                //       Text('Phone',
-                                //           style:
-                                //               GoogleFonts.nunitoSans(
-                                //                   textStyle: TextStyle(
-                                //                       color: Colors
-                                //                           .black54,
-                                //                       fontSize:
-                                //                           12.sp))),
-                                //       Text(
-                                //           "+91 ${parcelData.member!.phone.toString()}",
-                                //           style:
-                                //               GoogleFonts.nunitoSans(
-                                //                   textStyle: TextStyle(
-                                //                       color: Colors
-                                //                           .black,
-                                //                       fontSize: 12.sp,
-                                //                       fontWeight:
-                                //                           FontWeight
-                                //                               .w600)))
-                                //     ]),
-                                Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text('Tower ',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 12.sp))),
-                                      Text(
-                                          parcelData.member!.blockName
-                                              .toString(),
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12.sp,
-                                                  fontWeight: FontWeight.w600)))
-                                    ]),
-                                Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text('Floor',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 12.sp))),
-                                      Text(
-                                          parcelData.member!.floorNumber
-                                              .toString(),
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12.sp,
-                                                  fontWeight: FontWeight.w600)))
-                                    ]),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text('Property No',
-                                        style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                                color: Colors.black54,
-                                                fontSize: 12.sp))),
-                                    Text(
-                                      parcelData.member!.aprtNo.toString(),
+                                ],
+                              ),
+                              SizedBox(height: 5.h),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                      'Created By: ${capitalizeWords(parcelData.entryByRole.toString().replaceAll("_", " ").replaceAll("staff", '').replaceAll("admin", 'Resident'))}',
                                       style: GoogleFonts.nunitoSans(
-                                        textStyle: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w600),
+                                          textStyle: TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 13.sp))),
+                                  Text(
+                                    status().toString(),
+                                    style: GoogleFonts.nunitoSans(
+                                      textStyle: TextStyle(
+                                        color: parcelData.handoverStatus ==
+                                                    'pending' ||
+                                                parcelData.checkinDetail ==
+                                                    null ||
+                                                parcelData.checkinDetail!
+                                                        .checkoutAt ==
+                                                    null
+                                            ? Colors.red
+                                            : parcelData.handoverStatus ==
+                                                    'received'
+                                                ? Colors.orange
+                                                : Colors.green,
+                                        fontSize: 13.sp,
                                       ),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              parcelData.member!=null?    Divider(color: Colors.green.withOpacity(0.1)):SizedBox(),
+                              parcelData.member!=null?      Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text('Name',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black54,
+                                                    fontSize: 12.sp))),
+                                        Text(parcelData.member!.name??'',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12.sp,
+                                                    fontWeight: FontWeight.w600)))
+                                      ]),
+
+                                  Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text('Tower ',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black54,
+                                                    fontSize: 12.sp))),
+                                        Text(
+                                            parcelData.member!.blockName??''
+                                                .toString(),
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12.sp,
+                                                    fontWeight: FontWeight.w600)))
+                                      ]),
+                                  Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text('Floor',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black54,
+                                                    fontSize: 12.sp))),
+                                        Text(
+                                            parcelData.member!.floorNumber??''
+                                                .toString(),
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12.sp,
+                                                    fontWeight: FontWeight.w600)))
+                                      ]),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text('Property No',
+                                          style: GoogleFonts.nunitoSans(
+                                              textStyle: TextStyle(
+                                                  color: Colors.black54,
+                                                  fontSize: 12.sp))),
+                                      Text(
+                                        parcelData.member!.aprtNo??''.toString(),
+                                        style: GoogleFonts.nunitoSans(
+                                          textStyle: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ):SizedBox(),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
+                        );
                   }),
                 );
               }),

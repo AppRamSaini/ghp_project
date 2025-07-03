@@ -204,15 +204,14 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                   ],
                                 ),
                               ),
-                              headerWidget(
+                              serviceProviderHeaderWidget(
                                   context,
                                   state.userProfile.first.data!.user!.id
                                       .toString(),
                                   state.userProfile.first.data!.user!.name
                                       .toString(),
                                   state.userProfile.first.data!.user!.image ??
-                                      '',
-                                  index: 2)
+                                      '')
                             ],
                           ),
                         );
@@ -263,7 +262,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                 ),
                               ),
                               headerWidget(context, '', '', '',
-                                  isDemo: true, index: 1)
+                                  isDemo: true)
                             ],
                           ),
                         );
@@ -462,8 +461,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                               .nunitoSans(
                                                                   color: AppTheme
                                                                       .staffPrimaryColor,
-                                                                  fontSize:
-                                                                      12,
+                                                                  fontSize: 12,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w600)),
@@ -495,8 +493,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                               .nunitoSans(
                                                                   color: Colors
                                                                       .white,
-                                                                  fontSize:
-                                                                      12),
+                                                                  fontSize: 12),
                                                         ),
                                                       ),
                                                     ),

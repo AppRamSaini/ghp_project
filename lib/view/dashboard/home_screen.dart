@@ -8,6 +8,7 @@ import 'package:ghp_society_management/view/resident/bills/bill_screen.dart';
 import 'package:ghp_society_management/view/resident/bills/my_bills.dart';
 import 'package:ghp_society_management/view/resident/complaint/comlaint_page.dart';
 import 'package:ghp_society_management/view/resident/member/members_screen.dart';
+import 'package:ghp_society_management/view/resident/notice_board/notice_board_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:ghp_society_management/view/resident/visitors/visitor_screen.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
@@ -31,21 +32,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List colors = [
-    AppTheme.color1,
+    AppTheme.color9,
     AppTheme.color2,
     AppTheme.color3,
     AppTheme.color4
   ];
 
   List dataList = [
-    {"icon": ImageAssets.member1, "title": "Members"},
+    {"icon": ImageAssets.notice1, "title": "Notice Board"},
     {"icon": ImageAssets.complaint1, "title": "Complaints"},
     {"icon": ImageAssets.visitors1, "title": "Visitors"},
     {"icon": ImageAssets.parcel1, "title": "Parcels"},
   ];
 
   List pagesList = [
-    MemberScreen(),
+    NoticeBoardScreen(),
     ComplaintScreen(),
     VisitorScreen(),
     ParcelListingPage()

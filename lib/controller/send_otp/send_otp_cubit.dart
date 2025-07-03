@@ -26,6 +26,9 @@ class SendOtpCubit extends Cubit<SendOtpState> {
 
       var json = jsonDecode(responseData.body);
 
+
+      print('----->>>>$json');
+
       if (responseData.statusCode == 200 || responseData.statusCode == 201) {
         emit(SendOtpSuccessfully());
       } else {

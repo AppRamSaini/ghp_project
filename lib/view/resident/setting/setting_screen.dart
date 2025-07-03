@@ -57,7 +57,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   void handleTap(BuildContext context, int index) {
     List<Widget> staffScreens = [
-      ResidentProfileDetails(forDetails: true),
+      ResidentProfileDetails(forDetails: true,forResident: false),
       const SizedBox(),
       NotificationScreen(),
       const EmergencyContactScreen(),
@@ -259,7 +259,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text("Hello User",
+                                      Text("Dear Resident",
                                           style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                               color: Colors.black,

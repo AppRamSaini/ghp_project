@@ -56,38 +56,36 @@ class _MessagingScreenState extends State<MessagingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppTheme.backgroundColor,
 
         appBar: AppBar(
           leading: widget.userImage.isEmpty
-              ? Image.asset(ImageAssets.chatImage, height: 50.h)
+              ? Image.asset(ImageAssets.chatImage, height: 50)
               : CircleAvatar(
               radius: 25.r,
               backgroundColor: Colors.transparent,
               backgroundImage: NetworkImage(widget.userImage)),
-            title:  Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(widget.userName.toString(),
-                          style: GoogleFonts.nunitoSans(
-                              textStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600))),
-                      Text(
-                          widget.userCategory.isEmpty ||
-                              widget.userCategory == null
-                              ? "Resident"
-                              : capitalizeWords(widget.userCategory
-                              .toString()
-                              .replaceAll("_", ' ')),
-                          style: GoogleFonts.nunitoSans(
-                              textStyle: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600)))
-                    ]))),
+            title:  Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(capitalizeWords(widget.userName.toString()),
+                      style: GoogleFonts.nunitoSans(
+                          textStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600))),
+                  Text(
+                      widget.userCategory.isEmpty ||
+                          widget.userCategory == null
+                          ? "Resident"
+                          : capitalizeWords(widget.userCategory
+                          .toString()
+                          .replaceAll("_", ' ')),
+                      style: GoogleFonts.nunitoSans(
+                          textStyle: TextStyle(
+                              color: Colors.green,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600)))
+                ])),
         body: Column(
           children: [
             Expanded(
@@ -217,84 +215,80 @@ class _MessagingScreenState extends State<MessagingScreen> {
                   }),
             ),
             Container(
-              color: Colors.white,
-              child: Container(
-                  color: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10),
-                  child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: TextFormField(
-                        style: GoogleFonts.nunitoSans(
-                            color: Colors.black,
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500),
-                        controller: messagingController,
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          filled: true,
-                          hintText: "Type here..",
-                          hintStyle: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w400),
-                          fillColor: AppTheme.greyColor,
-                          errorBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(30.0),
-                            borderSide: BorderSide(
-                              color: AppTheme.greyColor,
-                            ),
+                color: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15),
+                child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: TextFormField(
+                      style: GoogleFonts.nunitoSans(
+                          color: Colors.black,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500),
+                      controller: messagingController,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        filled: true,
+                        hintText: "Type here..",
+                        hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400),
+                        fillColor: AppTheme.greyColor,
+                        errorBorder: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(30.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
                           ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(30.0),
-                            borderSide: BorderSide(
-                              color: AppTheme.greyColor,
-                            ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(30.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(30.0),
-                            borderSide: BorderSide(
-                              color: AppTheme.greyColor,
-                            ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(30.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(30.0),
-                            borderSide: BorderSide(
-                              color: AppTheme.greyColor,
-                            ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(30.0),
+                          borderSide: BorderSide(
+                            color: AppTheme.greyColor,
                           ),
                         ),
                       ),
-                      trailing: GestureDetector(
-                          onTap: () {
-                            if (messagingController
-                                .text.isNotEmpty) {
-                              context
-                                  .read<GroupCubit>()
-                                  .sendGroupMessage(
-                                      messagingController.text,
-                                      widget.groupId,
-                                      widget.userName,
-                                      widget.userId);
-                              messagingController.clear();
-                            }
-                          },
-                          child: Image.asset(
-                              ImageAssets.sendMessageImage,
-                              fit: BoxFit.cover,
-                              color: Colors.deepPurpleAccent)))),
-            ),
+                    ),
+                    trailing: GestureDetector(
+                        onTap: () {
+                          if (messagingController
+                              .text.isNotEmpty) {
+                            context
+                                .read<GroupCubit>()
+                                .sendGroupMessage(
+                                    messagingController.text,
+                                    widget.groupId,
+                                    widget.userName,
+                                    widget.userId);
+                            messagingController.clear();
+                          }
+                        },
+                        child: Image.asset(
+                            ImageAssets.sendMessageImage,
+                            fit: BoxFit.cover,
+                            color: Colors.deepPurpleAccent)))),
           ],
         ));
   }
 
   String _formatDate(DateTime dateTime) {
-    // Format the date with hour, minute, and AM/PM
     return DateFormat('h:mm a').format(dateTime);
   }
 }

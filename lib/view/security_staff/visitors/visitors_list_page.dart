@@ -275,278 +275,214 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
         }),
       ],
       child: Scaffold(
-        backgroundColor: AppTheme.backgroundColor,
-        body: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      searchBarOpen
-                          ? const SizedBox()
-                          : Row(children: [
-                              GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(_ctx).pop();
-                                  },
-                                  child: const Icon(Icons.arrow_back,
-                                      color: Colors.white)),
-                              SizedBox(width: 10.w),
-                              Text(
-                                  widget.type == 'T_V'
-                                      ? 'Today Visitors'
-                                      : "Past Visitors",
-                                  style: GoogleFonts.nunitoSans(
-                                      textStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20.sp,
-                                          fontWeight: FontWeight.w600)))
-                            ]),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: SearchBarAnimation(
-                          searchBoxColour: AppTheme.primaryLiteColor,
-                          buttonColour: AppTheme.primaryLiteColor,
-                          searchBoxWidth:
-                              MediaQuery.of(context).size.width / 1.1,
-                          isSearchBoxOnRightSide: false,
-                          textEditingController: searchController,
-                          isOriginalAnimation: true,
-                          enableKeyboardFocus: true,
-                          cursorColour: Colors.grey,
-                          enteredTextStyle: GoogleFonts.nunitoSans(
-                            textStyle: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          onExpansionComplete: () {
-                            setState(() {
-                              searchBarOpen = true;
-                            });
-                          },
-                          onCollapseComplete: () {
-                            searchController.clear();
-                            setState(() {
-                              searchBarOpen = false;
-                              fetchData();
-                            });
-                          },
-                          onPressButton: (isSearchBarOpens) {
-                            setState(() {
-                              searchBarOpen = true;
-                            });
-                          },
-                          onChanged: (value) {
-                            _visitorsListingCubit = VisitorsListingCubit()
-                              ..fetchVisitorsListing(
-                                  fromDate: fromDate!.text.toString(),
-                                  toDate: toDate!.text.toString(),
-                                  context: context,
-                                  search: searchController.text.toString(),
-                                  filterTypes:
-                                      filterList[widget.index].toString());
-                            setState(() {});
-                          },
-                          trailingWidget: const Icon(Icons.search,
-                              size: 20, color: Colors.white),
-                          secondaryButtonWidget: const Icon(Icons.close,
-                              size: 20, color: Colors.white),
-                          buttonWidget: const Icon(Icons.search,
-                              size: 20, color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20))),
-                  child: RefreshIndicator(
-                    onRefresh: fetchData,
-                    child: Column(
-                      children: [
-                        widget.type == 'T_V'
-                            ? const SizedBox()
-                            : Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 15),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                        child: TextFormField(
-                                            onTap: () {
-                                              _selectFromDate(context);
-                                            },
-                                            readOnly: true,
-                                            controller: fromDate,
-                                            style: GoogleFonts.nunitoSans(
-                                                color: Colors.black,
-                                                fontSize: 15.sp,
-                                                fontWeight: FontWeight.w500),
-                                            decoration: InputDecoration(
-                                                hintText: 'From Date',
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        vertical: 12.h,
-                                                        horizontal: 10.0),
-                                                prefixIcon: const Icon(
-                                                    Icons.calendar_month),
-                                                filled: true,
-                                                hintStyle: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 15.sp,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                                fillColor: AppTheme.greyColor,
-                                                errorBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                    borderSide: BorderSide(
-                                                        color: AppTheme
-                                                            .greyColor)),
-                                                focusedErrorBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(15.0),
-                                                    borderSide: BorderSide(color: AppTheme.greyColor)),
-                                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0), borderSide: BorderSide(color: AppTheme.greyColor)),
-                                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0), borderSide: BorderSide(color: AppTheme.greyColor))))),
-                                    SizedBox(width: 10.w),
-                                    Expanded(
-                                      child: TextFormField(
-                                        onTap: () {
-                                          _selectToDate(context);
-                                        },
-                                        readOnly: true,
-                                        controller: toDate,
-                                        style: GoogleFonts.nunitoSans(
-                                            color: Colors.black,
+        appBar: customAppbar(context: context, title: widget.type == 'T_V'
+            ? 'Today Visitors'
+            : "Past Visitors", textController: searchController,onExpansionComplete: () {
+          setState(() {
+            searchBarOpen = true;
+          });
+        },
+            onCollapseComplete: () {
+              searchController.clear();
+              setState(() {
+                searchBarOpen = false;
+                fetchData();
+              });
+            },
+            onPressButton: (isSearchBarOpens) {
+              setState(() {
+                searchBarOpen = true;
+              });
+            },
+            onChanged: (value) {
+              _visitorsListingCubit = VisitorsListingCubit()
+                ..fetchVisitorsListing(
+                    fromDate: fromDate!.text.toString(),
+                    toDate: toDate!.text.toString(),
+                    context: context,
+                    search: searchController.text.toString(),
+                    filterTypes:
+                    filterList[widget.index].toString());
+              setState(() {});
+            }),
+        body: Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20))),
+          child: RefreshIndicator(
+            onRefresh: fetchData,
+            child: Column(
+              children: [
+                widget.type == 'T_V'
+                    ? const SizedBox()
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 15),
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: TextFormField(
+                                    onTap: () {
+                                      _selectFromDate(context);
+                                    },
+                                    readOnly: true,
+                                    controller: fromDate,
+                                    style: GoogleFonts.nunitoSans(
+                                        color: Colors.black,
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w500),
+                                    decoration: InputDecoration(
+                                        hintText: 'From Date',
+                                        contentPadding:
+                                            EdgeInsets.symmetric(
+                                                vertical: 12.h,
+                                                horizontal: 10.0),
+                                        prefixIcon: const Icon(
+                                            Icons.calendar_month),
+                                        filled: true,
+                                        hintStyle: TextStyle(
+                                            color: Colors.grey,
                                             fontSize: 15.sp,
-                                            fontWeight: FontWeight.w500),
-                                        decoration: InputDecoration(
-                                          hintText: 'To Date',
-                                          contentPadding: EdgeInsets.symmetric(
-                                              vertical: 12.h, horizontal: 10.0),
-                                          prefixIcon:
-                                              const Icon(Icons.calendar_month),
-                                          filled: true,
-                                          hintStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.normal),
-                                          fillColor: AppTheme.greyColor,
-                                          errorBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(15.0),
-                                              borderSide: BorderSide(
-                                                  color: AppTheme.greyColor)),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15.0),
-                                                  borderSide: BorderSide(
-                                                      color:
-                                                          AppTheme.greyColor)),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(15.0),
-                                              borderSide: BorderSide(
-                                                  color: AppTheme.greyColor)),
-                                          enabledBorder: OutlineInputBorder(
+                                            fontWeight:
+                                                FontWeight.normal),
+                                        fillColor: AppTheme.greyColor,
+                                        errorBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                                    15.0),
+                                            borderSide: BorderSide(
+                                                color: AppTheme
+                                                    .greyColor)),
+                                        focusedErrorBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
-                                            borderSide: BorderSide(
-                                              color: AppTheme.greyColor,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                            borderSide: BorderSide(color: AppTheme.greyColor)),
+                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0), borderSide: BorderSide(color: AppTheme.greyColor)),
+                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0), borderSide: BorderSide(color: AppTheme.greyColor))))),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: TextFormField(
+                                onTap: () {
+                                  _selectToDate(context);
+                                },
+                                readOnly: true,
+                                controller: toDate,
+                                style: GoogleFonts.nunitoSans(
+                                    color: Colors.black,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500),
+                                decoration: InputDecoration(
+                                  hintText: 'To Date',
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 12.h, horizontal: 10.0),
+                                  prefixIcon:
+                                      const Icon(Icons.calendar_month),
+                                  filled: true,
+                                  hintStyle: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.normal),
+                                  fillColor: AppTheme.greyColor,
+                                  errorBorder: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(
+                                          color: AppTheme.greyColor)),
+                                  focusedErrorBorder:
+                                      OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(
+                                                  15.0),
+                                          borderSide: BorderSide(
+                                              color:
+                                                  AppTheme.greyColor)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(
+                                          color: AppTheme.greyColor)),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(15.0),
+                                    borderSide: BorderSide(
+                                      color: AppTheme.greyColor,
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                        Expanded(
-                          child: BlocBuilder<VisitorsListingCubit,
-                              VisitorsListingState>(
-                            bloc: _visitorsListingCubit,
-                            builder: (context, state) {
-                              if (state is VisitorsListingLoading &&
-                                  _visitorsListingCubit
-                                      .visitorsListing.isEmpty) {
-                                return const Center(
-                                    child: CircularProgressIndicator.adaptive(
-                                        backgroundColor:
-                                            Colors.deepPurpleAccent));
-                              }
-                              if (state is VisitorsListingFailed) {
-                                return Center(
-                                    child: Text(state.errorMsg.toString(),
-                                        style: const TextStyle(
-                                            color: Colors.red)));
-                              }
-                              if (state is VisitorsListingInternetError) {
-                                return Center(
-                                    child: Text(state.errorMsg.toString(),
-                                        style: const TextStyle(
-                                            color: Colors.red)));
-                              }
-                              var visitorsList =
-                                  _visitorsListingCubit.visitorsListing;
-                              if (visitorsList.isEmpty) {
-                                return const Center(
-                                    child: Text("Visitors Not Found!",
-                                        style: TextStyle(
-                                            color: Colors.deepPurpleAccent)));
-                              }
-                              return ListView.builder(
-                                padding: const EdgeInsets.only(bottom: 100),
-                                controller: _scrollController,
-                                shrinkWrap: true,
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                itemCount: visitorsList.length + 1,
-                                itemBuilder: (context, index) {
-                                  print(
-                                      '----------------------------->>>>>>>${visitorsList.length}');
-                                  if (index == visitorsList.length) {
-                                    return _visitorsListingCubit.state
-                                            is ViewVisitorsLoadingMore
-                                        ? const Padding(
-                                            padding: EdgeInsets.all(16.0),
-                                            child: Center(
-                                                child:
-                                                    CircularProgressIndicator()))
-                                        : const SizedBox.shrink();
-                                  }
-                                  return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      child: customVisitorsWidget(
-                                          context,
-                                          filterList[widget.index].toString(),
-                                          visitorsList[index]));
-                                },
-                              );
-                            },
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                Expanded(
+                  child: BlocBuilder<VisitorsListingCubit,
+                      VisitorsListingState>(
+                    bloc: _visitorsListingCubit,
+                    builder: (context, state) {
+                      if (state is VisitorsListingLoading &&
+                          _visitorsListingCubit
+                              .visitorsListing.isEmpty) {
+                        return const Center(
+                            child: CircularProgressIndicator.adaptive(
+                                backgroundColor:
+                                    Colors.deepPurpleAccent));
+                      }
+                      if (state is VisitorsListingFailed) {
+                        return Center(
+                            child: Text(state.errorMsg.toString(),
+                                style: const TextStyle(
+                                    color: Colors.red)));
+                      }
+                      if (state is VisitorsListingInternetError) {
+                        return Center(
+                            child: Text(state.errorMsg.toString(),
+                                style: const TextStyle(
+                                    color: Colors.red)));
+                      }
+                      var visitorsList =
+                          _visitorsListingCubit.visitorsListing;
+                      if (visitorsList.isEmpty) {
+                        return const Center(
+                            child: Text("Visitors Not Found!",
+                                style: TextStyle(
+                                    color: Colors.deepPurpleAccent)));
+                      }
+                      return ListView.builder(
+                        padding: const EdgeInsets.only(bottom: 100),
+                        controller: _scrollController,
+                        shrinkWrap: true,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: visitorsList.length + 1,
+                        itemBuilder: (context, index) {
+                          print(
+                              '----------------------------->>>>>>>${visitorsList.length}');
+                          if (index == visitorsList.length) {
+                            return _visitorsListingCubit.state
+                                    is ViewVisitorsLoadingMore
+                                ? const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Center(
+                                        child:
+                                            CircularProgressIndicator()))
+                                : const SizedBox.shrink();
+                          }
+                          return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10),
+                              child: customVisitorsWidget(
+                                  context,
+                                  filterList[widget.index].toString(),
+                                  visitorsList[index]));
+                        },
+                      );
+                    },
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

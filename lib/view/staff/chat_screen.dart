@@ -49,13 +49,13 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
-                child: Text('No groups available.',
+                child: Text('Data Not Available!',
                     style: TextStyle(color: Colors.deepPurpleAccent)));
           }
 
           List<GroupModel> groups = snapshot.data!.docs
-              .map((doc) => GroupModel.fromMap(
-                  doc.data() as Map<String, dynamic>))
+              .map((doc) =>
+                  GroupModel.fromMap(doc.data() as Map<String, dynamic>))
               .toList();
 
           return ListView.separated(
@@ -85,40 +85,33 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(100)),
                           child: group.members!.firstWhere(
-                                    (member) =>
-                                        member['uid'] != widget.userId,
+                                    (member) => member['uid'] != widget.userId,
                                     orElse: () => null,
                                   )['userImage'] ==
                                   null
-                              ? Image.asset(ImageAssets.chatImage,
-                                  height: 50.0)
+                              ? Image.asset(ImageAssets.chatImage, height: 50.0)
                               : ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.circular(25),
+                                  borderRadius: BorderRadius.circular(25),
                                   child: FadeInImage(
                                     height: 50,
                                     width: 50,
                                     fit: BoxFit.cover,
-                                    imageErrorBuilder:
-                                        (_, child, stackTrash) =>
-                                            Image.asset(
-                                                ImageAssets.chatImage,
-                                                height: 50.0),
-                                    placeholder: const AssetImage(
-                                        ImageAssets.chatImage),
-                                    image: NetworkImage(
-                                        group.members!.firstWhere(
+                                    imageErrorBuilder: (_, child, stackTrash) =>
+                                        Image.asset(ImageAssets.chatImage,
+                                            height: 50.0),
+                                    placeholder:
+                                        const AssetImage(ImageAssets.chatImage),
+                                    image:
+                                        NetworkImage(group.members!.firstWhere(
                                       (member) =>
-                                          member['uid'] !=
-                                          widget.userId,
+                                          member['uid'] != widget.userId,
                                       orElse: () => null,
                                     )['userImage']),
                                   ),
                                 )),
                       title: Text(
                         group.members!.firstWhere(
-                              (member) =>
-                                  member['uid'] != widget.userId,
+                              (member) => member['uid'] != widget.userId,
                               orElse: () => null,
                             )['userName'] ??
                             'No other members',
@@ -150,28 +143,25 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                       deleteChatDialog(context, group.id!);
                     },
                     onTap: () {
-                      context.read<GroupCubit>().markAllMessagesAsRead(
-                          group.id!, widget.userId);
+                      context
+                          .read<GroupCubit>()
+                          .markAllMessagesAsRead(group.id!, widget.userId);
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => MessagingScreen(
                           userImage: group.members!.firstWhere(
-                                (member) =>
-                                    member['uid'] != widget.userId,
+                                (member) => member['uid'] != widget.userId,
                                 orElse: () => null,
                               )['userImage'] ??
                               '',
                           groupId: group.id!,
                           userId: widget.userId,
                           userName: group.members!.firstWhere(
-                                  (member) =>
-                                      member['uid'] != widget.userId,
+                                  (member) => member['uid'] != widget.userId,
                                   orElse: () => null)['userName'] ??
                               'No other members',
                           userCategory: group.members!.firstWhere(
-                                  (member) =>
-                                      member['uid'] != widget.userId,
-                                  orElse: () =>
-                                      null)['serviceCategory'] ??
+                                  (member) => member['uid'] != widget.userId,
+                                  orElse: () => null)['serviceCategory'] ??
                               '',
                         ),
                       ));
@@ -182,29 +172,24 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(100)),
                         child: group.members!.firstWhere(
-                                  (member) =>
-                                      member['uid'] != widget.userId,
+                                  (member) => member['uid'] != widget.userId,
                                   orElse: () => null,
                                 )['userImage'] ==
                                 null
-                            ? Image.asset(ImageAssets.chatImage,
-                                height: 50.0)
+                            ? Image.asset(ImageAssets.chatImage, height: 50.0)
                             : ClipRRect(
                                 borderRadius: BorderRadius.circular(25),
                                 child: FadeInImage(
                                   height: 50,
                                   width: 50,
                                   fit: BoxFit.cover,
-                                  imageErrorBuilder: (_, child,
-                                          stackTrash) =>
+                                  imageErrorBuilder: (_, child, stackTrash) =>
                                       Image.asset(ImageAssets.chatImage,
                                           height: 50.0),
-                                  placeholder: const AssetImage(
-                                      ImageAssets.chatImage),
-                                  image: NetworkImage(
-                                      group.members!.firstWhere(
-                                    (member) =>
-                                        member['uid'] != widget.userId,
+                                  placeholder:
+                                      const AssetImage(ImageAssets.chatImage),
+                                  image: NetworkImage(group.members!.firstWhere(
+                                    (member) => member['uid'] != widget.userId,
                                     orElse: () => null,
                                   )['userImage']),
                                 ),
@@ -233,39 +218,37 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                         if (senderId == widget.userId) ...[
                           isReadByOthers
                               ? Icon(Icons.done_all,
-                                  size: 15.sp,
-                                  color: AppTheme.primaryColor)
+                                  size: 15.sp, color: AppTheme.primaryColor)
                               : Icon(Icons.done,
-                                  size: 15.sp,
-                                  color: AppTheme.primaryColor),
+                                  size: 15.sp, color: AppTheme.primaryColor),
                         ],
                         StreamBuilder<int>(
-                            stream: getUnreadMessagesCount(
-                                group.id!, widget.userId),
-                            builder: (context, snapshot) {
-                              final unreadCount = snapshot.data ?? 0;
-                              return unreadCount != 0
-                                  ? Container(
-                                      width: 25.0,
-                                      height: 25.0,
-                                      decoration: BoxDecoration(
-                                          color: AppTheme.primaryColor,
-                                          borderRadius:
-                                              BorderRadius.circular(
-                                                  100.0)),
-                                      child: Center(
-                                        child: Text(
-                                          unreadCount.toString(),
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12.0,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                          stream:
+                              getUnreadMessagesCount(group.id!, widget.userId),
+                          builder: (context, snapshot) {
+                            final unreadCount = snapshot.data ?? 0;
+                            return unreadCount != 0
+                                ? Container(
+                                    width: 25.0,
+                                    height: 25.0,
+                                    decoration: BoxDecoration(
+                                        color: AppTheme.primaryColor,
+                                        borderRadius:
+                                            BorderRadius.circular(100.0)),
+                                    child: Center(
+                                      child: Text(
+                                        unreadCount.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12.0,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                    )
-                                  : const SizedBox();
-                            }),
+                                    ),
+                                  )
+                                : const SizedBox();
+                          },
+                        ),
                       ],
                     ),
                   );

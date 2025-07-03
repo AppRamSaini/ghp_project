@@ -232,10 +232,11 @@ class _SlidersManagementState extends State<SlidersManagement> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          SizedBox(height: size.height * 0.01),
                           Padding(
                               padding: EdgeInsets.all(8.w),
                               child: Image.asset(ImageAssets.appLogo,
-                                  height: size.height * 0.06)),
+                                  height: size.height * 0.08)),
                           SizedBox(height: size.height * 0.02),
                           Text(
                               slidersList[_currentPage]
@@ -328,7 +329,7 @@ class _SlidersManagementState extends State<SlidersManagement> {
                               horizontal: 12, vertical: 15),
                           child: Container(
                             width: double.infinity,
-                            height: 50.h,
+                            height: 50,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
                                 border:

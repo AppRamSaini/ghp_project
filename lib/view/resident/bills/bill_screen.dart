@@ -3,9 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/constants/local_storage.dart';
+import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/my_bills/my_bills_cubit.dart';
 import 'package:ghp_society_management/controller/user_profile/user_profile_cubit.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
+import 'package:ghp_society_management/payment_gateway_service.dart';
 import 'package:ghp_society_management/view/resident/bills/bill_detail_screen.dart';
 import 'package:ghp_society_management/view/resident/bills/my_bills.dart';
 import 'package:ghp_society_management/view/session_dialogue.dart';
@@ -221,101 +224,159 @@ class _BillScreenState extends State<BillScreen> {
                           sessionExpiredDialog(context);
                         } else if (state is MyBillsLoaded) {
                           return ListView.builder(
-                            controller: _scrollController,
-                            shrinkWrap: true,
-                            itemCount: state.hasMore
-                                ? state.bills.length + 1
-                                : state.bills.length,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              if (index == state.bills.length) {
-                                return const Center(
-                                    child:
-                                        CircularProgressIndicator.adaptive());
-                              }
-                              final bill = state.bills[index];
-                              int delay = bill.dueDateRemainDays!;
-                              String delayData() {
-                                final remainDays = bill.dueDateRemainDays ?? 0;
-                                final delayDays = bill.dueDateDelayDays ?? 0;
-
-                                if (delay != null && delay > 0) {
-                                  return "Due in $remainDays ${remainDays > 1 ? 'days' : 'day'}";
-                                } else if (delayDays == 0) {
-                                  return 'Today is the last day';
-                                } else {
-                                  return "$delayDays ${delayDays > 1 ? 'days' : 'day'} overdue";
+                            padding: EdgeInsets.only(top: 10),
+                              itemCount: state.hasMore
+                                  ? state.bills.length + 1
+                                  : state.bills.length,
+                              itemBuilder: (_, index) {
+                                if (index == state.bills.length) {
+                                  return const Center(
+                                      child:
+                                          CircularProgressIndicator.adaptive());
                                 }
-                              }
+                                final bill = state.bills[index];
 
-                              return Container(
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 3),
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.grey.withOpacity(0.2)),
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Column(
-                                  children: [
-                                    ListTile(
-                                        dense: true,
-                                        onTap: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (_) => BillDetailScreen(
-                                                    billId:
-                                                        bill.id.toString()))),
-                                        contentPadding: const EdgeInsets.symmetric(
-                                            horizontal: 8),
-                                        leading: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5.r),
-                                                color: const Color(0xFFF2F1FE)),
-                                            child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(10.0),
-                                                child: Image.asset(
-                                                    ImageAssets.receiptImage,
-                                                    height: 20.h,
-                                                    width: 25.h,
-                                                    color: bill.status == 'unpaid'
-                                                        ? Colors.red
-                                                            .withOpacity(0.5)
-                                                        : Colors.cyanAccent
-                                                            .withOpacity(0.5)))),
-                                        title: Text(bill.service!.name.toString(), style: const TextStyle(color: Colors.black, fontSize: 14)),
-                                        subtitle: Text(bill.invoiceNumber.toString(), style: const TextStyle(color: Colors.deepPurpleAccent, fontSize: 10)),
-                                        trailing: Container(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7), decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: bill.status == 'paid' ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3)), child: Text(bill.status == 'paid' ? "Paid" : "Unpaid", style: TextStyle(color: bill.status == 'paid' ? Colors.green : Colors.red, fontWeight: FontWeight.w600)))),
-                                    Divider(
-                                        height: 0,
-                                        color: Colors.grey.withOpacity(0.2)),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                              "Amount ${bill.status == 'paid' ? 'Paid' : "Due"}: ₹${bill.amount.toString().replaceAll('.00', '')}",
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 14)),
-                                          const SizedBox(width: 20),
-                                          bill.status == 'paid'
-                                              ? const SizedBox()
-                                              : Text(delayData().toString(),
+                                String delayData() {
+                                  return convertDateFormat(bill.dueDate!);
+                                }
+
+                                return Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 10),
+                                  height:
+                                      MediaQuery.sizeOf(context).height * 0.16,
+                                  width: MediaQuery.sizeOf(context).width,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: AssetImage(
+                                              ImageAssets.billFrame))),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ListTile(
+                                          dense: true,
+                                          onTap: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      BillDetailScreen(
+                                                          billId: bill.id
+                                                              .toString()))),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 8),
+                                          leading: Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.r),
+                                                  color: Colors.black
+                                                      .withOpacity(0.1)),
+                                              child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(10.0),
+                                                  child: Image.asset(ImageAssets.receiptImage, height: 20.h, width: 25.h, color: Colors.white))),
+                                          title: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                  bill.service!.name.toString(),
                                                   style: const TextStyle(
-                                                      color: Colors.red))
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              );
-                            },
-                          );
+                                                      color: Colors.white,
+                                                      fontSize: 14)),
+                                              Text(
+                                                  bill.invoiceNumber.toString(),
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12)),
+                                            ],
+                                          ),
+                                          subtitle: bill.status == 'paid' ? Text("₹ ${bill.amount} paid On ${delayData()}", style: const TextStyle(color: Colors.white, fontSize: 10)) : Text("Due On ${delayData()}", style: const TextStyle(color: Colors.white, fontSize: 10))),
+                                      bill.status == 'paid'
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 20,
+                                                  left: 15,
+                                                  right: 10),
+                                              child: SizedBox(
+                                                  height: 30,
+                                                  width:
+                                                      MediaQuery.sizeOf(context)
+                                                          .width,
+                                                  child: marqueeText(
+                                                      "👍Thanks for being a wonderful resident!")))
+                                          : Container(
+                                              margin: EdgeInsets.only(
+                                                  bottom: 10,
+                                                  left: 10,
+                                                  right: 10),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 5),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                  color: Colors.white),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text('₹ ${bill.amount}',
+                                                      style: GoogleFonts.nunitoSans(
+                                                          textStyle: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold))),
+                                                  Text("D-123 1st",
+                                                      style: const TextStyle(
+                                                          color: Colors.black45,
+                                                          fontSize: 14)),
+                                                  GestureDetector(
+                                                    onTap: () async {
+                                                      await LocalStorage
+                                                          .localStorage
+                                                          .setString(
+                                                              'bill_id',
+                                                              bill.id
+                                                                  .toString());
+                                                      payBillFun(
+                                                          double.parse(bill
+                                                              .amount
+                                                              .toString()),
+                                                          context);
+                                                    },
+                                                    child: Container(
+                                                        padding: const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 16,
+                                                            vertical: 5),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                    30),
+                                                            color: Colors.green
+                                                                .withOpacity(
+                                                                    0.3)),
+                                                        child: Text('Pay',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600))),
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                    ],
+                                  ),
+                                );
+                              });
                         } else if (state is MyBillsFailed) {
                           return Padding(
                               padding: const EdgeInsets.all(15),

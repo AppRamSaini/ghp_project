@@ -34,31 +34,26 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Chat',
-          style:
-          TextStyle(color: Colors.black,fontSize: 18))),
+      appBar: AppBar(
+          title: Text('Chat',
+              style: TextStyle(color: Colors.black, fontSize: 18))),
       floatingActionButton: FloatingActionButton(
           backgroundColor: AppTheme.primaryColor,
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (builder) => CreateChatScreen(
-                      userId: widget.userId,
-                      userName: widget.userName,
-                      userImage: widget.userImage,
-                    )));
+                    userId: widget.userId,
+                    userName: widget.userName,
+                    userImage: widget.userImage)));
           },
           child: const Icon(Icons.add, color: Colors.white)),
-      body:
-
-
-      Padding(
+      body: Padding(
         padding: const EdgeInsets.all(12),
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('groups')
               .where("userIds",
-                  arrayContains:
-                      widget.userId) // Filter groups by userId
+                  arrayContains: widget.userId) // Filter groups by userId
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -68,14 +63,13 @@ class _ChatScreenState extends State<ChatScreen> {
             }
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
               return const Center(
-                  child: Text('No groups available.',
-                      style:
-                          TextStyle(color: Colors.deepPurpleAccent)));
+                  child: Text('No data available.',
+                      style: TextStyle(color: Colors.deepPurpleAccent)));
             }
 
             List<GroupModel> groups = snapshot.data!.docs
-                .map((doc) => GroupModel.fromMap(
-                    doc.data() as Map<String, dynamic>))
+                .map((doc) =>
+                    GroupModel.fromMap(doc.data() as Map<String, dynamic>))
                 .toList();
 
             List<Future<Map<String, dynamic>>> lastMessagesFutures =
@@ -112,21 +106,17 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: CircularProgressIndicator.adaptive(
                           backgroundColor: Colors.deepPurpleAccent));
                 }
-                if (messagesSnapshot.hasError ||
-                    !messagesSnapshot.hasData) {
+                if (messagesSnapshot.hasError || !messagesSnapshot.hasData) {
                   return const Center(
                       child: Text('Error loading groups or messages.',
-                          style: TextStyle(
-                              color: Colors.deepPurpleAccent)));
+                          style: TextStyle(color: Colors.deepPurpleAccent)));
                 }
                 // Sort groups by the timestamp of the last message (descending)
                 List<Map<String, dynamic>> groupsWithLastMessages =
                     messagesSnapshot.data!;
                 groupsWithLastMessages.sort((a, b) {
-                  DateTime timestampA =
-                      a['lastMessageTimestamp'] as DateTime;
-                  DateTime timestampB =
-                      b['lastMessageTimestamp'] as DateTime;
+                  DateTime timestampA = a['lastMessageTimestamp'] as DateTime;
+                  DateTime timestampB = b['lastMessageTimestamp'] as DateTime;
                   return timestampB.compareTo(timestampA);
                 });
                 return ListView.builder(
@@ -136,8 +126,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   itemBuilder: (context, index) {
                     var groupData = groupsWithLastMessages[index];
                     GroupModel group = groupData['group'];
-                    DateTime timestamp =
-                        groupData['lastMessageTimestamp'];
+                    DateTime timestamp = groupData['lastMessageTimestamp'];
                     String formattedTime =
                         DateFormat('hh:mm a').format(timestamp);
                     return StreamBuilder<QuerySnapshot>(
@@ -152,29 +141,25 @@ class _ChatScreenState extends State<ChatScreen> {
                         if (!messageSnapshot.hasData) {
                           return const Center(
                               child: CircularProgressIndicator.adaptive(
-                                  backgroundColor:
-                                      Colors.deepPurpleAccent));
+                                  backgroundColor: Colors.deepPurpleAccent));
                         }
 
-                        print(
-                            "------------>>>>${messageSnapshot.data!.docs}");
+                        print("------------>>>>${messageSnapshot.data!.docs}");
 
                         if (messageSnapshot.data!.docs.isEmpty) {
                           return const SizedBox();
                         }
-                        var lastMessage =
-                            messageSnapshot.data!.docs.first.data()
-                                as Map<String, dynamic>;
-                        String lastMessageText =
-                            lastMessage['message'] ?? '';
+                        var lastMessage = messageSnapshot.data!.docs.first
+                            .data() as Map<String, dynamic>;
+                        String lastMessageText = lastMessage['message'] ?? '';
                         String senderId = lastMessage['senderId'] ?? '';
-                        bool isReadByOthers = (lastMessage['readBy']
-                                    as List?)
+                        bool isReadByOthers = (lastMessage['readBy'] as List?)
                                 ?.any((id) => id != widget.userId) ??
                             false;
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: Card(color: Colors.white,
+                          child: Card(
+                            color: Colors.white,
                             margin: EdgeInsets.zero,
                             child: ListTile(
                               onLongPress: () {
@@ -185,87 +170,68 @@ class _ChatScreenState extends State<ChatScreen> {
                                     .read<GroupCubit>()
                                     .markAllMessagesAsRead(
                                         group.id!, widget.userId);
-                                Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            MessagingScreen(
-                                                userImage: group
-                                                        .members!
-                                                        .firstWhere(
-                                                      (member) =>
-                                                          member[
-                                                              'uid'] !=
-                                                          widget.userId,
-                                                      orElse: () =>
-                                                          null,
-                                                    )['userImage'] ??
-                                                    '',
-                                                groupId: group.id!,
-                                                userId: widget.userId,
-                                                userName: group.members!
-                                                        .firstWhere(
-                                                      (member) =>
-                                                          member[
-                                                              'uid'] !=
-                                                          widget.userId,
-                                                      orElse: () =>
-                                                          null,
-                                                    )['userName'] ??
-                                                    'No other members',
-                                                userCategory: group
-                                                        .members!
-                                                        .firstWhere(
-                                                      (member) =>
-                                                          member[
-                                                              'uid'] !=
-                                                          widget.userId,
-                                                      orElse: () =>
-                                                          null,
-                                                    )['serviceCategory'] ??
-                                                    '')));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => MessagingScreen(
+                                        userImage: group.members!.firstWhere(
+                                              (member) =>
+                                                  member['uid'] !=
+                                                  widget.userId,
+                                              orElse: () => null,
+                                            )['userImage'] ??
+                                            '',
+                                        groupId: group.id!,
+                                        userId: widget.userId,
+                                        userName: group.members!.firstWhere(
+                                              (member) =>
+                                                  member['uid'] !=
+                                                  widget.userId,
+                                              orElse: () => null,
+                                            )['userName'] ??
+                                            'No other members',
+                                        userCategory: group.members!.firstWhere(
+                                              (member) =>
+                                                  member['uid'] !=
+                                                  widget.userId,
+                                              orElse: () => null,
+                                            )['serviceCategory'] ??
+                                            '')));
                               },
-                              contentPadding: EdgeInsets.symmetric(horizontal: 5),
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 5),
                               dense: true,
                               leading: Card(
                                   elevation: 1,
                                   margin: EdgeInsets.zero,
                                   shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(100)),
+                                      borderRadius: BorderRadius.circular(100)),
                                   child: group.members!.firstWhere(
                                             (member) =>
-                                                member['uid'] !=
-                                                widget.userId,
+                                                member['uid'] != widget.userId,
                                             orElse: () => null,
                                           )['userImage'] ==
                                           null
-                                      ? Image.asset(
-                                          ImageAssets.chatImage,
+                                      ? Image.asset(ImageAssets.chatImage,
                                           height: 50.0)
                                       : CircleAvatar(
                                           radius: 25,
-                                          backgroundColor:
-                                              Colors.transparent,
+                                          backgroundColor: Colors.transparent,
                                           backgroundImage: NetworkImage(
                                               group.members!.firstWhere(
                                             (member) =>
-                                                member['uid'] !=
-                                                widget.userId,
+                                                member['uid'] != widget.userId,
                                             orElse: () => null,
                                           )['userImage']))),
                               title: Text(
                                   group.members!.firstWhere(
                                         (member) =>
-                                            member['uid'] !=
-                                            widget.userId,
+                                            member['uid'] != widget.userId,
                                         orElse: () => null,
                                       )['userName'] ??
                                       'No other members',
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: const TextStyle(
                                           fontSize: 15.0,
-                                          fontWeight:
-                                              FontWeight.w600))),
+                                          fontWeight: FontWeight.w600))),
                               subtitle: Text(lastMessageText,
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: const TextStyle(
@@ -275,56 +241,50 @@ class _ChatScreenState extends State<ChatScreen> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis),
                               trailing: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(formattedTime,
                                       style: GoogleFonts.nunitoSans(
                                           textStyle: const TextStyle(
                                               color: Colors.grey,
                                               fontSize: 12.0,
-                                              fontWeight:
-                                                  FontWeight.w600))),
+                                              fontWeight: FontWeight.w600))),
                                   const SizedBox(height: 5.0),
                                   if (senderId == widget.userId) ...[
                                     isReadByOthers
                                         ? Icon(Icons.done_all,
                                             size: 15.sp,
-                                            color:
-                                                AppTheme.primaryColor)
+                                            color: AppTheme.primaryColor)
                                         : Icon(Icons.done,
                                             size: 15.sp,
-                                            color:
-                                                AppTheme.primaryColor),
+                                            color: AppTheme.primaryColor),
                                   ],
                                   StreamBuilder<int>(
                                       stream: getUnreadMessagesCount(
                                           group.id!, widget.userId),
                                       builder: (context, snapshot) {
-                                        final unreadCount =
-                                            snapshot.data ?? 0;
+                                        final unreadCount = snapshot.data ?? 0;
                                         return unreadCount != 0
                                             ? Container(
                                                 width: 25.0,
                                                 height: 25.0,
                                                 decoration: BoxDecoration(
-                                                    color: AppTheme
-                                                        .primaryColor,
+                                                    color:
+                                                        AppTheme.primaryColor,
                                                     borderRadius:
-                                                        BorderRadius
-                                                            .circular(
-                                                                100.0)),
+                                                        BorderRadius.circular(
+                                                            100.0)),
                                                 child: Center(
                                                     child: Text(
-                                                        unreadCount
-                                                            .toString(),
+                                                        unreadCount.toString(),
                                                         style: GoogleFonts.nunitoSans(
                                                             textStyle: const TextStyle(
                                                                 color: Colors
                                                                     .white,
-                                                                fontSize:
-                                                                    12.0,
-                                                                fontWeight: FontWeight.w600)))))
+                                                                fontSize: 12.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600)))))
                                             : const SizedBox();
                                       }),
                                 ],

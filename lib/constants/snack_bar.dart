@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:marquee/marquee.dart';
 import 'package:searchbar_animation/searchbar_animation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -294,3 +295,20 @@ String convertTimeFormat(DateTime inputDate) {
 
   return formattedTime;
 }
+
+
+Widget marqueeText(String text)=>Marquee(
+  text: text,
+  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+  scrollAxis: Axis.horizontal,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  blankSpace: 10.0,
+  velocity: 50.0,
+  pauseAfterRound: Duration(seconds: 0),
+  startPadding: 10.0,
+  accelerationDuration: Duration(seconds: 1),
+  accelerationCurve: Curves.linear,
+  decelerationDuration: Duration(milliseconds: 500),
+  decelerationCurve: Curves.easeOut,
+);
+

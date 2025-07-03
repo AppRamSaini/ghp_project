@@ -67,19 +67,21 @@ class MyBillsPageState extends State<MyBillsPage> {
         if (state is MyBillsLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is MyBillsLoaded) {
-          return ListView.builder(
-            controller: _scrollController,
-            shrinkWrap: true,
-            itemCount:
-                state.hasMore ? state.bills.length + 1 : state.bills.length,
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
+          return
+
+
+            SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+                children: List.generate(
+                    state.hasMore ? state.bills.length + 1 : state.bills.length,
+                    (index) {
               if (index == state.bills.length) {
                 return const Center(
                     child: CircularProgressIndicator.adaptive());
               }
               final bill = state.bills[index];
-              int delay = bill.dueDateRemainDays!;
+
               String delayData() {
                 return convertDateFormat(bill.dueDate!);
                 // if (delay > 0) {
@@ -94,7 +96,7 @@ class MyBillsPageState extends State<MyBillsPage> {
               return Container(
                 margin: EdgeInsets.symmetric(horizontal: 10),
                 height: MediaQuery.sizeOf(context).height * 0.16,
-                width: MediaQuery.sizeOf(context).width,
+                width: MediaQuery.sizeOf(context).width*0.97,
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         fit: BoxFit.fill,
@@ -107,8 +109,8 @@ class MyBillsPageState extends State<MyBillsPage> {
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) =>
-                                    BillDetailScreen(billId: bill.id.toString()))),
+                                builder: (_) => BillDetailScreen(
+                                    billId: bill.id.toString()))),
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 8),
                         leading: Container(
@@ -121,72 +123,80 @@ class MyBillsPageState extends State<MyBillsPage> {
                                     height: 20.h,
                                     width: 25.h,
                                     color: Colors.white))),
-                        title: Text(bill.service!.name.toString(),
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 14)),
-                        subtitle: bill.status=='paid'?
-                        Text("₹ ${bill.amount} paid On ${delayData()}",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 10)):
-                        Text("Due On ${delayData()}",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 10))),
-
-
-                    bill.status=='paid'?
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Text('👍 Thanks for being a wonderful resident!',
-                          style: GoogleFonts.nunitoSans(
-                              textStyle: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold))),
-                    ):
-                    Container(
-                      margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('₹ ${bill.amount}',
-                              style: GoogleFonts.nunitoSans(
-                                  textStyle: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold))),
-                          GestureDetector(
-                            onTap: ()async{
-                              await LocalStorage.localStorage
-                                  .setString('bill_id',
-                                  bill.id.toString());
-                              payBillFun(
-                                  double.parse(bill.amount
-                                      .toString()),
-                                  context);
-                            },
-                            child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 5),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    color: Colors.green.withOpacity(0.3)),
-                                child: Text('Pay',
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.w600))),
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(bill.service!.name.toString(),
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 14)),
+                            Text(bill.invoiceNumber.toString(),
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 12)),
+                          ],
+                        ),
+                        subtitle: bill.status == 'paid'
+                            ? Text("₹ ${bill.amount} paid On ${delayData()}",
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 10))
+                            : Text("Due On ${delayData()}",
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 10))),
+                    bill.status == 'paid'
+                        ? Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: 20, left: 15, right: 10),
+                            child: SizedBox(
+                                height: 30,
+                                width: MediaQuery.sizeOf(context).width,
+                                child: marqueeText(
+                                    "👍Thanks for being a wonderful resident!")))
+                        : Container(
+                            margin: EdgeInsets.only(
+                                bottom: 10, left: 10, right: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: Colors.white),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('₹ ${bill.amount}',
+                                    style: GoogleFonts.nunitoSans(
+                                        textStyle: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold))),
+                                Text("D-123 1st",
+                                    style: const TextStyle(
+                                        color: Colors.black45, fontSize: 14)),
+                                GestureDetector(
+                                  onTap: () async {
+                                    await LocalStorage.localStorage.setString(
+                                        'bill_id', bill.id.toString());
+                                    payBillFun(
+                                        double.parse(bill.amount.toString()),
+                                        context);
+                                  },
+                                  child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 5),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          color: Colors.green.withOpacity(0.3)),
+                                      child: Text('Pay',
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.w600))),
+                                )
+                              ],
+                            ),
                           )
-                        ],
-                      ),
-                    )
                   ],
                 ),
               );
-            },
+            })),
           );
         } else if (state is MyBillsFailed) {
           return Padding(

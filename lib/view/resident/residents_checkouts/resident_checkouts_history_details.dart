@@ -171,7 +171,8 @@ class _ResidentCheckoutsHistoryDetailsState
                                 trailing: GestureDetector(child: SizedBox(height: 100, width: 80, child: Image.asset('assets/images/qr-image.png')))),
                             Divider(
                                 color: Colors.grey.withOpacity(0.2)),
-                            Padding(
+                            residentsCheckoutsData
+                                .user!.member!=null?       Padding(
                               padding: const EdgeInsets.only(
                                   left: 10, right: 10, bottom: 8),
                               child: Row(
@@ -237,7 +238,7 @@ class _ResidentCheckoutsHistoryDetailsState
                                   )
                                 ],
                               ),
-                            )
+                            ):SizedBox()
                           ],
                         ),
                       ),

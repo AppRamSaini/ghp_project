@@ -68,14 +68,16 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
             onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const ResidentsListPage
-                  ())),
+                MaterialPageRoute(builder: (_) => const ResidentsListPage())),
             backgroundColor: AppTheme.primaryColor,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             child: const Icon(Icons.person, color: Colors.white)),
-        appBar: customAppbar(context: context,searchBarOpen: searchBarOpen,
-            title: "Resident Checkouts History", textController: textController,
+        appBar: customAppbar(
+          context: context,
+          searchBarOpen: searchBarOpen,
+          title: "Resident Checkouts History",
+          textController: textController,
           onExpansionComplete: () {
             setState(() {
               searchBarOpen = true;
@@ -95,12 +97,8 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
           },
           onChanged: (value) {
             _staffSideResidentCheckoutsHistoryCubit.searchQueryData(value);
-          },)
-
-
-
-
-        ,
+          },
+        ),
         body: RefreshIndicator(
           onRefresh: onRefresh,
           child: BlocBuilder<StaffSideResidentCheckoutsHistoryCubit,
@@ -391,11 +389,7 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
 
 List<Map<String, dynamic>> optionsList = [
   {"icon": Icons.visibility, "menu": "View Details", "menu_id": 0},
-  {
-    "icon": Icons.qr_code,
-    "menu": "Scan By Manual",
-    "menu_id": 1
-  },
+  {"icon": Icons.qr_code, "menu": "Scan By Manual", "menu_id": 1},
 ];
 Widget popMenusForStaff({required BuildContext context, required residentId}) {
   return CircleAvatar(
@@ -446,14 +440,15 @@ Widget popMenusForStaff({required BuildContext context, required residentId}) {
                 context,
                 MaterialPageRoute(
                     builder: (_) => ResidentCheckoutsHistoryDetails(
-                        userId: residentId.toString())));
+                        userId: residentId.toString(), forResident: false)));
           } else if (value['menu_id'] == 1) {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (_) => ResidentProfileDetails(
                         residentId: {'resident_id': residentId.toString()},
-                        forQRPage: false)));
+                        forQRPage: false,
+                        forResident: false)));
           }
         },
       ),

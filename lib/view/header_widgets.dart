@@ -63,7 +63,7 @@ Widget securityStaffHeaderWidget(
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return chatIcon(0, context, userId, userImage, userName);
+            return chatIcon(0, context, userId, userImage, userName, 'staff');
           }
 
           List<GroupModel> groups = snapshot.data!.docs
@@ -77,7 +77,7 @@ Widget securityStaffHeaderWidget(
               int totalUnread =
                   unreadSnapshot.data?.fold(0, (a, b) => a! + b) ?? 0;
               return chatIcon(
-                  totalUnread, context, userId, userImage, userName);
+                  totalUnread, context, userId, userImage, userName, 'staff');
             },
           );
         },
@@ -100,17 +100,24 @@ Widget securityStaffHeaderWidget(
 
 /// 📩 Chat Icon Widget
 Widget chatIcon(int unreadCount, BuildContext context, String userId,
-    String userImage, String userName,
-    {bool forResident = false, bool isDemo = false}) {
+    String userImage, String userName, String forType,
+    {bool isDemo = false}) {
   return GestureDetector(
     onTap: () {
       if (!isDemo) {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (builder) => forResident
+            builder: (builder) => forType == 'resident'
                 ? ChatScreen(
                     userImage: userImage, userId: userId, userName: userName)
-                : StaffChatScreen(
-                    userImage: userImage, userId: userId, userName: userName)));
+                : forType == 'staff'
+                    ? StaffChatScreen(
+                        userImage: userImage,
+                        userId: userId,
+                        userName: userName)
+                    : StaffChatScreen(
+                        userImage: userImage,
+                        userId: userId,
+                        userName: userName)));
       }
     },
     child: Stack(
@@ -205,7 +212,8 @@ Widget serviceProviderHeaderWidget(
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return chatIcon(0, context, userId, userImage, userName);
+            return chatIcon(
+                0, context, userId, userImage, userName, 'service_provider');
           }
 
           List<GroupModel> groups = snapshot.data!.docs
@@ -218,8 +226,8 @@ Widget serviceProviderHeaderWidget(
             builder: (context, unreadSnapshot) {
               int totalUnread =
                   unreadSnapshot.data?.fold(0, (a, b) => a! + b) ?? 0;
-              return chatIcon(
-                  totalUnread, context, userId, userImage, userName);
+              return chatIcon(totalUnread, context, userId, userImage, userName,
+                  'service_provider');
             },
           );
         },
@@ -244,7 +252,7 @@ Widget serviceProviderHeaderWidget(
 
 /// RESIDENCE HEADER WIDGETS
 Widget headerWidget(BuildContext context, userId, userName, userImage,
-    {bool isDemo = false, int index = 0}) {
+    {bool isDemo = false}) {
   final int counts = LocalStorage.localStorage.getInt('counts') ?? 0;
   return Row(
     mainAxisAlignment: MainAxisAlignment.end,
@@ -257,7 +265,8 @@ Widget headerWidget(BuildContext context, userId, userName, userImage,
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return chatIcon(0, context, userId, userImage, userName);
+            return chatIcon(
+                0, context, userId, userImage, userName, 'resident');
           }
 
           List<GroupModel> groups = snapshot.data!.docs
@@ -270,8 +279,9 @@ Widget headerWidget(BuildContext context, userId, userName, userImage,
             builder: (context, unreadSnapshot) {
               int totalUnread =
                   unreadSnapshot.data?.fold(0, (a, b) => a! + b) ?? 0;
-              return chatIcon(totalUnread, context, userId, userImage, userName,
-                  forResident: true, isDemo: isDemo);
+              return chatIcon(
+                  totalUnread, context, userId, userImage, userName, 'resident',
+                  isDemo: isDemo);
             },
           );
         },
@@ -288,8 +298,7 @@ Widget headerWidget(BuildContext context, userId, userName, userImage,
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) =>
-                                  NotificationListing(index: index)));
+                              builder: (_) => NotificationListing(index: 0)));
                     }
                   },
                   child: CircleAvatar(

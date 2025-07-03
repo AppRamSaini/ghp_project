@@ -4,7 +4,6 @@ import 'package:ghp_society_management/controller/refer_property/refer_property_
 import 'package:ghp_society_management/controller/sos_management/sos_element/sos_element_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/incoming_request/incoming_request_cubit.dart';
 import 'package:ghp_society_management/model/incoming_visitors_request_model.dart';
-import 'package:ghp_society_management/view/resident/bills/bill_screen.dart';
 import 'package:ghp_society_management/view/resident/documents/docuements_page.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:ghp_society_management/view/resident/setting/setting_screen.dart';

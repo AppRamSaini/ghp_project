@@ -90,7 +90,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                               MaterialPageRoute(
                                   builder: (_) => ResidentProfileDetails(
                                       residentId: {'resident_id': id},
-                                      forQRPage: true)));
+                                      forQRPage: true,forResident: widget.fromResidentSide)));
                         });
                       } else if (parsedData.containsKey('daily_help_id')) {
                         String id = parsedData['daily_help_id'];

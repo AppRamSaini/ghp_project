@@ -128,7 +128,7 @@ class _ResidentsListPageState extends State<ResidentsListPage> {
                                               'resident_id': filteredItems![index]
                                                   .userId
                                                   .toString()
-                                            }, forQRPage: false))),
+                                            }, forQRPage: false,forResident: false))),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30)),
                                 color: AppTheme.primaryColor,

@@ -10,9 +10,7 @@ import 'package:ghp_society_management/controller/logout/logout_cubit.dart';
 import 'package:ghp_society_management/controller/user_profile/user_profile_cubit.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
-import 'package:ghp_society_management/view/dashboard/view_all_features.dart';
 import 'package:ghp_society_management/view/header_widgets.dart';
-import 'package:ghp_society_management/view/resident/complaint/comlaint_page.dart';
 import 'package:ghp_society_management/view/resident/event/event_screen.dart';
 import 'package:ghp_society_management/view/resident/member/members_screen.dart';
 import 'package:ghp_society_management/view/resident/notice_board/notice_board_screen.dart';
@@ -43,8 +41,6 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
     context.read<UserProfileCubit>().fetchUserProfile();
   }
 
-
-
   List colors = [
     AppTheme.color1,
     AppTheme.color2,
@@ -70,8 +66,6 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
     SosScreen(),
     NoticeBoardScreen(),
   ];
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -182,12 +176,11 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                             ],
                           ),
                         ),
-                        headerWidget(
+                        securityStaffHeaderWidget(
                             context,
                             state.userProfile.first.data!.user!.id.toString(),
                             state.userProfile.first.data!.user!.name.toString(),
-                            state.userProfile.first.data!.user!.image ?? '',
-                            index: 1)
+                            state.userProfile.first.data!.user!.image ?? '')
                       ],
                     ),
                   );
@@ -233,8 +226,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                             ],
                           ),
                         ),
-                        headerWidget(context, '', '', '',
-                            isDemo: true, index: 1)
+                        headerWidget(context, '', '', '', isDemo: true)
                       ],
                     ),
                   );
@@ -261,7 +253,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                   crossAxisSpacing: 10,
                   shrinkWrap: true,
                   physics: BouncingScrollPhysics(),
-                  padding:  EdgeInsets.zero,
+                  padding: EdgeInsets.zero,
                   itemCount: dataList.length,
                   itemBuilder: (context, index) {
                     double height;
@@ -269,8 +261,10 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                     return Column(
                       children: [
                         GestureDetector(
-                          onTap: () => Navigator.push(context,
-                              MaterialPageRoute(builder: (_) => pagesList[index])),
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => pagesList[index])),
                           child: Container(
                               margin: EdgeInsets.only(bottom: 5),
                               height: height,
@@ -278,7 +272,8 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                   borderRadius: BorderRadius.circular(10),
                                   color: colors[index % colors.length],
                                   border: Border.all(
-                                      color: colors[index % colors.length], width: 2)),
+                                      color: colors[index % colors.length],
+                                      width: 2)),
                               child: Image.asset(dataList[index]['icon'])),
                         ),
                         Padding(
@@ -286,7 +281,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                           child: Text(
                             dataList[index]['title'].toString(),
                             textAlign: TextAlign.center,
-                            overflow:TextOverflow.ellipsis,
+                            overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.nunitoSans(
                               textStyle: TextStyle(
                                 color: AppTheme.backgroundColor,
@@ -301,8 +296,6 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                   },
                 ),
                 SizedBox(height: size.height * 0.02),
-
-
                 const Expanded(
                   child: VisitorsTabBar(),
                 )

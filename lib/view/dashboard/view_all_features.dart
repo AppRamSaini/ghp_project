@@ -1,8 +1,6 @@
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/main.dart';
-import 'package:ghp_society_management/model/my_bill_model.dart';
-import 'package:ghp_society_management/model/sos_history_model.dart';
 import 'package:ghp_society_management/view/resident/complaint/comlaint_page.dart';
 import 'package:ghp_society_management/view/resident/event/event_screen.dart';
 import 'package:ghp_society_management/view/resident/member/members_screen.dart';
