@@ -1,7 +1,7 @@
 class Config {
   static const String baseURL =
-      'https://society.ghpjaipur.com/api/user/v1/';  // new url
-      // 'https://ghp-society.laraveldevelopmentcompany.com/api/user/v1/'; // old url
+      // 'https://society.ghpjaipur.com/api/user/v1/';  // new url
+      'https://ghp-society.laraveldevelopmentcompany.com/api/user/v1/'; // old url
 }
 
 class Routes {
