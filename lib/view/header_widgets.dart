@@ -82,18 +82,18 @@ Widget securityStaffHeaderWidget(
           );
         },
       ),
-
-      const SizedBox(width: 10),
-
-      /// 🚪 Logout Icon
-      GestureDetector(
-        onTap: () => logOutPermissionDialog(context, isLogout: true),
-        child: CircleAvatar(
-          backgroundColor: AppTheme.resolvedButtonColor.withOpacity(0.2),
-          child: Image.asset(ImageAssets.staffLogoutImage,
-              height: 20.h, color: AppTheme.resolvedButtonColor),
-        ),
-      ),
+      //
+      // const SizedBox(width: 10),
+      //
+      // /// 🚪 Logout Icon
+      // GestureDetector(
+      //   onTap: () => logOutPermissionDialog(context, isLogout: true),
+      //   child: CircleAvatar(
+      //     backgroundColor: AppTheme.resolvedButtonColor.withOpacity(0.2),
+      //     child: Image.asset(ImageAssets.staffLogoutImage,
+      //         height: 20.h, color: AppTheme.resolvedButtonColor),
+      //   ),
+      // ),
     ],
   );
 }
@@ -232,20 +232,20 @@ Widget serviceProviderHeaderWidget(
           );
         },
       ),
-      const SizedBox(width: 8),
-      GestureDetector(
-        onTap: () {
-          logOutPermissionDialog(context, isLogout: true);
-        },
-        child: CircleAvatar(
-          backgroundColor: AppTheme.resolvedButtonColor.withOpacity(0.2),
-          child: Image.asset(
-            ImageAssets.staffLogoutImage,
-            height: 20.h,
-            color: AppTheme.resolvedButtonColor,
-          ),
-        ),
-      ),
+      // const SizedBox(width: 8),
+      // GestureDetector(
+      //   onTap: () {
+      //     logOutPermissionDialog(context, isLogout: true);
+      //   },
+      //   child: CircleAvatar(
+      //     backgroundColor: AppTheme.resolvedButtonColor.withOpacity(0.2),
+      //     child: Image.asset(
+      //       ImageAssets.staffLogoutImage,
+      //       height: 20.h,
+      //       color: AppTheme.resolvedButtonColor,
+      //     ),
+      //   ),
+      // ),
     ],
   );
 }
@@ -322,22 +322,22 @@ Widget headerWidget(BuildContext context, userId, userName, userImage,
               : SizedBox.fromSize()
         ],
       ),
-      const SizedBox(width: 10),
-      GestureDetector(
-        onTap: () {
-          if (!isDemo) {
-            logOutPermissionDialog(context, isLogout: true);
-          }
-        },
-        child: CircleAvatar(
-          backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-          child: Image.asset(
-            ImageAssets.staffLogoutImage,
-            height: 20.h,
-            color: AppTheme.resolvedButtonColor,
-          ),
-        ),
-      ),
+      // const SizedBox(width: 10),
+      // GestureDetector(
+      //   onTap: () {
+      //     if (!isDemo) {
+      //       logOutPermissionDialog(context, isLogout: true);
+      //     }
+      //   },
+      //   child: CircleAvatar(
+      //     backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+      //     child: Image.asset(
+      //       ImageAssets.staffLogoutImage,
+      //       height: 20.h,
+      //       color: AppTheme.resolvedButtonColor,
+      //     ),
+      //   ),
+      // ),
     ],
   );
 }

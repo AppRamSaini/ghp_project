@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
             navigatorKey: navigatorKey,
-            navigatorObservers: [analyticsObserver],
+            // navigatorObservers: [analyticsObserver],
             home: SplashScreen(),
           );
         },
