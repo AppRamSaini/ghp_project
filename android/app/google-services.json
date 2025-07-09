@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "722059750239",
+    "project_id": "ghpsocietyapp-64319",
+    "storage_bucket": "ghpsocietyapp-64319.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:722059750239:android:44fb32e09cbad6edeca4ea",
+        "android_client_info": {
+          "package_name": "com.fp.ghpsocietyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfw9RO0bf4YvvrhrFAGpFGnDCt-kbNPI0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
