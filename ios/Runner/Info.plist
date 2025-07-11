@@ -24,6 +24,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>sms</string>
@@ -31,22 +33,12 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-
-	<key>UIBackgroundModes</key>
-    <array>
-      <string>fetch</string>
-      <string>remote-notification</string>
-    </array>
-    <key>FirebaseAppDelegateProxyEnabled</key>
-    <false/>
-
-	<key>NSLocationWhenInUseUsageDescription</key>
-    <string>We need your location to provide better services.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>We need your location to provide real-time tracking.</string>
-
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to capture images.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to provide real-time tracking.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to provide better services.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need access to your microphone for video recording.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -59,10 +51,6 @@
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>audio</string>
-		<string>fetch</string>
-		<string>processing</string>
-		<string>push-to-talk</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
