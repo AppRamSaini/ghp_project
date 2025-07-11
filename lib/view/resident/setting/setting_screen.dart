@@ -179,13 +179,13 @@ class _SettingScreenState extends State<SettingScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                                state.userProfile.first.data!
+                                                capitalizeWords(state.userProfile.first.data!
                                                     .user!.name
-                                                    .toString(),
+                                                    .toString()),
                                                 style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
                                                     color: Colors.black,
-                                                    fontSize: 15.sp,
+                                                    fontSize: 18.sp,
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                                 )),

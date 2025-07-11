@@ -136,6 +136,7 @@ class MyBillsPageState extends State<MyBillsPage> {
                         ),
                         subtitle: bill.status == 'paid'
                             ? Text("₹ ${bill.amount} paid On ${delayData()}",
+
                                 style: const TextStyle(
                                     color: Colors.white, fontSize: 10))
                             : Text("Due On ${delayData()}",
@@ -144,7 +145,7 @@ class MyBillsPageState extends State<MyBillsPage> {
                     bill.status == 'paid'
                         ? Padding(
                             padding: const EdgeInsets.only(
-                                bottom: 20, left: 15, right: 10),
+                                bottom: 10, left: 15, right: 10),
                             child: SizedBox(
                                 height: 30,
                                 width: MediaQuery.sizeOf(context).width,

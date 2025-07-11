@@ -122,14 +122,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                     });
                     return Padding(
-                      padding: const EdgeInsets.only(right: 10,bottom: 5,top: 5),
+                      padding:
+                          const EdgeInsets.only(right: 10, bottom: 5, top: 5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ManageProperty(),
                           Text(
-                              state.userProfile.first.data!.user!.societyName!.toUpperCase(),
-
+                              state.userProfile.first.data!.user!.societyName!
+                                  .toUpperCase(),
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
                                       color: Colors.black87,
@@ -139,7 +140,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   } else {
-                    return ManageProperty();
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ManageProperty(),
+                        Text("Loading....",
+                            style: GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600))),
+                      ],
+                    );
                   }
                 })),
             leading: BlocBuilder<UserProfileCubit, UserProfileState>(

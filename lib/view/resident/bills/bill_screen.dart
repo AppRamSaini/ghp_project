@@ -136,25 +136,6 @@ class _BillScreenState extends State<BillScreen> {
                           ],
                         );
 
-                        //
-                        // } else {
-                        //   return Column(
-                        //     mainAxisSize: MainAxisSize.min,
-                        //     children: [
-                        //       Text('Total Paid Amount : ₹ 0 /-',
-                        //           style: TextStyle(
-                        //               color: AppTheme.primaryColor,
-                        //               fontSize: 14.sp,
-                        //               fontWeight: FontWeight.w500)),
-                        //       const SizedBox(height: 3),
-                        //       Text('Total Unpaid Amount : ₹ 0/-',
-                        //           style: TextStyle(
-                        //               color: AppTheme.primaryColor,
-                        //               fontSize: 14.sp,
-                        //               fontWeight: FontWeight.w500)),
-                        //     ],
-                        //   );
-                        // }
                       },
                     ),
                   ),
@@ -241,7 +222,7 @@ class _BillScreenState extends State<BillScreen> {
                                 }
 
                                 return Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 10),
+                                  margin: EdgeInsets.only(left: 10,right: 10,bottom: 10),
                                   height:
                                       MediaQuery.sizeOf(context).height * 0.16,
                                   width: MediaQuery.sizeOf(context).width,
@@ -297,7 +278,7 @@ class _BillScreenState extends State<BillScreen> {
                                       bill.status == 'paid'
                                           ? Padding(
                                               padding: const EdgeInsets.only(
-                                                  bottom: 20,
+                                                  bottom: 10,
                                                   left: 15,
                                                   right: 10),
                                               child: SizedBox(
