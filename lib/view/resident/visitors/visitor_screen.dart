@@ -666,7 +666,7 @@ void visitorsModelBottomSheet(
                 contentPadding: EdgeInsets.zero,
                 dense: true,
                 leading: const Icon(Icons.block, color: Colors.red),
-                title: Text(visitors.status == 'active' ? 'Bloc' : 'UnBlock')),
+                title: Text(visitors.status == 'active' ? 'Block' : 'UnBlock')),
             Divider(color: Colors.black45.withOpacity(0.1), height: 0),
             ListTile(
                 onTap: () {

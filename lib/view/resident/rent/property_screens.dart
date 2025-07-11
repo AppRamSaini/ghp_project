@@ -16,8 +16,8 @@ class RentScreen extends StatefulWidget {
 
 class _RentScreenState extends State<RentScreen> {
   List<String> rentCategories = [
-    'Rent my Property',
-    'Sell my Property',
+    'Rent My Property',
+    'Sell My Property',
     'Buy/Rent Property',
     'View/Manage Existing Property'
   ];

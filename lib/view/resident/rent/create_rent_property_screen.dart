@@ -555,9 +555,11 @@ class _RentPropertyScreenState extends State<RentPropertyScreen> {
                       onChanged: (value) {
                         setState(() {
                           selectedAmenities = value;
-                          amenitiesList
-                              .add(selectedAmenities.toString());
+                          if (!amenitiesList.contains(selectedAmenities.toString())) {
+                            amenitiesList.add(selectedAmenities.toString());
+                          }
                         });
+
                       },
                       iconStyleData: const IconStyleData(
                         icon: Icon(

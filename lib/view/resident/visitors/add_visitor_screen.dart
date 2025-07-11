@@ -1016,101 +1016,101 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                         ]
                     ),
                     SizedBox(height: 10.h),
-                    Text('No. of visitors',
-                        style:GoogleFonts.nunitoSans(
-                            textStyle: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500
-                            )
-                        )),
-                    SizedBox(
-                        height: 10.h
-                    ),
-                    SizedBox(
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width,
-                        child: TextFormField(
-                          readOnly: true,
-                            controller: visitorsCount,
-                            style:GoogleFonts.nunitoSans(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500
-                            ),
-                            keyboardType: TextInputType
-                                .number,
-                            validator: (text) {
-                              if (text == null ||
-                                  text.isEmpty) {
-                                return 'Please enter number';
-                              }
-                              return null;
-                            },
-                            inputFormatters: [
-                              FilteringTextInputFormatter
-                                  .digitsOnly
-                            ],
-                            decoration: InputDecoration(
-                                hintText: 'Visitors Counts',
-                                contentPadding: EdgeInsets
-                                    .symmetric(
-                                    vertical: 12.h,
-                                    horizontal: 10.0),
-                                filled: true,
-                                hintStyle: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight
-                                        .normal
-                                ),
-                                fillColor: AppTheme
-                                    .greyColor,
-                                errorBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(
-                                        15.0),
-                                    borderSide: BorderSide(
-                                        color: AppTheme
-                                            .greyColor
-                                    )
-                                ),
-                                focusedErrorBorder:
-                                OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(
-                                        15.0),
-                                    borderSide: BorderSide(
-                                        color: AppTheme
-                                            .greyColor
-                                    )
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(
-                                        15.0),
-                                    borderSide: BorderSide(
-                                        color: AppTheme
-                                            .greyColor
-                                    )
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(
-                                        15.0),
-                                    borderSide: BorderSide(
-                                        color: AppTheme
-                                            .greyColor
-                                    )
-                                )
-                            )
-                        )
-                    ),
-                    SizedBox(
-                        height: 10.h
-                    ),
+                    // Text('No. of visitors',
+                    //     style:GoogleFonts.nunitoSans(
+                    //         textStyle: TextStyle(
+                    //             color: Colors.black,
+                    //             fontSize: 15,
+                    //             fontWeight: FontWeight.w500
+                    //         )
+                    //     )),
+                    // SizedBox(
+                    //     height: 10.h
+                    // ),
+                    // SizedBox(
+                    //     width: MediaQuery
+                    //         .of(context)
+                    //         .size
+                    //         .width,
+                    //     child: TextFormField(
+                    //       readOnly: true,
+                    //         controller: visitorsCount,
+                    //         style:GoogleFonts.nunitoSans(
+                    //           color: Colors.black,
+                    //           fontSize: 15,
+                    //           fontWeight: FontWeight.w500
+                    //         ),
+                    //         keyboardType: TextInputType
+                    //             .number,
+                    //         validator: (text) {
+                    //           if (text == null ||
+                    //               text.isEmpty) {
+                    //             return 'Please enter number';
+                    //           }
+                    //           return null;
+                    //         },
+                    //         inputFormatters: [
+                    //           FilteringTextInputFormatter
+                    //               .digitsOnly
+                    //         ],
+                    //         decoration: InputDecoration(
+                    //             hintText: 'Visitors Counts',
+                    //             contentPadding: EdgeInsets
+                    //                 .symmetric(
+                    //                 vertical: 12.h,
+                    //                 horizontal: 10.0),
+                    //             filled: true,
+                    //             hintStyle: TextStyle(
+                    //                 color: Colors.grey,
+                    //                 fontSize: 15,
+                    //                 fontWeight: FontWeight
+                    //                     .normal
+                    //             ),
+                    //             fillColor: AppTheme
+                    //                 .greyColor,
+                    //             errorBorder: OutlineInputBorder(
+                    //                 borderRadius:
+                    //                 BorderRadius.circular(
+                    //                     15.0),
+                    //                 borderSide: BorderSide(
+                    //                     color: AppTheme
+                    //                         .greyColor
+                    //                 )
+                    //             ),
+                    //             focusedErrorBorder:
+                    //             OutlineInputBorder(
+                    //                 borderRadius:
+                    //                 BorderRadius.circular(
+                    //                     15.0),
+                    //                 borderSide: BorderSide(
+                    //                     color: AppTheme
+                    //                         .greyColor
+                    //                 )
+                    //             ),
+                    //             focusedBorder: OutlineInputBorder(
+                    //                 borderRadius:
+                    //                 BorderRadius.circular(
+                    //                     15.0),
+                    //                 borderSide: BorderSide(
+                    //                     color: AppTheme
+                    //                         .greyColor
+                    //                 )
+                    //             ),
+                    //             enabledBorder: OutlineInputBorder(
+                    //                 borderRadius:
+                    //                 BorderRadius.circular(
+                    //                     15.0),
+                    //                 borderSide: BorderSide(
+                    //                     color: AppTheme
+                    //                         .greyColor
+                    //                 )
+                    //             )
+                    //         )
+                    //     )
+                    // ),
+                    // SizedBox(
+                    //     height: 10.h
+                    // ),
                     Row(
                         children: [
                           Expanded(
