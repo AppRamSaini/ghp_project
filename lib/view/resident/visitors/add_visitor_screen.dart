@@ -1016,6 +1016,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                         ]
                     ),
                     SizedBox(height: 10.h),
+
+
                     // Text('No. of visitors',
                     //     style:GoogleFonts.nunitoSans(
                     //         textStyle: TextStyle(

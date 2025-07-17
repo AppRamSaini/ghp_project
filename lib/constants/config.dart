@@ -1,8 +1,12 @@
 class Config {
   static const String baseURL =
-      // 'https://society.ghpjaipur.com/api/user/v1/';  // new url
-      'https://ghp-society.laraveldevelopmentcompany.com/api/user/v1/'; // old url
+      'https://dev-society.ghpjaipur.com/api/user/v1/';
+  // 'https://society.ghpjaipur.com/api/user/v1/';  // new url
+  // 'https://ghp-society.laraveldevelopmentcompany.com/api/user/v1/'; // old url
 }
+
+/// new code
+
 class Routes {
   static const String society = 'societies';
   static const String sendOtp = 'otp';
@@ -63,8 +67,10 @@ class Routes {
   static String createComplaints = 'complaint/create';
   static String getSliders = 'sliders';
   static String termsOfConditions = 'terms-of-use';
-  static String privacyPolicy = 'https://society.ghpjaipur.com/api/user/v1/privacy-policy';
-  static String privacyPolicyPage = 'https://society.ghpjaipur.com/api/user/v1/privacy-policy-page';
+  static String privacyPolicy =
+      'https://society.ghpjaipur.com/api/user/v1/privacy-policy';
+  static String privacyPolicyPage =
+      'https://society.ghpjaipur.com/api/user/v1/privacy-policy-page';
   static String getNotificationSettings = 'settings/notifications';
   static String updateNotificationSettings = 'settings/notification';
   static String visitorsListing(
