@@ -227,8 +227,6 @@ class _OtpScreenState extends State<OtpScreen> {
                 token = await messaging.getToken();
                 print("FCM Token: $token");
               }
-
-              // अगर कोई टोकन null आ रहा है, तो इसे Default Empty String से हैंडल करें
               context
                   .read<VerifyOtpCubit>()
                   .verifyOtp(widget.phoneNumber, pin, token ?? "rees");
@@ -246,9 +244,6 @@ class _OtpScreenState extends State<OtpScreen> {
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          ),],),);
   }
 }

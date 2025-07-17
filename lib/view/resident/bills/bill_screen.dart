@@ -141,59 +141,70 @@ class _BillScreenState extends State<BillScreen> {
                   ),
                   SizedBox(height: 10.h),
                   SizedBox(
-                    height: 50,
+                    height: 60, // Slightly larger for iPad usability
                     width: MediaQuery.of(context).size.width,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.only(left: 5),
-                      itemCount: filterTypes.length,
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedFilter = index;
-                            });
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        // Consider iPad if width >= 600
+                        final isTablet = constraints.maxWidth >= 600;
 
-                            _myBillsCubit = MyBillsCubit()
-                              ..fetchMyBills(
-                                  context: context,
-                                  billTypes: selectedFilterList[selectedFilter]
-                                      .toLowerCase());
-                          },
-                          child: Container(
-                            margin: EdgeInsets.all(5.w),
-                            decoration: BoxDecoration(
-                                color: selectedFilter == index
-                                    ? AppTheme.primaryColor
-                                    : Colors.transparent,
-                                border: Border.all(
-                                    color: selectedFilter == index
+                        return ListView.builder(
+                          padding: EdgeInsets.symmetric(horizontal: isTablet ? 12.0 : 5.0),
+                          itemCount: filterTypes.length,
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final isSelected = selectedFilter == index;
+
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedFilter = index;
+                                });
+
+                                _myBillsCubit = MyBillsCubit()
+                                  ..fetchMyBills(
+                                    context: context,
+                                    billTypes:
+                                    selectedFilterList[selectedFilter].toLowerCase(),
+                                  );
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: isTablet ? 10.0 : 5.0),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppTheme.primaryColor
+                                      : Colors.transparent,
+                                  border: Border.all(
+                                    color: isSelected
                                         ? AppTheme.primaryColor
-                                        : Colors.grey.withOpacity(0.5)),
-                                borderRadius: BorderRadius.circular(5.r)),
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.only(left: 20.0.w, right: 20.w),
-                              child: Center(
-                                child: Text(
-                                  filterTypes[index].toString(),
-                                  style: GoogleFonts.poppins(
-                                    color: selectedFilter == index
-                                        ? Colors.white
-                                        : Colors.black54,
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w400,
+                                        : Colors.grey.withOpacity(0.5),
+                                  ),
+                                  borderRadius: BorderRadius.circular(isTablet ? 10.0 : 6.0),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: isTablet ? 28.0 : 20.0,
+                                      vertical: isTablet ? 10.0 : 8.0),
+                                  child: Center(
+                                    child: Text(
+                                      filterTypes[index].toString(),
+                                      style: GoogleFonts.poppins(
+                                        color: isSelected ? Colors.white : Colors.black54,
+                                        fontSize: isTablet ? 16.0 : 12.0,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         );
                       },
                     ),
                   ),
+
                   Expanded(
                     child: BlocBuilder<MyBillsCubit, MyBillsState>(
                       bloc: _myBillsCubit,
