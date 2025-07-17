@@ -204,7 +204,7 @@ class GetAllComplaintScreenState extends State<GetAllComplaintScreen> {
         return DateFormat('dd MMMM yyyy, hh:mm a').format(parsedDate);
       }
 
-      return 'N/A';
+      return 'Not Assigned';
     }
 
     return Theme(
@@ -340,7 +340,7 @@ class GetAllComplaintScreenState extends State<GetAllComplaintScreen> {
                                       color: Colors.grey, fontSize: 14)),
                               subtitle: Text(
                                   lst[index].assignedTo == null
-                                      ? "N/A"
+                                      ? "Not Assigned"
                                       : lst[index].assignedTo!.name.toString(),
                                   style: const TextStyle(
                                       color: Colors.black,
