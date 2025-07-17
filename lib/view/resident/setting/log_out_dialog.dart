@@ -38,7 +38,7 @@ void logOutPermissionDialog(BuildContext context, {bool isLogout = true,}) =>
               children: [
                 isLogout
                     ? const Text(
-                        'Are you sure you want to logout this Society!',
+                        'Are you sure you want to logout this society!',
                         style: TextStyle(color: Colors.black, fontSize: 16))
                     : const Text('Are you sure you want to change society!',
                         style: TextStyle(color: Colors.black, fontSize: 16)),
@@ -676,7 +676,7 @@ void deleteComplaintPermissionDialog(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Are you sure you want to Cancel this Complaint!',
+                const Text('Are you sure you want to cancel this complaint!',
                     style: TextStyle(color: Colors.black, fontSize: 16)),
                 const SizedBox(height: 15),
                 Row(
@@ -1817,7 +1817,7 @@ void exitPageConfirmationDialog(BuildContext context) => showDialog(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Are you sure you want to exit this App!',
+                const Text('Are you sure you want to exit this app!',
                     style: TextStyle(color: Colors.black, fontSize: 16)),
                 const SizedBox(height: 15),
                 Row(

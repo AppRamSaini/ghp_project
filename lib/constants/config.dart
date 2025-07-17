@@ -3,7 +3,6 @@ class Config {
       // 'https://society.ghpjaipur.com/api/user/v1/';  // new url
       'https://ghp-society.laraveldevelopmentcompany.com/api/user/v1/'; // old url
 }
-
 class Routes {
   static const String society = 'societies';
   static const String sendOtp = 'otp';
@@ -65,6 +64,7 @@ class Routes {
   static String getSliders = 'sliders';
   static String termsOfConditions = 'terms-of-use';
   static String privacyPolicy = 'https://society.ghpjaipur.com/api/user/v1/privacy-policy';
+  static String privacyPolicyPage = 'https://society.ghpjaipur.com/api/user/v1/privacy-policy-page';
   static String getNotificationSettings = 'settings/notifications';
   static String updateNotificationSettings = 'settings/notification';
   static String visitorsListing(
@@ -79,7 +79,6 @@ class Routes {
   static String incomingRequestResponse = 'visitor/visitor-incoming-response';
   static String incomingVisitorRequest =
       'visitor/visitor-incoming-requests-list';
-
   static String documentsCounts = 'document/requests-count';
   static String getIncomingDocuments =
       'document/incoming-requests?filter_type=';

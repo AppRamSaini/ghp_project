@@ -4,6 +4,7 @@ import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
 import 'package:ghp_society_management/view/dashboard/view_all_features.dart';
+import 'package:ghp_society_management/view/manage_property/resident_property.dart';
 import 'package:ghp_society_management/view/resident/bills/bill_screen.dart';
 import 'package:ghp_society_management/view/resident/bills/my_bills.dart';
 import 'package:ghp_society_management/view/resident/complaint/comlaint_page.dart';
@@ -105,6 +106,54 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Image.asset('assets/images/pay_img.png')),
         appBar: AppBar(
             leadingWidth: double.infinity,
+            bottom: PreferredSize(
+                preferredSize: Size.fromHeight(35),
+                child: BlocBuilder<UserProfileCubit, UserProfileState>(
+                    builder: (context, state) {
+                  if (state is UserProfileLoaded) {
+                    Future.delayed(const Duration(milliseconds: 5), () {
+                      List<UnpaidBill> billData =
+                          state.userProfile.first.data!.unpaidBills!;
+                      if (billData.isNotEmpty) {
+                        checkPaymentReminder(
+                            context: context,
+                            myUnpaidBill: state
+                                .userProfile.first.data!.unpaidBills!.first);
+                      }
+                    });
+                    return Padding(
+                      padding:
+                          const EdgeInsets.only(right: 10, bottom: 5, top: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ManageProperty(),
+                          Text(
+                              state.userProfile.first.data!.user!.societyName!
+                                  .toUpperCase(),
+                              style: GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600))),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ManageProperty(),
+                        Text("Loading....",
+                            style: GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600))),
+                      ],
+                    );
+                  }
+                })),
             leading: BlocBuilder<UserProfileCubit, UserProfileState>(
               builder: (context, state) {
                 if (state is UserProfileLoaded) {

@@ -22,7 +22,7 @@ class ViewAllFeatures extends StatefulWidget {
 
 class _ViewAllFeaturesState extends State<ViewAllFeatures> {
   List colors = [
-    AppTheme.color1,
+    // AppTheme.color1,
     AppTheme.color2,
     AppTheme.color3,
     AppTheme.color4,
@@ -36,7 +36,7 @@ class _ViewAllFeaturesState extends State<ViewAllFeatures> {
   ];
 
   List dataList = [
-    {"icon": ImageAssets.member1, "title": "Members"},
+    // {"icon": ImageAssets.member1, "title": "Members"},
     {"icon": ImageAssets.complaint1, "title": "Complaints"},
     {"icon": ImageAssets.visitors1, "title": "Visitors"},
     {"icon": ImageAssets.parcel1, "title": "Parcels"},
@@ -49,7 +49,7 @@ class _ViewAllFeaturesState extends State<ViewAllFeatures> {
     {"icon": ImageAssets.polls1, "title": "Polls"},
   ];
   List pagesList = [
-    MemberScreen(),
+    // MemberScreen(),
     ComplaintScreen(),
     VisitorScreen(),
     ParcelListingPage(),
