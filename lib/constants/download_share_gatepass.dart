@@ -6,28 +6,24 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
-Future<void> captureAndSharePng(
-    ScreenshotController screenshotController) async {
+Future<void> captureAndSharePng(ScreenshotController screenshotController) async {
   try {
-    // Capture the screenshot of the entire screen
-    screenshotController.capture().then((Uint8List? capturedImage) async {
-      if (capturedImage != null) {
-        // Get temporary directory
-        final directory = await getTemporaryDirectory();
-        final file = await File('${directory.path}/gate pass_qr.png').create();
-        await file.writeAsBytes(capturedImage);
-        // Share the captured image
-        final xFile = XFile(file.path);
-        await Share.shareXFiles([xFile],
-            text: 'Here is the gate paa for the visitor.');
-      }
-    });
+    final capturedImage = await screenshotController.capture();
+    if (capturedImage != null) {
+      final directory = await getTemporaryDirectory();
+      final file = await File('${directory.path}/gate_pass_qr.jpg').create();
+      await file.writeAsBytes(capturedImage, flush: true);
+
+      final xFile = XFile(file.path);
+      await Share.shareXFiles([xFile], text: 'Here is the gate pass for the visitor.');
+    }
   } catch (e) {
     if (kDebugMode) {
-      print(e);
+      print("Error while sharing image: $e");
     }
   }
 }
+
 
 // New method to capture and download the QR code image
 Future<bool> captureAndDownloadPng(

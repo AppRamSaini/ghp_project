@@ -78,7 +78,11 @@ class ResidentGatePassState extends State<ResidentGatePass> {
                     border: Border.all(color: Colors.grey.withOpacity(0.1))),
                 child: TextButton.icon(
                   onPressed: () async {
+                    showLoadingDialog(context, (ctx) {
+                      dialogueContext = ctx;
+                    });
                     await captureAndSharePng(screenshotController);
+                    Navigator.of(dialogueContext).pop();
                   },
                   icon: const Icon(Icons.share, color: Colors.white),
                   label: const Text(
