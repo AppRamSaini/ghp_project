@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/view/resident/rent/buy_rent_property_screen.dart';
 import 'package:ghp_society_management/view/resident/rent/create_rent_property_screen.dart';
 import 'package:ghp_society_management/view/resident/rent/create_sell_property_screen.dart';
@@ -32,12 +33,7 @@ class _RentScreenState extends State<RentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Rent/Sell Property',
-          style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600)))),
+      appBar: appbarWidget(title: 'Rent/Sell Property'),
       body: ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(),
           itemCount: rentCategories.length,
@@ -47,23 +43,19 @@ class _RentScreenState extends State<RentScreen> {
               onTap: () {
                 if (index == 0) {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (builder) =>
-                          const RentPropertyScreen()));
+                      builder: (builder) => const RentPropertyScreen()));
                 }
                 if (index == 1) {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (builder) =>
-                          const CreateSellPropertyScreen()));
+                      builder: (builder) => const CreateSellPropertyScreen()));
                 }
                 if (index == 2) {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (builder) =>
-                          const BuyPropertyScreen()));
+                      builder: (builder) => const BuyPropertyScreen()));
                 }
                 if (index == 3) {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (builder) =>
-                          const ManagePropertyScreen()));
+                      builder: (builder) => const ManagePropertyScreen()));
                 }
               },
               child: Padding(
@@ -77,20 +69,17 @@ class _RentScreenState extends State<RentScreen> {
                             height: 160.h,
                             width: double.infinity,
                             fit: BoxFit.fill,
-                            imageErrorBuilder:
-                                (_, child, stackTrack) => Image.asset(
-                                    'assets/images/default.jpg',
+                            imageErrorBuilder: (_, child, stackTrack) =>
+                                Image.asset('assets/images/default.jpg',
                                     height: 160.h,
                                     width: double.infinity,
                                     fit: BoxFit.cover),
-                            image: AssetImage(
-                                imagesList[index].toString()),
-                            placeholder: const AssetImage(
-                                'assets/images/default.jpg'))),
+                            image: AssetImage(imagesList[index].toString()),
+                            placeholder:
+                                const AssetImage('assets/images/default.jpg'))),
                     Container(
                       decoration: BoxDecoration(
-                          color: AppTheme.backgroundColor
-                              .withOpacity(0.4),
+                          color: AppTheme.backgroundColor.withOpacity(0.4),
                           borderRadius: const BorderRadius.only(
                               bottomRight: Radius.circular(10),
                               bottomLeft: Radius.circular(10))),

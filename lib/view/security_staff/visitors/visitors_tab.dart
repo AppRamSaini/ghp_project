@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/notification/notification_listing/notification_list_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_in/check_in_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_out/check_out_cubit.dart';
@@ -10,7 +12,6 @@ import 'package:ghp_society_management/controller/visitors/visitor_request/resen
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/visitors_listing_model.dart';
 import 'package:ghp_society_management/timer_countdown.dart';
-import 'package:ghp_society_management/view/security_staff/dashboard/home.dart';
 import 'package:ghp_society_management/view/security_staff/scan_qr.dart';
 import 'package:ghp_society_management/view/security_staff/visitors/visitors_details_page.dart';
 import 'package:ghp_society_management/view/security_staff/visitors/visitors_list_page.dart';
@@ -50,7 +51,8 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
         toDate: '',
         search: '',
         filterTypes: filterList[selectedIndex],
-        context: context);
+        context: context,
+        fotStaffSide: true);
 
     setState(() {});
   }
@@ -72,6 +74,7 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
   }
 
   Timer? periodicTimer;
+
   void _startCountdownAndAPICalls(String visitorsId) {
     const duration = Duration(seconds: 4); // Call API every 5 seconds
     const totalTime = 59; // Total countdown time in seconds
@@ -140,6 +143,7 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
   }
 
   late BuildContext dialogueContext;
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -255,117 +259,31 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                 bloc: _visitorsListingCubit,
                 builder: (context, state) {
                   if (state is VisitorsListingLoaded) {
-                    return
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
                           onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => const VisitorsListPage(
-                                          index: 0, type: 'T_V'))),
-                            child: Container(
-                                width: size.width * 0.44,
-                                margin: EdgeInsets.only(bottom: 5),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: AppTheme.color1,
-                                    border:
-                                    Border.all(color: AppTheme.color1, width: 2)),
-                                child:
-
-                                Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(state.todayVisitors.toString(),
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 26.sp,
-                                                fontWeight: FontWeight.w600)),
-                                        Image.asset(ImageAssets.visitors1,
-                                            height: size.height * 0.08),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10,bottom: 10),
-                                      child: Text('Today visitors',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w600)),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                          GestureDetector(
-
-                  onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const VisitorsListPage(index: 1, type: 'P_V'),
-                          ),
-                        ),
-                            child: Container(
-                                width: size.width * 0.44,
-                                margin: EdgeInsets.only(bottom: 5),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: AppTheme.color3,
-                                    border:
-                                    Border.all(color: AppTheme.color3, width: 2)),
-                                child:
-                                Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(state.pastVisitors.toString(),
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 26.sp,
-                                                fontWeight: FontWeight.w600)),
-                                        Image.asset(ImageAssets.visitors1,
-                                            height: size.height * 0.08),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10,bottom: 10),
-                                      child: Text('Past visitors',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w600)),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                        ],
-                      );
-                  } else {
-                    return
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const VisitorsListPage(
+                                      index: 0, type: 'T_V'))),
+                          child: Container(
                               width: size.width * 0.44,
                               margin: EdgeInsets.only(bottom: 5),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   color: AppTheme.color1,
-                                  border:
-                                  Border.all(color: AppTheme.color1, width: 2)),
-                              child:
-                              Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                  border: Border.all(
+                                      color: AppTheme.color1, width: 2)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      Text('0',
+                                      Text(state.todayVisitors.toString(),
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 26.sp,
@@ -375,7 +293,8 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                                     ],
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 10,bottom: 10),
+                                    padding: const EdgeInsets.only(
+                                        left: 10, bottom: 10),
                                     child: Text('Today visitors',
                                         style: TextStyle(
                                             color: Colors.black,
@@ -384,21 +303,31 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                                   ),
                                 ],
                               )),
-                          Container(
+                        ),
+                        GestureDetector(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  const VisitorsListPage(index: 1, type: 'P_V'),
+                            ),
+                          ),
+                          child: Container(
                               width: size.width * 0.44,
                               margin: EdgeInsets.only(bottom: 5),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   color: AppTheme.color3,
-                                  border:
-                                  Border.all(color: AppTheme.color3, width: 2)),
-                              child:
-                              Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                  border: Border.all(
+                                      color: AppTheme.color3, width: 2)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      Text('0',
+                                      Text(state.pastVisitors.toString(),
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 26.sp,
@@ -408,7 +337,8 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                                     ],
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 10,bottom: 10),
+                                    padding: const EdgeInsets.only(
+                                        left: 10, bottom: 10),
                                     child: Text('Past visitors',
                                         style: TextStyle(
                                             color: Colors.black,
@@ -417,15 +347,91 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                                   ),
                                 ],
                               )),
-                        ],
-                      );
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                            width: size.width * 0.44,
+                            margin: EdgeInsets.only(bottom: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: AppTheme.color1,
+                                border: Border.all(
+                                    color: AppTheme.color1, width: 2)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text('0',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 26.sp,
+                                            fontWeight: FontWeight.w600)),
+                                    Image.asset(ImageAssets.visitors1,
+                                        height: size.height * 0.08),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, bottom: 10),
+                                  child: Text('Today visitors',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w600)),
+                                ),
+                              ],
+                            )),
+                        Container(
+                            width: size.width * 0.44,
+                            margin: EdgeInsets.only(bottom: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: AppTheme.color3,
+                                border: Border.all(
+                                    color: AppTheme.color3, width: 2)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text('0',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 26.sp,
+                                            fontWeight: FontWeight.w600)),
+                                    Image.asset(ImageAssets.visitors1,
+                                        height: size.height * 0.08),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, bottom: 10),
+                                  child: Text('Past visitors',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w600)),
+                                ),
+                              ],
+                            )),
+                      ],
+                    );
                   }
                 },
               ),
               const SizedBox(height: 20),
               TabBar(
                 isScrollable: true,
-
                 tabAlignment: TabAlignment.start,
                 automaticIndicatorColorAdjustment: true,
                 physics: const BouncingScrollPhysics(),
@@ -447,11 +453,8 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                 child: BlocBuilder<VisitorsListingCubit, VisitorsListingState>(
                   bloc: _visitorsListingCubit,
                   builder: (context, state) {
-                    if (state is VisitorsListingLoading &&
-                        _visitorsListingCubit.visitorsListing.isEmpty) {
-                      return const Center(
-                          child: CircularProgressIndicator.adaptive(
-                              backgroundColor: Colors.deepPurpleAccent));
+                    if (state is VisitorsListingLoading) {
+                      return notificationShimmerLoading();
                     }
 
                     if (state is VisitorsListingFailed) {
@@ -775,6 +778,7 @@ Widget customVisitorsWidget(
 
 class VisitorActionsHandler {
   final Map<String, int> resendAttempts = {};
+
   void handleTap({
     required BuildContext context,
     required String status,

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:http/http.dart' as http;
@@ -10,32 +11,54 @@ import 'package:path_provider/path_provider.dart';
 import '../model/outgoing_document_model.dart';
 
 class ApiManager {
-  getRequest(var url) async {
-    var token = LocalStorage.localStorage.getString('token');
-    print(url);
-    print(token);
-    var response;
-    if (token == null) {
-      response = await http.get(
-        Uri.parse(url),
-      );
-    } else {
-      response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Accept': 'application/json',
-        },
-      );
-    }
+  Future<http.Response> getRequest(String url,
+      {bool usePropertyID = false}) async {
+    try {
+      final token = LocalStorage.localStorage.getString('token');
+      final propertyId = LocalStorage.localStorage.getString('property_id');
 
-    return response;
+      if (kDebugMode) {
+        print('API URL: $url');
+        print('Token: $token');
+        print('Property ID: $propertyId (usePropertyID: $usePropertyID)');
+      }
+
+      final headers = {
+        'Accept': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+        if (usePropertyID && propertyId != null) 'x-property-id': propertyId,
+      };
+
+      final uri = Uri.parse(url);
+      final response = await http.get(uri, headers: headers);
+
+      // if (kDebugMode) {
+      //   print('Status Code: ${response.statusCode}');
+      //   print('Response Body: ${response.body}');
+      // }
+
+      return response;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error in getRequest: $e');
+      }
+      rethrow;
+    }
   }
 
-  deleteRequest(var url) async {
+  deleteRequest(var url, {bool usePropertyID = false}) async {
     var token = LocalStorage.localStorage.getString('token');
-    print(url);
-    print(token);
+    var propertyId = LocalStorage.localStorage.getString('property_id');
+
+    if (kDebugMode) {
+      print('url--->$url');
+    }
+    if (kDebugMode) {
+      print('token--- > $token');
+    }
+    if (kDebugMode) {
+      print('id--> ${propertyId!}$usePropertyID');
+    }
     var response;
     if (token == null) {
       response = await http.delete(Uri.parse(url));
@@ -45,6 +68,7 @@ class ApiManager {
         headers: {
           'Authorization': 'Bearer $token',
           'Accept': 'application/json',
+          if (usePropertyID) 'x-property-id': '$propertyId',
         },
       );
     }
@@ -52,12 +76,16 @@ class ApiManager {
     return response;
   }
 
-  putRequest(var alertBody, var url) async {
-    var response = await http.put(Uri.parse(url), body: alertBody);
-    return response;
-  }
-
   postRequest(var body, var url, var header) async {
+    var token = LocalStorage.localStorage.getString('token');
+    var propertyId = LocalStorage.localStorage.getString('property_id');
+    if (kDebugMode) {
+      print('url--->$url');
+    }
+    if (kDebugMode) {
+      print('token--- > $token');
+    }
+
     var response;
     if (body != null) {
       response = await http.post(Uri.parse(url), body: body, headers: header);

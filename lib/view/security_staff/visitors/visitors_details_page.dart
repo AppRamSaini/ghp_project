@@ -15,6 +15,7 @@ import 'package:intl/intl.dart';
 class VisitorsDetailsPage2 extends StatefulWidget {
   bool isTypesScan;
   final Map<String, dynamic> visitorsId;
+
   VisitorsDetailsPage2(
       {Key? key, this.isTypesScan = false, required this.visitorsId})
       : super(key: key);
@@ -52,8 +53,6 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
   }
 
   late BuildContext dialogueContext;
-
-
 
   void onBack(BuildContext buildContext) {
     Future.delayed(Duration.zero, () {
@@ -152,11 +151,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
         }),
       ],
       child: Scaffold(
-        appBar: AppBar(
-            title: Text('Visitors Details',
-                style: GoogleFonts.nunitoSans(
-                    textStyle:
-                        TextStyle(color: Colors.black, fontSize: 18)))),
+        appBar: appbarWidget(title: 'Visitors Details'),
         body: BlocBuilder<VisitorsDetailsCubit, VisitorsDetailsState>(
             bloc: _visitorsDetailsCubit,
             builder: (context, state) {
@@ -173,8 +168,8 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                 DateTime parsedTime = DateFormat("HH:mm:ss")
                     .parse(visitorsData.first.time.toString());
                 String timeOnly = DateFormat("hh:mm a").format(parsedTime);
-                String formatDate = DateFormat('dd-MMM-yyyy').format(
-                    DateTime.parse(visitorsData.first.date.toString()));
+                String formatDate = DateFormat('dd-MMM-yyyy')
+                    .format(DateTime.parse(visitorsData.first.date.toString()));
 
                 checkIn() {
                   if (state.visitorDetails.first.lastCheckinDetail != null) {
@@ -182,8 +177,8 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                             .checkinAt !=
                         null) {
                       return DateFormat('dd-MMM-yyyy hh:mm a').format(
-                          DateTime.parse(state.visitorDetails.first
-                              .lastCheckinDetail!.checkinAt
+                          DateTime.parse(state
+                              .visitorDetails.first.lastCheckinDetail!.checkinAt
                               .toString()));
                     } else {
                       return '';
@@ -208,8 +203,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
 
                 feedBack() {
                   if (state.visitorDetails.first.visitorFeedback != null) {
-                    return state
-                        .visitorDetails.first.visitorFeedback!.feedback
+                    return state.visitorDetails.first.visitorFeedback!.feedback
                         .toString();
                   } else {
                     return '';
@@ -246,8 +240,8 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                                capitalizeWords(visitorsData.first.visitorName
-                                    .toString()),
+                                capitalizeWords(
+                                    visitorsData.first.visitorName.toString()),
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
                                         color: Colors.black,
@@ -279,8 +273,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                             textStyle: TextStyle(
                                                 color: Colors.black45,
                                                 fontSize: 15.sp,
-                                                fontWeight:
-                                                    FontWeight.w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text('$formatDate || $timeOnly',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
@@ -302,8 +295,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                             textStyle: TextStyle(
                                                 color: Colors.black45,
                                                 fontSize: 15.sp,
-                                                fontWeight:
-                                                    FontWeight.w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
                                         '+91 ${visitorsData.first.phone.toString()}',
                                         style: GoogleFonts.nunitoSans(
@@ -326,8 +318,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                             textStyle: TextStyle(
                                                 color: Colors.black45,
                                                 fontSize: 15.sp,
-                                                fontWeight:
-                                                    FontWeight.w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
                                         visitorsData.first.noOfVisitors
                                             .toString(),
@@ -351,8 +342,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                             textStyle: TextStyle(
                                                 color: Colors.black45,
                                                 fontSize: 15.sp,
-                                                fontWeight:
-                                                    FontWeight.w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
                                         visitorsData.first.typeOfVisitor
                                             .toString(),
@@ -376,13 +366,11 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                             textStyle: TextStyle(
                                                 color: Colors.black45,
                                                 fontSize: 15.sp,
-                                                fontWeight:
-                                                    FontWeight.w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(visitorsStatus(),
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color:
-                                                    Colors.deepPurpleAccent,
+                                                color: Colors.deepPurpleAccent,
                                                 fontSize: 15.sp,
                                                 fontWeight: FontWeight.w600)))
                                   ]),
@@ -400,8 +388,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                             textStyle: TextStyle(
                                                 color: Colors.black45,
                                                 fontSize: 15.sp,
-                                                fontWeight:
-                                                    FontWeight.w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
                                         checkIn() != null
                                             ? checkIn().toString()
@@ -426,8 +413,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                             textStyle: TextStyle(
                                                 color: Colors.black45,
                                                 fontSize: 15.sp,
-                                                fontWeight:
-                                                    FontWeight.w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
                                         checkOut() != null
                                             ? checkOut().toString()
@@ -452,8 +438,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                             textStyle: TextStyle(
                                                 color: Colors.black45,
                                                 fontSize: 15.sp,
-                                                fontWeight:
-                                                    FontWeight.w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
                                         visitorsData.first.visitingFrequency
                                             .toString(),
@@ -480,8 +465,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                     visitorsData.first.bulkVisitors!.length,
                                 shrinkWrap: true,
                                 physics: const BouncingScrollPhysics(),
-                                itemBuilder:
-                                    (BuildContext context, int index) {
+                                itemBuilder: (BuildContext context, int index) {
                                   List<BulkVisitor> bulkVisitors =
                                       visitorsData.first.bulkVisitors!;
 
@@ -491,11 +475,10 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                   return Container(
                                     margin: const EdgeInsets.only(top: 5),
                                     decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
-                                            color: Colors.grey
-                                                .withOpacity(0.1))),
+                                            color:
+                                                Colors.grey.withOpacity(0.1))),
                                     child: ListTile(
                                         dense: true,
                                         minLeadingWidth: 30,
@@ -506,9 +489,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                             child: Icon(Icons.person_outline,
                                                 color: Colors.indigoAccent)),
                                         title: Text(
-                                            bulkVisitors[index]
-                                                .name
-                                                .toString(),
+                                            bulkVisitors[index].name.toString(),
                                             style: GoogleFonts.nunitoSans(
                                                 color: Colors.black,
                                                 fontSize: 14.sp,
@@ -518,8 +499,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                             style: GoogleFonts.nunitoSans(
                                                 color: Colors.black,
                                                 fontSize: 12.sp,
-                                                fontWeight:
-                                                    FontWeight.w500))),
+                                                fontWeight: FontWeight.w500))),
                                   );
                                 },
                               ),
@@ -547,50 +527,38 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               Text('Name',
-                                                  style:
-                                                      GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black54,
-                                                              fontSize:
-                                                                  14.sp))),
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black54,
+                                                          fontSize: 14.sp))),
                                               Text(
                                                   visitorsData
                                                       .first.member!.name
                                                       .toString(),
-                                                  style:
-                                                      GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600)))
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 14.sp,
+                                                          fontWeight:
+                                                              FontWeight.w600)))
                                             ]),
                                         Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
                                               Text('Phone',
-                                                  style:
-                                                      GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black54,
-                                                              fontSize:
-                                                                  14.sp))),
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black54,
+                                                          fontSize: 14.sp))),
                                               Text(
                                                   "+91 ${visitorsData.first.member!.phone.toString()}",
-                                                  style:
-                                                      GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600)))
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 14.sp,
+                                                          fontWeight:
+                                                              FontWeight.w600)))
                                             ]),
                                       ],
                                     ),
@@ -607,78 +575,60 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               Text('Tower Name ',
-                                                  style:
-                                                      GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black54,
-                                                              fontSize:
-                                                                  14.sp))),
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black54,
+                                                          fontSize: 14.sp))),
                                               Text(
                                                   visitorsData
                                                       .first.member!.blockName
                                                       .toString(),
-                                                  style:
-                                                      GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600)))
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 14.sp,
+                                                          fontWeight:
+                                                              FontWeight.w600)))
                                             ]),
                                         Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
                                               Text('Floor ',
-                                                  style:
-                                                      GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black54,
-                                                              fontSize:
-                                                                  14.sp))),
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black54,
+                                                          fontSize: 14.sp))),
                                               Text(
-                                                  visitorsData.first.member!
-                                                      .floorNumber
+                                                  visitorsData
+                                                      .first.member!.floorNumber
                                                       .toString(),
-                                                  style:
-                                                      GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600)))
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 14.sp,
+                                                          fontWeight:
+                                                              FontWeight.w600)))
                                             ]),
                                         Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
                                               Text('Property No',
-                                                  style:
-                                                      GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black54,
-                                                              fontSize:
-                                                                  14.sp))),
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black54,
+                                                          fontSize: 14.sp))),
                                               Text(
                                                   visitorsData
                                                       .first.member!.aprtNo
                                                       .toString(),
-                                                  style:
-                                                      GoogleFonts.nunitoSans(
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black,
-                                                              fontSize: 14.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600)))
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 14.sp,
+                                                          fontWeight:
+                                                              FontWeight.w600)))
                                             ]),
                                       ],
                                     ),
@@ -694,9 +644,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                           fontSize: 15.sp,
                                           fontWeight: FontWeight.w500))),
                               const SizedBox(height: 5),
-                              Text(
-                                  visitorsData.first.purposeOfVisit
-                                      .toString(),
+                              Text(visitorsData.first.purposeOfVisit.toString(),
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.black87,

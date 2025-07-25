@@ -18,8 +18,8 @@ import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart
 import 'package:ghp_society_management/view/resident/sos/sos_screen.dart';
 import 'package:ghp_society_management/view/resident/visitors/add_visitor_screen.dart';
 import 'package:ghp_society_management/view/security_staff/visitors/visitors_tab.dart';
-import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
+import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SecurityGuardHome extends StatefulWidget {
@@ -125,8 +125,6 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                             children: [
                               GestureDetector(
                                   onTap: () {
-                                    // Future.delayed(Duration.zero,
-                                    //     () => overDueBillAlertDialog(context));
                                     profileViewAlertDialog(
                                         context, state.userProfile.first);
                                   },
@@ -157,7 +155,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                             .toString(),
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors.black,
+                                                color: Colors.white,
                                                 fontSize: 15.sp,
                                                 fontWeight: FontWeight.w600,
                                                 overflow:
@@ -166,7 +164,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                     Text('Security Staff',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors.black,
+                                                color: Colors.white,
                                                 fontSize: 10.sp,
                                                 fontWeight: FontWeight.w500)))
                                   ],

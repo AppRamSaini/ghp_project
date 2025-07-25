@@ -5,7 +5,6 @@ import 'package:ghp_society_management/controller/resident_checkout_log/resident
 import 'package:ghp_society_management/model/daily_help_members_modal.dart';
 import 'package:ghp_society_management/view/security_staff/daliy_help/daily_help_details.dart';
 import 'package:ghp_society_management/view/security_staff/scan_qr.dart';
-import 'package:searchbar_animation/searchbar_animation.dart';
 
 class DailyHelpListingHistory extends StatefulWidget {
   const DailyHelpListingHistory({super.key});
@@ -56,280 +55,204 @@ class _DailyHelpListingHistoryState extends State<DailyHelpListingHistory> {
         }),
       ],
       child: Scaffold(
-        backgroundColor: AppTheme.backgroundColor,
-        body: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(
-                  child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        appBar: customAppbar(
+          searchBarOpen: searchBarOpen,
+          context: context,
+          title: 'Daily Help Member',
+          textController: textController,
+          onExpansionComplete: () {
+            setState(() {
+              searchBarOpen = true;
+            });
+          },
+          onCollapseComplete: () {
+            setState(() {
+              searchBarOpen = false;
+              textController.clear();
+              _dailyHelpListingCubit.fetchDailyHelpsApi();
+            });
+          },
+          onPressButton: (isSearchBarOpens) {
+            setState(() {
+              searchBarOpen = true;
+            });
+          },
+          onChanged: (value) {
+            _dailyHelpListingCubit.searchQueryData(value);
+          },
+        ),
+        body: RefreshIndicator(
+          onRefresh: onRefresh,
+          child: BlocBuilder<DailyHelpListingCubit, DailyHelpListingState>(
+            bloc: _dailyHelpListingCubit,
+            builder: (context, state) {
+              if (state is DailyHelpListingLoading) {
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
+              }
+              if (state is DailyHelpListingError) {
+                return Center(
+                    child: Text(state.errorMsg,
+                        style:
+                            const TextStyle(color: Colors.deepPurpleAccent)));
+              }
+
+              List<DailyHelp> newHistoryLogs =
+                  _dailyHelpListingCubit.dailyHelpMemberList;
+
+              if (state is DailyHelpListingSearchLoaded) {
+                newHistoryLogs = state.dailyHelpMemberList;
+              }
+
+              if (newHistoryLogs.isEmpty) {
+                return const Center(
+                    child: Text('Member not found!',
+                        style: TextStyle(color: Colors.deepPurpleAccent)));
+              }
+
+              return ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: newHistoryLogs.length,
+                padding: const EdgeInsets.only(top: 10),
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  // Last checkouts
+                  lastChecking() {
+                    return newHistoryLogs[index].lastCheckinDetail != null
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: Row(
+                              children: [
+                                Text(
+                                    newHistoryLogs[index]
+                                                .lastCheckinDetail!
+                                                .checkoutAt ==
+                                            null
+                                        ? "Last Check-IN : "
+                                        : "Last Check-Out : ",
+                                    style: GoogleFonts.ptSans(
+                                        textStyle: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w400))),
+                                Text(
+                                    newHistoryLogs[index]
+                                                .lastCheckinDetail!
+                                                .checkoutAt ==
+                                            null
+                                        ? formatDate(newHistoryLogs[index]
+                                            .lastCheckinDetail!
+                                            .checkinAt
+                                            .toString())
+                                        : formatDate(newHistoryLogs[index]
+                                            .lastCheckinDetail!
+                                            .checkoutAt
+                                            .toString()),
+                                    style: GoogleFonts.ptSans(
+                                        textStyle: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w400))),
+                              ],
+                            ),
+                          )
+                        : const SizedBox(height: 10);
+                  }
+
+                  Widget layoutChild() => Container(
+                        margin: const EdgeInsets.only(bottom: 5),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: Colors.grey[300]!)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            searchBarOpen
-                                ? const SizedBox()
-                                : Row(children: [
-                                    GestureDetector(
-                                        onTap: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Icon(Icons.arrow_back,
-                                            color: Colors.white)),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10, top: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(children: [
+                                    ClipRRect(
+                                        borderRadius: BorderRadius.circular(4),
+                                        child: FadeInImage(
+                                            height: 50.h,
+                                            width: 50.w,
+                                            fit: BoxFit.cover,
+                                            imageErrorBuilder: (_, child,
+                                                    stackTrack) =>
+                                                Image.asset(
+                                                    'assets/images/default.jpg',
+                                                    height: 60.h,
+                                                    width: 55.w,
+                                                    fit: BoxFit.cover),
+                                            image: NetworkImage(
+                                                newHistoryLogs[index]
+                                                    .imageUrl
+                                                    .toString()),
+                                            placeholder: const AssetImage(
+                                                'assets/images/default.jpg'))),
                                     SizedBox(width: 10.w),
-                                    Text('Daily Help',
-                                        style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18.sp,
-                                                fontWeight: FontWeight.w600)))
-                                  ]),
-                            SearchBarAnimation(
-                                searchBoxColour: AppTheme.primaryLiteColor,
-                                buttonColour: AppTheme.primaryLiteColor,
-                                searchBoxWidth:
-                                    MediaQuery.of(context).size.width / 1.1,
-                                isSearchBoxOnRightSide: false,
-                                textEditingController: textController,
-                                isOriginalAnimation: true,
-                                enableKeyboardFocus: true,
-                                enteredTextStyle: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w600)),
-                                onExpansionComplete: () {
-                                  setState(() {
-                                    searchBarOpen = true;
-                                  });
-                                },
-                                onCollapseComplete: () {
-                                  setState(() {
-                                    searchBarOpen = false;
-                                    textController.clear();
-                                    _dailyHelpListingCubit.fetchDailyHelpsApi();
-                                  });
-                                },
-                                onPressButton: (isSearchBarOpens) {
-                                  setState(() {
-                                    searchBarOpen = true;
-                                  });
-                                },
-                                onChanged: (value) {
-                                  _dailyHelpListingCubit.searchQueryData(value);
-                                },
-                                trailingWidget: const Icon(Icons.search,
-                                    size: 20, color: Colors.white),
-                                secondaryButtonWidget: const Icon(Icons.close,
-                                    size: 20, color: Colors.white),
-                                buttonWidget: const Icon(Icons.search,
-                                    size: 20, color: Colors.white))
-                          ]))),
-              SizedBox(height: 5.h),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20))),
-                  child: RefreshIndicator(
-                    onRefresh: onRefresh,
-                    child: BlocBuilder<DailyHelpListingCubit,
-                        DailyHelpListingState>(
-                      bloc: _dailyHelpListingCubit,
-                      builder: (context, state) {
-                        if (state is DailyHelpListingLoading) {
-                          return const Center(
-                              child: CircularProgressIndicator.adaptive());
-                        }
-                        if (state is DailyHelpListingError) {
-                          return Center(
-                              child: Text(state.errorMsg,
-                                  style: const TextStyle(
-                                      color: Colors.deepPurpleAccent)));
-                        }
-
-                        List<DailyHelp> newHistoryLogs =
-                            _dailyHelpListingCubit.dailyHelpMemberList;
-
-                        if (state is DailyHelpListingSearchLoaded) {
-                          newHistoryLogs = state.dailyHelpMemberList;
-                        }
-
-                        if (newHistoryLogs.isEmpty) {
-                          return const Center(
-                              child: Text('Member not found!',
-                                  style: TextStyle(
-                                      color: Colors.deepPurpleAccent)));
-                        }
-
-                        return ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: newHistoryLogs.length,
-                          padding: const EdgeInsets.only(top: 10),
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            // Last checkouts
-                            lastChecking() {
-                              return newHistoryLogs[index].lastCheckinDetail !=
-                                      null
-                                  ? Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      child: Row(
+                                    Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                              newHistoryLogs[index]
-                                                          .lastCheckinDetail!
-                                                          .checkoutAt ==
-                                                      null
-                                                  ? "Last Check-IN : "
-                                                  : "Last Check-Out : ",
+                                              capitalizeWords(
+                                                  newHistoryLogs[index]
+                                                      .name
+                                                      .toString()),
                                               style: GoogleFonts.ptSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors.black54,
-                                                      fontSize: 12.sp,
+                                                      color: Colors.black,
+                                                      fontSize: 16.sp,
                                                       fontWeight:
-                                                          FontWeight.w400))),
+                                                          FontWeight.w500))),
                                           Text(
-                                              newHistoryLogs[index]
-                                                          .lastCheckinDetail!
-                                                          .checkoutAt ==
-                                                      null
-                                                  ? formatDate(
-                                                      newHistoryLogs[index]
-                                                          .lastCheckinDetail!
-                                                          .checkinAt
-                                                          .toString())
-                                                  : formatDate(
-                                                      newHistoryLogs[index]
-                                                          .lastCheckinDetail!
-                                                          .checkoutAt
-                                                          .toString()),
+                                              "+91 : ${newHistoryLogs[index].phone.toString()}",
                                               style: GoogleFonts.ptSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors.black54,
-                                                      fontSize: 12.sp,
+                                                      color: Colors.black45,
+                                                      fontSize: 14.sp,
                                                       fontWeight:
-                                                          FontWeight.w400))),
-                                        ],
-                                      ),
-                                    )
-                                  : const SizedBox(height: 10);
-                            }
+                                                          FontWeight.w500))),
+                                          Text(
+                                              "Role : ${newHistoryLogs[index].role.toString().replaceAll("_", ' ')}",
+                                              style: GoogleFonts.ptSans(
+                                                  textStyle: TextStyle(
+                                                      color: Colors
+                                                          .deepPurpleAccent,
+                                                      fontSize: 14.sp,
+                                                      fontWeight:
+                                                          FontWeight.w500))),
+                                        ]),
+                                    SizedBox(width: 10.w)
+                                  ]),
+                                  popMenusForStaff(
+                                      fromResidentPage: false,
+                                      context: context,
+                                      requestData: newHistoryLogs[index])
+                                ],
+                              ),
+                            ),
+                            SizedBox(child: lastChecking()),
+                            SizedBox(
+                                child: serviceOnFlats(
+                                    newHistoryLogs[index], index))
+                          ],
+                        ),
+                      );
 
-                            Widget layoutChild() => Container(
-                                  margin: const EdgeInsets.only(bottom: 5),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      border:
-                                          Border.all(color: Colors.grey[300]!)),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 10, top: 10),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(children: [
-                                              ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                  child: FadeInImage(
-                                                      height: 50.h,
-                                                      width: 50.w,
-                                                      fit: BoxFit.cover,
-                                                      imageErrorBuilder: (_,
-                                                              child,
-                                                              stackTrack) =>
-                                                          Image.asset(
-                                                              'assets/images/default.jpg',
-                                                              height: 60.h,
-                                                              width: 55.w,
-                                                              fit:
-                                                                  BoxFit.cover),
-                                                      image: NetworkImage(
-                                                          newHistoryLogs[index]
-                                                              .imageUrl
-                                                              .toString()),
-                                                      placeholder: const AssetImage(
-                                                          'assets/images/default.jpg'))),
-                                              SizedBox(width: 10.w),
-                                              Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                        capitalizeWords(
-                                                            newHistoryLogs[
-                                                                    index]
-                                                                .name
-                                                                .toString()),
-                                                        style: GoogleFonts.ptSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize: 16.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500))),
-                                                    Text(
-                                                        "+91 : ${newHistoryLogs[index].phone.toString()}",
-                                                        style: GoogleFonts.ptSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black45,
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500))),
-                                                    Text(
-                                                        "Role : ${newHistoryLogs[index].role.toString().replaceAll("_", ' ')}",
-                                                        style: GoogleFonts.ptSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .deepPurpleAccent,
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500))),
-                                                  ]),
-                                              SizedBox(width: 10.w)
-                                            ]),
-                                            popMenusForStaff(
-                                                fromResidentPage: false,
-                                                context: context,
-                                                requestData:
-                                                    newHistoryLogs[index])
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(child: lastChecking()),
-                                      SizedBox(
-                                          child: serviceOnFlats(
-                                              newHistoryLogs[index], index))
-                                    ],
-                                  ),
-                                );
-
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 3),
-                              child: layoutChild(),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ],
+                  return Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    child: layoutChild(),
+                  );
+                },
+              );
+            },
           ),
         ),
       ),
@@ -337,6 +260,7 @@ class _DailyHelpListingHistoryState extends State<DailyHelpListingHistory> {
   }
 
   Map<int, int> selectedIndexes = {};
+
   // Service on Flats
   serviceOnFlats(DailyHelp newHistoryLogs, listIndex) {
     List<AssignedDailyHelpMember> assignedFlatsList =
@@ -479,14 +403,15 @@ List<Map<String, dynamic>> optionList3 = [
   {"icon": Icons.qr_code, "menu": "Scan By QR", "menu_id": 1},
   {"icon": Icons.scanner, "menu": "Scan By Manual", "menu_id": 2},
 ];
+
 Widget popMenusForStaff(
     {bool fromResidentPage = false,
     required BuildContext context,
     required DailyHelp requestData}) {
-  return CircleAvatar(
-    backgroundColor: Colors.deepPurpleAccent,
+  return Padding(
+    padding: const EdgeInsets.only(right: 5),
     child: CircleAvatar(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
       child: PopupMenuButton(
         elevation: 10,
         padding: EdgeInsets.zero,

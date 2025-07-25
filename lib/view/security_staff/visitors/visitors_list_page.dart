@@ -1,9 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_in/check_in_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_out/check_out_cubit.dart';
@@ -15,7 +17,6 @@ import 'package:ghp_society_management/timer_countdown.dart';
 import 'package:ghp_society_management/view/security_staff/visitors/visitors_tab.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:searchbar_animation/searchbar_animation.dart';
 
 class VisitorsListPage extends StatefulWidget {
   final int index;
@@ -49,7 +50,8 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
           toDate: '',
           search: searchController.text.toString(),
           filterTypes: filterList[widget.index].toString(),
-          context: context);
+          context: context,
+          fotStaffSide: true);
     _scrollController.addListener(_onScroll);
   }
 
@@ -114,12 +116,14 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
         toDate: '',
         context: context,
         search: searchController.text.toString(),
-        filterTypes: filterList[widget.index].toString());
+        filterTypes: filterList[widget.index].toString(),
+        fotStaffSide: true);
 
     setState(() {});
   }
 
   late BuildContext dialogueContext;
+
   void _handleNotResponding(String visitorsId) {
     print('----------->>>>>called not responding');
     var requestBody = {"visitor_id": visitorsId.toString()};
@@ -129,6 +133,7 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
   }
 
   Timer? periodicTimer;
+
   void _startCountdownAndAPICalls(String visitorsId) {
     const duration = Duration(seconds: 4);
     const totalTime = 59;
@@ -275,13 +280,15 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
         }),
       ],
       child: Scaffold(
-        appBar: customAppbar(context: context, title: widget.type == 'T_V'
-            ? 'Today Visitors'
-            : "Past Visitors", textController: searchController,onExpansionComplete: () {
-          setState(() {
-            searchBarOpen = true;
-          });
-        },
+        appBar: customAppbar(
+            context: context,
+            title: widget.type == 'T_V' ? 'Today Visitors' : "Past Visitors",
+            textController: searchController,
+            onExpansionComplete: () {
+              setState(() {
+                searchBarOpen = true;
+              });
+            },
             onCollapseComplete: () {
               searchController.clear();
               setState(() {
@@ -301,8 +308,8 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
                     toDate: toDate!.text.toString(),
                     context: context,
                     search: searchController.text.toString(),
-                    filterTypes:
-                    filterList[widget.index].toString());
+                    filterTypes: filterList[widget.index].toString(),
+                    fotStaffSide: true);
               setState(() {});
             }),
         body: Container(
@@ -310,8 +317,7 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
           decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20))),
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20))),
           child: RefreshIndicator(
             onRefresh: fetchData,
             child: Column(
@@ -336,32 +342,36 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
                                         fontWeight: FontWeight.w500),
                                     decoration: InputDecoration(
                                         hintText: 'From Date',
-                                        contentPadding:
-                                            EdgeInsets.symmetric(
-                                                vertical: 12.h,
-                                                horizontal: 10.0),
-                                        prefixIcon: const Icon(
-                                            Icons.calendar_month),
+                                        contentPadding: EdgeInsets.symmetric(
+                                            vertical: 12.h, horizontal: 10.0),
+                                        prefixIcon:
+                                            const Icon(Icons.calendar_month),
                                         filled: true,
                                         hintStyle: TextStyle(
                                             color: Colors.grey,
                                             fontSize: 15.sp,
-                                            fontWeight:
-                                                FontWeight.normal),
+                                            fontWeight: FontWeight.normal),
                                         fillColor: AppTheme.greyColor,
                                         errorBorder: OutlineInputBorder(
                                             borderRadius:
-                                                BorderRadius.circular(
-                                                    15.0),
+                                                BorderRadius.circular(15.0),
                                             borderSide: BorderSide(
-                                                color: AppTheme
-                                                    .greyColor)),
+                                                color: AppTheme.greyColor)),
                                         focusedErrorBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
-                                            borderSide: BorderSide(color: AppTheme.greyColor)),
-                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0), borderSide: BorderSide(color: AppTheme.greyColor)),
-                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0), borderSide: BorderSide(color: AppTheme.greyColor))))),
+                                            borderSide: BorderSide(
+                                                color: AppTheme.greyColor)),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15.0),
+                                            borderSide: BorderSide(
+                                                color: AppTheme.greyColor)),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15.0),
+                                            borderSide:
+                                                BorderSide(color: AppTheme.greyColor))))),
                             SizedBox(width: 10.w),
                             Expanded(
                               child: TextFormField(
@@ -378,8 +388,7 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
                                   hintText: 'To Date',
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: 12.h, horizontal: 10.0),
-                                  prefixIcon:
-                                      const Icon(Icons.calendar_month),
+                                  prefixIcon: const Icon(Icons.calendar_month),
                                   filled: true,
                                   hintStyle: TextStyle(
                                       color: Colors.grey,
@@ -387,26 +396,19 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
                                       fontWeight: FontWeight.normal),
                                   fillColor: AppTheme.greyColor,
                                   errorBorder: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(15.0),
+                                      borderRadius: BorderRadius.circular(15.0),
                                       borderSide: BorderSide(
                                           color: AppTheme.greyColor)),
-                                  focusedErrorBorder:
-                                      OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(
-                                                  15.0),
-                                          borderSide: BorderSide(
-                                              color:
-                                                  AppTheme.greyColor)),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(
+                                          color: AppTheme.greyColor)),
                                   focusedBorder: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(15.0),
+                                      borderRadius: BorderRadius.circular(15.0),
                                       borderSide: BorderSide(
                                           color: AppTheme.greyColor)),
                                   enabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(15.0),
+                                    borderRadius: BorderRadius.circular(15.0),
                                     borderSide: BorderSide(
                                       color: AppTheme.greyColor,
                                     ),
@@ -418,37 +420,29 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
                         ),
                       ),
                 Expanded(
-                  child: BlocBuilder<VisitorsListingCubit,
-                      VisitorsListingState>(
+                  child:
+                      BlocBuilder<VisitorsListingCubit, VisitorsListingState>(
                     bloc: _visitorsListingCubit,
                     builder: (context, state) {
-                      if (state is VisitorsListingLoading &&
-                          _visitorsListingCubit
-                              .visitorsListing.isEmpty) {
-                        return const Center(
-                            child: CircularProgressIndicator.adaptive(
-                                backgroundColor:
-                                    Colors.deepPurpleAccent));
+                      if (state is VisitorsListingLoading) {
+                        return notificationShimmerLoading();
                       }
                       if (state is VisitorsListingFailed) {
                         return Center(
                             child: Text(state.errorMsg.toString(),
-                                style: const TextStyle(
-                                    color: Colors.red)));
+                                style: const TextStyle(color: Colors.red)));
                       }
                       if (state is VisitorsListingInternetError) {
                         return Center(
                             child: Text(state.errorMsg.toString(),
-                                style: const TextStyle(
-                                    color: Colors.red)));
+                                style: const TextStyle(color: Colors.red)));
                       }
-                      var visitorsList =
-                          _visitorsListingCubit.visitorsListing;
+                      var visitorsList = _visitorsListingCubit.visitorsListing;
                       if (visitorsList.isEmpty) {
                         return const Center(
                             child: Text("Visitors Not Found!",
-                                style: TextStyle(
-                                    color: Colors.deepPurpleAccent)));
+                                style:
+                                    TextStyle(color: Colors.deepPurpleAccent)));
                       }
                       return ListView.builder(
                         padding: const EdgeInsets.only(bottom: 100),
@@ -457,21 +451,18 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
                         physics: const AlwaysScrollableScrollPhysics(),
                         itemCount: visitorsList.length + 1,
                         itemBuilder: (context, index) {
-                          print(
-                              '----------------------------->>>>>>>${visitorsList.length}');
                           if (index == visitorsList.length) {
                             return _visitorsListingCubit.state
                                     is ViewVisitorsLoadingMore
                                 ? const Padding(
                                     padding: EdgeInsets.all(16.0),
                                     child: Center(
-                                        child:
-                                            CircularProgressIndicator()))
+                                        child: CircularProgressIndicator()))
                                 : const SizedBox.shrink();
                           }
                           return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: customVisitorsWidget(
                                   context,
                                   filterList[widget.index].toString(),

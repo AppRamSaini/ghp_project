@@ -6,6 +6,7 @@ import 'package:ghp_society_management/controller/resident_checkout_log/resident
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
 import 'package:ghp_society_management/view/security_staff/dashboard/bottom_navigation.dart';
 import 'package:intl/intl.dart';
+
 import '../../../model/daily_help_member_checkout_details_modal.dart';
 
 class DailyHelpProfileDetails extends StatefulWidget {
@@ -13,6 +14,7 @@ class DailyHelpProfileDetails extends StatefulWidget {
   bool fromResidentPage;
   bool forDetailsPage;
   final Map<String, dynamic>? dailyHelpId;
+
   DailyHelpProfileDetails({
     super.key,
     this.dailyHelpId,
@@ -246,13 +248,7 @@ class DailyHelpProfileDetailsState extends State<DailyHelpProfileDetails> {
       child: WillPopScope(
         onWillPop: onCallBack,
         child: Scaffold(
-          appBar: AppBar(
-              title: Text('Profile Details',
-                  style: GoogleFonts.nunitoSans(
-                      textStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600)))),
+          appBar: appbarWidget(title: 'Profile Details'),
           body: RefreshIndicator(
             onRefresh: onRefresh,
             child: BlocBuilder<DailyHelpHistoryDetailsCubit,

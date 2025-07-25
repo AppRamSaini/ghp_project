@@ -8,6 +8,7 @@ import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/refer_property/create_refer_property/create_refer_property_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/delete_refer_property/delete_refer_property_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/get_refer_property/get_refer_property_cubit.dart';
+import 'package:ghp_society_management/controller/refer_property/refer_property_element/refer_property_element_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/update_refer_property/update_refer_property_cubit.dart';
 import 'package:ghp_society_management/model/refer_property_model.dart';
 import 'package:ghp_society_management/view/resident/refer_property/register_refer_property_screen.dart';
@@ -29,6 +30,7 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
   @override
   void initState() {
     _getReferPropertyCubit = GetReferPropertyCubit()..fetchGetReferProperty();
+    context.read<ReferPropertyElementCubit>().fetchReferPropetyElement();
     _scrollController.addListener(_onScroll);
 
     super.initState();
@@ -100,13 +102,7 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
         })
       ],
       child: Scaffold(
-
-        appBar: AppBar(title:    Text('Refer Property ',
-            style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(title: 'Refer Property '),
         floatingActionButton: FloatingActionButton(
             elevation: 0.0,
             backgroundColor: AppTheme.primaryColor,
@@ -115,12 +111,9 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
                   builder: (builder) => RegisterReferPropertyScreen()));
             },
             child: const Icon(Icons.add, color: Colors.white)),
-
-
         body: RefreshIndicator(
           onRefresh: onRefresh,
-          child: BlocBuilder<GetReferPropertyCubit,
-              GetReferPropertyState>(
+          child: BlocBuilder<GetReferPropertyCubit, GetReferPropertyState>(
             bloc: _getReferPropertyCubit,
             builder: (context, state) {
               if (state is GetReferPropertyLoading &&
@@ -132,8 +125,8 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
               if (state is GetReferPropertyFailed) {
                 return Center(
                     child: Text(state.errorMsg,
-                        style: const TextStyle(
-                            color: Colors.deepPurpleAccent)));
+                        style:
+                            const TextStyle(color: Colors.deepPurpleAccent)));
               }
 
               if (state is GetReferPropertyInternetError) {
@@ -142,8 +135,7 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
                         style: const TextStyle(color: Colors.red)));
               }
 
-              var getPropertyList =
-                  _getReferPropertyCubit.referPropertyList;
+              var getPropertyList = _getReferPropertyCubit.referPropertyList;
 
               return ListView.builder(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -157,8 +149,7 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
                         ? const Padding(
                             padding: EdgeInsets.all(16.0),
                             child: Center(
-                                child: CircularProgressIndicator
-                                    .adaptive()))
+                                child: CircularProgressIndicator.adaptive()))
                         : const SizedBox.shrink();
                   }
 
@@ -168,16 +159,14 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          border:
-                              Border.all(color: Colors.grey[300]!)),
+                          border: Border.all(color: Colors.grey[300]!)),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
                             Row(
                               children: [
-                                Image.asset(
-                                    ImageAssets.noticeBoardImage,
+                                Image.asset(ImageAssets.noticeBoardImage,
                                     height: 40.h),
                                 SizedBox(width: 10.w),
                                 Expanded(
@@ -192,32 +181,25 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
                                                   color: Colors.black,
                                                   fontSize: 14,
                                                   fontWeight:
-                                                      FontWeight
-                                                          .w600))),
+                                                      FontWeight.w600))),
                                       Row(
-                                        mainAxisSize:
-                                            MainAxisSize.min,
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text("Refer for ",
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors
-                                                          .black,
+                                                      color: Colors.black,
                                                       fontSize: 13,
                                                       fontWeight:
-                                                          FontWeight
-                                                              .w400))),
-                                          Text(
-                                              referProperty.name
-                                                  .toString(),
+                                                          FontWeight.w400))),
+                                          Text(referProperty.name.toString(),
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
                                                       color: Colors
                                                           .deepPurpleAccent,
                                                       fontSize: 13,
                                                       fontWeight:
-                                                          FontWeight
-                                                              .w400))),
+                                                          FontWeight.w400))),
                                         ],
                                       ),
                                     ],
@@ -230,15 +212,12 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
                                     requestData: referProperty)
                               ],
                             ),
-                            Divider(
-                                color: Colors.grey.withOpacity(0.2)),
+                            Divider(color: Colors.grey.withOpacity(0.2)),
                             Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
                                         "₹ ${referProperty.maxBudget.toString()}",
@@ -246,20 +225,17 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
                                             textStyle: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 12,
-                                                fontWeight: FontWeight
-                                                    .w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text("Max Budget",
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 12,
-                                                fontWeight: FontWeight
-                                                    .w600))),
+                                                fontWeight: FontWeight.w600))),
                                   ],
                                 ),
                                 Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
                                         "₹ ${referProperty.minBudget.toString()}",
@@ -267,37 +243,30 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
                                             textStyle: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 12,
-                                                fontWeight: FontWeight
-                                                    .w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text("Min Budget",
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 12,
-                                                fontWeight: FontWeight
-                                                    .w600))),
+                                                fontWeight: FontWeight.w600))),
                                   ],
                                 ),
                                 Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text(
-                                        referProperty.unitType
-                                            .toString(),
+                                    Text(referProperty.unitType.toString(),
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 12,
-                                                fontWeight: FontWeight
-                                                    .w400))),
+                                                fontWeight: FontWeight.w400))),
                                     Text("Property Type",
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 12,
-                                                fontWeight: FontWeight
-                                                    .w600))),
+                                                fontWeight: FontWeight.w600))),
                                   ],
                                 ),
                               ],
@@ -322,6 +291,7 @@ List<Map<String, dynamic>> optionsList = [
   {"icon": Icons.delete, "menu": "Delete", "menu_id": 2},
   {"icon": Icons.visibility, "menu": "View Details", "menu_id": 3},
 ];
+
 Widget referPropertyMenuIcons(
     {bool isStaffSide = false,
     required List<Map<String, dynamic>> options,

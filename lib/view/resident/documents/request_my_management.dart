@@ -1,5 +1,4 @@
 import 'package:ghp_society_management/constants/export.dart';
-
 import 'package:ghp_society_management/controller/documents/incoming_documents/incoming_documents_cubit.dart';
 import 'package:ghp_society_management/view/resident/documents/upload_document_screen.dart';
 import 'package:intl/intl.dart';
@@ -23,7 +22,7 @@ class _IncomingDocumentsScreenState extends State<IncomingDocumentsScreen> {
   final TextEditingController textController = TextEditingController();
 
   initCubit() {
-    incomingDocumentsCubit = context.read<IncomingDocumentsCubit>();
+    incomingDocumentsCubit = IncomingDocumentsCubit();
     incomingDocumentsCubit.fetchIncomingDocuments(
         filter: filterTypes[selectedFilter]);
   }
@@ -47,13 +46,7 @@ class _IncomingDocumentsScreenState extends State<IncomingDocumentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Text('Request By Management',
-              style: GoogleFonts.nunitoSans(
-                  textStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600)))),
+      appBar: appbarWidget(title: 'Request By Management'),
       body: SafeArea(
         child: BlocListener<UploadDocumentCubit, UploadDocumentState>(
           listener: (context, state) async {
@@ -110,8 +103,7 @@ class _IncomingDocumentsScreenState extends State<IncomingDocumentsScreen> {
                                   borderRadius: BorderRadius.circular(10.r),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 20),
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
                                   child: Center(
                                       child: Text(
                                     filterList[index],
@@ -198,13 +190,12 @@ class _IncomingDocumentsScreenState extends State<IncomingDocumentsScreen> {
                                   onTap: () {
                                     // if (documentsList[index].status ==
                                     //     'requested') {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (builder) =>
-                                                  UploadDocumentScreen(
-                                                      incomingRequestData:
-                                                          documentsList[
-                                                              index])));
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (builder) =>
+                                                UploadDocumentScreen(
+                                                    incomingRequestData:
+                                                        documentsList[index])));
                                     // } else {
                                     //   snackBar(
                                     //       context,

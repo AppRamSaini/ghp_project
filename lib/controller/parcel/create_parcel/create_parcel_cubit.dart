@@ -26,6 +26,9 @@ class ParcelManagementCubit extends Cubit<ParcelManagementState> {
       String? deliveryOption,
       String? senderName,
       File? profilePicture}) async {
+    var propertyId = LocalStorage.localStorage.getString('property_id');
+
+
     emit(CreateParcelLoading());
     try {
       final token = LocalStorage.localStorage.getString('token');
@@ -38,6 +41,7 @@ class ParcelManagementCubit extends Cubit<ParcelManagementState> {
       final request = http.MultipartRequest('POST', uri)
         ..headers['Authorization'] = 'Bearer $token'
         ..headers['Accept'] = 'application/json'
+        ..fields['property_id'] = propertyId.toString()
         ..fields['parcelid'] = parcelId.toString()
         ..fields['parcel_name'] = parcelName.toString()
         ..fields['no_of_parcel'] = numberOfParcel.toString()

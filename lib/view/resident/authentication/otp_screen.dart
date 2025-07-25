@@ -12,8 +12,8 @@ import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/verify_otp/verify_otp_cubit.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
+import 'package:ghp_society_management/view/maintenance_staff//bottom_nav_screen.dart';
 import 'package:ghp_society_management/view/security_staff/dashboard/bottom_navigation.dart';
-import 'package:ghp_society_management/view/Staff/bottom_nav_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
@@ -63,8 +63,7 @@ class _OtpScreenState extends State<OtpScreen> {
       case 'staff':
         return MaterialPageRoute(builder: (_) => const StaffDashboard());
       case 'staff_security_guard':
-        return MaterialPageRoute(
-            builder: (_) =>  SecurityGuardDashboard());
+        return MaterialPageRoute(builder: (_) => SecurityGuardDashboard());
       default:
         return null;
     }
@@ -79,8 +78,10 @@ class _OtpScreenState extends State<OtpScreen> {
     final defaultPinTheme = PinTheme(
         width: 60,
         height: 60,
-        textStyle:  TextStyle(
-            fontSize: 22, color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
+        textStyle: TextStyle(
+            fontSize: 22,
+            color: AppTheme.primaryColor,
+            fontWeight: FontWeight.bold),
         decoration: BoxDecoration(
             color: AppTheme.white,
             borderRadius: BorderRadius.circular(10),
@@ -92,14 +93,27 @@ class _OtpScreenState extends State<OtpScreen> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Image.asset(ImageAssets.loginImage,
-                  height: size.height * 0.5,
-                  width: size.width,
-                  fit: BoxFit.cover),
+              Stack(
+                children: [
+                  Image.asset(ImageAssets.loginImage,
+                      height: size.height * 0.5,
+                      width: size.width,
+                      fit: BoxFit.cover),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: size.height * 0.05, left: size.width * 0.035),
+                    child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: CircleAvatar(
+                          child: Icon(Icons.arrow_back_ios_outlined),
+                        )),
+                  )
+                ],
+              ),
               _buildTitle(),
-              SizedBox(height: size.height*0.03),
+              SizedBox(height: size.height * 0.03),
               _buildOtpField(defaultPinTheme),
-              SizedBox(height: size.height*0.02),
+              SizedBox(height: size.height * 0.02),
               _buildLoginButton(),
             ],
           ),
@@ -107,8 +121,6 @@ class _OtpScreenState extends State<OtpScreen> {
       ),
     );
   }
-
-
 
   Widget _buildTitle() {
     return Column(
@@ -156,12 +168,13 @@ class _OtpScreenState extends State<OtpScreen> {
           print("FCM Token: $token");
         }
         if (_otpController.text.isNotEmpty && _otpController.text.length == 4) {
-          context.read<VerifyOtpCubit>().verifyOtp(
-              widget.phoneNumber, _otpController.text, token ?? "");
+          context
+              .read<VerifyOtpCubit>()
+              .verifyOtp(widget.phoneNumber, _otpController.text, token ?? "");
         }
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
         child: Container(
           width: double.infinity,
           height: 50,
@@ -188,18 +201,15 @@ class _OtpScreenState extends State<OtpScreen> {
   Widget _buildOtpField(PinTheme defaultPinTheme) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'ENTER OTP',
-            style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500
-
-            ))
-          ),
+          Text('ENTER OTP',
+              style: GoogleFonts.nunitoSans(
+                  textStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500))),
           SizedBox(height: 10),
           Pinput(
             controller: _otpController,

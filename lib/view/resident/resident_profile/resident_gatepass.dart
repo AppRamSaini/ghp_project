@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/download_share_gatepass.dart';
 import 'package:ghp_society_management/constants/export.dart';
@@ -9,6 +10,7 @@ import 'package:screenshot/screenshot.dart';
 
 class ResidentGatePass extends StatefulWidget {
   final User? residentModel;
+
   const ResidentGatePass({super.key, required this.residentModel});
 
   @override
@@ -56,13 +58,7 @@ class ResidentGatePassState extends State<ResidentGatePass> {
         ),
       ],
       child: Scaffold(
-
-        appBar: AppBar(title: Text('Resident Gate Pass',
-            style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(title: 'Resident Gate Pass'),
         bottomNavigationBar: Container(
           color: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 30),
@@ -110,11 +106,9 @@ class ResidentGatePassState extends State<ResidentGatePass> {
             ],
           ),
         ),
-
-
         body: Padding(
-          padding: const EdgeInsets.only(
-              top: 30, right: 12, left: 12, bottom: 10),
+          padding:
+              const EdgeInsets.only(top: 30, right: 12, left: 12, bottom: 10),
           child: Screenshot(
             controller: screenshotController,
             child: Container(
@@ -123,8 +117,7 @@ class ResidentGatePassState extends State<ResidentGatePass> {
                   borderRadius: BorderRadius.circular(4),
                   boxShadow: [
                     BoxShadow(
-                        color: Colors.black45.withOpacity(0.2),
-                        blurRadius: 10)
+                        color: Colors.black45.withOpacity(0.2), blurRadius: 10)
                   ]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -148,17 +141,15 @@ class ResidentGatePassState extends State<ResidentGatePass> {
                   ),
                   const SizedBox(height: 20),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           widget.residentModel!.image != null
                               ? CircleAvatar(
                                   radius: 32.h,
-                                  backgroundImage: NetworkImage(widget
-                                      .residentModel!.image
-                                      .toString()))
+                                  backgroundImage: NetworkImage(
+                                      widget.residentModel!.image.toString()))
                               : CircleAvatar(
                                   radius: 35.h,
                                   backgroundImage: const AssetImage(
@@ -166,32 +157,27 @@ class ResidentGatePassState extends State<ResidentGatePass> {
                           const SizedBox(width: 10),
                           Flexible(
                             child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    capitalizeWords(widget
-                                        .residentModel!.name
-                                        .toString()),
+                                    capitalizeWords(
+                                        widget.residentModel!.name.toString()),
                                     style: GoogleFonts.nunitoSans(
                                         textStyle: TextStyle(
                                             color: Colors.black87,
                                             fontSize: 14.sp,
-                                            fontWeight:
-                                                FontWeight.w600))),
+                                            fontWeight: FontWeight.w600))),
                                 Text(
                                     "+91 ${widget.residentModel!.phone.toString()}",
                                     style: GoogleFonts.nunitoSans(
                                         textStyle: TextStyle(
                                             color: Colors.black45,
                                             fontSize: 12,
-                                            fontWeight:
-                                                FontWeight.w600))),
+                                            fontWeight: FontWeight.w600))),
                                 Text(
-                                    "Tower/Floor: ${widget.residentModel!.blockName.toString()}/${widget.residentModel!.floorNumber.toString()}, Flat No: ${widget.residentModel!.aprtNo.toString()}",
+                                    "Tower/Bloc: ${widget.residentModel!.property!.blockName}, Property No: ${widget.residentModel!.aprtNo.toString()}",
                                     style: GoogleFonts.nunitoSans(
-                                        color: Colors.black,
-                                        fontSize: 12))
+                                        color: Colors.black, fontSize: 12))
                               ],
                             ),
                           )
@@ -199,8 +185,7 @@ class ResidentGatePassState extends State<ResidentGatePass> {
                   ),
                   const SizedBox(height: 30),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
                         'Show the QR code to the security guard for scanning',
                         textAlign: TextAlign.center,
@@ -217,8 +202,8 @@ class ResidentGatePassState extends State<ResidentGatePass> {
                       padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                              color: Colors.grey.withOpacity(0.1))),
+                          border:
+                              Border.all(color: Colors.grey.withOpacity(0.1))),
                       child: QrImageView(
                         data: jsonDetails,
                         version: QrVersions.auto,

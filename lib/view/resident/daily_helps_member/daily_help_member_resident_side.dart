@@ -1,9 +1,7 @@
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/daliy_helps_member/daily_help_listing/daily_help_cubit.dart';
-import 'package:ghp_society_management/view/security_staff/daliy_help/daily_help_details.dart';
 import 'package:ghp_society_management/view/resident/daily_helps_member/daily_help_gatepass.dart';
-import 'package:ghp_society_management/view/security_staff/scan_qr.dart';
-import 'package:searchbar_animation/searchbar_animation.dart';
 
 import '../../security_staff/daliy_help/daily_helps_members.dart';
 
@@ -74,14 +72,10 @@ class DailyHelpListingHistoryResidentSideState
             bloc: _dailyHelpListingCubit,
             builder: (context, state) {
               if (state is DailyHelpListingLoading) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+                return notificationShimmerLoading();
               }
               if (state is DailyHelpListingError) {
-                return Center(
-                    child: Text(state.errorMsg,
-                        style:
-                            const TextStyle(color: Colors.deepPurpleAccent)));
+                return emptyDataWidget(state.errorMsg);
               }
 
               var newHistoryLogs = _dailyHelpListingCubit.dailyHelpMemberList;
@@ -91,9 +85,7 @@ class DailyHelpListingHistoryResidentSideState
               }
 
               if (newHistoryLogs.isEmpty) {
-                return const Center(
-                    child: Text('Member not found!',
-                        style: TextStyle(color: Colors.deepPurpleAccent)));
+                return emptyDataWidget('Member not found!');
               }
 
               return ListView.builder(
@@ -141,16 +133,15 @@ class DailyHelpListingHistoryResidentSideState
                               ],
                             ),
                           )
-
                         : Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Text("Not checked in by staff",
-                              style: GoogleFonts.ptSans(
-                                  textStyle: TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 11.sp,
-                                      fontWeight: FontWeight.w400))),
-                        );
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Text("Not checked in by staff",
+                                style: GoogleFonts.ptSans(
+                                    textStyle: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 11.sp,
+                                        fontWeight: FontWeight.w400))),
+                          );
                   }
 
                   Widget layoutChild() => Container(

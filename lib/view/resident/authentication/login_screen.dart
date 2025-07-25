@@ -51,10 +51,24 @@ class _LoginScreenState extends State<LoginScreen> {
             key: formkey,
             child: Column(
               children: [
-                Image.asset(ImageAssets.loginImage,
-                    height: size.height * 0.5,
-                    width: size.width,
-                    fit: BoxFit.cover),
+                Stack(
+                  children: [
+                    Image.asset(ImageAssets.loginImage,
+                        height: size.height * 0.5,
+                        width: size.width,
+                        fit: BoxFit.cover),
+                    Positioned(
+                      top: 60,
+                      left: 20,
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: CircleAvatar(
+                          child: Icon(Icons.arrow_back_ios_new_outlined),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.035),
                   child: Column(
@@ -90,8 +104,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.w500))),
                       SizedBox(height: 20.h),
-
-                      Align(alignment: Alignment.centerLeft,
+                      Align(
+                        alignment: Alignment.centerLeft,
                         child: Text("Your Number",
                             style: GoogleFonts.nunitoSans(
                                 color: Colors.black,
@@ -127,12 +141,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       FocusScope.of(context).unfocus();
                                     }
                                   },
-
                                   decoration: InputDecoration(
-
                                       filled: true,
-
-                                      hintText: "Eg. +91-1234-XXXXXX",
+                                      hintText: "1234-XXXXXX",
                                       hintStyle: TextStyle(
                                           color: Colors.grey,
                                           fontSize: 14.sp,
@@ -251,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(30)),
                             child: Center(
                               child: Text(
-                                'Verify OTP',
+                                'Send OTP',
                                 style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
                                     color: Colors.white,

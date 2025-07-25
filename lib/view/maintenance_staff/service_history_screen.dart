@@ -1,7 +1,8 @@
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/model/service_request_history_model.dart';
-import 'package:ghp_society_management/view/staff/mark_done_screen.dart';
-import 'package:ghp_society_management/view/staff/service/service_detail_screen.dart';
+import 'package:ghp_society_management/view/maintenance_staff/mark_done_screen.dart';
+import 'package:ghp_society_management/view/maintenance_staff/service_detail_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:pinput/pinput.dart';
 
@@ -130,24 +131,14 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Service History',
-            style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
+        appBar: appbarWidget(title: 'Service History'),
         body: RefreshIndicator(
           onRefresh: () async {
             selectedFilter = 0;
             endDate = null;
             startDate = null;
             setState(() {});
+
             _serviceRequestHistoryCubit.serviceRequestHistory(
               startDate: null,
               filter: types[selectedFilter].toString(),
@@ -158,11 +149,12 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
                 child: Row(
                   children: List.generate(
                     filterList.length,
-                        (index) => Expanded(
+                    (index) => Expanded(
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
@@ -219,13 +211,13 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                         child: Container(
                           margin: const EdgeInsets.only(left: 5, bottom: 5),
                           decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            border: Border.all(color: const Color(0xFFD9D9D9)),
-                            borderRadius: BorderRadius.circular(6.r),
-                          ),
+                              color: Colors.transparent,
+                              border:
+                                  Border.all(color: const Color(0xFFD9D9D9)),
+                              borderRadius: BorderRadius.circular(6.r)),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 10.0.w, vertical: 10),
+                                horizontal: 10.0.w, vertical: 8),
                             child: Row(
                               children: [
                                 Image.asset('assets/images/calendar2.png',
@@ -236,7 +228,8 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                                       ? 'yy-mm-dd'
                                       : startDate.toString(),
                                   style: GoogleFonts.poppins(
-                                    color: const Color.fromARGB(255, 102, 101, 101),
+                                    color: const Color.fromARGB(
+                                        255, 102, 101, 101),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -264,22 +257,25 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                         child: Container(
                           margin: const EdgeInsets.only(left: 5, bottom: 5),
                           decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            border: Border.all(color: const Color(0xFFD9D9D9)),
-                            borderRadius: BorderRadius.circular(6.r),
-                          ),
+                              color: Colors.transparent,
+                              border:
+                                  Border.all(color: const Color(0xFFD9D9D9)),
+                              borderRadius: BorderRadius.circular(6.r)),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 10.0.w, vertical: 10),
+                                horizontal: 10.0.w, vertical: 8),
                             child: Row(
                               children: [
                                 Image.asset('assets/images/calendar2.png',
                                     height: 22.h),
                                 SizedBox(width: 10.w),
                                 Text(
-                                  endDate == null ? 'yy-mm-dd' : endDate.toString(),
+                                  endDate == null
+                                      ? 'yy-mm-dd'
+                                      : endDate.toString(),
                                   style: GoogleFonts.poppins(
-                                    color: const Color.fromARGB(255, 102, 101, 101),
+                                    color: const Color.fromARGB(
+                                        255, 102, 101, 101),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -308,10 +304,10 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                           if (index == state.serviceHistory.length) {
                             return state is ServiceRequestHistoryLoadingMore
                                 ? const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child:
-                              Center(child: CircularProgressIndicator()),
-                            )
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Center(
+                                        child: CircularProgressIndicator()),
+                                  )
                                 : const SizedBox.shrink();
                           }
 
@@ -321,7 +317,8 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
 
                           Widget dateTypes() {
                             if (status == 'assigned') {
-                              DateTime assignedDate = requestList[index].createdAt!;
+                              DateTime assignedDate =
+                                  requestList[index].createdAt!;
                               return Text(
                                 "Assigned At: ${assignedDate.day} ${monthYear(assignedDate)}",
                                 style: const TextStyle(
@@ -336,7 +333,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                               );
                             } else {
                               DateTime completeDate =
-                              requestList[index].resolvedOrCancelledAt!;
+                                  requestList[index].resolvedOrCancelledAt!;
                               return Text(
                                 "Complete At: ${completeDate.day} ${monthYear(completeDate)}",
                                 style: const TextStyle(
@@ -353,8 +350,9 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                                 color: status == 'assigned'
                                     ? Colors.blue.withOpacity(0.2)
                                     : status == 'in_progress'
-                                    ? Colors.deepPurpleAccent.withOpacity(0.2)
-                                    : Colors.green.withOpacity(0.2),
+                                        ? Colors.deepPurpleAccent
+                                            .withOpacity(0.2)
+                                        : Colors.green.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
@@ -363,8 +361,8 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                                   color: status == 'assigned'
                                       ? Colors.blue
                                       : status == 'in_progress'
-                                      ? Colors.deepPurpleAccent
-                                      : Colors.green,
+                                          ? Colors.deepPurpleAccent
+                                          : Colors.green,
                                   fontSize: 12,
                                 ),
                               ),
@@ -377,17 +375,19 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.r),
-                                border: Border.all(color: const Color(0xFFE5E5E5)),
+                                border:
+                                    Border.all(color: const Color(0xFFE5E5E5)),
                               ),
                               child: Column(
                                 children: [
                                   ListTile(
-                                    contentPadding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     dense: true,
                                     leading: Container(
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.r),
+                                        borderRadius:
+                                            BorderRadius.circular(10.r),
                                         color: const Color(0xFFF2F1FE),
                                       ),
                                       child: Padding(
@@ -410,8 +410,10 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                                     subtitle: dateTypes(),
                                     trailing: GestureDetector(
                                       onTap: () {
-                                        Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (builder) => ServiceDetailScreen(
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (builder) =>
+                                              ServiceDetailScreen(
                                             data: requestList[index],
                                           ),
                                         ));
@@ -419,7 +421,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                                       child: CircleAvatar(
                                         radius: 18,
                                         backgroundColor:
-                                        Colors.grey.withOpacity(0.1),
+                                            Colors.grey.withOpacity(0.1),
                                         child: const Icon(
                                           Icons.arrow_forward_ios_rounded,
                                           size: 16,
@@ -429,14 +431,13 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                                     ),
                                   ),
                                   Divider(
-                                    color: Colors.grey.withOpacity(0.2),
-                                    height: 0.5,
-                                  ),
+                                      color: Colors.grey.withOpacity(0.2),
+                                      height: 0.5),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           "Complaint By : ${requestList[index].member!.name}",
@@ -457,14 +458,12 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                         },
                       );
                     } else if (state is ServiceRequestHistoryLoading) {
-                      return Center(child: CircularProgressIndicator());
+                      return notificationShimmerLoading();
                     } else if (state is ServiceRequestHistoryFailed) {
                       return Center(
-                        child: Text(
-                          state.errorMsg.toString(),
-                          style: const TextStyle(color: Colors.deepPurpleAccent),
-                        ),
-                      );
+                          child: Text(state.errorMsg.toString(),
+                              style: const TextStyle(
+                                  color: Colors.deepPurpleAccent)));
                     } else {
                       return const SizedBox.shrink();
                     }
@@ -474,8 +473,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
             ],
           ),
         ),
-      )
-      ,
+      ),
     );
   }
 

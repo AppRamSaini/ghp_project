@@ -1,5 +1,6 @@
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/documents/delete_request/delete_request_cubit.dart';
 import 'package:ghp_society_management/controller/documents/outgoing_documents/outgoing_documents_cubit.dart';
 import 'package:ghp_society_management/controller/documents/send_request/send_request_docs_cubit.dart';
@@ -9,7 +10,6 @@ import 'package:ghp_society_management/view/resident/documents/send_request_docu
 import 'package:ghp_society_management/view/resident/documents/view_docs_details.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:intl/intl.dart';
-import 'package:searchbar_animation/searchbar_animation.dart';
 
 class OutgoingDocumentsScreen extends StatefulWidget {
   const OutgoingDocumentsScreen({super.key});
@@ -38,6 +38,7 @@ class _OutgoingDocumentsScreenState extends State<OutgoingDocumentsScreen> {
   initCubit() {
     outgoingDocumentsCubit = OutgoingDocumentsCubit();
     outgoingDocumentsCubit.getOutgoingDocumentsAPI('all');
+    context.read<DocumentElementsCubit>().fetchDocumentElement();
   }
 
   late BuildContext dialogueContext;
@@ -261,10 +262,7 @@ class _OutgoingDocumentsScreenState extends State<OutgoingDocumentsScreen> {
                     } else if (state is OutgoingDocumentsLoaded) {
                       List<RequestData> documentsList = state.outgoingDocuments;
                       if (documentsList.isEmpty) {
-                        return const Center(
-                            child: Text("Documents not found!",
-                                style:
-                                    TextStyle(color: Colors.deepPurpleAccent)));
+                        return emptyDataWidget("Documents not found!");
                       }
                       return ListView.builder(
                         shrinkWrap: true,
@@ -338,16 +336,9 @@ class _OutgoingDocumentsScreenState extends State<OutgoingDocumentsScreen> {
                         },
                       );
                     } else if (state is OutgoingDocumentsLoading) {
-                      return const Center(
-                          child: CircularProgressIndicator.adaptive(
-                              backgroundColor: Colors.deepPurpleAccent));
+                      return notificationShimmerLoading();
                     } else if (state is OutgoingDocumentsFailed) {
-                      return Padding(
-                          padding: const EdgeInsets.all(25),
-                          child: Center(
-                              child: Text(state.errorMsg.toString(),
-                                  style: const TextStyle(
-                                      color: Colors.deepPurpleAccent))));
+                      return emptyDataWidget(state.errorMsg.toString());
                     } else if (state is OutgoingDocumentsInternetError) {
                       return Padding(
                           padding: const EdgeInsets.all(25),
@@ -376,6 +367,7 @@ List<Map<String, dynamic>> optionsList2 = [
   {"icon": Icons.visibility, "menu": "View", "menu_id": 1},
   {"icon": Icons.download_rounded, "menu": "Download", "menu_id": 2},
 ];
+
 Widget popMenus(
     {required List<Map<String, dynamic>> options,
     required BuildContext context,

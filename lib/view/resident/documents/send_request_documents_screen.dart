@@ -50,12 +50,7 @@ class _SendDocumentsRequestScreeState extends State<SendDocumentsRequestScree> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('Send Request',
-            style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(title: 'Send Request'),
         bottomNavigationBar: Container(
           color: Colors.white,
           child: GestureDetector(
@@ -142,16 +137,13 @@ class _SendDocumentsRequestScreeState extends State<SendDocumentsRequestScree> {
                         fillColor: AppTheme.greyColor,
                         errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           borderSide: BorderSide(
@@ -171,36 +163,29 @@ class _SendDocumentsRequestScreeState extends State<SendDocumentsRequestScree> {
                         ),
                       )),
                   SizedBox(height: 10.h),
-                  BlocBuilder<DocumentElementsCubit,
-                      DocumentElementsState>(
+                  BlocBuilder<DocumentElementsCubit, DocumentElementsState>(
                     builder: (context, state) {
                       if (state is DocumentElementLoaded) {
-
                         return DropdownButton2<String>(
-                          underline:
-                              Container(color: Colors.transparent),
+                          underline: Container(color: Colors.transparent),
                           isExpanded: true,
                           value: selectedValue,
                           hint: Text('Select document type',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 14))),
-                          items: state.documentElement.first.data
-                              .documentsTypes
+                                      color: Colors.grey, fontSize: 14))),
+                          items: state.documentElement.first.data.documentsTypes
                               .map((item) => DropdownMenuItem<String>(
                                     onTap: () {
                                       setState(() {
-                                        selectedDocId =
-                                            item.id.toInt();
+                                        selectedDocId = item.id.toInt();
                                       });
                                     },
                                     value: item.type,
                                     child: Text(
                                       item.type,
                                       style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black),
+                                          fontSize: 14, color: Colors.black),
                                     ),
                                   ))
                               .toList(),
@@ -226,16 +211,14 @@ class _SendDocumentsRequestScreeState extends State<SendDocumentsRequestScree> {
                             ),
                           ),
                           dropdownStyleData: DropdownStyleData(
-                            maxHeight:
-                                MediaQuery.sizeOf(context).height / 2,
+                            maxHeight: MediaQuery.sizeOf(context).height / 2,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   10), // Set border radius for dropdown
                             ),
                           ),
                           menuItemStyleData: const MenuItemStyleData(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                           ),
                         );
                       } else {

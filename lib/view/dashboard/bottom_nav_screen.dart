@@ -1,5 +1,6 @@
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/controller/notification/notification_listing/notification_list_cubit.dart';
+import 'package:ghp_society_management/controller/property_listing/property_listing_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/refer_property_element/refer_property_element_cubit.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_element/sos_element_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/incoming_request/incoming_request_cubit.dart';
@@ -24,12 +25,7 @@ class DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    context.read<IncomingRequestCubit>().fetchIncomingRequest();
-    context.read<VisitorsElementCubit>().fetchVisitorsElement();
-    context.read<DocumentElementsCubit>().fetchDocumentElement();
-    context.read<ReferPropertyElementCubit>().fetchReferPropetyElement();
-    context.read<SosElementCubit>().fetchSosElement();
-    context.read<MembersElementCubit>().fetchMembersElement();
+    context.read<PropertyListingCubit>().propertyListApi();
     context.read<NotificationListingCubit>().fetchNotifications();
   }
 
@@ -46,8 +42,6 @@ class DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    context.read<NotificationListingCubit>().fetchNotifications();
-
     return WillPopScope(
       onWillPop: () async {
         exitPageConfirmationDialog(context);
@@ -55,6 +49,16 @@ class DashboardState extends State<Dashboard> {
       },
       child: MultiBlocListener(
         listeners: [
+          BlocListener<PropertyListingCubit, PropertyListingState>(
+            listener: (context, state) {
+              if (state is PropertyListingLoaded) {
+                context.read<UserProfileCubit>().fetchUserProfile();
+                context
+                    .read<MyBillsCubit>()
+                    .fetchMyBills(context: context, billTypes: "all");
+              }
+            },
+          ),
           BlocListener<IncomingRequestCubit, IncomingRequestState>(
             listener: (context, state) {
               if (state is IncomingRequestLoaded) {

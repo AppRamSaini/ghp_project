@@ -1,45 +1,51 @@
+// To parse this JSON data, do
+//
+//     final selectSocietyModel = selectSocietyModelFromJson(jsonString);
+
+import 'dart:convert';
+
+SelectSocietyModel selectSocietyModelFromJson(String str) => SelectSocietyModel.fromJson(json.decode(str));
+
+String selectSocietyModelToJson(SelectSocietyModel data) => json.encode(data.toJson());
+
 class SelectSocietyModel {
   bool? status;
   String? message;
   Data? data;
 
-  SelectSocietyModel({this.status, this.message, this.data});
+  SelectSocietyModel({
+    this.status,
+    this.message,
+    this.data,
+  });
 
-  SelectSocietyModel.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
-  }
+  factory SelectSocietyModel.fromJson(Map<String, dynamic> json) => SelectSocietyModel(
+    status: json["status"],
+    message: json["message"],
+    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['message'] = this.message;
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "status": status,
+    "message": message,
+    "data": data?.toJson(),
+  };
 }
 
 class Data {
   Societies? societies;
 
-  Data({this.societies});
+  Data({
+    this.societies,
+  });
 
-  Data.fromJson(Map<String, dynamic> json) {
-    societies = json['societies'] != null
-        ? new Societies.fromJson(json['societies'])
-        : null;
-  }
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+    societies: json["societies"] == null ? null : Societies.fromJson(json["societies"]),
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.societies != null) {
-      data['societies'] = this.societies!.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "societies": societies?.toJson(),
+  };
 }
 
 class Societies {
@@ -49,76 +55,61 @@ class Societies {
   int? from;
   int? lastPage;
   String? lastPageUrl;
-  List<Links>? links;
-  var nextPageUrl;
+  List<Link>? links;
+  dynamic nextPageUrl;
   String? path;
   int? perPage;
-  var prevPageUrl;
+  dynamic prevPageUrl;
   int? to;
   int? total;
 
-  Societies(
-      {this.currentPage,
-      this.data,
-      this.firstPageUrl,
-      this.from,
-      this.lastPage,
-      this.lastPageUrl,
-      this.links,
-      this.nextPageUrl,
-      this.path,
-      this.perPage,
-      this.prevPageUrl,
-      this.to,
-      this.total});
+  Societies({
+    this.currentPage,
+    this.data,
+    this.firstPageUrl,
+    this.from,
+    this.lastPage,
+    this.lastPageUrl,
+    this.links,
+    this.nextPageUrl,
+    this.path,
+    this.perPage,
+    this.prevPageUrl,
+    this.to,
+    this.total,
+  });
 
-  Societies.fromJson(Map<String, dynamic> json) {
-    currentPage = json['current_page'];
-    if (json['data'] != null) {
-      data = <SocietyList>[];
-      json['data'].forEach((v) {
-        data!.add(SocietyList.fromJson(v));
-      });
-    }
-    firstPageUrl = json['first_page_url'];
-    from = json['from'];
-    lastPage = json['last_page'];
-    lastPageUrl = json['last_page_url'];
-    if (json['links'] != null) {
-      links = <Links>[];
-      json['links'].forEach((v) {
-        links!.add(new Links.fromJson(v));
-      });
-    }
-    nextPageUrl = json['next_page_url'];
-    path = json['path'];
-    perPage = json['per_page'];
-    prevPageUrl = json['prev_page_url'];
-    to = json['to'];
-    total = json['total'];
-  }
+  factory Societies.fromJson(Map<String, dynamic> json) => Societies(
+    currentPage: json["current_page"],
+    data: json["data"] == null ? [] : List<SocietyList>.from(json["data"]!.map((x) => SocietyList.fromJson(x))),
+    firstPageUrl: json["first_page_url"],
+    from: json["from"],
+    lastPage: json["last_page"],
+    lastPageUrl: json["last_page_url"],
+    links: json["links"] == null ? [] : List<Link>.from(json["links"]!.map((x) => Link.fromJson(x))),
+    nextPageUrl: json["next_page_url"],
+    path: json["path"],
+    perPage: json["per_page"],
+    prevPageUrl: json["prev_page_url"],
+    to: json["to"],
+    total: json["total"],
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['current_page'] = this.currentPage;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    data['first_page_url'] = this.firstPageUrl;
-    data['from'] = this.from;
-    data['last_page'] = this.lastPage;
-    data['last_page_url'] = this.lastPageUrl;
-    if (this.links != null) {
-      data['links'] = this.links!.map((v) => v.toJson()).toList();
-    }
-    data['next_page_url'] = this.nextPageUrl;
-    data['path'] = this.path;
-    data['per_page'] = this.perPage;
-    data['prev_page_url'] = this.prevPageUrl;
-    data['to'] = this.to;
-    data['total'] = this.total;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "current_page": currentPage,
+    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+    "first_page_url": firstPageUrl,
+    "from": from,
+    "last_page": lastPage,
+    "last_page_url": lastPageUrl,
+    "links": links == null ? [] : List<dynamic>.from(links!.map((x) => x.toJson())),
+    "next_page_url": nextPageUrl,
+    "path": path,
+    "per_page": perPage,
+    "prev_page_url": prevPageUrl,
+    "to": to,
+    "total": total,
+  };
 }
 
 class SocietyList {
@@ -128,194 +119,247 @@ class SocietyList {
   int? floors;
   String? status;
   int? floorUnits;
-  var memberId;
-  String? createdAt;
-  String? updatedAt;
-  var deletedAt;
+  dynamic memberId;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  dynamic deletedAt;
   String? city;
   String? state;
   String? pin;
   String? contact;
   String? email;
   String? registrationNum;
-  String? type;
+  Type? type;
   String? totalArea;
   int? totalTowers;
   String? amenities;
-  List<Blocks>? blocks;
+  List<Block>? blocks;
 
-  SocietyList(
-      {this.id,
-      this.name,
-      this.location,
-      this.floors,
-      this.status,
-      this.floorUnits,
-      this.memberId,
-      this.createdAt,
-      this.updatedAt,
-      this.deletedAt,
-      this.city,
-      this.state,
-      this.pin,
-      this.contact,
-      this.email,
-      this.registrationNum,
-      this.type,
-      this.totalArea,
-      this.totalTowers,
-      this.amenities,
-      this.blocks});
+  SocietyList({
+    this.id,
+    this.name,
+    this.location,
+    this.floors,
+    this.status,
+    this.floorUnits,
+    this.memberId,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.city,
+    this.state,
+    this.pin,
+    this.contact,
+    this.email,
+    this.registrationNum,
+    this.type,
+    this.totalArea,
+    this.totalTowers,
+    this.amenities,
+    this.blocks,
+  });
 
-  SocietyList.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    location = json['location'];
-    floors = json['floors'];
-    status = json['status'];
-    floorUnits = json['floor_units'];
-    memberId = json['member_id'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
-    city = json['city'];
-    state = json['state'];
-    pin = json['pin'];
-    contact = json['contact'];
-    email = json['email'];
-    registrationNum = json['registration_num'];
-    type = json['type'];
-    totalArea = json['total_area'];
-    totalTowers = json['total_towers'];
-    amenities = json['amenities'];
-    if (json['blocks'] != null) {
-      blocks = <Blocks>[];
-      json['blocks'].forEach((v) {
-        blocks!.add(new Blocks.fromJson(v));
-      });
-    }
-  }
+  factory SocietyList.fromJson(Map<String, dynamic> json) => SocietyList(
+    id: json["id"],
+    name: json["name"],
+    location: json["location"],
+    floors: json["floors"],
+    status: json["status"],
+    floorUnits: json["floor_units"],
+    memberId: json["member_id"],
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    deletedAt: json["deleted_at"],
+    city: json["city"],
+    state: json["state"],
+    pin: json["pin"],
+    contact: json["contact"],
+    email: json["email"],
+    registrationNum: json["registration_num"],
+    type: typeValues.map[json["type"]]!,
+    totalArea: json["total_area"],
+    totalTowers: json["total_towers"],
+    amenities: json["amenities"],
+    blocks: json["blocks"] == null ? [] : List<Block>.from(json["blocks"]!.map((x) => Block.fromJson(x))),
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['location'] = this.location;
-    data['floors'] = this.floors;
-    data['status'] = this.status;
-    data['floor_units'] = this.floorUnits;
-    data['member_id'] = this.memberId;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['pin'] = this.pin;
-    data['contact'] = this.contact;
-    data['email'] = this.email;
-    data['registration_num'] = this.registrationNum;
-    data['type'] = this.type;
-    data['total_area'] = this.totalArea;
-    data['total_towers'] = this.totalTowers;
-    data['amenities'] = this.amenities;
-    if (this.blocks != null) {
-      data['blocks'] = this.blocks!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "location": location,
+    "floors": floors,
+    "status": status,
+    "floor_units": floorUnits,
+    "member_id": memberId,
+    "created_at": createdAt?.toIso8601String(),
+    "updated_at": updatedAt?.toIso8601String(),
+    "deleted_at": deletedAt,
+    "city": city,
+    "state": state,
+    "pin": pin,
+    "contact": contact,
+    "email": email,
+    "registration_num": registrationNum,
+    "type": typeValues.reverse[type],
+    "total_area": totalArea,
+    "total_towers": totalTowers,
+    "amenities": amenities,
+    "blocks": blocks == null ? [] : List<dynamic>.from(blocks!.map((x) => x.toJson())),
+  };
 }
 
-class Blocks {
+class Block {
   int? id;
   String? propertyNumber;
   String? floor;
-  String? ownership;
+  dynamic ownership;
   String? bhk;
   String? totalFloor;
-  String? unitType;
+  Type? unitType;
   String? unitSize;
   int? unitQty;
-  String? name;
+  Name? name;
   int? totalUnits;
   int? societyId;
-  String? createdAt;
-  String? updatedAt;
-  var deletedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  dynamic deletedAt;
 
-  Blocks(
-      {this.id,
-      this.propertyNumber,
-      this.floor,
-      this.ownership,
-      this.bhk,
-      this.totalFloor,
-      this.unitType,
-      this.unitSize,
-      this.unitQty,
-      this.name,
-      this.totalUnits,
-      this.societyId,
-      this.createdAt,
-      this.updatedAt,
-      this.deletedAt});
+  Block({
+    this.id,
+    this.propertyNumber,
+    this.floor,
+    this.ownership,
+    this.bhk,
+    this.totalFloor,
+    this.unitType,
+    this.unitSize,
+    this.unitQty,
+    this.name,
+    this.totalUnits,
+    this.societyId,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+  });
 
-  Blocks.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    propertyNumber = json['property_number'];
-    floor = json['floor'];
-    ownership = json['ownership'];
-    bhk = json['bhk'];
-    totalFloor = json['total_floor'];
-    unitType = json['unit_type'];
-    unitSize = json['unit_size'];
-    unitQty = json['unit_qty'];
-    name = json['name'];
-    totalUnits = json['total_units'];
-    societyId = json['society_id'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
-  }
+  factory Block.fromJson(Map<String, dynamic> json) => Block(
+    id: json["id"],
+    propertyNumber: json["property_number"],
+    floor: json["floor"],
+    ownership: json["ownership"],
+    bhk: json["bhk"],
+    totalFloor: json["total_floor"],
+    unitType: typeValues.map[json["unit_type"]]!,
+    unitSize: json["unit_size"],
+    unitQty: json["unit_qty"],
+    name: nameValues.map[json["name"]]!,
+    totalUnits: json["total_units"],
+    societyId: json["society_id"],
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    deletedAt: json["deleted_at"],
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['property_number'] = this.propertyNumber;
-    data['floor'] = this.floor;
-    data['ownership'] = this.ownership;
-    data['bhk'] = this.bhk;
-    data['total_floor'] = this.totalFloor;
-    data['unit_type'] = this.unitType;
-    data['unit_size'] = this.unitSize;
-    data['unit_qty'] = this.unitQty;
-    data['name'] = this.name;
-    data['total_units'] = this.totalUnits;
-    data['society_id'] = this.societyId;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "property_number": propertyNumber,
+    "floor": floor,
+    "ownership": ownership,
+    "bhk": bhk,
+    "total_floor": totalFloor,
+    "unit_type": typeValues.reverse[unitType],
+    "unit_size": unitSize,
+    "unit_qty": unitQty,
+    "name": nameValues.reverse[name],
+    "total_units": totalUnits,
+    "society_id": societyId,
+    "created_at": createdAt?.toIso8601String(),
+    "updated_at": updatedAt?.toIso8601String(),
+    "deleted_at": deletedAt,
+  };
 }
 
-class Links {
+enum Name {
+  A,
+  A_4,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+  J,
+  K,
+  L,
+  TEST123,
+  TESTING_DUNNAY
+}
+
+final nameValues = EnumValues({
+  "A": Name.A,
+  "A-4": Name.A_4,
+  "B": Name.B,
+  "C": Name.C,
+  "D": Name.D,
+  "E": Name.E,
+  "F": Name.F,
+  "G": Name.G,
+  "H": Name.H,
+  "I": Name.I,
+  "J": Name.J,
+  "K": Name.K,
+  "L": Name.L,
+  "Test123": Name.TEST123,
+  "Testing Dunnay": Name.TESTING_DUNNAY
+});
+
+enum Type {
+  COMMERCIAL,
+  MIXED,
+  RESIDENTIAL
+}
+
+final typeValues = EnumValues({
+  "commercial": Type.COMMERCIAL,
+  "mixed": Type.MIXED,
+  "residential": Type.RESIDENTIAL
+});
+
+class Link {
   String? url;
   String? label;
   bool? active;
 
-  Links({this.url, this.label, this.active});
+  Link({
+    this.url,
+    this.label,
+    this.active,
+  });
 
-  Links.fromJson(Map<String, dynamic> json) {
-    url = json['url'];
-    label = json['label'];
-    active = json['active'];
-  }
+  factory Link.fromJson(Map<String, dynamic> json) => Link(
+    url: json["url"],
+    label: json["label"],
+    active: json["active"],
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['url'] = this.url;
-    data['label'] = this.label;
-    data['active'] = this.active;
-    return data;
+  Map<String, dynamic> toJson() => {
+    "url": url,
+    "label": label,
+    "active": active,
+  };
+}
+
+class EnumValues<T> {
+  Map<String, T> map;
+  late Map<T, String> reverseMap;
+
+  EnumValues(this.map);
+
+  Map<T, String> get reverse {
+    reverseMap = map.map((k, v) => MapEntry(v, k));
+    return reverseMap;
   }
 }

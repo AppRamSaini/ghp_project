@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final userProfileModel = userProfileModelFromJson(jsonString);
-
 import 'dart:convert';
 
 UserProfileModel userProfileModelFromJson(String str) =>
@@ -13,84 +9,83 @@ String userProfileModelToJson(UserProfileModel data) =>
 class UserProfileModel {
   bool? status;
   String? message;
-  Data? data;
+  UserProfileData? data;
 
-  UserProfileModel({
-    this.status,
-    this.message,
-    this.data,
-  });
+  UserProfileModel({this.status, this.message, this.data});
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) =>
       UserProfileModel(
-        status: json["status"],
-        message: json["message"],
-        data: json["data"] == null ? null : Data.fromJson(json["data"]),
-      );
+          status: json["status"],
+          message: json["message"],
+          data: json["data"] == null ? null : UserProfileData.fromJson(json["data"]));
 
-  Map<String, dynamic> toJson() => {
-        "status": status,
-        "message": message,
-        "data": data?.toJson(),
-      };
+  Map<String, dynamic> toJson() =>
+      {"status": status, "message": message, "data": data?.toJson()};
 }
 
-class Data {
+class UserProfileData {
   User? user;
   List<UnpaidBill>? unpaidBills;
 
-  Data({
+  UserProfileData({
     this.user,
     this.unpaidBills,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-        user: json["user"] == null ? null : User.fromJson(json["user"]),
-        unpaidBills: json["unpaid_bills"] == null
-            ? []
-            : List<UnpaidBill>.from(
-                json["unpaid_bills"]!.map((x) => UnpaidBill.fromJson(x))),
-      );
+  factory UserProfileData.fromJson(Map<String, dynamic> json) => UserProfileData(
+      user: json["user"] == null ? null : User.fromJson(json["user"]),
+      unpaidBills: json["unpaid_bills"] == null
+          ? []
+          : List<UnpaidBill>.from(
+              json["unpaid_bills"]!.map((x) => UnpaidBill.fromJson(x))));
 
   Map<String, dynamic> toJson() => {
         "user": user?.toJson(),
         "unpaid_bills": unpaidBills == null
             ? []
-            : List<dynamic>.from(unpaidBills!.map((x) => x.toJson())),
+            : List<dynamic>.from(unpaidBills!.map((x) => x.toJson()))
       };
 }
 
 class UnpaidBill {
   int? id;
   int? userId;
+  int? memberId;
   int? serviceId;
   String? billType;
-  String? amount;
-  DateTime? dueDate;
+  String? installment;
   int? societyId;
-  int? createdBy;
   String? invoiceNumber;
+  dynamic paymentLink;
+  String? paymentStatus;
   String? status;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  dynamic deletedAt;
+  String? amount;
+  String? advanceAmount;
+  String? prevMonthPending;
+  DateTime? paymentDate;
+  DateTime? dueDate;
+  int? collectorId;
   int? dueDateRemainDays;
   int? dueDateDelayDays;
 
   UnpaidBill({
     this.id,
     this.userId,
+    this.memberId,
     this.serviceId,
     this.billType,
-    this.amount,
-    this.dueDate,
+    this.installment,
     this.societyId,
-    this.createdBy,
     this.invoiceNumber,
+    this.paymentLink,
+    this.paymentStatus,
     this.status,
-    this.createdAt,
-    this.updatedAt,
-    this.deletedAt,
+    this.amount,
+    this.advanceAmount,
+    this.prevMonthPending,
+    this.paymentDate,
+    this.dueDate,
+    this.collectorId,
     this.dueDateRemainDays,
     this.dueDateDelayDays,
   });
@@ -98,22 +93,24 @@ class UnpaidBill {
   factory UnpaidBill.fromJson(Map<String, dynamic> json) => UnpaidBill(
         id: json["id"],
         userId: json["user_id"],
+        memberId: json["member_id"],
         serviceId: json["service_id"],
         billType: json["bill_type"],
+        installment: json["installment"],
+        societyId: json["society_id"],
+        invoiceNumber: json["invoice_number"],
+        paymentLink: json["payment_link"],
+        paymentStatus: json["payment_status"],
+        status: json["status"],
         amount: json["amount"],
+        advanceAmount: json["advance_amount"],
+        prevMonthPending: json["prev_month_pending"],
+        paymentDate: json["payment_date"] == null
+            ? null
+            : DateTime.parse(json["payment_date"]),
         dueDate:
             json["due_date"] == null ? null : DateTime.parse(json["due_date"]),
-        societyId: json["society_id"],
-        createdBy: json["created_by"],
-        invoiceNumber: json["invoice_number"],
-        status: json["status"],
-        createdAt: json["created_at"] == null
-            ? null
-            : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null
-            ? null
-            : DateTime.parse(json["updated_at"]),
-        deletedAt: json["deleted_at"],
+        collectorId: json["collector_id"],
         dueDateRemainDays: json["due_date_remain_days"],
         dueDateDelayDays: json["due_date_delay_days"],
       );
@@ -121,18 +118,22 @@ class UnpaidBill {
   Map<String, dynamic> toJson() => {
         "id": id,
         "user_id": userId,
+        "member_id": memberId,
         "service_id": serviceId,
         "bill_type": billType,
+        "installment": installment,
+        "society_id": societyId,
+        "invoice_number": invoiceNumber,
+        "payment_link": paymentLink,
+        "payment_status": paymentStatus,
+        "status": status,
         "amount": amount,
+        "advance_amount": advanceAmount,
+        "prev_month_pending": prevMonthPending,
+        "payment_date": paymentDate?.toIso8601String(),
         "due_date":
             "${dueDate!.year.toString().padLeft(4, '0')}-${dueDate!.month.toString().padLeft(2, '0')}-${dueDate!.day.toString().padLeft(2, '0')}",
-        "society_id": societyId,
-        "created_by": createdBy,
-        "invoice_number": invoiceNumber,
-        "status": status,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
-        "deleted_at": deletedAt,
+        "collector_id": collectorId,
         "due_date_remain_days": dueDateRemainDays,
         "due_date_delay_days": dueDateDelayDays,
       };
@@ -154,17 +155,14 @@ class User {
   String? societyName;
   String? unitType;
   String? floorNumber;
-  String? blockName;
   String? aprtNo;
-  BlockInfo? blockInfo;
+  Property? property;
   dynamic categoryName;
   dynamic categoryId;
-  int? memberId;
   int? societyId;
   dynamic staffId;
   String? imageUrl;
   LastCheckinDetail? lastCheckinDetail;
-  List<UnpaidBill>? myUnpaidBills;
 
   User({
     this.id,
@@ -182,17 +180,14 @@ class User {
     this.societyName,
     this.unitType,
     this.floorNumber,
-    this.blockName,
     this.aprtNo,
-    this.blockInfo,
+    this.property,
     this.categoryName,
     this.categoryId,
-    this.memberId,
     this.societyId,
     this.staffId,
     this.imageUrl,
     this.lastCheckinDetail,
-    this.myUnpaidBills,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -215,24 +210,16 @@ class User {
         societyName: json["society_name"],
         unitType: json["unit_type"],
         floorNumber: json["floor_number"],
-        blockName: json["block_name"],
         aprtNo: json["aprt_no"],
-        blockInfo: json["block_info"] == null
+        property: json["property"] == null
             ? null
-            : BlockInfo.fromJson(json["block_info"]),
+            : Property.fromJson(json["property"]),
         categoryName: json["category_name"],
         categoryId: json["category_id"],
-        memberId: json["member_id"],
         societyId: json["society_id"],
         staffId: json["staff_id"],
         imageUrl: json["image_url"],
-        lastCheckinDetail: json["last_checkin_detail"] == null
-            ? null
-            : LastCheckinDetail.fromJson(json["last_checkin_detail"]),
-        myUnpaidBills: json["my_unpaid_bills"] == null
-            ? []
-            : List<UnpaidBill>.from(
-                json["my_unpaid_bills"]!.map((x) => UnpaidBill.fromJson(x))),
+        lastCheckinDetail: json["last_checkin_detail"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -251,95 +238,70 @@ class User {
         "society_name": societyName,
         "unit_type": unitType,
         "floor_number": floorNumber,
-        "block_name": blockName,
         "aprt_no": aprtNo,
-        "block_info": blockInfo?.toJson(),
+        "property": property?.toJson(),
         "category_name": categoryName,
         "category_id": categoryId,
-        "member_id": memberId,
         "society_id": societyId,
         "staff_id": staffId,
         "image_url": imageUrl,
-        "last_checkin_detail": lastCheckinDetail?.toJson(),
-        "my_unpaid_bills": myUnpaidBills == null
-            ? []
-            : List<dynamic>.from(myUnpaidBills!.map((x) => x.toJson())),
+        "last_checkin_detail": lastCheckinDetail,
       };
 }
 
-class BlockInfo {
+class Property {
   int? id;
-  String? propertyNumber;
-  String? floor;
-  String? ownership;
-  String? bhk;
-  String? totalFloor;
-  String? unitType;
-  String? unitSize;
-  int? unitQty;
   String? name;
-  int? totalUnits;
-  int? societyId;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  dynamic deletedAt;
+  String? floorNumber;
+  String? unitType;
+  String? aprtNo;
+  String? email;
+  String? phone;
+  int? blockId;
+  String? blockName;
+  String? bhk;
+  String? unitSize;
 
-  BlockInfo({
+  Property({
     this.id,
-    this.propertyNumber,
-    this.floor,
-    this.ownership,
-    this.bhk,
-    this.totalFloor,
-    this.unitType,
-    this.unitSize,
-    this.unitQty,
     this.name,
-    this.totalUnits,
-    this.societyId,
-    this.createdAt,
-    this.updatedAt,
-    this.deletedAt,
+    this.floorNumber,
+    this.unitType,
+    this.aprtNo,
+    this.email,
+    this.phone,
+    this.blockId,
+    this.blockName,
+    this.bhk,
+    this.unitSize,
   });
 
-  factory BlockInfo.fromJson(Map<String, dynamic> json) => BlockInfo(
+  factory Property.fromJson(Map<String, dynamic> json) => Property(
         id: json["id"],
-        propertyNumber: json["property_number"],
-        floor: json["floor"],
-        ownership: json["ownership"],
-        bhk: json["bhk"],
-        totalFloor: json["total_floor"],
-        unitType: json["unit_type"],
-        unitSize: json["unit_size"],
-        unitQty: json["unit_qty"],
         name: json["name"],
-        totalUnits: json["total_units"],
-        societyId: json["society_id"],
-        createdAt: json["created_at"] == null
-            ? null
-            : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null
-            ? null
-            : DateTime.parse(json["updated_at"]),
-        deletedAt: json["deleted_at"],
+        floorNumber: json["floor_number"],
+        unitType: json["unit_type"],
+        aprtNo: json["aprt_no"],
+        email: json["email"],
+        phone: json["phone"],
+        blockId: json["block_id"],
+        blockName: json["block_name"],
+        bhk: json["bhk"],
+        unitSize: json["unit_size"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "property_number": propertyNumber,
-        "floor": floor,
-        "ownership": ownership,
-        "bhk": bhk,
-        "total_floor": totalFloor,
-        "unit_type": unitType,
-        "unit_size": unitSize,
-        "unit_qty": unitQty,
         "name": name,
-        "total_units": totalUnits,
-        "society_id": societyId,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
-        "deleted_at": deletedAt,
+        "floor_number": floorNumber,
+        "unit_type": unitType,
+        "aprt_no": aprtNo,
+        "email": email,
+        "phone": phone,
+        "block_id": blockId,
+        "block_name": blockName,
+        "bhk": bhk,
+        "unit_size": unitSize,
       };
 }
 

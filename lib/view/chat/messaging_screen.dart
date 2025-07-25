@@ -1,11 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ghp_society_management/constants/app_images.dart';
-import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/export.dart';
-import 'package:ghp_society_management/controller/chat/group_controller.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class MessagingScreen extends StatefulWidget {
@@ -56,36 +49,32 @@ class _MessagingScreenState extends State<MessagingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
         appBar: AppBar(
-          leading: widget.userImage.isEmpty
-              ? Image.asset(ImageAssets.chatImage, height: 50)
-              : CircleAvatar(
-              radius: 25.r,
-              backgroundColor: Colors.transparent,
-              backgroundImage: NetworkImage(widget.userImage)),
-            title:  Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(capitalizeWords(widget.userName.toString()),
-                      style: GoogleFonts.nunitoSans(
-                          textStyle: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600))),
-                  Text(
-                      widget.userCategory.isEmpty ||
-                          widget.userCategory == null
-                          ? "Resident"
-                          : capitalizeWords(widget.userCategory
-                          .toString()
-                          .replaceAll("_", ' ')),
-                      style: GoogleFonts.nunitoSans(
-                          textStyle: TextStyle(
-                              color: Colors.green,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600)))
-                ])),
+            leading: widget.userImage.isEmpty
+                ? Image.asset(ImageAssets.chatImage, height: 50)
+                : CircleAvatar(
+                    radius: 25.r,
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: NetworkImage(widget.userImage)),
+            title:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(capitalizeWords(widget.userName.toString()),
+                  style: GoogleFonts.nunitoSans(
+                      textStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600))),
+              Text(
+                  widget.userCategory.isEmpty || widget.userCategory == null
+                      ? "Resident"
+                      : capitalizeWords(
+                          widget.userCategory.toString().replaceAll("_", ' ')),
+                  style: GoogleFonts.nunitoSans(
+                      textStyle: TextStyle(
+                          color: Colors.red,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600)))
+            ])),
         body: Column(
           children: [
             Expanded(
@@ -95,17 +84,14 @@ class _MessagingScreenState extends State<MessagingScreen> {
                       .getGroupMessages(widget.groupId),
                   builder: (context, snapshot) {
                     print(widget.groupId);
-                    if (snapshot.data == null ||
-                        snapshot.data!.isEmpty) {
-                      return const Center(
-                          child: Text("No messages available"));
+                    if (snapshot.data == null || snapshot.data!.isEmpty) {
+                      return const Center(child: Text("No messages available"));
                     } else {
-                      WidgetsBinding.instance.addPostFrameCallback(
-                          (_) => _scrollToBottom());
+                      WidgetsBinding.instance
+                          .addPostFrameCallback((_) => _scrollToBottom());
                       context
                           .read<GroupCubit>()
-                          .markAllMessagesAsRead(
-                              widget.groupId, widget.userId);
+                          .markAllMessagesAsRead(widget.groupId, widget.userId);
 
                       var messages = snapshot.data!;
                       return ListView.builder(
@@ -114,8 +100,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
                         itemCount: messages.length,
                         itemBuilder: (context, index) {
                           final message = messages[index];
-                          final isMe =
-                              message.senderId == widget.userId;
+                          final isMe = message.senderId == widget.userId;
                           return Align(
                             alignment: isMe
                                 ? Alignment.centerRight
@@ -128,77 +113,53 @@ class _MessagingScreenState extends State<MessagingScreen> {
                                     : CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    padding:
-                                        const EdgeInsets.symmetric(
-                                            vertical: 5,
-                                            horizontal: 15),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5, horizontal: 15),
                                     decoration: BoxDecoration(
                                         color: isMe
-                                            ? const Color(
-                                                0xFF8077F5)
+                                            ? Colors.grey
                                             : Colors.grey[200],
-                                        borderRadius:
-                                            BorderRadius.only(
-                                          topLeft: Radius.circular(
-                                              isMe ? 0 : 20),
-                                          topRight:
-                                              const Radius.circular(
-                                                  20),
-                                          bottomLeft:
-                                              const Radius.circular(
-                                                  20),
-                                          bottomRight:
-                                              Radius.circular(
-                                                  isMe ? 20 : 0),
-                                        )),
+                                        borderRadius: BorderRadius.only(
+                                            topLeft:
+                                                Radius.circular(isMe ? 0 : 20),
+                                            topRight: const Radius.circular(20),
+                                            bottomLeft:
+                                                const Radius.circular(20),
+                                            bottomRight: Radius.circular(
+                                                isMe ? 20 : 0))),
                                     child: Column(
                                       crossAxisAlignment: isMe
                                           ? CrossAxisAlignment.end
-                                          : CrossAxisAlignment
-                                              .start,
+                                          : CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                            messages[index]
-                                                .message!,
+                                        Text(messages[index].message!,
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 color: isMe
                                                     ? Colors.white
-                                                    : Colors
-                                                        .black)),
+                                                    : Colors.black)),
                                         const SizedBox(height: 5),
                                         Row(
-                                          mainAxisSize:
-                                              MainAxisSize.min,
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Text(
-                                                _formatDate(message
-                                                    .timestamp!
+                                                _formatDate(message.timestamp!
                                                     .toDate()),
                                                 style: TextStyle(
                                                     fontSize: 8,
                                                     color: isMe
-                                                        ? Colors
-                                                            .white
-                                                        : Colors
-                                                            .black)),
+                                                        ? Colors.white
+                                                        : Colors.black)),
                                             SizedBox(width: 5.w),
                                             if (isMe) ...[
-                                              message.readBy.any(
-                                                      (id) =>
-                                                          id !=
-                                                          widget
-                                                              .userId)
-                                                  ? Icon(
-                                                      Icons
-                                                          .done_all,
+                                              message.readBy.any((id) =>
+                                                      id != widget.userId)
+                                                  ? Icon(Icons.done_all,
                                                       size: 15.sp,
-                                                      color: Colors
-                                                          .white)
+                                                      color: Colors.white)
                                                   : Icon(Icons.done,
                                                       size: 15.sp,
-                                                      color: Colors
-                                                          .white),
+                                                      color: Colors.white),
                                             ]
                                           ],
                                         ),
@@ -216,8 +177,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
             ),
             Container(
                 color: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: TextFormField(
@@ -237,29 +197,25 @@ class _MessagingScreenState extends State<MessagingScreen> {
                             fontWeight: FontWeight.w400),
                         fillColor: AppTheme.greyColor,
                         errorBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(30.0),
+                          borderRadius: BorderRadius.circular(30.0),
                           borderSide: BorderSide(
                             color: AppTheme.greyColor,
                           ),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(30.0),
+                          borderRadius: BorderRadius.circular(30.0),
                           borderSide: BorderSide(
                             color: AppTheme.greyColor,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(30.0),
+                          borderRadius: BorderRadius.circular(30.0),
                           borderSide: BorderSide(
                             color: AppTheme.greyColor,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(30.0),
+                          borderRadius: BorderRadius.circular(30.0),
                           borderSide: BorderSide(
                             color: AppTheme.greyColor,
                           ),
@@ -268,20 +224,16 @@ class _MessagingScreenState extends State<MessagingScreen> {
                     ),
                     trailing: GestureDetector(
                         onTap: () {
-                          if (messagingController
-                              .text.isNotEmpty) {
-                            context
-                                .read<GroupCubit>()
-                                .sendGroupMessage(
-                                    messagingController.text,
-                                    widget.groupId,
-                                    widget.userName,
-                                    widget.userId);
+                          if (messagingController.text.isNotEmpty) {
+                            context.read<GroupCubit>().sendGroupMessage(
+                                messagingController.text,
+                                widget.groupId,
+                                widget.userName,
+                                widget.userId);
                             messagingController.clear();
                           }
                         },
-                        child: Image.asset(
-                            ImageAssets.sendMessageImage,
+                        child: Image.asset(ImageAssets.sendMessageImage,
                             fit: BoxFit.cover,
                             color: Colors.deepPurpleAccent)))),
           ],
