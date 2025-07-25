@@ -120,124 +120,119 @@ class _CreateParcelSecurityStaffSideState
       pageBuilder: (context, anim1, anim2) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return GestureDetector(
-              onTap: () {}, // prevents closing the keyboard on tap outside
-              child: Scaffold(
-                backgroundColor: Colors.black.withOpacity(0.3),
-                body: Center(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 100),
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8)),
-                    width: MediaQuery.of(context).size.width,
-                    child: BlocBuilder<SearchMemberCubit, SearchMemberState>(
-                      bloc: _searchMemberCubit,
-                      builder: (_, state) {
-                        if (state is SearchMemberLoading) {
-                          return SizedBox();
-                        } else if (state is SearchMemberFailed) {
-                          return Center(
-                            child: Text(state.errorMessage.toString(),
-                                style: const TextStyle(
-                                    color: Colors.deepPurpleAccent)),
-                          );
-                        } else if (state is SearchMemberLoaded) {
-                          List<SearchMemberInfo>? filteredItems =
-                              state.searchMemberInfo;
+            return Scaffold(
+              backgroundColor: Colors.black.withOpacity(0.3),
+              body: Center(
+                child: Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 100),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8)),
+                  width: MediaQuery.of(context).size.width,
+                  child: BlocBuilder<SearchMemberCubit, SearchMemberState>(
+                    bloc: _searchMemberCubit,
+                    builder: (_, state) {
+                      if (state is SearchMemberLoading) {
+                        return SizedBox();
+                      } else if (state is SearchMemberFailed) {
+                        return Center(
+                          child: Text(state.errorMessage.toString(),
+                              style: const TextStyle(
+                                  color: Colors.deepPurpleAccent)),
+                        );
+                      } else if (state is SearchMemberLoaded) {
+                        List<SearchMemberInfo>? filteredItems =
+                            state.searchMemberInfo;
 
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("Select member",
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500)),
-                                  IconButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    icon: const Icon(Icons.clear,
-                                        color: Colors.black87),
-                                  ),
-                                ],
-                              ),
-                              Divider(
-                                  height: 0,
-                                  color: Colors.grey.withOpacity(0.5)),
-                              const SizedBox(height: 10),
-                              TextField(
-                                autofocus: true,
-                                controller: searchController,
-                                decoration: InputDecoration(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    isDense: true,
-                                    hintText: "Search...",
-                                    prefixIcon: const Icon(Icons.search),
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color:
-                                                Colors.grey.withOpacity(0.5)))),
-                                onChanged: (query) {
-                                  setState(() {
-                                    _searchMemberCubit
-                                        .fetchSearchMember(query.toLowerCase());
-                                  });
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              filteredItems == null || filteredItems.isEmpty
-                                  ? const Center(
-                                      child: Text("Member Not Found!",
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.deepPurpleAccent)))
-                                  : Expanded(
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: filteredItems.length,
-                                        itemBuilder: (context, index) {
-                                          final member = filteredItems[index];
-                                          return Container(
-                                            margin: const EdgeInsets.only(
-                                                bottom: 8),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
-                                                border: Border.all(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.5))),
-                                            child: ListTile(
-                                              dense: true,
-                                              title: Text(
-                                                  "${capitalizeWords(member.name.toString())} -  Floor(${member.floorNumber}) -  Aprt(${member.aprtNo}) - Tower(${member.block?.name})"),
-                                              onTap: () {
-                                                setState(() {
-                                                  residenceController.text =
-                                                      member.name.toString();
-                                                  residenceID =
-                                                      member.userId.toString();
-                                                });
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      ),
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text("Select member",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500)),
+                                IconButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  icon: const Icon(Icons.clear,
+                                      color: Colors.black87),
+                                ),
+                              ],
+                            ),
+                            Divider(
+                                height: 0, color: Colors.grey.withOpacity(0.5)),
+                            const SizedBox(height: 10),
+                            TextField(
+                              autofocus: true,
+                              controller: searchController,
+                              decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  isDense: true,
+                                  hintText: "Search...",
+                                  prefixIcon: const Icon(Icons.search),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color:
+                                              Colors.grey.withOpacity(0.5)))),
+                              onChanged: (query) {
+                                setState(() {
+                                  _searchMemberCubit
+                                      .fetchSearchMember(query.toLowerCase());
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            filteredItems == null || filteredItems.isEmpty
+                                ? const Center(
+                                    child: Text("Member Not Found!",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.deepPurpleAccent)))
+                                : Expanded(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: filteredItems.length,
+                                      itemBuilder: (context, index) {
+                                        final member = filteredItems[index];
+                                        return Container(
+                                          margin:
+                                              const EdgeInsets.only(bottom: 8),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                              border: Border.all(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5))),
+                                          child: ListTile(
+                                            dense: true,
+                                            title: Text(
+                                                "${capitalizeWords(member.name.toString())} -  Floor(${member.floorNumber}) -  Aprt(${member.aprtNo}) - Tower(${member.block?.name})"),
+                                            onTap: () {
+                                              setState(() {
+                                                residenceController.text =
+                                                    member.name.toString();
+                                                residenceID =
+                                                    member.userId.toString();
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        );
+                                      },
                                     ),
-                            ],
-                          );
-                        } else {
-                          return const Center(
-                              child: Text("Something went wrong!"));
-                        }
-                      },
-                    ),
+                                  ),
+                          ],
+                        );
+                      } else {
+                        return const Center(
+                            child: Text("Something went wrong!"));
+                      }
+                    },
                   ),
                 ),
               ),
