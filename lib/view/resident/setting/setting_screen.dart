@@ -405,9 +405,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     child: const Text("Internet connection error!",
                         style: TextStyle(fontSize: 16, color: Colors.red)));
               } else if (state is UserProfileFailed) {
-                return Center(
-                    child: const Text('Something went wrong!',
-                        style: TextStyle(fontSize: 16, color: Colors.red)));
+                return notificationShimmerLoading();
               } else {
                 return notificationShimmerLoading();
               }
