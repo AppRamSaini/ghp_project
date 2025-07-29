@@ -25,7 +25,7 @@ class DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    context.read<PropertyListingCubit>().propertyListApi();
+    context.read<PropertyListingCubit>().fetchPropertyList();
     context.read<NotificationListingCubit>().fetchNotifications();
   }
 

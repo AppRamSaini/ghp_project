@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:bloc/bloc.dart';
+
 import 'package:ghp_society_management/constants/config.dart';
 import 'package:ghp_society_management/constants/export.dart';
-import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
-import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
+
 // Part file for states
 part 'create_visitors_state.dart';
 

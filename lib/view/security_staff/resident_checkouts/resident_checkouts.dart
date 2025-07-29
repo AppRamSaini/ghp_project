@@ -253,8 +253,14 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Column(
+                                              Row(
                                                 children: [
+                                                  const Text(
+                                                    "Tower/Block : ",
+                                                    style: TextStyle(
+                                                        color: Colors.black54,
+                                                        fontSize: 12),
+                                                  ),
                                                   Text(
                                                       newHistoryLogs[index]
                                                           .resident!
@@ -266,37 +272,35 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           fontSize: 12)),
-                                                  const Text(
-                                                    "Tower Name",
-                                                    style: TextStyle(
-                                                        color: Colors.black54,
-                                                        fontSize: 12),
-                                                  ),
                                                 ],
                                               ),
-                                              Column(
+                                              // Column(
+                                              //   children: [
+                                              //     Text(
+                                              //         newHistoryLogs[index]
+                                              //             .resident!
+                                              //             .member!
+                                              //             .floorNumber
+                                              //             .toString(),
+                                              //         style: const TextStyle(
+                                              //             color: Colors.black,
+                                              //             fontWeight:
+                                              //                 FontWeight.w500,
+                                              //             fontSize: 12)),
+                                              //     const Text(
+                                              //       "Floor No",
+                                              //       style: TextStyle(
+                                              //           color: Colors.black54,
+                                              //           fontSize: 12),
+                                              //     ),
+                                              //   ],
+                                              // ),
+                                              Row(
                                                 children: [
-                                                  Text(
-                                                      newHistoryLogs[index]
-                                                          .resident!
-                                                          .member!
-                                                          .floorNumber
-                                                          .toString(),
-                                                      style: const TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w500,
+                                                  const Text("Property No : ",
+                                                      style: TextStyle(
+                                                          color: Colors.black54,
                                                           fontSize: 12)),
-                                                  const Text(
-                                                    "Floor No",
-                                                    style: TextStyle(
-                                                        color: Colors.black54,
-                                                        fontSize: 12),
-                                                  ),
-                                                ],
-                                              ),
-                                              Column(
-                                                children: [
                                                   Text(
                                                       newHistoryLogs[index]
                                                           .resident!
@@ -308,12 +312,6 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           fontSize: 12)),
-                                                  const Text(
-                                                    "Property No",
-                                                    style: TextStyle(
-                                                        color: Colors.black54,
-                                                        fontSize: 12),
-                                                  ),
                                                 ],
                                               )
                                             ],

@@ -726,7 +726,7 @@ Widget customVisitorsWidget(
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text('Tower Name ',
+                            Text('Tower/Block Name ',
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
                                         color: Colors.black54,
@@ -738,21 +738,21 @@ Widget customVisitorsWidget(
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.w600)))
                           ]),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text('Floor ',
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 12.sp))),
-                            Text(visitorsData.member!.floorNumber.toString(),
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w600)))
-                          ]),
+                      // Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.center,
+                      //     children: [
+                      //       Text('Floor ',
+                      //           style: GoogleFonts.nunitoSans(
+                      //               textStyle: TextStyle(
+                      //                   color: Colors.black54,
+                      //                   fontSize: 12.sp))),
+                      //       Text(visitorsData.member!.floorNumber.toString(),
+                      //           style: GoogleFonts.nunitoSans(
+                      //               textStyle: TextStyle(
+                      //                   color: Colors.black,
+                      //                   fontSize: 12.sp,
+                      //                   fontWeight: FontWeight.w600)))
+                      //     ]),
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [

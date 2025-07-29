@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_in/check_in_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_out/check_out_cubit.dart';
@@ -68,7 +69,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
     String dateTime = getDateTime();
     if (visitorsData.status == 'inactive') {
       snackBarMsg(context,
-          "User has been blocked by resident. Please contact to resident");
+          "This visitor has been blocked by resident. Please contact to resident");
       onBack(buildContext);
     } else {
       var lastCheckinDetail = visitorsData.lastCheckinDetail;
@@ -156,9 +157,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
             bloc: _visitorsDetailsCubit,
             builder: (context, state) {
               if (state is VisitorsDetailsLoading) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive(
-                        backgroundColor: Colors.deepPurpleAccent));
+                return notificationShimmerLoading();
               } else if (state is VisitorsDetailsLoaded) {
                 List<VisitorsDetails> visitorsData = state.visitorDetails;
 
@@ -574,7 +573,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              Text('Tower Name ',
+                                              Text('Tower/Block Name ',
                                                   style: GoogleFonts.nunitoSans(
                                                       textStyle: TextStyle(
                                                           color: Colors.black54,
@@ -590,26 +589,26 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                                           fontWeight:
                                                               FontWeight.w600)))
                                             ]),
-                                        Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Text('Floor ',
-                                                  style: GoogleFonts.nunitoSans(
-                                                      textStyle: TextStyle(
-                                                          color: Colors.black54,
-                                                          fontSize: 14.sp))),
-                                              Text(
-                                                  visitorsData
-                                                      .first.member!.floorNumber
-                                                      .toString(),
-                                                  style: GoogleFonts.nunitoSans(
-                                                      textStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 14.sp,
-                                                          fontWeight:
-                                                              FontWeight.w600)))
-                                            ]),
+                                        // Column(
+                                        //     crossAxisAlignment:
+                                        //         CrossAxisAlignment.center,
+                                        //     children: [
+                                        //       Text('Floor ',
+                                        //           style: GoogleFonts.nunitoSans(
+                                        //               textStyle: TextStyle(
+                                        //                   color: Colors.black54,
+                                        //                   fontSize: 14.sp))),
+                                        //       Text(
+                                        //           visitorsData
+                                        //               .first.member!.floorNumber
+                                        //               .toString(),
+                                        //           style: GoogleFonts.nunitoSans(
+                                        //               textStyle: TextStyle(
+                                        //                   color: Colors.black,
+                                        //                   fontSize: 14.sp,
+                                        //                   fontWeight:
+                                        //                       FontWeight.w600)))
+                                        //     ]),
                                         Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,

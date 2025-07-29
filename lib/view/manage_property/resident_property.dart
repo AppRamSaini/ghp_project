@@ -24,7 +24,7 @@ class _ManagePropertyState extends State<ManageProperty> {
   void initState() {
     super.initState();
     _propertyListingCubit = PropertyListingCubit();
-    _propertyListingCubit.propertyListApi();
+    _propertyListingCubit.fetchPropertyList();
   }
 
   @override

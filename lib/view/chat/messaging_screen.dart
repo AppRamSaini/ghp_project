@@ -51,11 +51,16 @@ class _MessagingScreenState extends State<MessagingScreen> {
     return Scaffold(
         appBar: AppBar(
             leading: widget.userImage.isEmpty
-                ? Image.asset(ImageAssets.chatImage, height: 50)
-                : CircleAvatar(
-                    radius: 25.r,
-                    backgroundColor: Colors.transparent,
-                    backgroundImage: NetworkImage(widget.userImage)),
+                ? Image.asset(ImageAssets.chatImage,
+                    height: 50, color: AppTheme.white)
+                : FadeInImage(
+                    placeholder: AssetImage(ImageAssets.chatImage),
+                    image: NetworkImage(widget.userImage),
+                    imageErrorBuilder: (c, s, p) => Image.asset(
+                        ImageAssets.chatImage,
+                        height: 50,
+                        color: AppTheme.white),
+                  ),
             title:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(capitalizeWords(widget.userName.toString()),

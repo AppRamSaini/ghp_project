@@ -58,8 +58,6 @@ Widget shimmerListTile(Size size) {
   );
 }
 
-
-
 /// dashboard page simmer effects\
 Widget dashboardSimmerLoading(BuildContext context,
     {bool forHomePage = false}) {
@@ -126,6 +124,7 @@ Widget notificationShimmerLoading() => ListView.separated(
             SizedBox(height: 8),
           ],
         ));
+
 Widget shimmerText({required double width, required double height}) {
   return Shimmer.fromColors(
     baseColor: Colors.grey.shade300,
@@ -147,7 +146,6 @@ Widget shimmerCard({required double height}) {
     highlightColor: Colors.grey.shade100,
     child: Container(
       height: height,
-
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: Colors.grey,
@@ -171,43 +169,42 @@ Widget shimmerButton({required double width, required double height}) {
   );
 }
 
-
 /// service provider simmer
 
-/// dashboard page simmer effects\
-Widget gridviewSimmerLoading(BuildContext context,
-    {bool forHomePage = false}) {
-  final size = MediaQuery.of(context).size;
-
-  return Scaffold(
-    body: SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-        child: MasonryGridView.count(
-          crossAxisCount: 3,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: 100,
-          itemBuilder: (context, index) {
-            return Shimmer.fromColors(
-              baseColor: Colors.grey.shade300,
-              highlightColor: Colors.grey.shade100,
-              child: Container(
-                height: 100,
-                width: 100,
-
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey,
-                ),
-              ),
-            );
-          },
-
-        ),
-      ),
-    ),
-  );
-}
+// /// dashboard page simmer effects\
+// Widget gridviewSimmerLoading(BuildContext context,
+//     {bool forHomePage = false}) {
+//   final size = MediaQuery.of(context).size;
+//
+//   return Scaffold(
+//     body: SingleChildScrollView(
+//       child: Padding(
+//         padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+//         child: MasonryGridView.count(
+//           crossAxisCount: 3,
+//           mainAxisSpacing: 10,
+//           crossAxisSpacing: 10,
+//           shrinkWrap: true,
+//           physics: NeverScrollableScrollPhysics(),
+//           itemCount: 100,
+//           itemBuilder: (context, index) {
+//             return Shimmer.fromColors(
+//               baseColor: Colors.grey.shade300,
+//               highlightColor: Colors.grey.shade100,
+//               child: Container(
+//                 height: 100,
+//                 width: 100,
+//
+//                 decoration: BoxDecoration(
+//                   shape: BoxShape.circle,
+//                   color: Colors.grey,
+//                 ),
+//               ),
+//             );
+//           },
+//
+//         ),
+//       ),
+//     ),
+//   );
+// }

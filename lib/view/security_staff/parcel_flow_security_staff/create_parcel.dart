@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -13,8 +12,8 @@ import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/members/search_member/search_member_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/create_parcel/create_parcel_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_element/parcel_element_cubit.dart';
-import 'package:ghp_society_management/model/search_member_modal.dart';
 import 'package:ghp_society_management/view/resident/visitors/add_visitor_screen.dart';
+import 'package:ghp_society_management/view/security_staff/select_residents.dart';
 import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -42,6 +41,7 @@ class _CreateParcelSecurityStaffSideState
   TextEditingController? time = TextEditingController();
   String? parcelTypes;
   String? residenceID;
+  String? propertyId;
   final _formKey = GlobalKey<FormState>();
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
@@ -108,7 +108,7 @@ class _CreateParcelSecurityStaffSideState
     updateDate();
   }
 
-  TextEditingController searchController = TextEditingController();
+/*  TextEditingController searchController = TextEditingController();
 
   Future<void> _showSearchDialog() async {
     _searchMemberCubit.fetchSearchMember('');
@@ -249,7 +249,7 @@ class _CreateParcelSecurityStaffSideState
     );
 
     searchController.clear();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -289,7 +289,7 @@ class _CreateParcelSecurityStaffSideState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 10.h),
-                  Text('Search Resident',
+                  Text('Select Resident',
                       style: GoogleFonts.nunitoSans(
                           textStyle: TextStyle(
                               color: Colors.black,
@@ -297,15 +297,27 @@ class _CreateParcelSecurityStaffSideState
                               fontWeight: FontWeight.w500))),
                   SizedBox(height: 10.h),
                   TextFormField(
-                    onTap: () {
-                      _searchMemberCubit.fetchSearchMember('');
-                      _showSearchDialog();
+                    onTap: () async {
+                      // _searchMemberCubit.fetchSearchMember('');
+                      // _showSearchDialog();
+
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SelectMembers()));
+
+                      if (result != null) {
+                        residenceController.text = result['name'];
+                        residenceID = result['user_id'];
+                        propertyId = result['property_id'];
+                        setState(() {});
+                      }
                     },
                     readOnly: true,
                     style: const TextStyle(color: Colors.black87, fontSize: 16),
                     controller: residenceController,
                     decoration: InputDecoration(
-                      hintText: 'Search resident',
+                      hintText: 'Select resident',
                       contentPadding: EdgeInsets.symmetric(
                           vertical: 12.h, horizontal: 10.0),
                       filled: true,
@@ -337,7 +349,7 @@ class _CreateParcelSecurityStaffSideState
                     // },
                   ),
                   SizedBox(height: 10.h),
-                  Text('Parcel ID',
+                  Text('Parcel Order ID',
                       style: GoogleFonts.nunitoSans(
                           textStyle: TextStyle(
                               color: Colors.black,
@@ -356,12 +368,12 @@ class _CreateParcelSecurityStaffSideState
                       keyboardType: TextInputType.text,
                       validator: (text) {
                         if (text == null || text.isEmpty) {
-                          return 'Please enter parcel ID';
+                          return 'Please enter parcel order ID';
                         }
                         return null;
                       },
                       decoration: InputDecoration(
-                        hintText: 'Enter parcel ID',
+                        hintText: 'Enter parcel order ID',
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 12.h, horizontal: 10.0),
                         filled: true,
@@ -942,6 +954,8 @@ class _CreateParcelSecurityStaffSideState
                           };*/
 
                           context.read<ParcelManagementCubit>().createParcelAPI(
+                              forUseStaff: true,
+                              prId: propertyId.toString(),
                               parcelId: parcelIDController.text.toString(),
                               parcelName: nameController.text.toString(),
                               numberOfParcel: numberOfParcel.toString(),

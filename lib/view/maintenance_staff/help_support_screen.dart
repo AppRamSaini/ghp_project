@@ -19,20 +19,17 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
 
   List<ItemModel> itemData = <ItemModel>[
     ItemModel(
-      headerItem: "How do I register for the app?",
-      description:
-          "Contact your society admin for registration details and download instructions.",
-    ),
+        headerItem: "How do I register for the app?",
+        description:
+            "Contact your society admin for registration details and download instructions."),
     ItemModel(
-      headerItem: "How will I know if my complaint is resolved?",
-      description:
-          'You’ll get a notification when it’s resolved, or you can check the complaint status in the "Complaints" section.',
-    ),
+        headerItem: "How will I know if my complaint is resolved?",
+        description:
+            'You’ll get a notification when it’s resolved, or you can check the complaint status in the "Complaints" section.'),
     ItemModel(
-      headerItem: "What should I do if I face technical issues?",
-      description:
-          'Go to "Help" or "Support" in the app to contact the support team for assistance.',
-    ),
+        headerItem: "What should I do if I face technical issues?",
+        description:
+            'Go to "Help" or "Support" in the app to contact the support team for assistance.'),
   ];
 
   @override
@@ -236,10 +233,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
               } else if (state is ContactLoading) {
                 return notificationShimmerLoading();
               } else {
-                return const Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Center(child: Text('Contacts not found!')),
-                );
+                return emptyDataWidget('Contacts not found!');
               }
             },
           ),

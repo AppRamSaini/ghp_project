@@ -1504,7 +1504,7 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                                       color: Colors.black,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500)),
-                              Text(profileDetails.data!.user!.email.toString(),
+                              Text(profileDetails.data!.user!.email ?? 'NIL',
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.black,
                                       fontSize: 14,

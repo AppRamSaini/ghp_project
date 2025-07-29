@@ -207,8 +207,14 @@ class _ResidentCheckoutsHistoryDetailsState
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Column(
+                                        Row(
                                           children: [
+                                            const Text(
+                                              "Tower/Block : ",
+                                              style: TextStyle(
+                                                  color: Colors.black54,
+                                                  fontSize: 12),
+                                            ),
                                             Text(
                                                 residentsCheckoutsData
                                                     .user!.member!.blockName
@@ -217,12 +223,6 @@ class _ResidentCheckoutsHistoryDetailsState
                                                     color: Colors.black,
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 12)),
-                                            const Text(
-                                              "Tower/Bloc",
-                                              style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 12),
-                                            ),
                                           ],
                                         ),
                                         // Column(
@@ -243,8 +243,14 @@ class _ResidentCheckoutsHistoryDetailsState
                                         //     ),
                                         //   ],
                                         // ),
-                                        Column(
+                                        Row(
                                           children: [
+                                            const Text(
+                                              "Property No : ",
+                                              style: TextStyle(
+                                                  color: Colors.black54,
+                                                  fontSize: 12),
+                                            ),
                                             Text(
                                                 residentsCheckoutsData
                                                     .user!.member!.aprtNo
@@ -253,12 +259,6 @@ class _ResidentCheckoutsHistoryDetailsState
                                                     color: Colors.black,
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 12)),
-                                            const Text(
-                                              "Property No",
-                                              style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 12),
-                                            ),
                                           ],
                                         )
                                       ],

@@ -129,7 +129,10 @@ class Routes {
   static String residentCheckOut = 'resident/checkout';
   static String residentCheckoutsHistory = 'resident/all-checkin-log';
   static String residentCheckoutsHistoryDetails = 'resident/checkin-details';
-  static String dailyHelpsMembers = 'society/members?type=daily_help';
+
+  static String dailyHelpsMembers(String propertyId) =>
+      'society/members/$propertyId?type=daily_help';
+  static String dailyHelpsStaffSide = 'society/members?type=daily_help';
   static String dailyHelpsMembersDetails =
       'resident/daily-help-checkin-details/';
   static String billPayment = 'bill/payment-details';

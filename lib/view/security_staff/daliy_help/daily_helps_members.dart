@@ -1,4 +1,5 @@
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/daliy_helps_member/daily_help_listing/daily_help_cubit.dart';
 import 'package:ghp_society_management/controller/resident_checkout_log/resident_check-in/resident_check_in_cubit.dart';
 import 'package:ghp_society_management/controller/resident_checkout_log/resident_check-out/resident_checkout_cubit.dart';
@@ -87,8 +88,7 @@ class _DailyHelpListingHistoryState extends State<DailyHelpListingHistory> {
             bloc: _dailyHelpListingCubit,
             builder: (context, state) {
               if (state is DailyHelpListingLoading) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+                return notificationShimmerLoading();
               }
               if (state is DailyHelpListingError) {
                 return Center(
@@ -468,7 +468,7 @@ Widget popMenusForStaff(
                     builder: (_) =>
                         QrCodeScanner(fromResidentSide: fromResidentPage)));
           } else if (value['menu_id'] == 2) {
-            Navigator.pushReplacement(
+            Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (_) => DailyHelpProfileDetails(

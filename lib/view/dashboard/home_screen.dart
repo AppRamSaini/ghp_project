@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ParcelListingPage()
   ];
 
-  fetchBill() {
+  Future fetchBill() async {
     context.read<UserProfileCubit>().fetchUserProfile();
     context
         .read<MyBillsCubit>()
@@ -172,14 +172,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Colors.white,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600))),
-                    subtitle: Text(
-                        'Property : ${state.userProfile.first.data!.user!.property!.aprtNo ?? 'NIL'}'
-                            .toUpperCase(),
-                        style: GoogleFonts.nunitoSans(
-                            textStyle: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500))),
+                    subtitle: state.userProfile.first.data!.user!.property !=
+                            null
+                        ? Text(
+                            'Property : ${state.userProfile.first.data!.user!.property!.aprtNo ?? 'NIL'}'
+                                .toUpperCase(),
+                            style: GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500)))
+                        : SizedBox(),
                   );
                 } else {
                   return ListTile(
@@ -212,9 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: residentSideHeader(context))
             ]),
         body: RefreshIndicator(
-          onRefresh: () async {
-            fetchBill();
-          },
+          onRefresh: fetchBill,
           child: BlocBuilder<PropertyListingCubit, PropertyListingState>(
               builder: (context, state) {
             if (state is PropertyListingLoading) {
@@ -389,7 +390,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 } else {
-                  return SizedBox();
+                  return dashboardSimmerLoading(context, forHomePage: true);
                 }
               },
             );

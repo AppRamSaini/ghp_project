@@ -71,7 +71,7 @@ class _SosScreenState extends State<SosScreen> {
     return BlocBuilder<SosCategoryCubit, SosCategoryState>(
       builder: (context, state) {
         if (state is SosCategoryLoading && !_isRefreshing(state)) {
-          return gridviewSimmerLoading(context);
+          return notificationShimmerLoading();
         } else if (state is SosCategorySearchLoaded) {
           return _buildSearchResults(state);
         } else if (state is SosCategoryLoaded) {

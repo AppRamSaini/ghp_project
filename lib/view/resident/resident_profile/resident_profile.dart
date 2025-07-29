@@ -142,7 +142,6 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
               .checkInAPI(statusBody: checkInData);
           break;
         default:
-          // Optional: Handle unknown status
           snackBarMsg(context, "Unknown check-in status.");
           break;
       }

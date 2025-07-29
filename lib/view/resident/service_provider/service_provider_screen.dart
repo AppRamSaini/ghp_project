@@ -20,9 +20,8 @@ class _ServiceProviderScreenState extends State<ServiceProviderScreen> {
     super.initState();
   }
 
-  Future onRefresh()async{
+  Future onRefresh() async {
     context.read<ServiceCategoriesCubit>().fetchServiceCategories();
-
   }
 
   @override
@@ -71,15 +70,16 @@ class _ServiceProviderScreenState extends State<ServiceProviderScreen> {
                         .serviceCategories.first.data.serviceCategories.length,
                     shrinkWrap: true,
                     physics: const AlwaysScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisSpacing: 10, crossAxisCount: 3),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            mainAxisSpacing: 10, crossAxisCount: 3),
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (builder) => ServiceProviderDetailScreen(
-                                    categoryId: state.serviceCategories.first.data
-                                        .serviceCategories[index].id
+                                    categoryId: state.serviceCategories.first
+                                        .data.serviceCategories[index].id
                                         .toString(),
                                   )));
                         },
@@ -160,7 +160,8 @@ class _ServiceProviderScreenState extends State<ServiceProviderScreen> {
                               children: [
                                 ClipOval(
                                   child: CachedNetworkImage(
-                                    imageUrl: state.serviceCategories[index].image
+                                    imageUrl: state
+                                        .serviceCategories[index].image
                                         .toString(),
                                     width: 90,
                                     height: 90,
@@ -205,7 +206,7 @@ class _ServiceProviderScreenState extends State<ServiceProviderScreen> {
                 return emptyDataWidget(
                     state.errorMsg.toString()); // Handle error state
               } else if (state is ServiceCategoriesLoading) {
-                return gridviewSimmerLoading(context); // Handle error state
+                return notificationShimmerLoading(); // Handle error state
               } else if (state is ServiceCategoriesInternetError) {
                 return const Center(
                     child: Text('Internet connection error',

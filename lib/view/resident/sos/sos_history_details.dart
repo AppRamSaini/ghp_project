@@ -43,33 +43,19 @@ class SosHistoryDetailsState extends State<SosHistoryDetails> {
 
     Widget sosPlace() {
       return widget.sosHistoryList.user!.member != null
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Divider(color: Colors.grey.withOpacity(0.2))),
                 Text("Alert Place ",
                     style: GoogleFonts.nunitoSans(
                         textStyle: TextStyle(
                             color: Colors.deepPurpleAccent, fontSize: 14.sp))),
-                const SizedBox(height: 5),
-                Row(
-                  children: [
-                    Expanded(
-                        child: Text(
-                            "Floor No : ${widget.sosHistoryList.user!.member!.floorNumber.toString()}",
-                            style: GoogleFonts.nunitoSans(
-                                textStyle: TextStyle(
-                                    color: Colors.black87, fontSize: 14.sp)))),
-                    Expanded(
-                        child: Text(
-                            "Property No : ${widget.sosHistoryList.user!.member!.aprtNo.toString()}",
-                            style: GoogleFonts.nunitoSans(
-                                textStyle: TextStyle(
-                                    color: Colors.black87, fontSize: 14.sp))))
-                  ],
-                ),
+                Expanded(
+                    child: Text(
+                        "Property No : ${widget.sosHistoryList.user!.member!.aprtNo.toString()}",
+                        style: GoogleFonts.nunitoSans(
+                            textStyle: TextStyle(
+                                color: Colors.black87, fontSize: 14.sp))))
               ],
             )
           : SizedBox();

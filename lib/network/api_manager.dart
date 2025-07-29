@@ -20,7 +20,7 @@ class ApiManager {
       if (kDebugMode) {
         print('API URL: $url');
         print('Token: $token');
-        print('Property ID: $propertyId (usePropertyID: $usePropertyID)');
+        // print('Property ID: $propertyId (usePropertyID: $usePropertyID)');
       }
 
       final headers = {
@@ -78,7 +78,7 @@ class ApiManager {
 
   postRequest(var body, var url, var header) async {
     var token = LocalStorage.localStorage.getString('token');
-    var propertyId = LocalStorage.localStorage.getString('property_id');
+    // var propertyId = LocalStorage.localStorage.getString('property_id');
     if (kDebugMode) {
       print('url--->$url');
     }

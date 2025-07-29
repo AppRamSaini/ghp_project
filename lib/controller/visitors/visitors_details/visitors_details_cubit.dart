@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:ghp_society_management/constants/config.dart';
 import 'package:ghp_society_management/model/visitors_details_model.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
 import 'package:ghp_society_management/view/session_dialogue.dart';
-import 'package:meta/meta.dart';
+
 part 'visitors_details_state.dart';
 
 class VisitorsDetailsCubit extends Cubit<VisitorsDetailsState> {
@@ -19,6 +20,7 @@ class VisitorsDetailsCubit extends Cubit<VisitorsDetailsState> {
   Future<void> fetchVisitorsDetails(
       {required BuildContext context, required String visitorsId}) async {
     emit(VisitorsDetailsLoading());
+    print('url------${Config.baseURL}${Routes.visitorsDetails}$visitorsId');
     try {
       var response = await apiManager
           .getRequest("${Config.baseURL}${Routes.visitorsDetails}$visitorsId");

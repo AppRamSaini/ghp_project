@@ -10,16 +10,15 @@ import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/crop_image.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/local_storage.dart';
-import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/members/search_member/search_member_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/visitors_scan/scan_visitors_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/create_visitors/create_visitors_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/visitor_request/not_responding/not_responde_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/visitors_element/visitors_element_cubit.dart';
-import 'package:ghp_society_management/model/search_member_modal.dart';
 import 'package:ghp_society_management/timer_countdown.dart';
 import 'package:ghp_society_management/view/resident/visitors/visitor_screen.dart';
+import 'package:ghp_society_management/view/security_staff/select_residents.dart';
 import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -286,7 +285,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
     periodicTimer?.cancel(); // Stop the timer
   }
 
-  TextEditingController searchController = TextEditingController();
+/*  TextEditingController searchController = TextEditingController();
 
   Future<void> _showSearchDialog() async {
     List<SearchMemberInfo>? filteredItems =
@@ -413,7 +412,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
     );
 
     searchController.clear();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -503,7 +502,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Search Residence',
+                            Text('Select Residence',
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
                                         color: Colors.black,
@@ -511,9 +510,21 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                         fontWeight: FontWeight.w500))),
                             SizedBox(height: 10.h),
                             TextFormField(
-                              onTap: () {
-                                _searchMemberCubit.fetchSearchMember('');
-                                _showSearchDialog();
+                              onTap: () async {
+                                // _searchMemberCubit.fetchSearchMember('');
+                                // _showSearchDialog();
+
+                                final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SelectMembers()));
+
+                                if (result != null) {
+                                  residenceController.text = result['name'];
+                                  residenceId = result['user_id'];
+                                  propertyID = result['property_id'];
+                                  setState(() {});
+                                }
                               },
                               readOnly: true,
                               style: const TextStyle(
@@ -537,7 +548,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                               //   });
                               // },
                               decoration: InputDecoration(
-                                hintText: 'Search residence',
+                                hintText: 'Select resident',
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 12.h, horizontal: 10.0),
                                 filled: true,
@@ -563,14 +574,6 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                     borderSide:
                                         BorderSide(color: AppTheme.greyColor)),
                               ),
-                              // scrollbarDecoration: ScrollbarDecoration(
-                              //     controller: ScrollController(),
-                              //     theme: const ScrollbarThemeData(
-                              //         radius: Radius.circular(5))),
-                              // future: () async {
-                              //   return await fetchData(
-                              //       residenceController.text.toString());
-                              // },
                             ),
                             SizedBox(height: 10.h),
                           ],
