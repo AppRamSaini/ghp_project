@@ -97,6 +97,50 @@ Widget securityStaffHeaderWidget(
   );
 }
 
+/// SECURITY STAFF HEADER
+Widget securityStaffHeaderLoading(BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: CircleAvatar(
+              backgroundColor: AppTheme.white.withOpacity(0.5),
+              child: Image.asset(ImageAssets.messageImage,
+                  height: 20.h, color: AppTheme.resolvedButtonColor))),
+      const SizedBox(width: 10),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: GestureDetector(
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const NotificationListing(index: 1))),
+          child: CircleAvatar(
+            backgroundColor: AppTheme.white.withOpacity(0.5),
+            child: Image.asset(ImageAssets.bellImage,
+                height: 20.h, color: AppTheme.resolvedButtonColor),
+          ),
+        ),
+      ),
+
+      //
+      // const SizedBox(width: 10),
+      //
+      // /// 🚪 Logout Icon
+      // GestureDetector(
+      //   onTap: () => logOutPermissionDialog(context, isLogout: true),
+      //   child: CircleAvatar(
+      //     backgroundColor: AppTheme.resolvedButtonColor.withOpacity(0.2),
+      //     child: Image.asset(ImageAssets.staffLogoutImage,
+      //         height: 20.h, color: AppTheme.resolvedButtonColor),
+      //   ),
+      // ),
+    ],
+  );
+}
+
 /// 📩 Chat Icon Widget
 Widget chatIcon(int unreadCount, BuildContext context, String userId,
     String userImage, String userName, String forType,

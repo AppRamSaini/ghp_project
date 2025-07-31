@@ -135,7 +135,6 @@ class _SelectMembersState extends State<SelectMembers> {
                         _buildDropdowns(context),
                         SizedBox(height: 10.h),
                         Expanded(child: _buildMembersList(societyData)),
-                        SizedBox(height: 30.h),
                       ],
                     );
                   },
@@ -213,35 +212,19 @@ class _SelectMembersState extends State<SelectMembers> {
                 final floor = data.properties![index];
                 final memberList = floor.propertyNumbers ?? [];
 
-                return Column(
-                  children: [
-                    Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Row(children: [
-                          const Expanded(child: Divider()),
-                          SizedBox(width: 10.w),
-                          Text("FLOOR ${floor.floor}",
-                              style: TextStyle(
-                                  color: AppTheme.primaryColor,
-                                  fontWeight: FontWeight.w600)),
-                          SizedBox(width: 10.w),
-                          const Expanded(child: Divider())
-                        ])),
-                    ListView.builder(
-                      itemCount: memberList.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, i) {
-                        final member = memberList[i].memberInfo;
-                        if (member == null) return const SizedBox();
-                        return _buildMemberCard(
-                            propertyId: member.id.toString() ?? '',
-                            name: member.name ?? '',
-                            propertyNo: member.aprtNo ?? '',
-                            userId: member.userId.toString() ?? '');
-                      },
-                    ),
-                  ],
+                return ListView.builder(
+                  itemCount: memberList.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, i) {
+                    final member = memberList[i].memberInfo;
+                    if (member == null) return const SizedBox();
+                    return _buildMemberCard(
+                        propertyId: member.id.toString() ?? '',
+                        name: member.name ?? '',
+                        propertyNo: member.aprtNo ?? '',
+                        userId: member.userId.toString() ?? '');
+                  },
                 );
               },
             );
@@ -324,7 +307,7 @@ class _SelectMembersState extends State<SelectMembers> {
 Widget selectBtn(void Function()? onTap) => GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
             color: AppTheme.primaryColor),

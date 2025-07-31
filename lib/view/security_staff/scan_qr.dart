@@ -10,130 +10,224 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class QrCodeScanner extends StatefulWidget {
-  bool fromResidentSide;
+  final bool fromResidentSide;
 
-  QrCodeScanner({super.key, this.fromResidentSide = false});
+  const QrCodeScanner({super.key, this.fromResidentSide = false});
 
   @override
   State<QrCodeScanner> createState() => _QrCodeScannerState();
 }
 
-class _QrCodeScannerState extends State<QrCodeScanner> {
+class _QrCodeScannerState extends State<QrCodeScanner>
+    with SingleTickerProviderStateMixin {
   final MobileScannerController controller = MobileScannerController();
   late BuildContext dialogueContext;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     _requestCameraPermission();
+    _animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2))
+          ..repeat(reverse: false);
+    _animation =
+        Tween<double>(begin: 0, end: 200).animate(_animationController);
   }
 
-  /// Function to request camera permission
+  @override
+  void dispose() {
+    controller.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
+
   Future<void> _requestCameraPermission() async {
     var status = await Permission.camera.status;
 
     if (status.isDenied || status.isPermanentlyDenied) {
-      await Permission.camera.request(); // Open default permission dialog
+      await Permission.camera.request();
+      setState(() {});
     }
 
     if (await Permission.camera.isGranted) {
-      setState(() {}); // If permission is granted, refresh UI
+      setState(() {});
+    }
+  }
+
+  void _handleDetection(BarcodeCapture capture) async {
+    for (var barcode in capture.barcodes) {
+      if (barcode.rawValue != null) {
+        showLoadingDialog(context, (ctx) => dialogueContext = ctx);
+
+        try {
+          final qrData = barcode.rawValue!;
+          final Map<String, dynamic> parsedData = jsonDecode(qrData);
+
+          await controller.stop();
+          Navigator.pop(dialogueContext);
+
+          if (parsedData.containsKey('visitor_id')) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => VisitorsDetailsPage2(
+                  visitorsId: {'visitor_id': parsedData['visitor_id']},
+                  isTypesScan: true,
+                ),
+              ),
+            );
+          } else if (parsedData.containsKey('resident_id')) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ResidentProfileDetails(
+                  residentId: {'resident_id': parsedData['resident_id']},
+                  forQRPage: true,
+                  forResident: widget.fromResidentSide,
+                ),
+              ),
+            );
+          } else if (parsedData.containsKey('daily_help_id')) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => DailyHelpProfileDetails(
+                  dailyHelpId: {'daily_help_id': parsedData['daily_help_id']},
+                  forQRPage: true,
+                  forDetailsPage: false,
+                  fromResidentPage: widget.fromResidentSide,
+                ),
+              ),
+            );
+          } else {
+            throw Exception("Key not found in QR");
+          }
+        } catch (e) {
+          Navigator.of(context, rootNavigator: true).pop();
+          snackBar(context, "Error processing QR code.", Icons.warning,
+              AppTheme.redColor);
+        }
+
+        break;
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        SizedBox(
-          height: MediaQuery.sizeOf(context).height,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: MobileScanner(
-              controller: controller,
-              onDetect: (BarcodeCapture capture) async {
-                for (var barcode in capture.barcodes) {
-                  if (barcode.rawValue != null) {
-                    showLoadingDialog(context, (ctx) {
-                      dialogueContext = ctx;
-                    });
-                    try {
-                      // Extract and parse QR data
-                      String qrData = barcode.rawValue!;
-                      Map<String, dynamic> parsedData;
-                      try {
-                        parsedData = jsonDecode(qrData);
-                      } catch (e) {
-                        Navigator.of(context, rootNavigator: true).pop();
-                        snackBar(context, "Invalid QR code format.",
-                            Icons.warning, AppTheme.redColor);
-                        return;
-                      }
-                      if (parsedData.containsKey('visitor_id')) {
-                        String id = parsedData['visitor_id'];
-                        await controller.stop();
-                        Future.delayed(const Duration(milliseconds: 100), () {
-                          Navigator.pop(dialogueContext);
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => VisitorsDetailsPage2(
-                                      visitorsId: {'visitor_id': id},
-                                      isTypesScan: true)));
-                        });
-                      } else if (parsedData.containsKey('resident_id')) {
-                        String id = parsedData['resident_id'];
-                        await controller.stop();
-                        Future.delayed(const Duration(milliseconds: 100), () {
-                          Navigator.pop(dialogueContext);
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => ResidentProfileDetails(
-                                      residentId: {'resident_id': id},
-                                      forQRPage: true,
-                                      forResident: widget.fromResidentSide)));
-                        });
-                      } else if (parsedData.containsKey('daily_help_id')) {
-                        String id = parsedData['daily_help_id'];
-                        await controller.stop();
-                        Future.delayed(const Duration(milliseconds: 100), () {
-                          Navigator.pop(dialogueContext);
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => DailyHelpProfileDetails(
-                                      dailyHelpId: {'daily_help_id': id},
-                                      forQRPage: true,
-                                      forDetailsPage: false,
-                                      fromResidentPage:
-                                          widget.fromResidentSide)));
-                        });
-                      } else {
-                        throw Exception("Key '-->>' not found.");
-                      }
-                    } catch (e) {
-                      Navigator.of(context, rootNavigator: true).pop();
-                      snackBar(context, "Error processing QR code.",
-                          Icons.warning, AppTheme.redColor);
-                    }
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          MobileScanner(controller: controller, onDetect: _handleDetection),
 
-                    break; // Stop processing after the first valid QR code
-                  }
-                }
+          // Overlay + Scanner box
+          Center(child: _buildScannerOverlay()),
+
+          // Red animation line
+          Positioned.fill(
+            child: AnimatedBuilder(
+              animation: _animation,
+              builder: (_, __) {
+                return Center(
+                  child: Container(
+                    margin: EdgeInsets.only(top: _animation.value),
+                    height: 2,
+                    width: 220,
+                    color: Colors.redAccent,
+                  ),
+                );
               },
             ),
           ),
+
+          // Close button (top left)
+          // Positioned(
+          //   top: MediaQuery.of(context).padding.top + 16,
+          //   left: 16,
+          //   child: CircleAvatar(
+          //     backgroundColor: Colors.black54,
+          //     child: IconButton(
+          //         icon: const Icon(Icons.arrow_back, color: Colors.white),
+          //         onPressed: () => Navigator.pushAndRemoveUntil(
+          //             context,
+          //             MaterialPageRoute(builder: (_) => Dashboard()),
+          //             (newRoute) => true)),
+          //   ),
+          // ),
+
+          // Flash toggle (bottom center)
+          Positioned(
+            bottom: 40,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: CircleAvatar(
+                backgroundColor: Colors.black54,
+                child: IconButton(
+                  icon: ValueListenableBuilder(
+                    valueListenable: controller,
+                    builder: (context, state, child) {
+                      if (state == TorchState.off) {
+                        return const Icon(Icons.flash_off, color: Colors.white);
+                      } else {
+                        return const Icon(Icons.flash_on, color: Colors.yellow);
+                      }
+                    },
+                  ),
+                  onPressed: () => controller.toggleTorch(),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScannerOverlay() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // Dark transparent background with clear cutout center
+        ColorFiltered(
+          colorFilter: ColorFilter.mode(
+            Colors.black.withOpacity(0.6),
+            BlendMode.srcOut,
+          ),
+          child: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  color: Colors.black,
+                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Container(
+                  height: 220,
+                  width: 220,
+                  decoration: const BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
+
+        // Border around scanner
         Container(
           height: 220,
           width: 220,
           decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.deepPurpleAccent, width: 1.5)),
-        )
+            border: Border.all(color: Colors.deepPurpleAccent, width: 2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       ],
     );
   }

@@ -8,7 +8,6 @@ import 'package:ghp_society_management/view/resident/parcel_flow/parcel_listing.
 import 'package:ghp_society_management/view/resident/polls/poll_screen.dart';
 import 'package:ghp_society_management/view/resident/refer_property/refer_property_screen.dart';
 import 'package:ghp_society_management/view/resident/rent/property_screens.dart';
-import 'package:ghp_society_management/view/resident/service_provider/service_provider_screen.dart';
 import 'package:ghp_society_management/view/resident/sos/sos_screen.dart';
 import 'package:ghp_society_management/view/resident/visitors/visitor_screen.dart';
 
@@ -30,7 +29,7 @@ class _ViewAllFeaturesState extends State<ViewAllFeatures> {
     AppTheme.color7,
     AppTheme.color8,
     AppTheme.color9,
-    AppTheme.color10,
+    // AppTheme.color10,
     AppTheme.color11,
   ];
 
@@ -44,7 +43,7 @@ class _ViewAllFeaturesState extends State<ViewAllFeatures> {
     {"icon": ImageAssets.rent1, "title": "Rent/Sell"},
     {"icon": ImageAssets.refer1, "title": "Refer"},
     {"icon": ImageAssets.notice1, "title": "Notice Board"},
-    {"icon": ImageAssets.service1, "title": "Service Provider"},
+    // {"icon": ImageAssets.service1, "title": "Service Provider"},
     {"icon": ImageAssets.polls1, "title": "Polls"},
   ];
   List pagesList = [
@@ -57,21 +56,14 @@ class _ViewAllFeaturesState extends State<ViewAllFeatures> {
     RentScreen(),
     ReferPropertyScreen(),
     NoticeBoardScreen(),
-    ServiceProviderScreen(),
+    // ServiceProviderScreen(),
     PollScreen()
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('All Features',
-            style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                    color: AppTheme.backgroundColor,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600))),
-      ),
+      appBar: appbarWidget(title: 'All Features'),
       body: MasonryGridView.count(
         crossAxisCount: 3,
         mainAxisSpacing: 10,
@@ -82,24 +74,21 @@ class _ViewAllFeaturesState extends State<ViewAllFeatures> {
         itemCount: dataList.length,
         itemBuilder: (context, index) {
           double height;
-
           height = size.height * 0.13; // optional for others
-
           return Column(
             children: [
               GestureDetector(
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => pagesList[index])),
-                child: Container(
-                    margin: EdgeInsets.only(bottom: 5),
-                    height: height,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: colors[index % colors.length],
-                        border: Border.all(
-                            color: colors[index % colors.length], width: 2)),
-                    child: Image.asset(dataList[index]['icon'])),
-              ),
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => pagesList[index])),
+                  child: Container(
+                      margin: EdgeInsets.only(bottom: 5),
+                      height: height,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: colors[index % colors.length],
+                          border: Border.all(
+                              color: colors[index % colors.length], width: 2)),
+                      child: Image.asset(dataList[index]['icon']))),
               Padding(
                 padding: EdgeInsets.only(bottom: 5),
                 child: Text(

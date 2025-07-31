@@ -18,6 +18,8 @@ class SlidersCubit extends Cubit<SlidersState> {
     if (state is SlidersLoading) return;
     emit(SlidersLoading());
     try {
+      slidersList.clear();
+
       var response =
           await apiManager.getRequest("${Config.baseURL}${Routes.getSliders}");
       if (response.statusCode == 200) {

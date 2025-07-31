@@ -12,7 +12,9 @@ import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SosScreen extends StatefulWidget {
-  const SosScreen({super.key});
+  bool forStaffSide;
+
+  SosScreen({super.key, this.forStaffSide = false});
 
   @override
   State<SosScreen> createState() => _SosScreenState();
@@ -125,7 +127,8 @@ class _SosScreenState extends State<SosScreen> {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (builder) => SosDetailScreen(sosCategory: item),
+                builder: (builder) => SosDetailScreen(
+                    sosCategory: item, forStaffSide: widget.forStaffSide),
               ),
             );
           },

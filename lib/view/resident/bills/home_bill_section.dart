@@ -64,6 +64,7 @@ class MyBillsPageState extends State<MyBillsPage> {
             baseColor: Colors.grey.shade300,
             highlightColor: Colors.grey.shade100,
             child: Container(
+              margin: EdgeInsets.symmetric(horizontal: size.width * 0.03),
               width: size.width,
               height: size.height * 0.15,
               decoration: BoxDecoration(

@@ -59,7 +59,7 @@ class _DailyHelpListingHistoryState extends State<DailyHelpListingHistory> {
         appBar: customAppbar(
           searchBarOpen: searchBarOpen,
           context: context,
-          title: 'Daily Help Member',
+          title: 'Daily Help Staffs',
           textController: textController,
           onExpansionComplete: () {
             setState(() {
@@ -219,7 +219,7 @@ class _DailyHelpListingHistoryState extends State<DailyHelpListingHistory> {
                                                       fontWeight:
                                                           FontWeight.w500))),
                                           Text(
-                                              "Role : ${newHistoryLogs[index].role.toString().replaceAll("_", ' ')}",
+                                              "Role : ${capitalizeWords(newHistoryLogs[index].role.toString().replaceAll("_", ' '))}",
                                               style: GoogleFonts.ptSans(
                                                   textStyle: TextStyle(
                                                       color: Colors

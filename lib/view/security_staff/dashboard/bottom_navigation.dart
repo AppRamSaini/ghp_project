@@ -1,5 +1,6 @@
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/controller/notification/notification_listing/notification_list_cubit.dart';
+import 'package:ghp_society_management/controller/parcel/parcel_element/parcel_element_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_pending_counts/parcel_counts_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/receive_parcel/receive_parcel_cubit.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_element/sos_element_cubit.dart';
@@ -26,8 +27,9 @@ class SecurityGuardDashboardState extends State<SecurityGuardDashboard> {
   @override
   void initState() {
     super.initState();
-
+    context.read<VisitorsElementCubit>().fetchVisitorsElement();
     context.read<NotificationListingCubit>().fetchNotifications();
+    context.read<ParcelElementsCubit>().fetchParcelElement();
     _pageController = PageController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.index != null && widget.index! > 0) {
@@ -43,8 +45,6 @@ class SecurityGuardDashboardState extends State<SecurityGuardDashboard> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
-
-    print('---------->>>>>>>>>>>${widget.index}');
   }
 
   final List<Widget> lst = [
@@ -227,11 +227,10 @@ class SecurityGuardDashboardState extends State<SecurityGuardDashboard> {
       String icon, String label, int currentIndex, int index) {
     return Column(
       children: [
-        Image.asset(
-          icon,
-          color: currentIndex == index ? Colors.deepPurpleAccent : Colors.black,
-          height: 18,
-        ),
+        Image.asset(icon,
+            color:
+                currentIndex == index ? Colors.deepPurpleAccent : Colors.black,
+            height: 18),
         Text(
           label,
           style: TextStyle(

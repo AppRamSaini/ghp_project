@@ -401,7 +401,7 @@ class _CreateParcelSecurityStaffSideState
                     ),
                   ),
                   SizedBox(height: 10.h),
-                  Text('Parcel Name',
+                  Text('Product Name',
                       style: GoogleFonts.nunitoSans(
                           textStyle: TextStyle(
                               color: Colors.black,

@@ -11,7 +11,6 @@ import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/complants/create_complaints/create_complaints_cubit.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_element/sos_element_cubit.dart';
-import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -49,22 +48,16 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
         } else if (state is CreateComplaintsSuccessfully) {
           snackBar(
               context, "Complaint Submitted!", Icons.done, AppTheme.guestColor);
-
           Navigator.of(dialogueContext!).pop();
-          Navigator.of(context).pop();
+          Navigator.pop(context);
         } else if (state is CreateComplaintsFailed) {
           snackBar(context, state.errorMsg.toString(), Icons.warning,
               AppTheme.redColor);
-
           Navigator.of(dialogueContext!).pop();
         } else if (state is CreateComplaintsInternetError) {
           snackBar(context, 'Internet connection failed', Icons.wifi_off,
               AppTheme.redColor);
-
           Navigator.of(dialogueContext!).pop();
-        } else if (state is CreateComplaintsLogout) {
-          Navigator.of(dialogueContext!).pop();
-          sessionExpiredDialog(context);
         }
       },
       child: Scaffold(
