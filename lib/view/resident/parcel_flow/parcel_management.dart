@@ -54,7 +54,7 @@ Widget popMenusForStaff(
     required BuildContext context,
     required ParcelListing requestData}) {
   return CircleAvatar(
-    backgroundColor: AppTheme.primaryColor.withOpacity(0.05),
+    backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
     child: PopupMenuButton(
       elevation: 10,
       padding: EdgeInsets.zero,
@@ -141,7 +141,7 @@ Widget popMenusForResident(
     required BuildContext context,
     required ParcelListing requestData}) {
   return CircleAvatar(
-    backgroundColor: AppTheme.primaryColor.withOpacity(0.5),
+    backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
     child: PopupMenuButton(
       elevation: 10,
       padding: EdgeInsets.zero,

@@ -120,7 +120,13 @@ void deleteAccountPermissionDialog(BuildContext context) => showDialog(
                     GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
-                        context.read<LogoutCubit>().logout();
+                        LocalStorage.localStorage.clear();
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (builder) =>
+                                    const SelectSocietyScreen()),
+                            (route) => false);
+                        // context.read<LogoutCubit>().logout();
                       },
                       child: Text(
                         'DELETE',

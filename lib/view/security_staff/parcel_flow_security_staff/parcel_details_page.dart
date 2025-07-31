@@ -494,11 +494,11 @@ class _ParcelDetailsSecurityStaffSideState
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Column(
+                                          Row(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
-                                                Text('Tower Name ',
+                                                Text('Tower/Block : ',
                                                     style:
                                                         GoogleFonts.nunitoSans(
                                                             textStyle: TextStyle(
@@ -520,37 +520,37 @@ class _ParcelDetailsSecurityStaffSideState
                                                                     FontWeight
                                                                         .w600)))
                                               ]),
-                                          Column(
+                                          // Column(
+                                          //     crossAxisAlignment:
+                                          //         CrossAxisAlignment.center,
+                                          //     children: [
+                                          //       Text('Floor ',
+                                          //           style:
+                                          //               GoogleFonts.nunitoSans(
+                                          //                   textStyle: TextStyle(
+                                          //                       color: Colors
+                                          //                           .black54,
+                                          //                       fontSize:
+                                          //                           14.sp))),
+                                          //       Text(
+                                          //           requestData
+                                          //               .member!.floorNumber
+                                          //               .toString(),
+                                          //           style:
+                                          //               GoogleFonts.nunitoSans(
+                                          //                   textStyle: TextStyle(
+                                          //                       color: Colors
+                                          //                           .black,
+                                          //                       fontSize: 14.sp,
+                                          //                       fontWeight:
+                                          //                           FontWeight
+                                          //                               .w600)))
+                                          //     ]),
+                                          Row(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
-                                                Text('Floor ',
-                                                    style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black54,
-                                                                fontSize:
-                                                                    14.sp))),
-                                                Text(
-                                                    requestData
-                                                        .member!.floorNumber
-                                                        .toString(),
-                                                    style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600)))
-                                              ]),
-                                          Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text('Property No',
+                                                Text('Property No : ',
                                                     style:
                                                         GoogleFonts.nunitoSans(
                                                             textStyle: TextStyle(

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/refer_property/create_refer_property/create_refer_property_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/delete_refer_property/delete_refer_property_cubit.dart';
@@ -116,10 +117,8 @@ class _ReferPropertyScreenState extends State<ReferPropertyScreen> {
           child: BlocBuilder<GetReferPropertyCubit, GetReferPropertyState>(
             bloc: _getReferPropertyCubit,
             builder: (context, state) {
-              if (state is GetReferPropertyLoading &&
-                  _getReferPropertyCubit.referPropertyList.isEmpty) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+              if (state is GetReferPropertyLoading) {
+                return notificationShimmerLoading();
               }
 
               if (state is GetReferPropertyFailed) {

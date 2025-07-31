@@ -63,7 +63,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
   List pagesList = [
     MemberScreen(),
     EventScreen(),
-    SosScreen(),
+    SosScreen(forStaffSide: true),
     NoticeBoardScreen(),
   ];
 
@@ -224,7 +224,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                             ],
                           ),
                         ),
-                        headerWidget(context, '', '', '', isDemo: true)
+                        securityStaffHeaderWidget(context, '', '', '')
                       ],
                     ),
                   );

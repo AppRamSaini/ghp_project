@@ -19,9 +19,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 
 class SosDetailScreen extends StatefulWidget {
+  bool forStaffSide;
   final SosCategory sosCategory;
 
-  const SosDetailScreen({super.key, required this.sosCategory});
+  SosDetailScreen(
+      {super.key, required this.sosCategory, this.forStaffSide = false});
 
   @override
   State<SosDetailScreen> createState() => _SosDetailScreenState();
@@ -142,48 +144,50 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
       ],
       child: Scaffold(
         appBar: appbarWidget(title: 'Request for Callback'),
-        bottomNavigationBar: Container(
-          color: Colors.white,
-          child: GestureDetector(
-            onTap: () {
-              if (formkey.currentState!.validate()) {
-                Map<String, String?> sosBody = {
-                  "sos_category_id": widget.sosCategory.id.toString(),
-                  "area": selectedValue,
-                  "description": descriptionController.text
-                };
+        bottomNavigationBar: widget.forStaffSide
+            ? SizedBox()
+            : Container(
+                color: Colors.white,
+                child: GestureDetector(
+                  onTap: () {
+                    if (formkey.currentState!.validate()) {
+                      Map<String, String?> sosBody = {
+                        "sos_category_id": widget.sosCategory.id.toString(),
+                        "area": selectedValue,
+                        "description": descriptionController.text
+                      };
 
-                print(selectedValue);
-                if (selectedValue == null) {
-                  snackBar(context, 'Please select area', Icons.warning,
-                      AppTheme.redColor);
-                } else {
-                  context.read<SubmitSosCubit>().submitSos(sosBody);
-                }
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Container(
-                width: double.infinity,
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: AppTheme.primaryColor),
-                child: Center(
-                  child: Text('Submit ',
-                      style: GoogleFonts.nunitoSans(
-                        textStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )),
+                      print(selectedValue);
+                      if (selectedValue == null) {
+                        snackBar(context, 'Please select area', Icons.warning,
+                            AppTheme.redColor);
+                      } else {
+                        context.read<SubmitSosCubit>().submitSos(sosBody);
+                      }
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: AppTheme.primaryColor),
+                      child: Center(
+                        child: Text('Submit ',
+                            style: GoogleFonts.nunitoSans(
+                              textStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )),
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
         body: Form(
           key: formkey,
           child: SingleChildScrollView(
@@ -237,13 +241,6 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.w500))),
                           )),
-                  SizedBox(height: 10.h),
-                  Text('Ambulance :',
-                      style: GoogleFonts.nunitoSans(
-                          textStyle: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600))),
                   SizedBox(height: 10.h),
                   Text(
                       'Tap here to share your location with emergency responders',
@@ -334,123 +331,138 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
                       ),
                     ),
                   ),
-                  const Divider(),
-                  Text('Report Incident :',
-                      style: GoogleFonts.nunitoSans(
-                          textStyle: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w600))),
-                  SizedBox(height: 10.h),
-                  Text('Select Area',
-                      style: GoogleFonts.nunitoSans(
-                          textStyle: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w500))),
-                  SizedBox(height: 10.h),
-                  BlocBuilder<SosElementCubit, SosElementState>(
-                    bloc: _sosElementCubit,
-                    builder: (context, state) {
-                      if (state is SosElementLoaded) {
-                        return DropdownButton2<String>(
-                          hint: const Text('--select--',
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 14)),
-                          underline: Container(color: Colors.transparent),
-                          isExpanded: true,
-                          value: selectedValue,
-                          items: state.sosElement.first.data.areas
-                              .map((item) => DropdownMenuItem<String>(
-                                  value: item.name,
-                                  child: Text(item.name,
-                                      style: const TextStyle(
-                                          fontSize: 14, color: Colors.black))))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedValue = value;
-                            });
-                          },
-                          iconStyleData: const IconStyleData(
-                              icon: Icon(Icons.arrow_drop_down,
-                                  color: Colors.black45),
-                              iconSize: 24),
-                          buttonStyleData: ButtonStyleData(
-                            decoration: BoxDecoration(
-                              color: AppTheme.greyColor,
-                              // Background color for the button
-                              borderRadius: BorderRadius.circular(
-                                  10), // Set border radius
-                              // Optional border
+                  widget.forStaffSide
+                      ? SizedBox()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Divider(),
+                            Text('Report Incident :',
+                                style: GoogleFonts.nunitoSans(
+                                    textStyle: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.w600))),
+                            SizedBox(height: 10.h),
+                            Text('Select Area',
+                                style: GoogleFonts.nunitoSans(
+                                    textStyle: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w500))),
+                            SizedBox(height: 10.h),
+                            BlocBuilder<SosElementCubit, SosElementState>(
+                              bloc: _sosElementCubit,
+                              builder: (context, state) {
+                                if (state is SosElementLoaded) {
+                                  return DropdownButton2<String>(
+                                    hint: const Text('--select--',
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 14)),
+                                    underline:
+                                        Container(color: Colors.transparent),
+                                    isExpanded: true,
+                                    value: selectedValue,
+                                    items: state.sosElement.first.data.areas
+                                        .map((item) => DropdownMenuItem<String>(
+                                            value: item.name,
+                                            child: Text(item.name,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black))))
+                                        .toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedValue = value;
+                                      });
+                                    },
+                                    iconStyleData: const IconStyleData(
+                                        icon: Icon(Icons.arrow_drop_down,
+                                            color: Colors.black45),
+                                        iconSize: 24),
+                                    buttonStyleData: ButtonStyleData(
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.greyColor,
+                                        // Background color for the button
+                                        borderRadius: BorderRadius.circular(
+                                            10), // Set border radius
+                                        // Optional border
+                                      ),
+                                    ),
+                                    dropdownStyleData: DropdownStyleData(
+                                      maxHeight:
+                                          MediaQuery.sizeOf(context).height / 2,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                            10), // Set border radius for dropdown
+                                      ),
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 16),
+                                    ),
+                                  );
+                                } else {
+                                  return const SizedBox();
+                                }
+                              },
                             ),
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            maxHeight: MediaQuery.sizeOf(context).height / 2,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                  10), // Set border radius for dropdown
+                            SizedBox(height: 10.h),
+                            Text('Description',
+                                style: GoogleFonts.nunitoSans(
+                                    textStyle: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w500))),
+                            SizedBox(height: 10.h),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: TextFormField(
+                                controller: descriptionController,
+                                maxLines: null,
+                                style: GoogleFonts.nunitoSans(
+                                    color: Colors.black,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500),
+                                keyboardType: TextInputType.multiline,
+                                validator: (text) {
+                                  if (text == null || text.isEmpty) {
+                                    return 'Please enter description';
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  hintText: 'Enter description',
+                                  filled: true,
+                                  hintStyle: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w400),
+                                  fillColor: AppTheme.greyColor,
+                                  errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(
+                                          color: AppTheme.greyColor)),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(
+                                          color: AppTheme.greyColor)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(
+                                          color: AppTheme.greyColor)),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide:
+                                        BorderSide(color: AppTheme.greyColor),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                          ),
-                        );
-                      } else {
-                        return const SizedBox();
-                      }
-                    },
-                  ),
-                  SizedBox(height: 10.h),
-                  Text('Description',
-                      style: GoogleFonts.nunitoSans(
-                          textStyle: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w500))),
-                  SizedBox(height: 10.h),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: TextFormField(
-                      controller: descriptionController,
-                      maxLines: null,
-                      style: GoogleFonts.nunitoSans(
-                          color: Colors.black,
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w500),
-                      keyboardType: TextInputType.multiline,
-                      validator: (text) {
-                        if (text == null || text.isEmpty) {
-                          return 'Please enter description';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: 'Enter description',
-                        filled: true,
-                        hintStyle: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w400),
-                        fillColor: AppTheme.greyColor,
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(color: AppTheme.greyColor)),
-                        focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(color: AppTheme.greyColor)),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(color: AppTheme.greyColor)),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                          borderSide: BorderSide(color: AppTheme.greyColor),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
+                            SizedBox(height: 10.h),
+                          ],
+                        )
                 ],
               ),
             ),

@@ -3,8 +3,8 @@ import 'package:ghp_society_management/controller/notification/notification_list
 import 'package:ghp_society_management/view/maintenance_staff/help_support_screen.dart';
 import 'package:ghp_society_management/view/maintenance_staff/home_screen.dart';
 import 'package:ghp_society_management/view/maintenance_staff/service_history_screen.dart';
+import 'package:ghp_society_management/view/maintenance_staff/settings.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
-import 'package:ghp_society_management/view/resident/setting/setting_screen.dart';
 
 class StaffDashboard extends StatefulWidget {
   const StaffDashboard({super.key});
@@ -15,7 +15,7 @@ class StaffDashboard extends StatefulWidget {
 
 class StaffDashboardState extends State<StaffDashboard> {
   int currentIndex = 0;
-  PageController? _pageController;
+  late PageController _pageController;
 
   @override
   void initState() {
@@ -38,77 +38,87 @@ class StaffDashboardState extends State<StaffDashboard> {
         return true;
       },
       child: Scaffold(
-        body: SizedBox.expand(
-            child: PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() => currentIndex = index);
-                },
-                children: <Widget>[
+        body: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() => currentIndex = index);
+            },
+            children: [
               const StaffHomeScreen(),
               const ServiceHistoryScreen(),
               const HelpSupportScreen(),
-              SettingScreen(forStaffSide: true)
-            ])),
-        bottomNavigationBar: BottomNavyBar(
-          selectedIndex: currentIndex,
-          onItemSelected: (index) {
-            setState(() => currentIndex = index);
-            _pageController!.jumpToPage(index);
-          },
-          items: <BottomNavyBarItem>[
-            BottomNavyBarItem(
-                title: Text('Home',
-                    style: GoogleFonts.nunitoSans(
-                        textStyle: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w500))),
-                icon: Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Image.asset(ImageAssets.homeImage,
-                        height: 18.h, color: Colors.black)),
-                activeColor: AppTheme.primaryColor),
-            BottomNavyBarItem(
-                title: Text('Service History',
-                    style: GoogleFonts.nunitoSans(
-                        textStyle: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w500))),
-                icon: Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Image.asset(ImageAssets.serviceHistoryImage,
-                        height: 18.h, color: Colors.black)),
-                activeColor: AppTheme.primaryColor),
-            BottomNavyBarItem(
-                title: Text('Help & Support',
-                    style: GoogleFonts.nunitoSans(
-                        textStyle: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w500))),
-                icon: Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Image.asset(ImageAssets.headsetImage,
-                        height: 18.h, color: Colors.black)),
-                activeColor: AppTheme.primaryColor),
-            BottomNavyBarItem(
-                textAlign: TextAlign.center,
-                title: Text('Setting',
-                    style: GoogleFonts.nunitoSans(
-                        textStyle: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w500))),
-                icon: Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Image.asset(ImageAssets.settingImage,
-                        height: 18.h, color: Colors.black)),
-                activeColor: AppTheme.primaryColor),
+              SettingScreenMaintenanceStaff()
+            ]),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 10)]),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        currentIndex = 0;
+                        _pageController.jumpToPage(0);
+                        setState(() {});
+                      },
+                      child: bottomBarWidget(
+                          ImageAssets.homeImage, "Home", currentIndex, 0)),
+                  GestureDetector(
+                      onTap: () {
+                        currentIndex = 1;
+                        _pageController.jumpToPage(1);
+                        setState(() {});
+                      },
+                      child: bottomBarWidget(ImageAssets.serviceHistoryImage,
+                          "Service History", currentIndex, 1)),
+                  GestureDetector(
+                      onTap: () {
+                        currentIndex = 2;
+                        _pageController.jumpToPage(2);
+                        setState(() {});
+                      },
+                      child: bottomBarWidget(ImageAssets.headsetImage,
+                          "Help & Support", currentIndex, 2)),
+                  GestureDetector(
+                    onTap: () {
+                      currentIndex = 3;
+                      _pageController.jumpToPage(3);
+                      setState(() {});
+                    },
+                    child: bottomBarWidget(
+                        ImageAssets.settingImage, "Settings", currentIndex, 3),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget bottomBarWidget(
+      String icon, String label, int currentIndex, int index) {
+    return Column(
+      children: [
+        Image.asset(icon,
+            color:
+                currentIndex == index ? Colors.deepPurpleAccent : Colors.black,
+            height: 18),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            color:
+                currentIndex == index ? Colors.deepPurpleAccent : Colors.black,
+          ),
+        ),
+      ],
     );
   }
 }

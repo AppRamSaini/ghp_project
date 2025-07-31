@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:bloc/bloc.dart';
-import 'package:ghp_society_management/constants/config.dart';
+
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/model/select_society_model.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
-import 'package:meta/meta.dart';
-import 'package:http/http.dart' as http;
 
 part 'select_society_state.dart';
 
@@ -32,32 +29,34 @@ class SelectSocietyCubit extends Cubit<SelectSocietyState> {
     }
 
     try {
-      final url = "${Config.baseURL}${Routes.society}?page=$currentPage";
-      var response = await http.get(Uri.parse(url));
-      // final response = await apiManager.getRequest('https://dev-society.ghpjaipur.com/api/user/v1/societies');
+      final response = await apiManager.getRequest(
+          'https://dev-society.ghpjaipur.com/api/user/v1/societies');
       final resData = json.decode(response.body.toString());
-      //
-      print('res ---->>>>>>>>>>>>>>$response');
 
-      if (response.statusCode == 200 && resData['status']) {
-        final newSocietyList = (resData['data']['societies']['data'] as List)
-            .map((e) => SocietyList.fromJson(e))
-            .toList();
+      if (response.statusCode == 200 && resData['status'] == true) {
+        final societiesData = resData['data']?['societies']?['data'];
 
-        currentPage = resData['data']['societies']['current_page'];
-        final lastPage = resData['data']['societies']['last_page'];
+        currentPage = resData['data']['societies']['current_page'] ?? 1;
+        final lastPage = resData['data']['societies']['last_page'] ?? 1;
         hasMore = currentPage < lastPage;
 
-        if (loadMore) {
-          societyList.addAll(newSocietyList);
+        if (societiesData is List) {
+          final newSocieties =
+              societiesData.map((e) => SocietyList.fromJson(e)).toList();
+
+          if (loadMore) {
+            societyList.addAll(newSocieties);
+          } else {
+            societyList = newSocieties;
+          }
+          emit(SelectSocietyLoaded(selectedSociety: societyList));
         } else {
-          societyList = newSocietyList;
+          emit(SelectSocietyFailed(errorMsg: "Invalid data format received."));
         }
-
-
-        emit(SelectSocietyLoaded(selectedSociety: societyList));
       } else {
-        emit(SelectSocietyFailed(errorMsg: resData['message'].toString()));
+        emit(SelectSocietyFailed(
+            errorMsg:
+                resData['message']?.toString() ?? "Something went wrong"));
       }
     } on SocketException {
       emit(SelectSocietyInternetError(errorMsg: "Internet Connection Error!"));

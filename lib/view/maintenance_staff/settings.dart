@@ -1,10 +1,7 @@
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
-import 'package:ghp_society_management/view/resident/resident_profile/edit_profile_screen.dart';
-import 'package:ghp_society_management/view/resident/resident_profile/resident_gatepass.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_profile.dart';
-import 'package:ghp_society_management/view/resident/residents_checkouts/resident_checkouts_history_details.dart';
 import 'package:ghp_society_management/view/resident/setting/delete_account.dart';
 import 'package:ghp_society_management/view/resident/setting/emergency_contact.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
@@ -14,59 +11,32 @@ import 'package:ghp_society_management/view/resident/setting/term_of_use.dart';
 import 'package:ghp_society_management/view/security_staff/daliy_help/daily_helps_members.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 
-class SettingScreen extends StatefulWidget {
-  bool forStaffSide;
-
-  SettingScreen({super.key, this.forStaffSide = false});
+class SettingScreenMaintenanceStaff extends StatefulWidget {
+  const SettingScreenMaintenanceStaff({super.key});
 
   @override
-  State<SettingScreen> createState() => _SettingScreenState();
+  State<SettingScreenMaintenanceStaff> createState() => _SettingScreenState();
 }
 
-class _SettingScreenState extends State<SettingScreen> {
+class _SettingScreenState extends State<SettingScreenMaintenanceStaff> {
   int selectedValue = 0;
-  List<String> settingListTitle = [
-    'View Profile',
-    'Edit Profile',
-    // 'Daily Help',
-    // 'Change Society',
-    'Notifications Settings',
-    'Emergency Contacts',
-    'Check-out History',
-    'Terms Of Use',
-    'Privacy Policy',
-    'Delete Account',
-    'Log Out'
-  ];
 
   List<String> settingListTitle2 = [
     'View Profile',
-    'Edit Profile',
-    'Daily Help History',
     'Notifications Settings',
     'Emergency Contacts',
+    'Terms & Conditions',
+    'Privacy policy',
     'Delete Account',
     'Log Out'
   ];
 
-  List<IconData?> iconsList = [
-    Icons.person,
-    Icons.edit,
-    // Icons.history,
-    Icons.notification_add,
-    Icons.emergency_share,
-    Icons.check_circle_outline,
-    Icons.private_connectivity,
-    Icons.privacy_tip,
-    Icons.delete_forever,
-    Icons.logout,
-  ];
   List<IconData?> iconsListForStaff = [
     Icons.person,
-    Icons.edit,
-    Icons.history,
     Icons.notification_add,
     Icons.emergency_share,
+    Icons.privacy_tip_outlined,
+    Icons.privacy_tip_rounded,
     Icons.delete_forever,
     Icons.logout,
   ];
@@ -82,41 +52,20 @@ class _SettingScreenState extends State<SettingScreen> {
   void handleTap(BuildContext context, int index) {
     List<Widget> staffScreens = [
       ResidentProfileDetails(forDetails: true, forResident: false),
-      EditProfileScreen(),
       DailyHelpListingHistory(),
       NotificationScreen(),
       const EmergencyContactScreen(),
-      DeleteUserAccount(),
-      const SizedBox() // Logout handled separately
-    ];
-
-    List<Widget> residentScreens = [
-      ResidentProfileDetails(forDetails: true),
-      EditProfileScreen(),
-      // const DailyHelpListingHistoryResidentSide(),
-      NotificationScreen(),
-      const EmergencyContactScreen(),
-      ResidentCheckoutsHistoryDetails(forResident: true, userId: ''),
       const TermOfUseScreen(),
       const PrivacyPolicyScreen(),
       DeleteUserAccount(),
       const SizedBox() // Logout handled separately
     ];
 
-    if (widget.forStaffSide) {
-      if (index == 6) {
-        logOutPermissionDialog(context);
-      } else {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (builder) => staffScreens[index]));
-      }
+    if (index == 7) {
+      logOutPermissionDialog(context, isLogout: index == 7);
     } else {
-      if (index == 8) {
-        logOutPermissionDialog(context, isLogout: index == 8);
-      } else {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (builder) => residentScreens[index]));
-      }
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (builder) => staffScreens[index]));
     }
   }
 
@@ -260,17 +209,15 @@ class _SettingScreenState extends State<SettingScreen> {
                                                           fontWeight: FontWeight
                                                               .w500))),
                                               Text(
-                                                  widget.forStaffSide
-                                                      ? capitalizeWords(state
-                                                              .userProfile
-                                                              .first
-                                                              .data!
-                                                              .user!
-                                                              .role
-                                                              .toString())
-                                                          .toString()
-                                                          .replaceAll('_', ' ')
-                                                      : "Tower/Block: ${state.userProfile.first.data!.user!.property!.blockName.toString()}/${state.userProfile.first.data!.user!.floorNumber.toString()}, Property : ${state.userProfile.first.data!.user!.aprtNo.toString()}",
+                                                  capitalizeWords(state
+                                                          .userProfile
+                                                          .first
+                                                          .data!
+                                                          .user!
+                                                          .role
+                                                          .toString())
+                                                      .toString()
+                                                      .replaceAll('_', ' '),
                                                   style: GoogleFonts.nunitoSans(
                                                       textStyle: TextStyle(
                                                           color: Colors.black87,
@@ -282,32 +229,24 @@ class _SettingScreenState extends State<SettingScreen> {
                                     ],
                                   ),
                                 ),
-                                widget.forStaffSide
-                                    ? const SizedBox(height: 80)
-                                    : GestureDetector(
-                                        onTap: () => Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (builder) =>
-                                                    ResidentGatePass(
-                                                        residentModel: state
-                                                            .userProfile
-                                                            .first
-                                                            .data!
-                                                            .user!))),
-                                        child: Image.asset(
-                                          'assets/images/qr-image.png',
-                                          height: 80,
-                                          width: 80,
-                                        ),
-                                      )
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 8),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: AppTheme.primaryColor),
+                                  child: Text(
+                                    "Edit Profile",
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.white),
+                                  ),
+                                )
                               ],
                             ),
                           )),
                       ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: widget.forStaffSide
-                            ? settingListTitle2.length
-                            : settingListTitle.length,
+                        itemCount: settingListTitle2.length,
                         shrinkWrap: true,
                         itemBuilder: ((context, index) {
                           return Padding(
@@ -326,15 +265,10 @@ class _SettingScreenState extends State<SettingScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          Icon(
-                                              widget.forStaffSide
-                                                  ? iconsListForStaff[index]
-                                                  : iconsList[index],
-                                              color: widget.forStaffSide &&
-                                                      index == 5
+                                          Icon(iconsListForStaff[index],
+                                              color: index == 5
                                                   ? Colors.red
-                                                  : !widget.forStaffSide &&
-                                                          index == 7
+                                                  : index == 7
                                                       ? Colors.red
                                                       : AppTheme.primaryColor
                                                           .withOpacity(0.8)),
@@ -354,17 +288,12 @@ class _SettingScreenState extends State<SettingScreen> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                Text(
-                                                    widget.forStaffSide
-                                                        ? settingListTitle2[
-                                                            index]
-                                                        : settingListTitle[
-                                                            index],
+                                                Text(settingListTitle2[index],
                                                     style: GoogleFonts.nunitoSans(
                                                         textStyle: TextStyle(
-                                                            color: widget.forStaffSide && index == 5
+                                                            color: index == 5
                                                                 ? Colors.red
-                                                                : !widget.forStaffSide && index == 7
+                                                                : index == 7
                                                                     ? Colors.red
                                                                     : Colors.black,
                                                             fontSize: 14.sp,

@@ -696,7 +696,7 @@ Widget customVisitorsWidget(
             : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
-                    "Arrived At : ${visitorsDate.toString()} $formattedTime",
+                    "Arriving At : ${visitorsDate.toString()} $formattedTime",
                     style:
                         const TextStyle(color: Colors.black45, fontSize: 12)),
               ),
@@ -726,7 +726,7 @@ Widget customVisitorsWidget(
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text('Tower/Block Name ',
+                            Text('Tower/Block',
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
                                         color: Colors.black54,

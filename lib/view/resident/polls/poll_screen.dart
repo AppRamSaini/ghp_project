@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/polls_controller/create_polls/create_polls_cubit.dart';
 import 'package:ghp_society_management/controller/polls_controller/get_polls/get_polls_cubit.dart';
@@ -70,8 +71,7 @@ class _PollScreenState extends State<PollScreen> {
             bloc: _getPollsCubit,
             builder: (context, state) {
               if (state is GetPollsLoading) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+                return notificationShimmerLoading();
               } else if (state is GetPollsLoaded) {
                 List<POllList> pollsList = state.pollsList;
                 return pollsList.isEmpty

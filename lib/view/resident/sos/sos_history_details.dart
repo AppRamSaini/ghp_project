@@ -46,10 +46,13 @@ class SosHistoryDetailsState extends State<SosHistoryDetails> {
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Alert Place ",
-                    style: GoogleFonts.nunitoSans(
-                        textStyle: TextStyle(
-                            color: Colors.deepPurpleAccent, fontSize: 14.sp))),
+                Expanded(
+                  child: Text("Alert Place ",
+                      style: GoogleFonts.nunitoSans(
+                          textStyle: TextStyle(
+                              color: Colors.deepPurpleAccent,
+                              fontSize: 14.sp))),
+                ),
                 Expanded(
                     child: Text(
                         "Property No : ${widget.sosHistoryList.user!.member!.aprtNo.toString()}",
@@ -187,6 +190,9 @@ class SosHistoryDetailsState extends State<SosHistoryDetails> {
                                     color: Colors.black87, fontSize: 14.sp))))
                   ],
                 ),
+                Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Divider(color: Colors.grey.withOpacity(0.2))),
                 sosPlace(),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),

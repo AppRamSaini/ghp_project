@@ -235,7 +235,7 @@ class DailyHelpProfileDetailsState extends State<DailyHelpProfileDetails> {
         }),
       ],
       child: Scaffold(
-        appBar: appbarWidget(title: 'Profile Details'),
+        appBar: appbarWidget(title: 'Staff Details'),
         body: RefreshIndicator(
           onRefresh: onRefresh,
           child: BlocBuilder<DailyHelpHistoryDetailsCubit,
@@ -246,7 +246,6 @@ class DailyHelpProfileDetailsState extends State<DailyHelpProfileDetails> {
                   return notificationShimmerLoading();
                 } else if (state is DailyHelpHistoryDetailsLoaded) {
                   Data? usersData = state.dailyHelpMemberDetailsModal.data;
-
                   print(
                       '-------------->>>>>>>>>>>>${widget.fromResidentPage}  - ${widget.forDetailsPage}   ${widget.forQRPage}');
                   if (!widget.forDetailsPage) {

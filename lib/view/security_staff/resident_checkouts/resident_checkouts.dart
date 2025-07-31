@@ -6,7 +6,7 @@ import 'package:ghp_society_management/controller/resident_checkout_log/resident
 import 'package:ghp_society_management/model/resident_checkouts_history_model.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_profile.dart';
 import 'package:ghp_society_management/view/resident/residents_checkouts/resident_checkouts_history_details.dart';
-import 'package:ghp_society_management/view/security_staff/residents_list.dart';
+import 'package:ghp_society_management/view/security_staff/resident_checkouts/residents_list.dart';
 
 class ResidentsCheckoutsHistory extends StatefulWidget {
   const ResidentsCheckoutsHistory({super.key});
@@ -387,65 +387,62 @@ List<Map<String, dynamic>> optionsList = [
 
 Widget popMenusForStaff({required BuildContext context, required residentId}) {
   return CircleAvatar(
-    backgroundColor: Colors.deepPurpleAccent,
-    child: CircleAvatar(
-      backgroundColor: Colors.white,
-      child: PopupMenuButton(
-        elevation: 10,
-        padding: EdgeInsets.zero,
-        color: Colors.white,
-        surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-        icon: const Icon(Icons.more_horiz_rounded,
-            color: Colors.deepPurpleAccent, size: 18.0),
-        offset: const Offset(0, 50),
-        itemBuilder: (BuildContext bc) {
-          return optionsList
-              .map(
-                (selectedOption) => PopupMenuItem(
-                  padding: EdgeInsets.zero,
-                  value: selectedOption,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10.w, right: 30),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(selectedOption['icon']),
-                            const SizedBox(width: 10),
-                            Text(selectedOption['menu'] ?? "",
-                                style: GoogleFonts.poppins(
-                                    color: Colors.black,
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w400))
-                          ],
-                        ),
-                      ],
-                    ),
+    backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+    child: PopupMenuButton(
+      elevation: 10,
+      padding: EdgeInsets.zero,
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+      icon: const Icon(Icons.more_horiz_rounded,
+          color: Colors.deepPurpleAccent, size: 18.0),
+      offset: const Offset(0, 50),
+      itemBuilder: (BuildContext bc) {
+        return optionsList
+            .map(
+              (selectedOption) => PopupMenuItem(
+                padding: EdgeInsets.zero,
+                value: selectedOption,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 10.w, right: 30),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(selectedOption['icon']),
+                          const SizedBox(width: 10),
+                          Text(selectedOption['menu'] ?? "",
+                              style: GoogleFonts.poppins(
+                                  color: Colors.black,
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w400))
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              )
-              .toList();
-        },
-        onSelected: (value) async {
-          if (value['menu_id'] == 0) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => ResidentCheckoutsHistoryDetails(
-                        userId: residentId.toString(), forResident: false)));
-          } else if (value['menu_id'] == 1) {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => ResidentProfileDetails(
-                        residentId: {'resident_id': residentId.toString()},
-                        forQRPage: false,
-                        forResident: false)));
-          }
-        },
-      ),
+              ),
+            )
+            .toList();
+      },
+      onSelected: (value) async {
+        if (value['menu_id'] == 0) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => ResidentCheckoutsHistoryDetails(
+                      userId: residentId.toString(), forResident: false)));
+        } else if (value['menu_id'] == 1) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => ResidentProfileDetails(
+                      residentId: {'resident_id': residentId.toString()},
+                      forQRPage: false,
+                      forResident: false)));
+        }
+      },
     ),
   );
 }

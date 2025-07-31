@@ -93,7 +93,7 @@ class _ManagePropertyState extends State<ManageProperty> {
                   return PopupMenuItem<PropertyList>(
                     value: item,
                     child: Text(
-                      "${item.name ?? ''} (${item.blockName} - ${item.aprtNo})",
+                      "${item.name ?? ''} - (${item.aprtNo})",
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,

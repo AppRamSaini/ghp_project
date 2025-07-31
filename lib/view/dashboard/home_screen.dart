@@ -2,6 +2,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
+import 'package:ghp_society_management/controller/notification/notification_listing/notification_list_cubit.dart';
 import 'package:ghp_society_management/controller/property_listing/property_listing_cubit.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
@@ -54,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
     context
         .read<MyBillsCubit>()
         .fetchMyBills(context: context, billTypes: "all");
+    context.read<NotificationListingCubit>().fetchNotifications();
     setState(() {});
   }
 
@@ -108,14 +110,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   final image = state.userProfile.first.data!.user!.image;
                   final name = state.userProfile.first.data!.user!.name;
                   final userId = state.userProfile.first.data!.user!.id;
-
                   LocalStorage.localStorage
                       .setString('user_image', image.toString());
                   LocalStorage.localStorage
                       .setString('user_name', name.toString());
                   LocalStorage.localStorage
                       .setString('user_id', userId.toString());
-
                   Future.delayed(const Duration(milliseconds: 5), () {
                     List<UnpaidBill> billData =
                         state.userProfile.first.data!.unpaidBills!;
@@ -242,10 +242,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             Padding(
                               padding: const EdgeInsets.only(left: 12.0),
                               child: Text('All Features',
-                                  style: GoogleFonts.cormorant(
+                                  style: GoogleFonts.nunito(
                                     textStyle: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 18.sp,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   )),
@@ -340,7 +340,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           },
                         ),
-                        SizedBox(height: 10.h),
+                        SizedBox(height: size.height * 0.1),
                         // Row(
                         //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         //   children: [
