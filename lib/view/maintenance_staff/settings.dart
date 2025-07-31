@@ -1,6 +1,7 @@
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
+import 'package:ghp_society_management/view/resident/resident_profile/edit_profile_screen.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_profile.dart';
 import 'package:ghp_society_management/view/resident/setting/delete_account.dart';
 import 'package:ghp_society_management/view/resident/setting/emergency_contact.dart';
@@ -8,7 +9,6 @@ import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart
 import 'package:ghp_society_management/view/resident/setting/notification_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/privacy_policy.dart';
 import 'package:ghp_society_management/view/resident/setting/term_of_use.dart';
-import 'package:ghp_society_management/view/security_staff/daliy_help/daily_helps_members.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 
 class SettingScreenMaintenanceStaff extends StatefulWidget {
@@ -52,7 +52,6 @@ class _SettingScreenState extends State<SettingScreenMaintenanceStaff> {
   void handleTap(BuildContext context, int index) {
     List<Widget> staffScreens = [
       ResidentProfileDetails(forDetails: true, forResident: false),
-      DailyHelpListingHistory(),
       NotificationScreen(),
       const EmergencyContactScreen(),
       const TermOfUseScreen(),
@@ -61,8 +60,8 @@ class _SettingScreenState extends State<SettingScreenMaintenanceStaff> {
       const SizedBox() // Logout handled separately
     ];
 
-    if (index == 7) {
-      logOutPermissionDialog(context, isLogout: index == 7);
+    if (index == 6) {
+      logOutPermissionDialog(context, isLogout: index == 6);
     } else {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (builder) => staffScreens[index]));
@@ -229,16 +228,24 @@ class _SettingScreenState extends State<SettingScreenMaintenanceStaff> {
                                     ],
                                   ),
                                 ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 8),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: AppTheme.primaryColor),
-                                  child: Text(
-                                    "Edit Profile",
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.white),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (builder) =>
+                                                EditProfileScreen()));
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 8),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        color: AppTheme.primaryColor),
+                                    child: Text(
+                                      "Edit Profile",
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.white),
+                                    ),
                                   ),
                                 )
                               ],
