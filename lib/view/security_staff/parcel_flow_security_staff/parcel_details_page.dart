@@ -1,5 +1,6 @@
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_complaint/parcel_complaint_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_details/parcel_details_cubit.dart';
 import 'package:ghp_society_management/model/parcel_details_model.dart';
@@ -65,13 +66,7 @@ class _ParcelDetailsSecurityStaffSideState
         }),
       ],
       child: Scaffold(
-          appBar: AppBar(
-              title: Text('Parcel Details',
-                  style: GoogleFonts.nunitoSans(
-                      textStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600)))),
+          appBar: appbarWidget(title: 'Parcel Details'),
           body: Padding(
             padding: const EdgeInsets.all(12.0),
             child: BlocBuilder<ParcelDetailsCubit, ParcelDetailsState>(
@@ -682,11 +677,25 @@ class _ParcelDetailsSecurityStaffSideState
                               child: Row(
                                 children: [
                                   requestData.deliveryAgentImage != null
-                                      ? CircleAvatar(
-                                          radius: 35,
-                                          backgroundImage: NetworkImage(
-                                              requestData.deliveryAgentImage
-                                                  .toString()))
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(100),
+                                          child: FadeInImage(
+                                            height: 70,
+                                            width: 70,
+                                            fit: BoxFit.cover,
+                                            placeholder: AssetImage(
+                                                'assets/images/default.jpg'),
+                                            image: NetworkImage(requestData
+                                                .deliveryAgentImage
+                                                .toString()),
+                                            imageErrorBuilder: (_, child, st) =>
+                                                CircleAvatar(
+                                                    radius: 35,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/images/default.jpg')),
+                                          ),
+                                        )
                                       : const CircleAvatar(
                                           radius: 35,
                                           backgroundImage: AssetImage(
@@ -733,14 +742,9 @@ class _ParcelDetailsSecurityStaffSideState
                     ),
                   );
                 } else if (state is ParcelDetailsFailed) {
-                  return Center(
-                      child: Text(state.errorMsg.toString(),
-                          style:
-                              const TextStyle(color: Colors.deepPurpleAccent)));
+                  return emptyDataWidget(state.errorMsg.toString());
                 } else if (state is ParcelDetailsLoading) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive(
-                          backgroundColor: Colors.deepPurpleAccent));
+                  return notificationShimmerLoading();
                 } else if (state is ParcelDetailsInternetError) {
                   return Center(
                       child: Text(state.errorMsg.toString(),

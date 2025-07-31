@@ -1,10 +1,11 @@
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/view/resident/daily_helps_member/daily_help_member_resident_side.dart';
-import 'package:ghp_society_management/view/resident/residents_checkouts/resident_checkouts_history_details.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/edit_profile_screen.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_gatepass.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_profile.dart';
+import 'package:ghp_society_management/view/resident/residents_checkouts/resident_checkouts_history_details.dart';
 import 'package:ghp_society_management/view/resident/setting/delete_account.dart';
 import 'package:ghp_society_management/view/resident/setting/emergency_contact.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
@@ -27,8 +28,9 @@ class _SettingScreenState extends State<SettingScreen> {
   int selectedValue = 0;
   List<String> settingListTitle = [
     'View Profile',
+    'Edit Profile',
     'Daily Help',
-    'Change Society',
+    // 'Change Society',
     'Notifications Settings',
     'Privacy Policy',
     'Terms Of Use',
@@ -40,11 +42,34 @@ class _SettingScreenState extends State<SettingScreen> {
 
   List<String> settingListTitle2 = [
     'View Profile',
-    'Change Society',
+    'Edit Profile',
+    'Daily Help History',
     'Notifications Settings',
     'Emergency Contacts',
     'Delete Account',
     'Log Out'
+  ];
+
+  List<IconData?> iconsList = [
+    Icons.person,
+    Icons.edit,
+    Icons.history,
+    Icons.notification_add,
+    Icons.privacy_tip,
+    Icons.private_connectivity,
+    Icons.emergency_share,
+    Icons.check_circle_outline,
+    Icons.delete_forever,
+    Icons.logout,
+  ];
+  List<IconData?> iconsListForStaff = [
+    Icons.person,
+    Icons.edit,
+    Icons.history,
+    Icons.notification_add,
+    Icons.emergency_share,
+    Icons.delete_forever,
+    Icons.logout,
   ];
 
   late BuildContext dialogueContext;
@@ -57,8 +82,9 @@ class _SettingScreenState extends State<SettingScreen> {
 
   void handleTap(BuildContext context, int index) {
     List<Widget> staffScreens = [
-      ResidentProfileDetails(forDetails: true,forResident: false),
-      const SizedBox(),
+      ResidentProfileDetails(forDetails: true, forResident: false),
+      EditProfileScreen(),
+      DailyHelpListingHistory(),
       NotificationScreen(),
       const EmergencyContactScreen(),
       DeleteUserAccount(),
@@ -67,8 +93,8 @@ class _SettingScreenState extends State<SettingScreen> {
 
     List<Widget> residentScreens = [
       ResidentProfileDetails(forDetails: true),
+      EditProfileScreen(),
       const DailyHelpListingHistoryResidentSide(),
-      const SizedBox(), // Logout handled separately
       NotificationScreen(),
       const PrivacyPolicyScreen(),
       const TermOfUseScreen(),
@@ -79,22 +105,25 @@ class _SettingScreenState extends State<SettingScreen> {
     ];
 
     if (widget.forStaffSide) {
-      if (index == 1) {
-        logOutPermissionDialog(context, isLogout: false);
-      } else if (index == 5) {
+      if (index == 6) {
         logOutPermissionDialog(context);
       } else {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (builder) => staffScreens[index]));
       }
     } else {
-      if (index == 2 || index == 9) {
+      if (index == 9) {
         logOutPermissionDialog(context, isLogout: index == 9);
       } else {
         Navigator.of(context).push(
             MaterialPageRoute(builder: (builder) => residentScreens[index]));
       }
     }
+  }
+
+  Future onRefresh() async {
+    context.read<UserProfileCubit>().fetchUserProfile();
+    setState(() {});
   }
 
   @override
@@ -129,254 +158,258 @@ class _SettingScreenState extends State<SettingScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-            title: Text('Settings',
-                style: GoogleFonts.nunitoSans(
-                    textStyle: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600)))),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(7),
-                      border: Border.all(color: Colors.grey.withOpacity(0.15))),
-                  child: BlocBuilder<UserProfileCubit, UserProfileState>(
-                    builder: (context, state) {
-                      if (state is UserProfileLoaded) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 0),
-                          child:
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    state.userProfile.first.data!.user!.image !=
-                                            null
-                                        ? CircleAvatar(
-                                            radius: 28,
-                                            backgroundImage: NetworkImage(state
-                                                .userProfile
-                                                .first
-                                                .data!
-                                                .user!
-                                                .image
-                                                .toString()))
-                                        : const CircleAvatar(
-                                            radius: 25,
-                                            backgroundImage: AssetImage(
-                                                'assets/images/default.jpg')),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                capitalizeWords(state.userProfile.first.data!
-                                                    .user!.name
+        appBar: appbarWidget(title: 'Settings'),
+        body: RefreshIndicator(
+          onRefresh: onRefresh,
+          child: BlocBuilder<UserProfileCubit, UserProfileState>(
+            builder: (context, state) {
+              if (state is UserProfileLoaded) {
+                return SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      Container(
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7),
+                              border: Border.all(
+                                  color: Colors.grey.withOpacity(0.15))),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      state.userProfile.first.data!.user!
+                                                  .image !=
+                                              null
+                                          ? ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: FadeInImage(
+                                                height: 70,
+                                                width: 70,
+                                                fit: BoxFit.fill,
+                                                placeholder: AssetImage(
+                                                    'assets/images/default.jpg'),
+                                                image: NetworkImage(state
+                                                    .userProfile
+                                                    .first
+                                                    .data!
+                                                    .user!
+                                                    .image
                                                     .toString()),
-                                                style: GoogleFonts.nunitoSans(
-                                                  textStyle: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 18.sp,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                )),
-                                            // Text(
-                                            //     "+91 ${state.userProfile.first.data!.user!.phone.toString()}",
-                                            //     style: GoogleFonts.nunitoSans(
-                                            //         textStyle: TextStyle(
-                                            //             color: Colors.black87,
-                                            //             fontSize: 10.sp,
-                                            //             fontWeight:
-                                            //                 FontWeight.w500))),
-                                            Text(
-                                                widget.forStaffSide
-                                                    ? capitalizeWords(state
+                                                imageErrorBuilder: (_, child,
+                                                        st) =>
+                                                    Image.asset(
+                                                        'assets/images/default.jpg',
+                                                        height: 70,
+                                                        width: 70,
+                                                        fit: BoxFit.fill),
+                                              ),
+                                            )
+                                          : ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: FadeInImage(
+                                                height: 70,
+                                                width: 70,
+                                                fit: BoxFit.fill,
+                                                placeholder: AssetImage(
+                                                    'assets/images/default.jpg'),
+                                                image: AssetImage(''),
+                                                imageErrorBuilder: (_, child,
+                                                        st) =>
+                                                    Image.asset(
+                                                        'assets/images/default.jpg',
+                                                        height: 70,
+                                                        width: 70,
+                                                        fit: BoxFit.fill),
+                                              ),
+                                            ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  capitalizeWords(state
+                                                      .userProfile
+                                                      .first
+                                                      .data!
+                                                      .user!
+                                                      .name
+                                                      .toString()),
+                                                  style: GoogleFonts.nunitoSans(
+                                                    textStyle: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  )),
+                                              Text(
+                                                  "+91 ${state.userProfile.first.data!.user!.phone.toString()}",
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black87,
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight
+                                                              .w500))),
+                                              Text(
+                                                  widget.forStaffSide
+                                                      ? capitalizeWords(state
+                                                              .userProfile
+                                                              .first
+                                                              .data!
+                                                              .user!
+                                                              .role
+                                                              .toString())
+                                                          .toString()
+                                                          .replaceAll('_', ' ')
+                                                      : "Tower/Block: ${state.userProfile.first.data!.user!.property!.blockName.toString()}/${state.userProfile.first.data!.user!.floorNumber.toString()}, Property : ${state.userProfile.first.data!.user!.aprtNo.toString()}",
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black87,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w500)))
+                                            ]),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                widget.forStaffSide
+                                    ? const SizedBox(height: 80)
+                                    : GestureDetector(
+                                        onTap: () => Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (builder) =>
+                                                    ResidentGatePass(
+                                                        residentModel: state
                                                             .userProfile
                                                             .first
                                                             .data!
-                                                            .user!
-                                                            .role
-                                                            .toString())
-                                                        .toString()
-                                                        .replaceAll('_', ' ')
-                                                    : "Tower/Floor: ${state.userProfile.first.data!.user!.blockName.toString()}/${state.userProfile.first.data!.user!.floorNumber.toString()}, Flat No: ${state.userProfile.first.data!.user!.aprtNo.toString()}",
-                                                style: GoogleFonts.nunitoSans(
-                                                    textStyle: TextStyle(
-                                                        color: Colors.black87,
-                                                        fontSize: 10,
-                                                        fontWeight:
-                                                            FontWeight.w500)))
-                                          ]),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              widget.forStaffSide
-                                  ? const SizedBox(height: 80)
-                                  : GestureDetector(
-                                      onTap: () => Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (builder) =>
-                                                  ResidentGatePass(
-                                                      residentModel: state
-                                                          .userProfile
-                                                          .first
-                                                          .data!
-                                                          .user!))),
-                                      child: SizedBox(
+                                                            .user!))),
+                                        child: Image.asset(
+                                          'assets/images/qr-image.png',
                                           height: 80,
-                                          width: 70,
-                                          child: Image.asset(
-                                              'assets/images/qr-image.png')),
-                                    )
-                            ],
-                          ),
-                        );
-                      } else if (state is UserProfileLoading) {
-                        return const CircularProgressIndicator();
-                      } else {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 10),
-                          child: Row(
-                            children: [
-                              const CircleAvatar(
-                                  radius: 32,
-                                  backgroundImage:
-                                      AssetImage('assets/images/default.jpg')),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                          width: 80,
+                                        ),
+                                      )
+                              ],
+                            ),
+                          )),
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: widget.forStaffSide
+                            ? settingListTitle2.length
+                            : settingListTitle.length,
+                        shrinkWrap: true,
+                        itemBuilder: ((context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: GestureDetector(
+                              onTap: () => handleTap(context, index),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border:
+                                        Border.all(color: Colors.grey[100]!)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
                                     children: [
-                                      Text("Dear Resident",
-                                          style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          )),
-                                      Text("+91 *********",
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontSize: 13.sp,
-                                                  fontWeight:
-                                                      FontWeight.w500))),
-                                      Text("Not Define",
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontSize: 13.sp,
-                                                  fontWeight: FontWeight.w500)))
-                                    ]),
-                              ),
-                              SizedBox(
-                                  height: 100,
-                                  width: 80,
-                                  child:
-                                      Image.asset('assets/images/qr-image.png'))
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-                ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: widget.forStaffSide
-                        ? settingListTitle2.length
-                        : settingListTitle.length,
-                    shrinkWrap: true,
-                    itemBuilder: ((context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
-                        child: GestureDetector(
-                          onTap: () => handleTap(context, index),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.grey[100]!)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Image.asset(ImageAssets.settingLogo,
-                                          height: 35.h),
-                                      SizedBox(width: 10.w),
-                                      Expanded(
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-
-                                              children: [
-                                            Text(
-                                                widget.forStaffSide
-                                                    ? settingListTitle2[index]
-                                                    : settingListTitle[index],
-                                                style: GoogleFonts.nunitoSans(
-                                                    textStyle: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14.sp,
-                                                        fontWeight:
-                                                            FontWeight.w600)))
-                                          ])),
-                                      SizedBox(width: 10.w),
-                                      index == 0
-                                          ? MaterialButton(
-                                              onPressed: () => Navigator.of(
-                                                      context)
-                                                  .push(MaterialPageRoute(
-                                                      builder: (builder) =>
-                                                          const EditProfileScreen())),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          30)),
-                                              color: AppTheme.primaryColor,
-                                              child: const Text("Edit Profile",
-                                                  style: TextStyle(fontSize: 12,
-                                                      color: Colors.white)))
-                                          : Container(
-                                              decoration: BoxDecoration(
-                                                  color: AppTheme.greyColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          1000.r)),
-                                              child: const Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Icon(
-                                                  Icons.navigate_next,
-                                                  color: Colors.black54,
-                                                ),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                              widget.forStaffSide
+                                                  ? iconsListForStaff[index]
+                                                  : iconsList[index],
+                                              color: widget.forStaffSide &&
+                                                      index == 5
+                                                  ? Colors.red
+                                                  : !widget.forStaffSide &&
+                                                          index == 8
+                                                      ? Colors.red
+                                                      : Colors.black87),
+                                          // Image.asset(ImageAssets.settingLogo,
+                                          //     color: widget.forStaffSide &&
+                                          //             index == 5
+                                          //         ? Colors.red
+                                          //         : !widget.forStaffSide &&
+                                          //                 index == 8
+                                          //             ? Colors.red
+                                          //             : null,
+                                          //     height: 35.h),
+                                          SizedBox(width: 10.w),
+                                          Expanded(
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                Text(
+                                                    widget.forStaffSide
+                                                        ? settingListTitle2[
+                                                            index]
+                                                        : settingListTitle[
+                                                            index],
+                                                    style: GoogleFonts.nunitoSans(
+                                                        textStyle: TextStyle(
+                                                            color: widget.forStaffSide && index == 5
+                                                                ? Colors.red
+                                                                : !widget.forStaffSide && index == 8
+                                                                    ? Colors.red
+                                                                    : Colors.black,
+                                                            fontSize: 14.sp,
+                                                            fontWeight: FontWeight.w600)))
+                                              ])),
+                                          SizedBox(width: 10.w),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: AppTheme.greyColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        1000.r)),
+                                            child: const Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Icon(
+                                                Icons.navigate_next,
+                                                color: Colors.black54,
                                               ),
                                             ),
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      );
-                    }))
-              ],
-            ),
+                          );
+                        }),
+                      ),
+                      SizedBox(height: 30),
+                    ],
+                  ),
+                );
+              } else if (state is UserProfileLoading) {
+                return notificationShimmerLoading();
+              } else if (state is UserProfileInternetError) {
+                return Center(
+                    child: const Text("Internet connection error!",
+                        style: TextStyle(fontSize: 16, color: Colors.red)));
+              } else if (state is UserProfileFailed) {
+                return notificationShimmerLoading();
+              } else {
+                return notificationShimmerLoading();
+              }
+            },
           ),
         ),
       ),

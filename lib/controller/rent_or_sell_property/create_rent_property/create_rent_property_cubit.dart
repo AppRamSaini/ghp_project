@@ -34,6 +34,8 @@ class CreateRentPropertyCubit extends Cubit<CreateRentPropertyState> {
 
     try {
       var token = LocalStorage.localStorage.getString('token');
+      final propertyId = LocalStorage.localStorage.getString('property_id');
+
       if (token == null) {
         emit(CreateRentPropertyFailed());
         return;
@@ -43,6 +45,7 @@ class CreateRentPropertyCubit extends Cubit<CreateRentPropertyState> {
           'POST', Uri.parse(Config.baseURL + Routes.createRentProperty))
         ..headers['Authorization'] = 'Bearer $token'
         ..headers['Accept'] = 'application/json'
+        ..fields['property_id'] = propertyId ?? ''
         ..fields['block_id'] = block ?? ''
         ..fields['floor'] = floor ?? ''
         ..fields['unit_type'] = unitType ?? ''
@@ -68,6 +71,8 @@ class CreateRentPropertyCubit extends Cubit<CreateRentPropertyState> {
           request.files.add(multipartFile);
         }
       }
+
+      print('payload -------->>>>${request.fields}');
 
       // Send the request
       final responseStream = await request.send();

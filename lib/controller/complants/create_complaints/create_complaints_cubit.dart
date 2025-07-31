@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:ghp_society_management/constants/config.dart';
@@ -26,11 +27,12 @@ class CreateComplaintsCubit extends Cubit<CreateComplaintsState> {
 
     try {
       final token = LocalStorage.localStorage.getString('token');
-      print('--------------------$serviceCategoryId');
+      final propertyId = LocalStorage.localStorage.getString('property_id');
       final request = http.MultipartRequest(
           'POST', Uri.parse(Config.baseURL + Routes.createComplaints))
         ..headers['Authorization'] = 'Bearer $token'
         ..headers['Accept'] = 'application/json'
+        ..fields['property_id'] = '$propertyId'
         ..fields['complaint_category_id'] = serviceCategoryId.toString()
         ..fields['area'] = area
         ..fields['description'] = description;
@@ -80,4 +82,3 @@ class CreateComplaintsCubit extends Cubit<CreateComplaintsState> {
     }
   }
 }
-

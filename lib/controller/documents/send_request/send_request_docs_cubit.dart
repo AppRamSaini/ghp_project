@@ -14,11 +14,17 @@ class SendDocsRequestCubit extends Cubit<SendDocsRequestState> {
     emit(SendDocsRequestLoading());
     try {
       var token = LocalStorage.localStorage.getString('token');
-      var responseData = await apiManager.postRequest(
-          requestBody,
-          Config.baseURL + Routes.sendRequest,
-          {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
+      final propertyId = LocalStorage.localStorage.getString('property_id');
 
+      var responseData = await apiManager
+          .postRequest(requestBody, Config.baseURL + Routes.sendRequest, {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+        'x-property-id': '$propertyId'
+      });
+
+
+      print('p-------------------....$propertyId');
       var response = json.decode(responseData.body.toString());
       print(responseData.body);
       if (responseData.statusCode == 201) {

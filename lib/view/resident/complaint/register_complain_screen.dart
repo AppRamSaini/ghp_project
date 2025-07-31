@@ -1,10 +1,9 @@
 import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:flutter_document_picker/flutter_document_picker.dart';
-// import 'package:flutter_document_picker/flutter_document_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
@@ -15,8 +14,6 @@ import 'package:ghp_society_management/controller/sos_management/sos_element/sos
 import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-// import 'package:video_thumbnail/video_thumbnail.dart';
 
 class RegisterComplaintScreen extends StatefulWidget {
   final String categoryId;
@@ -51,7 +48,7 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
           });
         } else if (state is CreateComplaintsSuccessfully) {
           snackBar(
-              context, state.msg.toString(), Icons.done, AppTheme.guestColor);
+              context, "Complaint Submitted!", Icons.done, AppTheme.guestColor);
 
           Navigator.of(dialogueContext!).pop();
           Navigator.of(context).pop();
@@ -71,13 +68,7 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
         }
       },
       child: Scaffold(
-
-        appBar: AppBar(title: Text('Register Complaint',
-            style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(title: 'Register Complaint'),
         bottomNavigationBar: GestureDetector(
           onTap: () {
             if (selectedValue == null) {
@@ -143,19 +134,17 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
                     if (state is SosElementLoaded) {
                       return DropdownButton2<String>(
                           hint: const Text('--select--',
-                              style: TextStyle(
-                                  color: Colors.grey, fontSize: 14)),
-                          underline:
-                          Container(color: Colors.transparent),
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 14)),
+                          underline: Container(color: Colors.transparent),
                           isExpanded: true,
                           value: selectedValue,
                           items: state.sosElement.first.data.areas
                               .map((item) => DropdownMenuItem<String>(
-                              value: item.name,
-                              child: Text(item.name,
-                                  style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black))))
+                                  value: item.name,
+                                  child: Text(item.name,
+                                      style: const TextStyle(
+                                          fontSize: 14, color: Colors.black))))
                               .toList(),
                           onChanged: (value) {
                             setState(() {
@@ -169,14 +158,11 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
                           buttonStyleData: ButtonStyleData(
                               decoration: BoxDecoration(
                                   color: AppTheme.greyColor,
-                                  borderRadius:
-                                  BorderRadius.circular(10))),
+                                  borderRadius: BorderRadius.circular(10))),
                           dropdownStyleData: DropdownStyleData(
-                              maxHeight: MediaQuery.sizeOf(context).height /
-                                  2,
+                              maxHeight: MediaQuery.sizeOf(context).height / 2,
                               decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.circular(10))),
+                                  borderRadius: BorderRadius.circular(10))),
                           menuItemStyleData: const MenuItemStyleData(
                               padding: EdgeInsets.symmetric(horizontal: 16)));
                     } else {
@@ -213,8 +199,7 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
                       fillColor: AppTheme.greyColor,
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15.0),
-                        borderSide:
-                        BorderSide(color: AppTheme.greyColor),
+                        borderSide: BorderSide(color: AppTheme.greyColor),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15.0),
@@ -270,8 +255,7 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
                           // } else {
                           //   snackbarMessage(context);
                           // }
-                          _showPicker(
-                              context: context, isPickVideo: true);
+                          _showPicker(context: context, isPickVideo: true);
                         },
                         child: Image.asset(ImageAssets.videoImage,
                             height: 90.h, width: 100.w)),
@@ -618,17 +602,17 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
                 // अगर thumbnailFile null है तो डिफ़ॉल्ट इमेज दिखाओ
                 thumbnailFile != null
                     ? Image.file(
-                  thumbnailFile!,
-                  width: 100,
-                  height: 120,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) {
-                    return Image.asset('assets/images/default.jpg',
-                        fit: BoxFit.cover);
-                  },
-                )
+                        thumbnailFile!,
+                        width: 100,
+                        height: 120,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) {
+                          return Image.asset('assets/images/default.jpg',
+                              fit: BoxFit.cover);
+                        },
+                      )
                     : Image.asset('assets/images/default.jpg',
-                    width: 100, height: 120, fit: BoxFit.cover),
+                        width: 100, height: 120, fit: BoxFit.cover),
 
                 Container(
                   width: 100,

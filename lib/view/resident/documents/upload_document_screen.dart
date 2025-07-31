@@ -1,16 +1,16 @@
 import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:flutter_document_picker/flutter_document_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
-import 'package:ghp_society_management/controller/upload_document/upload_document_cubit.dart';
 import 'package:ghp_society_management/controller/documents_element/document_elements_cubit.dart';
+import 'package:ghp_society_management/controller/upload_document/upload_document_cubit.dart';
 import 'package:ghp_society_management/model/incoming_documents_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -19,6 +19,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class UploadDocumentScreen extends StatefulWidget {
   final IncomingRequestData incomingRequestData;
+
   const UploadDocumentScreen({super.key, required this.incomingRequestData});
 
   @override
@@ -37,8 +38,10 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
   @override
   void initState() {
     super.initState();
-    documentName.text = widget.incomingRequestData.subject??'Upload documents';
-    description.text = widget.incomingRequestData.description??'Upload documents description';
+    documentName.text =
+        widget.incomingRequestData.subject ?? 'Upload documents';
+    description.text = widget.incomingRequestData.description ??
+        'Upload documents description';
     documentsType.text = widget.incomingRequestData.fileType != null
         ? widget.incomingRequestData.fileType.toString()
         : 'docs';
@@ -70,14 +73,7 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('Upload Document',
-            style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500
-              )
-            ))),
+        appBar: appbarWidget(title: 'Upload Document'),
         bottomNavigationBar: Container(
           color: Colors.white,
           child: GestureDetector(
@@ -124,7 +120,6 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
                 children: [
                   SizedBox(height: 10.h),
                   Text('Document Name',
-
                       style: GoogleFonts.nunitoSans(
                         textStyle: TextStyle(
                           color: Colors.black,
@@ -359,71 +354,61 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
                     ),
                     Expanded(
                         child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: 120.h,
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: documentFiles.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: EdgeInsets.only(left: 8.w),
-                                  child: Stack(
-                                    alignment: Alignment.topRight,
-                                    children: [
-                                      Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  10),
-                                              border: Border.all(
-                                                  color: AppTheme
-                                                      .primaryColor)),
-                                          width: 100.w,
-                                          height: 120.h,
-                                          child: ClipRRect(
-                                            borderRadius:
-                                            BorderRadius.circular(10),
-                                            child: (documentFiles[index]
+                      width: MediaQuery.of(context).size.width,
+                      height: 120.h,
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: documentFiles.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.only(left: 8.w),
+                              child: Stack(
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: AppTheme.primaryColor)),
+                                      width: 100.w,
+                                      height: 120.h,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: (documentFiles[index]
                                                 .path
                                                 .contains('.pdf'))
-                                                ? SfPdfViewer.file(
+                                            ? SfPdfViewer.file(
                                                 documentFiles[index])
-                                                : Image.file(
-                                                documentFiles[index],
+                                            : Image.file(documentFiles[index],
                                                 fit: BoxFit.cover),
-                                          )),
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets.all(8.0),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            documentFiles.removeAt(index);
-                                            setState(() {});
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.circular(
-                                                    1000),
-                                                color:
-                                                const Color.fromARGB(
-                                                    255,
-                                                    143,
-                                                    40,
-                                                    32)),
-                                            child: const Icon(
-                                              CupertinoIcons.minus,
-                                              color: Colors.white,
-                                            ),
-                                          ),
+                                      )),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        documentFiles.removeAt(index);
+                                        setState(() {});
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(1000),
+                                            color: const Color.fromARGB(
+                                                255, 143, 40, 32)),
+                                        child: const Icon(
+                                          CupertinoIcons.minus,
+                                          color: Colors.white,
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                );
-                              }),
-                        ))
+                                ],
+                              ),
+                            );
+                          }),
+                    ))
                   ]),
                 ],
               ),
@@ -577,8 +562,8 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
       sourcePath: pickedImage.path,
       compressFormat: ImageCompressFormat.jpg,
       compressQuality: 100,
-      aspectRatio: const CropAspectRatio(
-          ratioX: 1, ratioY: 1), // Set the aspect ratio for a square image
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      // Set the aspect ratio for a square image
       uiSettings: [
         AndroidUiSettings(
             toolbarTitle: 'Cropper',

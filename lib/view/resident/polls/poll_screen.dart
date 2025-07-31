@@ -63,12 +63,7 @@ class _PollScreenState extends State<PollScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('Polls',
-            style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(title: 'Polls'),
         body: RefreshIndicator(
           onRefresh: refreshPage,
           child: BlocBuilder<GetPollsCubit, GetPollsState>(
@@ -84,25 +79,20 @@ class _PollScreenState extends State<PollScreen> {
                         child: Text('Polls not found!',
                             style: GoogleFonts.nunitoSans(
                                 textStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16.sp))))
+                                    color: Colors.black, fontSize: 16.sp))))
                     : ListView.builder(
                         padding: const EdgeInsets.only(top: 10),
                         itemCount: pollsList.length,
                         shrinkWrap: true,
-                        physics:
-                            const AlwaysScrollableScrollPhysics(),
+                        physics: const AlwaysScrollableScrollPhysics(),
                         itemBuilder: (_, index) {
-                          String expireDate =
-                              DateFormat('dd-MMMM-yyyy').format(
-                                  DateTime.parse(pollsList[index]
-                                      .endDate
-                                      .toString()));
+                          String expireDate = DateFormat('dd-MMMM-yyyy').format(
+                              DateTime.parse(
+                                  pollsList[index].endDate.toString()));
 
                           bool isExpired = DateTime.now().isAfter(
-                              DateTime.parse(pollsList[index]
-                                  .endDate
-                                  .toString()));
+                              DateTime.parse(
+                                  pollsList[index].endDate.toString()));
 
                           return Container(
                             margin: const EdgeInsets.symmetric(
@@ -110,18 +100,12 @@ class _PollScreenState extends State<PollScreen> {
                             padding: const EdgeInsets.all(10),
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(10),
-                                border: Border.all(
-                                    color: Colors.grey[300]!)),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.grey[300]!)),
                             child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                    pollsList[index]
-                                        .endMsg
-                                        .toString(),
+                                Text(pollsList[index].endMsg.toString(),
                                     style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                         color: Colors.grey,
@@ -136,142 +120,109 @@ class _PollScreenState extends State<PollScreen> {
                                           style: TextStyle(
                                               color: Colors.red,
                                               fontSize: 14.sp,
-                                              fontWeight:
-                                                  FontWeight.bold),
+                                              fontWeight: FontWeight.bold),
                                         )
                                       : CustomFlutterPolls(
-                                          leadingVotedProgessColor:
-                                              Colors.deepPurpleAccent
-                                                  .withOpacity(0.6),
+                                          leadingVotedProgessColor: Colors
+                                              .deepPurpleAccent
+                                              .withOpacity(0.6),
                                           pollOptionsWidth:
-                                              MediaQuery.sizeOf(
-                                                          context)
-                                                      .width *
+                                              MediaQuery.sizeOf(context).width *
                                                   0.85,
-                                          userVotedOptionId:
-                                              pollsList[index]
-                                                  .options
-                                                  .first
-                                                  .id
-                                                  .toString(),
-                                          pollOptionsFillColor: Colors
-                                              .grey
-                                              .withOpacity(0.1),
-                                          pollOptionsBorder:
-                                              Border.all(
-                                                  color: Colors
-                                                      .deepPurple),
+                                          userVotedOptionId: pollsList[index]
+                                              .options
+                                              .first
+                                              .id
+                                              .toString(),
+                                          pollOptionsFillColor:
+                                              Colors.grey.withOpacity(0.1),
+                                          pollOptionsBorder: Border.all(
+                                              color: Colors.deepPurple),
                                           pollOptionsHeight: 50,
                                           pollTitle: Text(
-                                            pollsList[index]
-                                                .title
-                                                .toString(),
-                                            style:
-                                                GoogleFonts.aBeeZee(
+                                            pollsList[index].title.toString(),
+                                            style: GoogleFonts.aBeeZee(
                                               textStyle: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight.w600,
+                                                fontWeight: FontWeight.w600,
                                               ),
                                             ),
                                           ),
-                                          pollId: pollsList[index]
-                                              .id
-                                              .toString(),
-                                          hasVoted: pollsList[index]
-                                              .hasVoted,
-                                          onVoted: (PollOption
-                                                  pollOption,
+                                          pollId:
+                                              pollsList[index].id.toString(),
+                                          hasVoted: pollsList[index].hasVoted,
+                                          onVoted: (PollOption pollOption,
                                               int newTotalVotes) async {
                                             context
-                                                .read<
-                                                    CreatePollsCubit>()
+                                                .read<CreatePollsCubit>()
                                                 .giveTheVoteAPI(
-                                                  pollId:
-                                                      pollsList[index]
-                                                          .id
-                                                          .toString(),
-                                                  optionId: pollOption
+                                                  pollId: pollsList[index]
                                                       .id
                                                       .toString(),
+                                                  optionId:
+                                                      pollOption.id.toString(),
                                                 );
-                                            setState(
-                                                () {}); // Refresh the UI
+                                            setState(() {}); // Refresh the UI
                                             return true;
                                           },
                                           metaWidget: Padding(
                                             padding:
-                                                const EdgeInsets.only(
-                                                    left: 20),
+                                                const EdgeInsets.only(left: 20),
                                             child: Text(
                                               'Expire at : $expireDate',
                                               style: const TextStyle(
-                                                fontSize: 14,
-                                                  fontWeight:
-                                                      FontWeight
-                                                          .w500),
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500),
                                             ),
                                           ),
-                                          votedBackgroundColor: Colors
-                                              .grey
-                                              .withOpacity(0.5),
+                                          votedBackgroundColor:
+                                              Colors.grey.withOpacity(0.5),
                                           voteInProgressColor:
                                               Colors.deepPurpleAccent,
-                                          votesTextStyle:
-                                              const TextStyle(
-                                                  fontWeight:
-                                                      FontWeight
-                                                          .w500),
+                                          votesTextStyle: const TextStyle(
+                                              fontWeight: FontWeight.w500),
                                           votedCheckmark: const Icon(
                                               Icons.check_circle,
                                               color: Colors.white,
                                               size: 20),
-                                          pollOptions:
-                                              pollsList[index]
-                                                  .options
-                                                  .map((option) {
+                                          pollOptions: pollsList[index]
+                                              .options
+                                              .map((option) {
                                             return PollOption(
-                                              id: option.id
-                                                  .toString(),
+                                              id: option.id.toString(),
                                               title: Padding(
                                                 padding:
-                                                    const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal:
-                                                            10),
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10),
                                                 child: Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
                                                     Text(
-                                                      option
-                                                          .optionText
+                                                      option.optionText
                                                           .toString(),
                                                       style: TextStyle(
-                                                          color: option.votesCount >
-                                                                  0
-                                                              ? Colors
-                                                                  .white
-                                                              : Colors
-                                                                  .black,
+                                                          color:
+                                                              option.votesCount >
+                                                                      0
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black,
                                                           fontWeight:
-                                                              FontWeight
-                                                                  .w500),
+                                                              FontWeight.w500),
                                                     ),
                                                     Text(
                                                       "${option.votesCount.toString()} Votes",
                                                       style: const TextStyle(
                                                           fontWeight:
-                                                              FontWeight
-                                                                  .w500),
+                                                              FontWeight.w500),
                                                     ),
                                                   ],
                                                 ),
                                               ),
-                                              votes: option.votesCount
-                                                  .toInt(),
+                                              votes: option.votesCount.toInt(),
                                             );
                                           }).toList(),
                                         ),
@@ -291,8 +242,7 @@ class _PollScreenState extends State<PollScreen> {
                 return const Center(
                     child: Text('Internet connection error',
                         style: TextStyle(
-                            color: Colors
-                                .red))); // Handle internet error
+                            color: Colors.red))); // Handle internet error
               }
               return const SizedBox();
             },

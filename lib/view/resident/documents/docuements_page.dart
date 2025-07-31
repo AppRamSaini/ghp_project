@@ -1,13 +1,13 @@
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/documents/documents_count/document_count_cubit.dart';
 import 'package:ghp_society_management/controller/documents/send_request/send_request_docs_cubit.dart';
-import 'package:ghp_society_management/firebase_services.dart';
 import 'package:ghp_society_management/view/resident/documents/request_by_me.dart';
 import 'package:ghp_society_management/view/resident/documents/request_my_management.dart';
-import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
+
   @override
   State<DocumentsScreen> createState() => _DocumentsScreenState();
 }
@@ -19,9 +19,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   void initState() {
     super.initState();
     documentCountCubit = DocumentCountCubit()..documentCountType();
-    // Future.delayed(const Duration(seconds: 2), () {
-    //   DialogService().startDialogCheck(navigatorKey.currentContext!);
-    // });
   }
 
   @override
@@ -46,13 +43,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         ),
       ],
       child: Scaffold(
-        appBar: AppBar(
-            title: Text('Documents',
-                style: GoogleFonts.nunitoSans(
-                    textStyle: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(title: 'Documents'),
         body: SafeArea(
           child: RefreshIndicator(
             onRefresh: () async {
@@ -91,11 +82,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                     ],
                   );
                 } else if (state is DocumentCountLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator.adaptive(
-                      backgroundColor: Colors.deepPurpleAccent,
-                    ),
-                  );
+                  return dashboardSimmerLoading(context);
                 } else if (state is DocumentCountFailed) {
                   return Center(
                     child: Padding(
@@ -103,10 +90,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                       child: Text(
                         state.errorMsg,
                         style: TextStyle(
-                          color: state is DocumentCountInternetError
-                              ? Colors.red
-                              : Colors.deepPurpleAccent,
-                        ),
+                            color: state is DocumentCountInternetError
+                                ? Colors.red
+                                : Colors.deepPurpleAccent),
                         textAlign: TextAlign.center,
                       ),
                     ),

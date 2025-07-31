@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,7 +72,6 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
     });
   }
 
-  /// SOS कैंसिल होने पर टाइमर और डायलॉग बंद करने का फ़ंक्शन
   void stopTimerDialog() {
     countdownTimer?.cancel();
     Future.delayed(const Duration(milliseconds: 10), () {
@@ -141,10 +141,7 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
         )
       ],
       child: Scaffold(
-        appBar: AppBar(
-            title: Text('Request for Callback',
-                style: GoogleFonts.nunitoSans(
-                    textStyle: TextStyle(color: Colors.black, fontSize: 18)))),
+        appBar: appbarWidget(title: 'Request for Callback'),
         bottomNavigationBar: Container(
           color: Colors.white,
           child: GestureDetector(
@@ -261,7 +258,8 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
                         dialogueContext = ctx;
                       });
 
-                      LocationPermission permission = await Geolocator.checkPermission();
+                      LocationPermission permission =
+                          await Geolocator.checkPermission();
 
                       if (permission == LocationPermission.denied) {
                         permission = await Geolocator.requestPermission();
@@ -275,7 +273,8 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
                           builder: (_) => AlertDialog(
                             title: Text(
                               "Permission Permanently Denied",
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             content: Text(
                               "Location permission has been permanently denied. Please go to settings and allow permission.",
@@ -289,7 +288,8 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
                               TextButton(
                                 onPressed: () async {
                                   Navigator.pop(context);
-                                  await Geolocator.openAppSettings(); // Then open settings
+                                  await Geolocator
+                                      .openAppSettings(); // Then open settings
                                 },
                                 child: Text("Open Settings"),
                               ),
@@ -306,14 +306,13 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
 
                       setState(() {
                         location =
-                        "Latitude: ${position.latitude}, Longitude: ${position.longitude}";
+                            "Latitude: ${position.latitude}, Longitude: ${position.longitude}";
                         Navigator.of(dialogueContext).pop();
                       });
 
                       Share.shareUri(Uri.parse(
                           'https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}'));
                     },
-
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Container(

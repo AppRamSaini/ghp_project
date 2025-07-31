@@ -17,11 +17,15 @@ class SubmitSosCubit extends Cubit<SubmitSosState> {
     emit(SubmitSosLoading());
     try {
       var token = LocalStorage.localStorage.getString('token');
+      var propertyId = LocalStorage.localStorage.getString('property_id');
 
-      var responseData = await apiManager.postRequest(
-          sosBody,
-          Config.baseURL + Routes.submitSos,
-          {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
+      var responseData = await apiManager
+          .postRequest(sosBody, Config.baseURL + Routes.submitSos, {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+        'x-property-id': '$propertyId',
+      });
+
 
       var data = json.decode(responseData.body.toString());
       if (responseData.statusCode == 201) {

@@ -1,7 +1,7 @@
 import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:ghp_society_management/constants/export.dart';
-
 
 /// Handle Background Notification
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -51,6 +51,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.sizeOf(context);
@@ -64,10 +65,11 @@ class _MyAppState extends State<MyApp> {
             theme: ThemeData(
               scaffoldBackgroundColor: Colors.white,
               useMaterial3: true,
-              appBarTheme: const AppBarTheme(
-                backgroundColor: Colors.white,
+              appBarTheme: AppBarTheme(
+                titleTextStyle: TextStyle(color: AppTheme.white),
+                backgroundColor: AppTheme.primaryColor,
                 centerTitle: false,
-                iconTheme: IconThemeData(color: Colors.black),
+                iconTheme: IconThemeData(color: Colors.white),
               ),
             ),
             navigatorKey: navigatorKey,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class EventDetailScreen extends StatefulWidget {
@@ -30,12 +31,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Events Details',
-          style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600)))),
+      appBar: appbarWidget(title: 'Events Details'),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -44,14 +40,13 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 height: 200.h,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                progressIndicatorBuilder:
-                    (context, url, progress) => Center(
-                            child: Image.asset(
-                          height: 180.h,
-                          width: double.infinity,
-                          'assets/images/default.jpg',
-                          fit: BoxFit.cover,
-                        )),
+                progressIndicatorBuilder: (context, url, progress) => Center(
+                        child: Image.asset(
+                      height: 180.h,
+                      width: double.infinity,
+                      'assets/images/default.jpg',
+                      fit: BoxFit.cover,
+                    )),
                 errorWidget: (context, url, error) => Container(
                     height: 200.h,
                     width: double.infinity,
@@ -111,8 +106,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       ),
                       SizedBox(
                           height: 50,
-                          child: VerticalDivider(
-                              color: Colors.grey[300])),
+                          child: VerticalDivider(color: Colors.grey[300])),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

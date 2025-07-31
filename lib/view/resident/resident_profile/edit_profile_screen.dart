@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,6 +57,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   final ImagePicker picker = ImagePicker();
   XFile? pickedImage;
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<EditProfileCubit, EditProfileState>(
@@ -86,13 +88,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-            title: Text('Edit Profile',
-                style: GoogleFonts.nunitoSans(
-                    textStyle: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(title: 'Edit Profile'),
         body: Form(
           key: formkey,
           child: SingleChildScrollView(
@@ -101,22 +97,62 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Align(alignment: Alignment.center,
+                  Align(
+                    alignment: Alignment.center,
                     child: Stack(
                       children: [
                         (imageFile == null && imgFile == null)
-                            ? CircleAvatar(
-                                radius: 50.h,
-                                backgroundImage: const AssetImage(
-                                    'assets/images/default.jpg'))
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(200),
+                                child: FadeInImage(
+                                  height: 120,
+                                  width: 120,
+                                  fit: BoxFit.fill,
+                                  placeholder:
+                                      AssetImage('assets/images/default.jpg'),
+                                  image: NetworkImage(''),
+                                  imageErrorBuilder: (_, child, st) =>
+                                      Image.asset('assets/images/default.jpg',
+                                          height: 120,
+                                          width: 120,
+                                          fit: BoxFit.fill),
+                                ),
+                              )
                             : (imageFile == null)
-                                ? CircleAvatar(
-                                    radius: 50.h,
-                                    backgroundImage: NetworkImage(imgFile))
-                                : CircleAvatar(
-                                    radius: 50.h,
-                                    backgroundImage:
-                                        FileImage(File(imageFile!.path))),
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(200),
+                                    child: FadeInImage(
+                                      height: 120,
+                                      width: 120,
+                                      fit: BoxFit.fill,
+                                      placeholder: AssetImage(
+                                          'assets/images/default.jpg'),
+                                      image: NetworkImage(imgFile),
+                                      imageErrorBuilder: (_, child, st) =>
+                                          Image.asset(
+                                              'assets/images/default.jpg',
+                                              height: 120,
+                                              width: 120,
+                                              fit: BoxFit.fill),
+                                    ),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(200),
+                                    child: FadeInImage(
+                                      height: 120,
+                                      width: 120,
+                                      fit: BoxFit.fill,
+                                      placeholder: AssetImage(
+                                          'assets/images/default.jpg'),
+                                      image: NetworkImage(''),
+                                      imageErrorBuilder: (_, child, st) =>
+                                          Image.asset(
+                                              'assets/images/default.jpg',
+                                              height: 120,
+                                              width: 120,
+                                              fit: BoxFit.fill),
+                                    ),
+                                  ),
                         Positioned(
                           top: 55.h,
                           left: 70,
@@ -125,12 +161,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               uploadFileWidget(
                                 context: context,
                                 fromGallery: () async {
-                                  pickAndCropImage(
-                                      source: ImageSource.gallery);
+                                  pickAndCropImage(source: ImageSource.gallery);
                                 },
                                 fromCamera: () async {
-                                  pickAndCropImage(
-                                      source: ImageSource.camera);
+                                  pickAndCropImage(source: ImageSource.camera);
                                 },
                               );
                             },
@@ -271,13 +305,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               fontWeight: FontWeight.w500))),
                   SizedBox(height: 10.h),
                   TextFormField(
-                    readOnly: true,
                     controller: emailController,
                     style: GoogleFonts.nunitoSans(
-                      color: AppTheme.backgroundColor,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
+                        color: AppTheme.backgroundColor,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500),
                     keyboardType: TextInputType.text,
                     validator: (text) {
                       if (text == null || text.isEmpty) {

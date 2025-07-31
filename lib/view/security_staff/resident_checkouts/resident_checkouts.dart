@@ -1,14 +1,12 @@
 import 'package:ghp_society_management/constants/export.dart';
-import 'package:ghp_society_management/controller/members/search_member/search_member_cubit.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/resident_checkout_log/resident_check-in/resident_check_in_cubit.dart';
 import 'package:ghp_society_management/controller/resident_checkout_log/resident_check-out/resident_checkout_cubit.dart';
 import 'package:ghp_society_management/controller/resident_checkout_log/resident_checkouts/staff_side_checkouts_history_cubit.dart';
 import 'package:ghp_society_management/model/resident_checkouts_history_model.dart';
-import 'package:ghp_society_management/model/search_member_modal.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_profile.dart';
 import 'package:ghp_society_management/view/resident/residents_checkouts/resident_checkouts_history_details.dart';
 import 'package:ghp_society_management/view/security_staff/residents_list.dart';
-import 'package:searchbar_animation/searchbar_animation.dart';
 
 class ResidentsCheckoutsHistory extends StatefulWidget {
   const ResidentsCheckoutsHistory({super.key});
@@ -105,11 +103,8 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
               StaffSideResidentCheckoutsHistoryState>(
             bloc: _staffSideResidentCheckoutsHistoryCubit,
             builder: (context, state) {
-              if (state is StaffSideResidentCheckoutsHistoryLoading &&
-                  _staffSideResidentCheckoutsHistoryCubit
-                      .checkoutsHistoryLogs.isEmpty) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+              if (state is StaffSideResidentCheckoutsHistoryLoading) {
+                return notificationShimmerLoading();
               }
               if (state is StaffSideResidentCheckoutsHistoryError) {
                 return Center(
@@ -258,8 +253,14 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Column(
+                                              Row(
                                                 children: [
+                                                  const Text(
+                                                    "Tower/Block : ",
+                                                    style: TextStyle(
+                                                        color: Colors.black54,
+                                                        fontSize: 12),
+                                                  ),
                                                   Text(
                                                       newHistoryLogs[index]
                                                           .resident!
@@ -271,37 +272,35 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           fontSize: 12)),
-                                                  const Text(
-                                                    "Tower Name",
-                                                    style: TextStyle(
-                                                        color: Colors.black54,
-                                                        fontSize: 12),
-                                                  ),
                                                 ],
                                               ),
-                                              Column(
+                                              // Column(
+                                              //   children: [
+                                              //     Text(
+                                              //         newHistoryLogs[index]
+                                              //             .resident!
+                                              //             .member!
+                                              //             .floorNumber
+                                              //             .toString(),
+                                              //         style: const TextStyle(
+                                              //             color: Colors.black,
+                                              //             fontWeight:
+                                              //                 FontWeight.w500,
+                                              //             fontSize: 12)),
+                                              //     const Text(
+                                              //       "Floor No",
+                                              //       style: TextStyle(
+                                              //           color: Colors.black54,
+                                              //           fontSize: 12),
+                                              //     ),
+                                              //   ],
+                                              // ),
+                                              Row(
                                                 children: [
-                                                  Text(
-                                                      newHistoryLogs[index]
-                                                          .resident!
-                                                          .member!
-                                                          .floorNumber
-                                                          .toString(),
-                                                      style: const TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w500,
+                                                  const Text("Property No : ",
+                                                      style: TextStyle(
+                                                          color: Colors.black54,
                                                           fontSize: 12)),
-                                                  const Text(
-                                                    "Floor No",
-                                                    style: TextStyle(
-                                                        color: Colors.black54,
-                                                        fontSize: 12),
-                                                  ),
-                                                ],
-                                              ),
-                                              Column(
-                                                children: [
                                                   Text(
                                                       newHistoryLogs[index]
                                                           .resident!
@@ -313,12 +312,6 @@ class _ResidentsCheckoutsHistoryState extends State<ResidentsCheckoutsHistory> {
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           fontSize: 12)),
-                                                  const Text(
-                                                    "Property No",
-                                                    style: TextStyle(
-                                                        color: Colors.black54,
-                                                        fontSize: 12),
-                                                  ),
                                                 ],
                                               )
                                             ],
@@ -391,6 +384,7 @@ List<Map<String, dynamic>> optionsList = [
   {"icon": Icons.visibility, "menu": "View Details", "menu_id": 0},
   {"icon": Icons.qr_code, "menu": "Scan By Manual", "menu_id": 1},
 ];
+
 Widget popMenusForStaff({required BuildContext context, required residentId}) {
   return CircleAvatar(
     backgroundColor: Colors.deepPurpleAccent,

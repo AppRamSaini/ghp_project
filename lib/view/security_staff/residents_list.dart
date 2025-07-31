@@ -1,13 +1,13 @@
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/members/search_member/search_member_cubit.dart';
-import 'package:ghp_society_management/controller/resident_checkout_log/resident_checkouts/staff_side_checkouts_history_cubit.dart';
 import 'package:ghp_society_management/model/search_member_modal.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_profile.dart';
-import 'package:searchbar_animation/searchbar_animation.dart';
 
 import '../../constants/export.dart';
 
 class ResidentsListPage extends StatefulWidget {
   const ResidentsListPage({super.key});
+
   @override
   State<ResidentsListPage> createState() => _ResidentsListPageState();
 }
@@ -27,7 +27,7 @@ class _ResidentsListPageState extends State<ResidentsListPage> {
 
   List<SearchMemberInfo>? filteredItems;
 
-  Future onRefresh()async{
+  Future onRefresh() async {
     _searchMemberCubit.fetchSearchMember('');
   }
 
@@ -74,12 +74,13 @@ class _ResidentsListPageState extends State<ResidentsListPage> {
             bloc: _searchMemberCubit,
             builder: (_, state) {
               if (state is SearchMemberLoading) {
-                return const Center(child: CircularProgressIndicator.adaptive());
+                return notificationShimmerLoading();
               }
               if (state is SearchMemberFailed) {
                 return Center(
                     child: Text(state.errorMessage.toString(),
-                        style: const TextStyle(color: Colors.deepPurpleAccent)));
+                        style:
+                            const TextStyle(color: Colors.deepPurpleAccent)));
               }
 
               if (state is SearchMemberLoaded && textController.text.isEmpty) {
@@ -112,23 +113,26 @@ class _ResidentsListPageState extends State<ResidentsListPage> {
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 10),
                             title: Text(
-                              capitalizeWords(
-                                  filteredItems![index].name.toString()),
-                              style: const TextStyle(fontWeight: FontWeight.w500)
-                            ),
+                                capitalizeWords(
+                                    filteredItems![index].name.toString()),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500)),
                             subtitle: Text(
-                                "Floor: ${filteredItems![index].floorNumber.toString()}  Aprt: ${filteredItems![index].aprtNo.toString()} Tower: ${filteredItems![index].block!.name.toString()}"),
+                                "Tower/Bloc: ${filteredItems![index].block!.name.toString()} - Property No : ${filteredItems![index].aprtNo.toString()} "),
                             trailing: MaterialButton(
                                 height: 32,
                                 onPressed: () => Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) =>
-                                            ResidentProfileDetails(residentId: {
-                                              'resident_id': filteredItems![index]
-                                                  .userId
-                                                  .toString()
-                                            }, forQRPage: false,forResident: false))),
+                                        builder: (_) => ResidentProfileDetails(
+                                                residentId: {
+                                                  'resident_id':
+                                                      filteredItems![index]
+                                                          .userId
+                                                          .toString()
+                                                },
+                                                forQRPage: false,
+                                                forResident: false))),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30)),
                                 color: AppTheme.primaryColor,

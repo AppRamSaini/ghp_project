@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/local_storage.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/members/members_cubit.dart';
 import 'package:ghp_society_management/controller/members_element/members_element_cubit.dart';
@@ -11,10 +12,10 @@ import 'package:ghp_society_management/model/members_element_model.dart';
 import 'package:ghp_society_management/model/members_model.dart';
 import 'package:ghp_society_management/model/user_model.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:searchbar_animation/searchbar_animation.dart';
 
 class MemberScreen extends StatefulWidget {
   const MemberScreen({super.key});
+
   @override
   State<MemberScreen> createState() => _MemberScreenState();
 }
@@ -38,6 +39,7 @@ class _MemberScreenState extends State<MemberScreen> {
   int selectedIndex = 0;
 
   String? _userId;
+
   @override
   void initState() {
     _membersCubit = MembersCubit();
@@ -72,6 +74,7 @@ class _MemberScreenState extends State<MemberScreen> {
   UserModel? userList;
 
   late BuildContext dialogContext;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,8 +146,7 @@ class _MemberScreenState extends State<MemberScreen> {
                     bloc: _membersCubit,
                     builder: (context, state) {
                       if (state is MembersLoading) {
-                        return const Center(
-                            child: CircularProgressIndicator.adaptive());
+                        return notificationShimmerLoading();
                       }
                       if (state is MembersFailed) {
                         return Padding(

@@ -1,6 +1,5 @@
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/controller/notification/notification_listing/notification_list_cubit.dart';
-import 'package:ghp_society_management/controller/parcel/parcel_element/parcel_element_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_pending_counts/parcel_counts_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/receive_parcel/receive_parcel_cubit.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_element/sos_element_cubit.dart';
@@ -13,7 +12,9 @@ import 'package:ghp_society_management/view/security_staff/scan_qr.dart';
 
 class SecurityGuardDashboard extends StatefulWidget {
   int? index = 0;
+
   SecurityGuardDashboard({super.key, this.index});
+
   @override
   State<SecurityGuardDashboard> createState() => SecurityGuardDashboardState();
 }
@@ -25,12 +26,9 @@ class SecurityGuardDashboardState extends State<SecurityGuardDashboard> {
   @override
   void initState() {
     super.initState();
-    context.read<ParcelElementsCubit>().fetchParcelElement();
+
     context.read<NotificationListingCubit>().fetchNotifications();
-    context.read<SosElementCubit>().fetchSosElement();
-    context.read<ParcelCountsCubit>().fetchParcelCounts();
     _pageController = PageController();
-    // Delay the jumpToPage call to ensure the PageController is attached
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.index != null && widget.index! > 0) {
         _pageController.jumpToPage(widget.index!);

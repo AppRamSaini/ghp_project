@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:ghp_society_management/view/resident/resident_profile/resident_profile.dart';
-import 'package:ghp_society_management/view/security_staff/daliy_help/daily_help_details.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/view/resident/resident_profile/resident_profile.dart';
+import 'package:ghp_society_management/view/security_staff/daliy_help/daily_help_details.dart';
 import 'package:ghp_society_management/view/security_staff/visitors/visitors_details_page.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class QrCodeScanner extends StatefulWidget {
   bool fromResidentSide;
+
   QrCodeScanner({super.key, this.fromResidentSide = false});
 
   @override
@@ -90,7 +92,8 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                               MaterialPageRoute(
                                   builder: (_) => ResidentProfileDetails(
                                       residentId: {'resident_id': id},
-                                      forQRPage: true,forResident: widget.fromResidentSide)));
+                                      forQRPage: true,
+                                      forResident: widget.fromResidentSide)));
                         });
                       } else if (parsedData.containsKey('daily_help_id')) {
                         String id = parsedData['daily_help_id'];
@@ -105,7 +108,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
                                       forQRPage: true,
                                       forDetailsPage: false,
                                       fromResidentPage:
-                                      widget.fromResidentSide)));
+                                          widget.fromResidentSide)));
                         });
                       } else {
                         throw Exception("Key '-->>' not found.");

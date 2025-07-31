@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/config.dart';
-import 'package:ghp_society_management/controller/privacy_policy/privacy_policy_cubit.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
+import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PrivacyPolicyScreen extends StatefulWidget {
@@ -16,7 +13,7 @@ class PrivacyPolicyScreen extends StatefulWidget {
 
 class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   late final WebViewController controller;
-  bool isLoading = true; // 🟢 loader state
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -47,29 +44,16 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
       ..loadRequest(Uri.parse(Routes.privacyPolicyPage));
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Text('Privacy Policy',
-              style: GoogleFonts.nunitoSans(
-                  textStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600)))),
+      appBar: appbarWidget(title: 'Privacy Policy'),
       body: Stack(
         children: [
           WebViewWidget(controller: controller),
-          if (isLoading)
-            const Center(
-              child: CircularProgressIndicator.adaptive(
-                backgroundColor: Colors.deepPurpleAccent,
-              ),
-            ),
+          if (isLoading) notificationShimmerLoading(),
         ],
       ),
-
 
       /*Padding(
         padding: const EdgeInsets.all(10.0),

@@ -3,7 +3,6 @@ import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/view/resident/complaint/comlaint_page.dart';
 import 'package:ghp_society_management/view/resident/event/event_screen.dart';
-import 'package:ghp_society_management/view/resident/member/members_screen.dart';
 import 'package:ghp_society_management/view/resident/notice_board/notice_board_screen.dart';
 import 'package:ghp_society_management/view/resident/parcel_flow/parcel_listing.dart';
 import 'package:ghp_society_management/view/resident/polls/poll_screen.dart';

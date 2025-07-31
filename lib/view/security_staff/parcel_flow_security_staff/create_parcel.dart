@@ -1,24 +1,24 @@
 import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/constants/crop_image.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/members/search_member/search_member_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/create_parcel/create_parcel_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_element/parcel_element_cubit.dart';
-import 'package:ghp_society_management/model/search_member_modal.dart';
 import 'package:ghp_society_management/view/resident/visitors/add_visitor_screen.dart';
+import 'package:ghp_society_management/view/security_staff/select_residents.dart';
 import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'dart:async';
-import 'package:ghp_society_management/constants/crop_image.dart';
 
 class CreateParcelSecurityStaffSide extends StatefulWidget {
   const CreateParcelSecurityStaffSide({super.key});
@@ -41,6 +41,7 @@ class _CreateParcelSecurityStaffSideState
   TextEditingController? time = TextEditingController();
   String? parcelTypes;
   String? residenceID;
+  String? propertyId;
   final _formKey = GlobalKey<FormState>();
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
@@ -64,6 +65,7 @@ class _CreateParcelSecurityStaffSideState
   int selectedIndex = -1;
   List<SearchItem> searchDataList = []; // List of SearchItem objects
   List<CroppedFile>? croppedImagesList = [];
+
   fromCamera(BuildContext context) async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.camera);
@@ -106,19 +108,20 @@ class _CreateParcelSecurityStaffSideState
     updateDate();
   }
 
-  TextEditingController searchController = TextEditingController();
-  Future<void> _showSearchDialog() async {
-    List<SearchMemberInfo>? filteredItems =
-        List.from(_searchMemberCubit.searchMemberInfo);
+/*  TextEditingController searchController = TextEditingController();
 
-    await showDialog(
+  Future<void> _showSearchDialog() async {
+    _searchMemberCubit.fetchSearchMember('');
+
+    await showGeneralDialog(
       barrierDismissible: true,
+      barrierLabel: "Search",
       context: context,
-      builder: (context) {
+      pageBuilder: (context, anim1, anim2) {
         return StatefulBuilder(
           builder: (context, setState) {
             return Scaffold(
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.black.withOpacity(0.3),
               body: Center(
                 child: Container(
                   margin:
@@ -132,103 +135,103 @@ class _CreateParcelSecurityStaffSideState
                     bloc: _searchMemberCubit,
                     builder: (_, state) {
                       if (state is SearchMemberLoading) {
-                        return const Center(
-                            child: CircularProgressIndicator.adaptive());
-                      }
-                      if (state is SearchMemberFailed) {
+                        return SizedBox();
+                      } else if (state is SearchMemberFailed) {
                         return Center(
-                            child: Text(state.errorMessage.toString(),
-                                style: const TextStyle(
-                                    color: Colors.deepPurpleAccent)));
-                      }
+                          child: Text(state.errorMessage.toString(),
+                              style: const TextStyle(
+                                  color: Colors.deepPurpleAccent)),
+                        );
+                      } else if (state is SearchMemberLoaded) {
+                        List<SearchMemberInfo>? filteredItems =
+                            state.searchMemberInfo;
 
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text("Select member",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500)),
-                              IconButton(
-                                onPressed: () => Navigator.pop(context),
-                                icon: const Icon(Icons.clear,
-                                    color: Colors.black87),
-                              ),
-                            ],
-                          ),
-                          Divider(
-                              height: 0, color: Colors.grey.withOpacity(0.5)),
-                          const SizedBox(height: 10),
-                          TextField(
-                            controller: searchController,
-                            decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 5),
-                                isDense: true,
-                                hintText: "Search...",
-                                prefixIcon: const Icon(Icons.search),
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey.withOpacity(0.5)))),
-                            onChanged: (query) {
-                              setState(() {
-                                filteredItems = _searchMemberCubit
-                                    .searchMemberInfo
-                                    .where((item) => item.name
-                                        .toString()
-                                        .toLowerCase()
-                                        .contains(query.toLowerCase()))
-                                    .toList();
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 10),
-                          filteredItems == null || filteredItems!.isEmpty
-                              ? const Center(
-                                  child: Text("Member Not Found!",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.deepPurpleAccent)))
-                              : Expanded(
-                                  child: ListView.builder(
-                                    itemCount: filteredItems?.length ?? 0,
-                                    itemBuilder: (context, index) {
-                                      return Container(
-                                        margin:
-                                            const EdgeInsets.only(bottom: 8),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                            border: Border.all(
-                                                color: Colors.grey
-                                                    .withOpacity(0.5))),
-                                        child: ListTile(
-                                          dense: true,
-                                          title: Text(
-                                              "${capitalizeWords(filteredItems![index].name.toString())} -  Floor(${filteredItems![index].floorNumber.toString()}) -  Aprt(${filteredItems![index].aprtNo.toString()}) - Tower(${filteredItems![index].block!.name.toString()})"),
-                                          onTap: () {
-                                            setState(() {
-                                              residenceController.text =
-                                                  filteredItems![index]
-                                                      .name
-                                                      .toString();
-                                              residenceID =
-                                                  filteredItems![index]
-                                                      .userId
-                                                      .toString();
-                                            });
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  ),
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text("Select member",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500)),
+                                IconButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  icon: const Icon(Icons.clear,
+                                      color: Colors.black87),
                                 ),
-                        ],
-                      );
+                              ],
+                            ),
+                            Divider(
+                                height: 0, color: Colors.grey.withOpacity(0.5)),
+                            const SizedBox(height: 10),
+                            TextField(
+                              autofocus: true,
+                              controller: searchController,
+                              decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  isDense: true,
+                                  hintText: "Search...",
+                                  prefixIcon: const Icon(Icons.search),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color:
+                                              Colors.grey.withOpacity(0.5)))),
+                              onChanged: (query) {
+                                setState(() {
+                                  _searchMemberCubit
+                                      .fetchSearchMember(query.toLowerCase());
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            filteredItems == null || filteredItems.isEmpty
+                                ? const Center(
+                                    child: Text("Member Not Found!",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.deepPurpleAccent)))
+                                : Expanded(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: filteredItems.length,
+                                      itemBuilder: (context, index) {
+                                        final member = filteredItems[index];
+                                        return Container(
+                                          margin:
+                                              const EdgeInsets.only(bottom: 8),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                              border: Border.all(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5))),
+                                          child: ListTile(
+                                            dense: true,
+                                            title: Text(
+                                                "${capitalizeWords(member.name.toString())} -  Floor(${member.floorNumber}) -  Aprt(${member.aprtNo}) - Tower(${member.block?.name})"),
+                                            onTap: () {
+                                              setState(() {
+                                                residenceController.text =
+                                                    member.name.toString();
+                                                residenceID =
+                                                    member.userId.toString();
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                          ],
+                        );
+                      } else {
+                        return const Center(
+                            child: Text("Something went wrong!"));
+                      }
                     },
                   ),
                 ),
@@ -237,10 +240,16 @@ class _CreateParcelSecurityStaffSideState
           },
         );
       },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return FadeTransition(
+          opacity: anim1,
+          child: child,
+        );
+      },
     );
 
     searchController.clear();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -270,11 +279,7 @@ class _CreateParcelSecurityStaffSideState
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('Add Parcel Info',
-            style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18)))),
+        appBar: appbarWidget(title: 'Add Parcel Info'),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(10),
@@ -284,7 +289,7 @@ class _CreateParcelSecurityStaffSideState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 10.h),
-                  Text('Search Resident',
+                  Text('Select Resident',
                       style: GoogleFonts.nunitoSans(
                           textStyle: TextStyle(
                               color: Colors.black,
@@ -292,16 +297,27 @@ class _CreateParcelSecurityStaffSideState
                               fontWeight: FontWeight.w500))),
                   SizedBox(height: 10.h),
                   TextFormField(
-                    onTap: () {
-                      _searchMemberCubit.fetchSearchMember('');
-                      _showSearchDialog();
+                    onTap: () async {
+                      // _searchMemberCubit.fetchSearchMember('');
+                      // _showSearchDialog();
+
+                      final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SelectMembers()));
+
+                      if (result != null) {
+                        residenceController.text = result['name'];
+                        residenceID = result['user_id'];
+                        propertyId = result['property_id'];
+                        setState(() {});
+                      }
                     },
                     readOnly: true,
-                    style: const TextStyle(
-                        color: Colors.black87, fontSize: 16),
+                    style: const TextStyle(color: Colors.black87, fontSize: 16),
                     controller: residenceController,
                     decoration: InputDecoration(
-                      hintText: 'Search resident',
+                      hintText: 'Select resident',
                       contentPadding: EdgeInsets.symmetric(
                           vertical: 12.h, horizontal: 10.0),
                       filled: true,
@@ -312,20 +328,16 @@ class _CreateParcelSecurityStaffSideState
                       fillColor: AppTheme.greyColor,
                       errorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
-                          borderSide:
-                              BorderSide(color: AppTheme.greyColor)),
+                          borderSide: BorderSide(color: AppTheme.greyColor)),
                       focusedErrorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
-                          borderSide:
-                              BorderSide(color: AppTheme.greyColor)),
+                          borderSide: BorderSide(color: AppTheme.greyColor)),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
-                          borderSide:
-                              BorderSide(color: AppTheme.greyColor)),
+                          borderSide: BorderSide(color: AppTheme.greyColor)),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
-                          borderSide:
-                              BorderSide(color: AppTheme.greyColor)),
+                          borderSide: BorderSide(color: AppTheme.greyColor)),
                     ),
                     // scrollbarDecoration: ScrollbarDecoration(
                     //     controller: ScrollController(),
@@ -337,7 +349,7 @@ class _CreateParcelSecurityStaffSideState
                     // },
                   ),
                   SizedBox(height: 10.h),
-                  Text('Parcel ID',
+                  Text('Parcel Order ID',
                       style: GoogleFonts.nunitoSans(
                           textStyle: TextStyle(
                               color: Colors.black,
@@ -356,12 +368,12 @@ class _CreateParcelSecurityStaffSideState
                       keyboardType: TextInputType.text,
                       validator: (text) {
                         if (text == null || text.isEmpty) {
-                          return 'Please enter parcel ID';
+                          return 'Please enter parcel order ID';
                         }
                         return null;
                       },
                       decoration: InputDecoration(
-                        hintText: 'Enter parcel ID',
+                        hintText: 'Enter parcel order ID',
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 12.h, horizontal: 10.0),
                         filled: true,
@@ -372,16 +384,13 @@ class _CreateParcelSecurityStaffSideState
                         fillColor: AppTheme.greyColor,
                         errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           borderSide: BorderSide(
@@ -427,16 +436,13 @@ class _CreateParcelSecurityStaffSideState
                         fillColor: AppTheme.greyColor,
                         errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           borderSide: BorderSide(
@@ -456,29 +462,24 @@ class _CreateParcelSecurityStaffSideState
                         ),
                       )),
                   SizedBox(height: 10.h),
-                  BlocBuilder<ParcelElementsCubit,
-                      ParcelElementsState>(
+                  BlocBuilder<ParcelElementsCubit, ParcelElementsState>(
                     builder: (context, state) {
                       if (state is ParcelElementLoaded) {
                         return DropdownButton2<String>(
-                          underline:
-                              Container(color: Colors.transparent),
+                          underline: Container(color: Colors.transparent),
                           isExpanded: true,
                           value: parcelTypes,
                           hint: Text('Select Parcel type',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 15.sp))),
-                          items: state
-                              .parcelElement.first.data!.parcelTypes!
+                                      color: Colors.grey, fontSize: 15.sp))),
+                          items: state.parcelElement.first.data!.parcelTypes!
                               .map((item) => DropdownMenuItem<String>(
                                     value: item.name,
                                     child: Text(
                                       item.name.toString(),
                                       style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black),
+                                          fontSize: 14, color: Colors.black),
                                     ),
                                   ))
                               .toList(),
@@ -504,16 +505,14 @@ class _CreateParcelSecurityStaffSideState
                             ),
                           ),
                           dropdownStyleData: DropdownStyleData(
-                            maxHeight:
-                                MediaQuery.sizeOf(context).height / 2,
+                            maxHeight: MediaQuery.sizeOf(context).height / 2,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   10), // Set border radius for dropdown
                             ),
                           ),
                           menuItemStyleData: const MenuItemStyleData(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                           ),
                         );
                       } else {
@@ -544,13 +543,11 @@ class _CreateParcelSecurityStaffSideState
                               value: item,
                               child: Text(item,
                                   style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black))))
+                                      fontSize: 14, color: Colors.black))))
                           .toList(),
                       onChanged: (value) {
                         setState(() {
-                          numberOfParcel =
-                              value; // Update selected value
+                          numberOfParcel = value; // Update selected value
                         });
                       },
                       iconStyleData: const IconStyleData(
@@ -560,17 +557,13 @@ class _CreateParcelSecurityStaffSideState
                       buttonStyleData: ButtonStyleData(
                           decoration: BoxDecoration(
                               color: AppTheme.greyColor,
-                              borderRadius:
-                                  BorderRadius.circular(10))),
+                              borderRadius: BorderRadius.circular(10))),
                       dropdownStyleData: DropdownStyleData(
-                          maxHeight:
-                              MediaQuery.sizeOf(context).height / 2,
+                          maxHeight: MediaQuery.sizeOf(context).height / 2,
                           decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(10))),
+                              borderRadius: BorderRadius.circular(10))),
                       menuItemStyleData: const MenuItemStyleData(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 16))),
+                          padding: EdgeInsets.symmetric(horizontal: 16))),
                   SizedBox(height: 10.h),
                   Row(children: [
                     Expanded(
@@ -615,8 +608,7 @@ class _CreateParcelSecurityStaffSideState
                                   vertical: 12.h, horizontal: 10.0),
                               prefixIcon: GestureDetector(
                                   onTap: () {},
-                                  child: const Icon(
-                                      Icons.calendar_month)),
+                                  child: const Icon(Icons.calendar_month)),
                               filled: true,
                               hintStyle: TextStyle(
                                   color: Colors.grey,
@@ -624,23 +616,19 @@ class _CreateParcelSecurityStaffSideState
                                   fontWeight: FontWeight.normal),
                               fillColor: AppTheme.greyColor,
                               errorBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(15.0),
-                                  borderSide: BorderSide(
-                                      color: AppTheme.greyColor)),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
                               focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(15.0),
-                                  borderSide: BorderSide(
-                                      color: AppTheme.greyColor)),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
                               focusedBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(15.0),
-                                  borderSide: BorderSide(
-                                      color: AppTheme.greyColor)),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(15.0),
+                                borderRadius: BorderRadius.circular(15.0),
                                 borderSide: BorderSide(
                                   color: AppTheme.greyColor,
                                 ),
@@ -681,23 +669,19 @@ class _CreateParcelSecurityStaffSideState
                                   fontWeight: FontWeight.normal),
                               fillColor: AppTheme.greyColor,
                               errorBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(15.0),
-                                  borderSide: BorderSide(
-                                      color: AppTheme.greyColor)),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
                               focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(15.0),
-                                  borderSide: BorderSide(
-                                      color: AppTheme.greyColor)),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
                               focusedBorder: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(15.0),
-                                  borderSide: BorderSide(
-                                      color: AppTheme.greyColor)),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(15.0),
+                                borderRadius: BorderRadius.circular(15.0),
                                 borderSide: BorderSide(
                                   color: AppTheme.greyColor,
                                 ),
@@ -744,16 +728,13 @@ class _CreateParcelSecurityStaffSideState
                         fillColor: AppTheme.greyColor,
                         errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           borderSide: BorderSide(
@@ -776,9 +757,7 @@ class _CreateParcelSecurityStaffSideState
                     child: TextFormField(
                       controller: deliverPhoneController,
                       maxLength: 10,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       style: GoogleFonts.nunitoSans(
                           color: Colors.black,
                           fontSize: 15.sp,
@@ -803,16 +782,13 @@ class _CreateParcelSecurityStaffSideState
                         fillColor: AppTheme.greyColor,
                         errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           borderSide: BorderSide(
@@ -856,16 +832,13 @@ class _CreateParcelSecurityStaffSideState
                         fillColor: AppTheme.greyColor,
                         errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(
-                                color: AppTheme.greyColor)),
+                            borderSide: BorderSide(color: AppTheme.greyColor)),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           borderSide: BorderSide(
@@ -888,11 +861,10 @@ class _CreateParcelSecurityStaffSideState
                       children: List.generate(
                           2,
                           (index) => GestureDetector(
-                              onTap: () => setState(
-                                  () => selectedIndex = index),
+                              onTap: () =>
+                                  setState(() => selectedIndex = index),
                               child: Container(
-                                  margin: const EdgeInsets.only(
-                                      right: 30),
+                                  margin: const EdgeInsets.only(right: 30),
                                   alignment: Alignment.center,
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 15, vertical: 8),
@@ -902,14 +874,17 @@ class _CreateParcelSecurityStaffSideState
                                               ? AppTheme.primaryColor
                                               : Colors.blueGrey
                                                   .withOpacity(0.1)),
-                                      borderRadius:
-                                          BorderRadius.circular(8),
-                                      color:
-                                          selectedIndex == index ? AppTheme.primaryColor.withOpacity(0.3) : Colors.grey.withOpacity(0.3)),
-                                  child: Text(index == 0 ? 'To Security Guard' : 'To Resident', style: GoogleFonts.nunitoSans(textStyle: TextStyle(color: selectedIndex == index ? AppTheme.primaryColor : Colors.black45, fontSize: 14.sp, fontWeight: FontWeight.w500))))))),
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: selectedIndex == index
+                                          ? AppTheme.primaryColor
+                                              .withOpacity(0.3)
+                                          : Colors.grey.withOpacity(0.3)),
+                                  child: Text(index == 0 ? 'To Security Guard' : 'To Resident',
+                                      style: GoogleFonts.nunitoSans(
+                                          textStyle:
+                                              TextStyle(color: selectedIndex == index ? AppTheme.primaryColor : Colors.black45, fontSize: 14.sp, fontWeight: FontWeight.w500))))))),
                   Padding(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Text('Upload Photos',
                           style: GoogleFonts.nunitoSans(
                               textStyle: TextStyle(
@@ -929,8 +904,7 @@ class _CreateParcelSecurityStaffSideState
                             });
                       },
                       onRemove: (index) {
-                        setState(
-                            () => croppedImagesList!.removeAt(index));
+                        setState(() => croppedImagesList!.removeAt(index));
                       },
                       croppedImagesList: croppedImagesList),
                   const SizedBox(height: 50),
@@ -940,23 +914,14 @@ class _CreateParcelSecurityStaffSideState
 
                       if (_formKey.currentState!.validate()) {
                         if (parcelTypes == null) {
-                          snackBar(
-                              context,
-                              'Kindly select type of parcels',
-                              Icons.done,
-                              AppTheme.redColor);
+                          snackBar(context, 'Kindly select type of parcels',
+                              Icons.done, AppTheme.redColor);
                         } else if (numberOfParcel == null) {
-                          snackBar(
-                              context,
-                              'Kindly select no. of parcels',
-                              Icons.done,
-                              AppTheme.redColor);
+                          snackBar(context, 'Kindly select no. of parcels',
+                              Icons.done, AppTheme.redColor);
                         } else if (numberOfParcel == null) {
-                          snackBar(
-                              context,
-                              'Kindly select no. of parcels',
-                              Icons.done,
-                              AppTheme.redColor);
+                          snackBar(context, 'Kindly select no. of parcels',
+                              Icons.done, AppTheme.redColor);
                         } else if (croppedImagesList!.isEmpty) {
                           snackBar(
                               context,
@@ -965,11 +930,8 @@ class _CreateParcelSecurityStaffSideState
                               AppTheme.redColor);
                         } else {
                           documentFiles.clear();
-                          for (int i = 0;
-                              i < croppedImagesList!.length;
-                              i++) {
-                            documentFiles.add(
-                                File(croppedImagesList![i].path));
+                          for (int i = 0; i < croppedImagesList!.length; i++) {
+                            documentFiles.add(File(croppedImagesList![i].path));
                           }
                           /*   var parcelsBody = {
                             "parcelid":
@@ -991,32 +953,25 @@ class _CreateParcelSecurityStaffSideState
                                 : "Resident"
                           };*/
 
-                          context
-                              .read<ParcelManagementCubit>()
-                              .createParcelAPI(
-                                  parcelId: parcelIDController.text
-                                      .toString(),
-                                  parcelName:
-                                      nameController.text.toString(),
-                                  numberOfParcel:
-                                      numberOfParcel.toString(),
-                                  parcelType: parcelTypes.toString(),
-                                  deliveryName: deliverNameController
-                                      .text
-                                      .toString(),
-                                  deliveryPhone:
-                                      deliverPhoneController.text
-                                          .toString(),
-                                  date: date!.text.toString(),
-                                  time: time!.text.toString(),
-                                  senderName: senderController.text
-                                      .toString(),
-                                  parcelOfId: residenceID.toString(),
-                                  deliveryOption: selectedIndex == 0
-                                      ? "Security Guard"
-                                      : "Resident",
-                                  profilePicture:
-                                      documentFiles.first);
+                          context.read<ParcelManagementCubit>().createParcelAPI(
+                              forUseStaff: true,
+                              prId: propertyId.toString(),
+                              parcelId: parcelIDController.text.toString(),
+                              parcelName: nameController.text.toString(),
+                              numberOfParcel: numberOfParcel.toString(),
+                              parcelType: parcelTypes.toString(),
+                              deliveryName:
+                                  deliverNameController.text.toString(),
+                              deliveryPhone:
+                                  deliverPhoneController.text.toString(),
+                              date: date!.text.toString(),
+                              time: time!.text.toString(),
+                              senderName: senderController.text.toString(),
+                              parcelOfId: residenceID.toString(),
+                              deliveryOption: selectedIndex == 0
+                                  ? "Security Guard"
+                                  : "Resident",
+                              profilePicture: documentFiles.first);
                         }
                       }
                     },

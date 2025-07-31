@@ -22,7 +22,7 @@ class OutgoingDocumentsCubit extends Cubit<OutgoingDocumentsState> {
     emit(OutgoingDocumentsLoading());
     try {
       Response response = await apiManager
-          .getRequest("${Config.baseURL + Routes.getOutgoingDocuments}$filter");
+          .getRequest("${Config.baseURL + Routes.getOutgoingDocuments}$filter",usePropertyID: true);
       var res = json.decode(response.body.toString());
       print('------------->>>>>$res');
       if (response.statusCode == 200) {

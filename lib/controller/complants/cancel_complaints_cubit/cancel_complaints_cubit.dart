@@ -20,6 +20,7 @@ class CancelComplaintsCubit extends Cubit<CancelComplaintsState> {
 
     try {
       var token = LocalStorage.localStorage.getString('token');
+      final propertyId = LocalStorage.localStorage.getString('property_id');
       if (token == null) {
         emit(CancelComplaintsFailed());
         return;
@@ -28,6 +29,7 @@ class CancelComplaintsCubit extends Cubit<CancelComplaintsState> {
           'POST', Uri.parse(Config.baseURL + Routes.cancelComplaints))
         ..headers['Authorization'] = 'Bearer $token'
         ..headers['Accept'] = 'application/json'
+        ..headers['x-property-id'] = '$propertyId'
         ..fields['complaint_id'] = complaintsId ?? '';
       // Send the request
       final responseStream = await request.send();

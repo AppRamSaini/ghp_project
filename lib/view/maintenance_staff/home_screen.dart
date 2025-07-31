@@ -1,10 +1,11 @@
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/model/service_request_model.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
+import 'package:ghp_society_management/view/maintenance_staff/mark_done_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
-import 'package:ghp_society_management/view/staff/mark_done_screen.dart';
 import 'package:pinput/pinput.dart';
 
 class StaffHomeScreen extends StatefulWidget {
@@ -180,7 +181,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                   .toString(),
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors.black,
+                                                      color: Colors.white,
                                                       fontSize: 15.sp,
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -193,7 +194,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                   .toString(),
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors.black,
+                                                      color: Colors.white,
                                                       fontSize: 10.sp,
                                                       fontWeight:
                                                           FontWeight.w500)))
@@ -237,10 +238,10 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Text("Loading...",
+                                          Text("LOADING...",
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors.black,
+                                                      color: Colors.white,
                                                       fontSize: 15.sp,
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -250,7 +251,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                           Text('TOWER LOADING...',
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors.black,
+                                                      color: Colors.white,
                                                       fontSize: 11.sp,
                                                       fontWeight:
                                                           FontWeight.w500)))
@@ -261,8 +262,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                   ],
                                 ),
                               ),
-                              headerWidget(context, '', '', '',
-                                  isDemo: true)
+                              headerWidget(context, '', '', '', isDemo: true)
                             ],
                           ),
                         );
@@ -276,12 +276,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                 child: BlocBuilder<ServiceRequestCubit, ServiceRequestState>(
                   builder: (context, state) {
                     if (state is ServiceRequestsLoading) {
-                      return const SizedBox(
-                          width: double.infinity,
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [CircularProgressIndicator()]));
+                      return dashboardSimmerLoading(context);
                     } else if (state is ServiceRequestsLoaded) {
                       List<ServiceRequestData> runningServiceList = state
                           .serviceHistory.first.data!.serviceRunning!.data!;
@@ -295,7 +290,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(height: 10.h),
-                              Text('Running Service',
+                              Text('Running Services',
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.black,
@@ -311,7 +306,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                     children: [
                                       Image.asset('assets/images/not-found.png',
                                           height: 250),
-                                      Text('Current Not Running Services!',
+                                      Text('No running service!',
                                           style: GoogleFonts.nunitoSans(
                                               textStyle: TextStyle(
                                                   color:
@@ -391,7 +386,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                                         FontWeight
                                                                             .w600)),
                                                         Text(
-                                                            'TOWER: ${runningList[index].blockName} - FLOOR: ${runningList[index].floorNumber} - Property NO: ${runningList[index].aprtNo}'
+                                                            'TOWER/BLOC: ${runningList[index].blockName} - Property NO: ${runningList[index].aprtNo}'
                                                                 .toUpperCase(),
                                                             style: GoogleFonts.nunitoSans(
                                                                 color: AppTheme
@@ -525,13 +520,13 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                           Image.asset(
                                               'assets/images/not-found.png',
                                               height: 250),
-                                          Text(
-                                              'Currently Services Request Not Found!',
+                                          Text('No Complaints Assigned',
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
                                                       color: Colors
                                                           .deepPurpleAccent,
                                                       fontSize: 16.sp))),
+                                          SizedBox(height: 50)
                                         ],
                                       ),
                                     )
@@ -661,7 +656,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                     ],
                                                   ),
                                                   subtitle: Text(
-                                                      "TOWER:  ${requestList[index].blockName}  FLOOR:  ${requestList[index].floorNumber}   property NO:  ${requestList[index].aprtNo}"
+                                                      "TOWER/BLOC:  ${requestList[index].blockName}  Property NO:  ${requestList[index].aprtNo}"
                                                           .toUpperCase(),
                                                       style: GoogleFonts
                                                           .nunitoSans(
@@ -698,8 +693,8 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                         icon: Icons.phone,
                                                         text:
                                                             "Call To Resident",
-                                                        color: Colors
-                                                            .deepPurpleAccent)
+                                                        color: AppTheme
+                                                            .primaryColor)
                                                   ]),
                                               const SizedBox(height: 5)
                                             ],
@@ -829,7 +824,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                 ),
                               ),
                               Text(
-                                  "TOWER:  ${serviceDetails.blockName}  FLOOR:  ${serviceDetails.floorNumber}   APRT NO:  ${serviceDetails.aprtNo}",
+                                  "TOWER/BLOC:  ${serviceDetails.blockName}   PROPERTY NO:  ${serviceDetails.aprtNo}",
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.grey, fontSize: 12)),
                             ],
@@ -935,8 +930,8 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                   height: 40.h,
                                   width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      color: AppTheme.staffPrimaryColor),
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: AppTheme.primaryColor),
                                   child: Center(
                                     child: Text(
                                       'Start Service',
@@ -1020,6 +1015,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                             top: 10.w, left: 10.w, right: 10.w, bottom: 10.h),
                         child: Text(
                             'Please enter the OTP to verify and complete the service from residence.',
+                            textAlign: TextAlign.center,
                             style: GoogleFonts.nunitoSans(
                                 color: Colors.black,
                                 fontSize: 14.sp,
@@ -1061,17 +1057,17 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                           }
                         },
                         child: Container(
-                          height: 50.h,
+                          height: 50,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              color: AppTheme.staffPrimaryColor),
+                              borderRadius: BorderRadius.circular(30),
+                              color: AppTheme.primaryColor),
                           child: Center(
                             child: Text(
                               'Mark as Done',
                               style: GoogleFonts.nunitoSans(
                                 color: Colors.white,
-                                fontSize: 14.sp,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),

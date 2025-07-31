@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
+import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/refer_property/create_refer_property/create_refer_property_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/get_refer_property/get_refer_property_cubit.dart';
@@ -19,6 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 class RegisterReferPropertyScreen extends StatefulWidget {
   final ReferPropertyList? requestData;
   bool isRefer;
+
   RegisterReferPropertyScreen(
       {super.key, this.requestData, this.isRefer = false});
 
@@ -81,13 +81,12 @@ class _RegisterReferPropertyScreenState
               dialogueContext = ctx;
             });
           } else if (state is CreateReferPropertysuccessfully) {
-            snackBar(context, 'Refer property uploaded successfully',
-                Icons.done, AppTheme.guestColor);
+            snackBar(context, 'Refer property created successfully', Icons.done,
+                AppTheme.guestColor);
             Navigator.of(dialogueContext!).pop();
             Navigator.of(context).pop();
           } else if (state is CreateReferPropertyFailed) {
-            snackBar(context, 'Failed to upload refer property', Icons.warning,
-                AppTheme.redColor);
+            snackBar(context, state.message, Icons.warning, AppTheme.redColor);
             Navigator.of(dialogueContext!).pop();
           } else if (state is CreateReferPropertyInternetError) {
             snackBar(context, 'Internet connection failed', Icons.wifi_off,
@@ -95,6 +94,7 @@ class _RegisterReferPropertyScreenState
             Navigator.of(dialogueContext!).pop();
           } else if (state is CreateReferPropertyLogout) {
             Navigator.of(dialogueContext!).pop();
+
             sessionExpiredDialog(context);
           }
         }),
@@ -124,12 +124,7 @@ class _RegisterReferPropertyScreenState
         })
       ],
       child: Scaffold(
-        appBar: AppBar(title: Text('Refer Property ',
-            style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(title: 'Refer Property '),
         body: Form(
           key: formkey,
           child: SingleChildScrollView(
@@ -137,7 +132,6 @@ class _RegisterReferPropertyScreenState
               padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                
                 children: [
                   const SizedBox(height: 10),
                   Text('Name',
@@ -164,7 +158,6 @@ class _RegisterReferPropertyScreenState
                         return null;
                       },
                       decoration: InputDecoration(
-
                         hintText: 'Enter name',
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 12.h, horizontal: 10.0),
@@ -232,8 +225,7 @@ class _RegisterReferPropertyScreenState
                       validator: (text) {
                         if (text == null || text.isEmpty) {
                           return 'Please enter mobile number';
-                        } else if (text.length > 10 ||
-                            text.length < 10) {
+                        } else if (text.length > 10 || text.length < 10) {
                           return 'Mobile number length must be equal to 10';
                         }
                         return null;
@@ -313,8 +305,7 @@ class _RegisterReferPropertyScreenState
                           children: [
                             Expanded(
                               child: DropdownButton2<String>(
-                                underline: Container(
-                                    color: Colors.transparent),
+                                underline: Container(color: Colors.transparent),
                                 isExpanded: true,
                                 value: selectMinBudget,
                                 hint: Text('--select--',
@@ -325,10 +316,9 @@ class _RegisterReferPropertyScreenState
                                         fontWeight: FontWeight.normal,
                                       ),
                                     )),
-                                items: state.referPropertyElement
-                                    .first.data.minBudgetOptions
-                                    .map((item) =>
-                                        DropdownMenuItem<String>(
+                                items: state.referPropertyElement.first.data
+                                    .minBudgetOptions
+                                    .map((item) => DropdownMenuItem<String>(
                                           value: item.name,
                                           child: Text(
                                             item.name,
@@ -356,26 +346,21 @@ class _RegisterReferPropertyScreenState
                                   decoration: BoxDecoration(
                                     color: AppTheme.greyColor,
                                     // Background color for the button
-                                    borderRadius:
-                                        BorderRadius.circular(
-                                            10), // Set border radius
+                                    borderRadius: BorderRadius.circular(
+                                        10), // Set border radius
                                     // Optional border
                                   ),
                                 ),
                                 dropdownStyleData: DropdownStyleData(
                                   maxHeight:
-                                      MediaQuery.sizeOf(context)
-                                              .height /
-                                          2,
+                                      MediaQuery.sizeOf(context).height / 2,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
                                         10), // Set border radius for dropdown
                                   ),
                                 ),
-                                menuItemStyleData:
-                                    const MenuItemStyleData(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
                                 ),
                               ),
                             ),
@@ -384,8 +369,7 @@ class _RegisterReferPropertyScreenState
                             ),
                             Expanded(
                               child: DropdownButton2<String>(
-                                underline: Container(
-                                    color: Colors.transparent),
+                                underline: Container(color: Colors.transparent),
                                 isExpanded: true,
                                 value: selectMaxBudget,
                                 hint: Text('--select--',
@@ -396,10 +380,9 @@ class _RegisterReferPropertyScreenState
                                         fontWeight: FontWeight.normal,
                                       ),
                                     )),
-                                items: state.referPropertyElement
-                                    .first.data.maxBudgetOptions
-                                    .map((item) =>
-                                        DropdownMenuItem<String>(
+                                items: state.referPropertyElement.first.data
+                                    .maxBudgetOptions
+                                    .map((item) => DropdownMenuItem<String>(
                                           value: item.name,
                                           child: Text(
                                             item.name,
@@ -426,26 +409,21 @@ class _RegisterReferPropertyScreenState
                                   decoration: BoxDecoration(
                                     color: AppTheme.greyColor,
                                     // Background color for the button
-                                    borderRadius:
-                                        BorderRadius.circular(
-                                            10), // Set border radius
+                                    borderRadius: BorderRadius.circular(
+                                        10), // Set border radius
                                     // Optional border
                                   ),
                                 ),
                                 dropdownStyleData: DropdownStyleData(
                                   maxHeight:
-                                      MediaQuery.sizeOf(context)
-                                              .height /
-                                          2,
+                                      MediaQuery.sizeOf(context).height / 2,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
                                         10), // Set border radius for dropdown
                                   ),
                                 ),
-                                menuItemStyleData:
-                                    const MenuItemStyleData(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
                                 ),
                               ),
                             ),
@@ -549,26 +527,22 @@ class _RegisterReferPropertyScreenState
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal),
                           ),
-                          underline:
-                              Container(color: Colors.transparent),
+                          underline: Container(color: Colors.transparent),
                           isExpanded: true,
                           value: lookingFor,
-                          items: state.referPropertyElement.first.data
-                              .unitTypes
+                          items: state.referPropertyElement.first.data.unitTypes
                               .map((item) => DropdownMenuItem<String>(
                                     value: item.name,
                                     child: Text(
                                       item.name,
                                       style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black),
+                                          fontSize: 14, color: Colors.black),
                                     ),
                                   ))
                               .toList(),
                           onChanged: (value) {
                             setState(() {
-                              lookingFor =
-                                  value; // Update selected value
+                              lookingFor = value; // Update selected value
                             });
                           },
                           iconStyleData: const IconStyleData(
@@ -588,16 +562,14 @@ class _RegisterReferPropertyScreenState
                             ),
                           ),
                           dropdownStyleData: DropdownStyleData(
-                            maxHeight:
-                                MediaQuery.sizeOf(context).height / 2,
+                            maxHeight: MediaQuery.sizeOf(context).height / 2,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   10), // Set border radius for dropdown
                             ),
                           ),
                           menuItemStyleData: const MenuItemStyleData(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                           ),
                         );
                       } else {
@@ -631,19 +603,16 @@ class _RegisterReferPropertyScreenState
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal),
                           ),
-                          underline:
-                              Container(color: Colors.transparent),
+                          underline: Container(color: Colors.transparent),
                           isExpanded: true,
                           value: bhk,
-                          items: state
-                              .referPropertyElement.first.data.bhks
+                          items: state.referPropertyElement.first.data.bhks
                               .map((item) => DropdownMenuItem<String>(
                                     value: item.name,
                                     child: Text(
                                       item.name,
                                       style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black),
+                                          fontSize: 14, color: Colors.black),
                                     ),
                                   ))
                               .toList(),
@@ -669,16 +638,14 @@ class _RegisterReferPropertyScreenState
                             ),
                           ),
                           dropdownStyleData: DropdownStyleData(
-                            maxHeight:
-                                MediaQuery.sizeOf(context).height / 2,
+                            maxHeight: MediaQuery.sizeOf(context).height / 2,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   10), // Set border radius for dropdown
                             ),
                           ),
                           menuItemStyleData: const MenuItemStyleData(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                           ),
                         );
                       } else {
@@ -715,26 +682,23 @@ class _RegisterReferPropertyScreenState
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal),
                           ),
-                          underline:
-                              Container(color: Colors.transparent),
+                          underline: Container(color: Colors.transparent),
                           isExpanded: true,
                           value: propertyStatus,
-                          items: state.referPropertyElement.first.data
-                              .propertyStatus
+                          items: state
+                              .referPropertyElement.first.data.propertyStatus
                               .map((item) => DropdownMenuItem<String>(
                                     value: item.name,
                                     child: Text(
                                       item.name,
                                       style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black),
+                                          fontSize: 14, color: Colors.black),
                                     ),
                                   ))
                               .toList(),
                           onChanged: (value) {
                             setState(() {
-                              propertyStatus =
-                                  value; // Update selected value
+                              propertyStatus = value; // Update selected value
                             });
                           },
                           iconStyleData: const IconStyleData(
@@ -754,16 +718,14 @@ class _RegisterReferPropertyScreenState
                             ),
                           ),
                           dropdownStyleData: DropdownStyleData(
-                            maxHeight:
-                                MediaQuery.sizeOf(context).height / 2,
+                            maxHeight: MediaQuery.sizeOf(context).height / 2,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   10), // Set border radius for dropdown
                             ),
                           ),
                           menuItemStyleData: const MenuItemStyleData(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                           ),
                         );
                       } else {
@@ -797,26 +759,23 @@ class _RegisterReferPropertyScreenState
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal),
                           ),
-                          underline:
-                              Container(color: Colors.transparent),
+                          underline: Container(color: Colors.transparent),
                           isExpanded: true,
                           value: propertyFacing,
-                          items: state.referPropertyElement.first.data
-                              .propertyFencing
+                          items: state
+                              .referPropertyElement.first.data.propertyFencing
                               .map((item) => DropdownMenuItem<String>(
                                     value: item.name,
                                     child: Text(
                                       item.name,
                                       style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black),
+                                          fontSize: 14, color: Colors.black),
                                     ),
                                   ))
                               .toList(),
                           onChanged: (value) {
                             setState(() {
-                              propertyFacing =
-                                  value; // Update selected value
+                              propertyFacing = value; // Update selected value
                             });
                           },
                           iconStyleData: const IconStyleData(
@@ -836,16 +795,14 @@ class _RegisterReferPropertyScreenState
                             ),
                           ),
                           dropdownStyleData: DropdownStyleData(
-                            maxHeight:
-                                MediaQuery.sizeOf(context).height / 2,
+                            maxHeight: MediaQuery.sizeOf(context).height / 2,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   10), // Set border radius for dropdown
                             ),
                           ),
                           menuItemStyleData: const MenuItemStyleData(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                           ),
                         );
                       } else {
@@ -923,6 +880,9 @@ class _RegisterReferPropertyScreenState
                   SizedBox(height: 20.h),
                   GestureDetector(
                     onTap: () {
+                      final propertyId =
+                          LocalStorage.localStorage.getString('property_id');
+
                       if (formkey.currentState!.validate()) {
                         if (selectMinBudget == null) {
                           snackBar(
@@ -949,22 +909,17 @@ class _RegisterReferPropertyScreenState
                               Icons.warning,
                               AppTheme.redColor);
                         } else if (bhk == null) {
-                          snackBar(context, "Kindly select bhk",
-                              Icons.warning, AppTheme.redColor);
+                          snackBar(context, "Kindly select bhk", Icons.warning,
+                              AppTheme.redColor);
                         } else if (propertyStatus == null) {
-                          snackBar(
-                              context,
-                              "Kindly select property status",
-                              Icons.warning,
-                              AppTheme.redColor);
+                          snackBar(context, "Kindly select property status",
+                              Icons.warning, AppTheme.redColor);
                         } else if (bhk == null) {
-                          snackBar(
-                              context,
-                              "Kindly select property facing",
-                              Icons.warning,
-                              AppTheme.redColor);
+                          snackBar(context, "Kindly select property facing",
+                              Icons.warning, AppTheme.redColor);
                         } else {
                           var referPropertyBody = {
+                            "property_id": propertyId.toString(),
                             "name": propertyName.text,
                             "phone": mobileNumber.text,
                             "min_budget": selectMinBudget!,
@@ -986,8 +941,7 @@ class _RegisterReferPropertyScreenState
                           } else {
                             context
                                 .read<CreateReferPropertyCubit>()
-                                .createReferProperty(
-                                    referPropertyBody);
+                                .createReferProperty(referPropertyBody);
                           }
                         }
                       }

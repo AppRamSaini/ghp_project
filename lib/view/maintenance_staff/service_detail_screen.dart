@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ghp_society_management/model/service_request_history_model.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ServiceDetailScreen extends StatefulWidget {
   final ServiceHistoryModel data;
@@ -33,20 +32,14 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
     }
 
     return Scaffold(
-
-appBar: AppBar(title: Text('Service Details',
-    style: GoogleFonts.nunitoSans(
-        color: Colors.black,
-        fontSize: 16.sp,
-        fontWeight: FontWeight.w600))),
+      appBar: appbarWidget(title: 'Service Details'),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.all(10),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              border:
-                  Border.all(color: Colors.grey.withOpacity(0.2))),
+              border: Border.all(color: Colors.grey.withOpacity(0.2))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -66,25 +59,21 @@ appBar: AppBar(title: Text('Service Details',
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Floor & Property No : ',
+                  Text('Property No : ',
                       style: GoogleFonts.nunitoSans(
                           color: const Color(0Xff666666),
                           fontSize: 14,
                           fontWeight: FontWeight.w500)),
-                  Expanded(
-                    child: Text(
-                        'Floor ${widget.data.floorNumber} - Property No ${widget.data.aprtNo}',
-                        style: GoogleFonts.nunitoSans(
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600)),
-                  )
+                  Text('${widget.data.aprtNo}',
+                      style: GoogleFonts.nunitoSans(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600))
                 ],
               ),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child:
-                      Divider(color: Colors.grey.withOpacity(0.2))),
+                  child: Divider(color: Colors.grey.withOpacity(0.2))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -102,8 +91,7 @@ appBar: AppBar(title: Text('Service Details',
               ),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child:
-                      Divider(color: Colors.grey.withOpacity(0.2))),
+                  child: Divider(color: Colors.grey.withOpacity(0.2))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -121,8 +109,7 @@ appBar: AppBar(title: Text('Service Details',
               ),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child:
-                      Divider(color: Colors.grey.withOpacity(0.2))),
+                  child: Divider(color: Colors.grey.withOpacity(0.2))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -141,8 +128,7 @@ appBar: AppBar(title: Text('Service Details',
               ),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child:
-                      Divider(color: Colors.grey.withOpacity(0.2))),
+                  child: Divider(color: Colors.grey.withOpacity(0.2))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -161,8 +147,7 @@ appBar: AppBar(title: Text('Service Details',
               ),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child:
-                      Divider(color: Colors.grey.withOpacity(0.2))),
+                  child: Divider(color: Colors.grey.withOpacity(0.2))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -181,8 +166,7 @@ appBar: AppBar(title: Text('Service Details',
               ),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child:
-                      Divider(color: Colors.grey.withOpacity(0.2))),
+                  child: Divider(color: Colors.grey.withOpacity(0.2))),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -200,8 +184,7 @@ appBar: AppBar(title: Text('Service Details',
               ),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child:
-                      Divider(color: Colors.grey.withOpacity(0.2))),
+                  child: Divider(color: Colors.grey.withOpacity(0.2))),
               Text("Resident Details",
                   style: GoogleFonts.nunitoSans(
                       color: Colors.lightBlue,
@@ -209,8 +192,7 @@ appBar: AppBar(title: Text('Service Details',
                       fontWeight: FontWeight.w600)),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child:
-                      Divider(color: Colors.grey.withOpacity(0.2))),
+                  child: Divider(color: Colors.grey.withOpacity(0.2))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -228,8 +210,7 @@ appBar: AppBar(title: Text('Service Details',
               ),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child:
-                      Divider(color: Colors.grey.withOpacity(0.2))),
+                  child: Divider(color: Colors.grey.withOpacity(0.2))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -247,19 +228,17 @@ appBar: AppBar(title: Text('Service Details',
               ),
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child:
-                      Divider(color: Colors.grey.withOpacity(0.2))),
+                  child: Divider(color: Colors.grey.withOpacity(0.2))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text('Block ',
+                        Text('Tower/Block ',
                             style: GoogleFonts.nunitoSans(
                                 textStyle: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 14))),
+                                    color: Colors.black54, fontSize: 14))),
                         Text(widget.data.member!.blockName.toString(),
                             style: GoogleFonts.nunitoSans(
                                 textStyle: TextStyle(
@@ -267,31 +246,27 @@ appBar: AppBar(title: Text('Service Details',
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600)))
                       ]),
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text('Floor',
-                            style: GoogleFonts.nunitoSans(
-                                textStyle: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 14))),
-                        Text(
-                            widget.data.member!.floorNumber
-                                .toString(),
-                            style: GoogleFonts.nunitoSans(
-                                textStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600)))
-                      ]),
+                  // Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.center,
+                  //     children: [
+                  //       Text('Floor',
+                  //           style: GoogleFonts.nunitoSans(
+                  //               textStyle: TextStyle(
+                  //                   color: Colors.black54, fontSize: 14))),
+                  //       Text(widget.data.member!.floorNumber.toString(),
+                  //           style: GoogleFonts.nunitoSans(
+                  //               textStyle: TextStyle(
+                  //                   color: Colors.black,
+                  //                   fontSize: 14,
+                  //                   fontWeight: FontWeight.w600)))
+                  //     ]),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text('Property No',
                           style: GoogleFonts.nunitoSans(
                               textStyle: TextStyle(
-                                  color: Colors.black54,
-                                  fontSize: 14))),
+                                  color: Colors.black54, fontSize: 14))),
                       Text(
                         widget.data.member!.aprtNo.toString(),
                         style: GoogleFonts.nunitoSans(

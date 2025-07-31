@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
@@ -9,14 +10,11 @@ import 'package:ghp_society_management/view/resident/visitors/incomming_request.
 import 'package:vibration/vibration.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
-
-
-
+    FlutterLocalNotificationsPlugin();
 
 Future<void> setupLocalNotifications() async {
   const AndroidInitializationSettings androidInitSettings =
-  AndroidInitializationSettings('@mipmap/ic_launcher');
+      AndroidInitializationSettings('@mipmap/ic_launcher');
 
   final InitializationSettings initSettings = InitializationSettings(
     android: androidInitSettings,
@@ -24,11 +22,6 @@ Future<void> setupLocalNotifications() async {
 
   await flutterLocalNotificationsPlugin.initialize(initSettings);
 }
-
-
-
-
-
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 // FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -175,20 +168,20 @@ class FirebaseNotificationService {
     flutterLocalNotificationsPlugin.initialize(initSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse response) async {
-          if (response.actionId == 'ALLOW_ACTION') {
-            _handleApiCall('allowed');
-          } else if (response.actionId == 'DECLINE_ACTION') {
-            _handleApiCall('not_allowed');
-          }
-          _stopVibrationAndRingtone();
-        });
+      if (response.actionId == 'ALLOW_ACTION') {
+        _handleApiCall('allowed');
+      } else if (response.actionId == 'DECLINE_ACTION') {
+        _handleApiCall('not_allowed');
+      }
+      _stopVibrationAndRingtone();
+    });
   }
 
   /// API Call for Visitor Approval
   static void _handleApiCall(String status) async {
     try {
       final visitorId =
-      LocalStorage.localStorage.getString("visitor_id").toString();
+          LocalStorage.localStorage.getString("visitor_id").toString();
       final data = {"visitor_id": visitorId, "status": status};
 
       navigatorKey.currentState?.context
@@ -198,9 +191,4 @@ class FirebaseNotificationService {
       print("API Error: $e");
     }
   }
-
-
-
-
-
 }

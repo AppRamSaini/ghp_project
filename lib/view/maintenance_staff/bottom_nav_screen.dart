@@ -1,10 +1,10 @@
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/controller/notification/notification_listing/notification_list_cubit.dart';
+import 'package:ghp_society_management/view/maintenance_staff/help_support_screen.dart';
+import 'package:ghp_society_management/view/maintenance_staff/home_screen.dart';
+import 'package:ghp_society_management/view/maintenance_staff/service_history_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:ghp_society_management/view/resident/setting/setting_screen.dart';
-import 'package:ghp_society_management/view/staff/help_support_screen.dart';
-import 'package:ghp_society_management/view/staff/home_screen.dart';
-import 'package:ghp_society_management/view/staff/service/service_history_screen.dart';
 
 class StaffDashboard extends StatefulWidget {
   const StaffDashboard({super.key});
@@ -94,7 +94,7 @@ class StaffDashboardState extends State<StaffDashboard> {
                         height: 18.h, color: Colors.black)),
                 activeColor: AppTheme.primaryColor),
             BottomNavyBarItem(
-              textAlign: TextAlign.center,
+                textAlign: TextAlign.center,
                 title: Text('Setting',
                     style: GoogleFonts.nunitoSans(
                         textStyle: TextStyle(

@@ -20,6 +20,7 @@ import 'package:ghp_society_management/controller/parcel/parcel_element/parcel_e
 import 'package:ghp_society_management/controller/parcel/parcel_listing/parcel_listing_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_pending_counts/parcel_counts_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/receive_parcel/receive_parcel_cubit.dart';
+import 'package:ghp_society_management/controller/property_listing/property_listing_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/create_refer_property/create_refer_property_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/delete_refer_property/delete_refer_property_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/get_refer_property/get_refer_property_cubit.dart';
@@ -197,5 +198,7 @@ class BlocProviders {
         create: (context) => DailyHelpListingCubit()),
     BlocProvider<DailyHelpHistoryDetailsCubit>(
         create: (context) => DailyHelpHistoryDetailsCubit()),
+    BlocProvider<PropertyListingCubit>(
+        create: (context) => PropertyListingCubit()),
   ];
 }
