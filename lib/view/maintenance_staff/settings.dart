@@ -9,7 +9,6 @@ import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart
 import 'package:ghp_society_management/view/resident/setting/notification_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/privacy_policy.dart';
 import 'package:ghp_society_management/view/resident/setting/term_of_use.dart';
-import 'package:ghp_society_management/view/security_staff/daliy_help/daily_helps_members.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 
 class SettingScreenMaintenanceStaff extends StatefulWidget {
@@ -53,7 +52,6 @@ class _SettingScreenState extends State<SettingScreenMaintenanceStaff> {
   void handleTap(BuildContext context, int index) {
     List<Widget> staffScreens = [
       ResidentProfileDetails(forDetails: true, forResident: false),
-      DailyHelpListingHistory(),
       NotificationScreen(),
       const EmergencyContactScreen(),
       const TermOfUseScreen(),
@@ -62,8 +60,8 @@ class _SettingScreenState extends State<SettingScreenMaintenanceStaff> {
       const SizedBox() // Logout handled separately
     ];
 
-    if (index == 7) {
-      logOutPermissionDialog(context, isLogout: index == 7);
+    if (index == 6) {
+      logOutPermissionDialog(context, isLogout: index == 6);
     } else {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (builder) => staffScreens[index]));
@@ -231,9 +229,11 @@ class _SettingScreenState extends State<SettingScreenMaintenanceStaff> {
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: (){
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(builder: (builder) => EditProfileScreen()));
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (builder) =>
+                                                EditProfileScreen()));
                                   },
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
