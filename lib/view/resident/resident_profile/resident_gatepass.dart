@@ -59,51 +59,54 @@ class ResidentGatePassState extends State<ResidentGatePass> {
       ],
       child: Scaffold(
         appBar: appbarWidget(title: 'Resident Gate Pass'),
-        bottomNavigationBar: Container(
-          color: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                height: 42,
-                width: 150,
-                decoration: BoxDecoration(
-                    color: AppTheme.primaryColor,
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.grey.withOpacity(0.1))),
-                child: TextButton.icon(
-                  onPressed: () async {
-                    await captureAndSharePng(screenshotController);
-                  },
-                  icon: const Icon(Icons.share, color: Colors.white),
-                  label: const Text(
-                    "Share",
-                    style: TextStyle(color: Colors.white),
+        bottomNavigationBar: Padding(
+          padding: globalBottomPadding(context),
+          child: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  height: 42,
+                  width: 150,
+                  decoration: BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: Colors.grey.withOpacity(0.1))),
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      await captureAndSharePng(screenshotController);
+                    },
+                    icon: const Icon(Icons.share, color: Colors.white),
+                    label: const Text(
+                      "Share",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                height: 42,
-                width: 150,
-                decoration: BoxDecoration(
-                    color: AppTheme.primaryColor,
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.grey.withOpacity(0.1))),
-                child: TextButton.icon(
-                  onPressed: () async {
-                    await context
-                        .read<DownloadDocumentCubit>()
-                        .downloadQRCode(screenshotController);
-                  },
-                  icon: const Icon(Icons.download, color: Colors.white),
-                  label: const Text(
-                    "Download",
-                    style: TextStyle(color: Colors.white),
+                Container(
+                  height: 42,
+                  width: 150,
+                  decoration: BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: Colors.grey.withOpacity(0.1))),
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      await context
+                          .read<DownloadDocumentCubit>()
+                          .downloadQRCode(screenshotController);
+                    },
+                    icon: const Icon(Icons.download, color: Colors.white),
+                    label: const Text(
+                      "Download",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         body: Padding(

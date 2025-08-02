@@ -62,42 +62,45 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
       },
       child: Scaffold(
         appBar: appbarWidget(title: 'Register Complaint'),
-        bottomNavigationBar: GestureDetector(
-          onTap: () {
-            if (selectedValue == null) {
-              snackBar(context, 'Please select area', Icons.wifi_off,
-                  AppTheme.redColor);
-            } else if (controller.text.isEmpty) {
-              snackBar(context, 'Please enter some description', Icons.wifi_off,
-                  AppTheme.redColor);
-            } else {
-              context.read<CreateComplaintsCubit>().createComplaints(
-                  serviceCategoryId: widget.categoryId.toString(),
-                  area: selectedValue.toString(),
-                  description: controller.text.toString(),
-                  imageList: imagesList,
-                  videoList: videoList,
-                  audioList: audioList);
-            }
-          },
-          child: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Container(
-                width: double.infinity,
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: AppTheme.primaryColor),
-                child: Center(
-                  child: Text(
-                    'Submit ',
-                    style: GoogleFonts.nunitoSans(
-                      textStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
+        bottomNavigationBar: Padding(
+          padding: globalBottomPadding(context),
+          child: GestureDetector(
+            onTap: () {
+              if (selectedValue == null) {
+                snackBar(context, 'Please select area', Icons.wifi_off,
+                    AppTheme.redColor);
+              } else if (controller.text.isEmpty) {
+                snackBar(context, 'Please enter some description',
+                    Icons.wifi_off, AppTheme.redColor);
+              } else {
+                context.read<CreateComplaintsCubit>().createComplaints(
+                    serviceCategoryId: widget.categoryId.toString(),
+                    area: selectedValue.toString(),
+                    description: controller.text.toString(),
+                    imageList: imagesList,
+                    videoList: videoList,
+                    audioList: audioList);
+              }
+            },
+            child: Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: AppTheme.primaryColor),
+                  child: Center(
+                    child: Text(
+                      'Submit ',
+                      style: GoogleFonts.nunitoSans(
+                        textStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
@@ -294,95 +297,98 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
       context: context,
       enableDrag: false,
       builder: (BuildContext context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(20),
+        return Padding(
+          padding: globalBottomPadding(context),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
             ),
-          ),
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              const SizedBox(height: 10),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: editProfileOptionList.length,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        ListTile(
-                          onTap: () {
-                            if (index == 1) {
-                              if (isPickVideo) {
-                                getVideo(ImageSource.gallery);
-                              } else {
-                                getImage(ImageSource.gallery);
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(height: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey[300]!),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: editProfileOptionList.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          ListTile(
+                            onTap: () {
+                              if (index == 1) {
+                                if (isPickVideo) {
+                                  getVideo(ImageSource.gallery);
+                                } else {
+                                  getImage(ImageSource.gallery);
+                                }
+                              } else if (index == 0) {
+                                if (isPickVideo) {
+                                  getVideo(ImageSource.camera);
+                                } else {
+                                  getImage(ImageSource.camera);
+                                }
                               }
-                            } else if (index == 0) {
-                              if (isPickVideo) {
-                                getVideo(ImageSource.camera);
-                              } else {
-                                getImage(ImageSource.camera);
-                              }
-                            }
-                            Navigator.of(context).pop();
-                          },
-                          leading: Icon(
-                            editProfileOptionIconsList[index],
-                            color: AppTheme.primaryColor,
+                              Navigator.of(context).pop();
+                            },
+                            leading: Icon(
+                              editProfileOptionIconsList[index],
+                              color: AppTheme.primaryColor,
+                            ),
+                            title: Text(
+                              editProfileOptionList[index],
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
-                          title: Text(
-                            editProfileOptionList[index],
-                            style: const TextStyle(
+                          if (index != editProfileOptionList.length - 1)
+                            Divider(color: Colors.grey[300]),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: AppTheme.primaryColor,
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Cancel',
+                          style: GoogleFonts.nunitoSans(
+                            textStyle: const TextStyle(
+                              color: Colors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
-                          ),
-                        ),
-                        if (index != editProfileOptionList.length - 1)
-                          Divider(color: Colors.grey[300]),
-                      ],
-                    );
-                  },
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Container(
-                    width: double.infinity,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppTheme.primaryColor,
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Cancel',
-                        style: GoogleFonts.nunitoSans(
-                          textStyle: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

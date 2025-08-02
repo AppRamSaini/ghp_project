@@ -55,11 +55,12 @@ class StaffDashboardState extends State<StaffDashboard> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
+                margin: EdgeInsets.only(bottom: 12),
                 decoration: const BoxDecoration(
                     color: Colors.white,
                     boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 10)]),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

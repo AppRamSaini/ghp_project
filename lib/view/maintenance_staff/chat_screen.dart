@@ -25,7 +25,7 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appbarWidget(title: 'Chats'),
+      appBar: appbarWidget(title: 'Chat'),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('groups')
@@ -63,9 +63,104 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                 builder: (context, messageSnapshot) {
                   if (!messageSnapshot.hasData ||
                       messageSnapshot.data!.docs.isEmpty) {
-                    return ListTile(
+                    return Card(
+                      elevation: 10,
+                      child: ListTile(
+                        onLongPress: () {
+                          deleteChatDialog(context, group.id!);
+                        },
+                        leading: Card(
+                            elevation: 1,
+                            margin: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100)),
+                            child: group.members!.firstWhere(
+                                      (member) =>
+                                          member['uid'] != widget.userId,
+                                      orElse: () => null,
+                                    )['userImage'] ==
+                                    null
+                                ? Image.asset(ImageAssets.chatImage,
+                                    height: 50.0)
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(25),
+                                    child: FadeInImage(
+                                      height: 50,
+                                      width: 50,
+                                      fit: BoxFit.cover,
+                                      imageErrorBuilder:
+                                          (_, child, stackTrash) => Image.asset(
+                                              ImageAssets.chatImage,
+                                              height: 50.0),
+                                      placeholder: const AssetImage(
+                                          ImageAssets.chatImage),
+                                      image: NetworkImage(
+                                          group.members!.firstWhere(
+                                        (member) =>
+                                            member['uid'] != widget.userId,
+                                        orElse: () => null,
+                                      )['userImage']),
+                                    ),
+                                  )),
+                        title: Text(
+                          group.members!.firstWhere(
+                                (member) => member['uid'] != widget.userId,
+                                orElse: () => null,
+                              )['userName'] ??
+                              'No other members',
+                          style: GoogleFonts.nunitoSans(
+                            textStyle: const TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        subtitle: const Text("No messages yet"),
+                      ),
+                    );
+                  }
+
+                  var lastMessage = messageSnapshot.data!.docs.first;
+                  String lastMessageText = lastMessage['message'] ?? '';
+                  String senderId = lastMessage['senderId'] ?? '';
+                  DateTime lastMessageTime =
+                      (lastMessage['timestamp'] as Timestamp).toDate();
+                  String formattedTime =
+                      DateFormat('hh:mm a').format(lastMessageTime);
+
+                  bool isReadByOthers = (lastMessage['readBy'] as List?)
+                          ?.any((id) => id != widget.userId) ??
+                      false;
+
+                  return Card(
+                    color: Colors.white,
+                    child: ListTile(
                       onLongPress: () {
                         deleteChatDialog(context, group.id!);
+                      },
+                      onTap: () {
+                        context
+                            .read<GroupCubit>()
+                            .markAllMessagesAsRead(group.id!, widget.userId);
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => MessagingScreen(
+                            userImage: group.members!.firstWhere(
+                                  (member) => member['uid'] != widget.userId,
+                                  orElse: () => null,
+                                )['userImage'] ??
+                                '',
+                            groupId: group.id!,
+                            userId: widget.userId,
+                            userName: group.members!.firstWhere(
+                                    (member) => member['uid'] != widget.userId,
+                                    orElse: () => null)['userName'] ??
+                                'No other members',
+                            userCategory: group.members!.firstWhere(
+                                    (member) => member['uid'] != widget.userId,
+                                    orElse: () => null)['serviceCategory'] ??
+                                '',
+                          ),
+                        ));
                       },
                       leading: Card(
                           elevation: 1,
@@ -110,134 +205,50 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                           ),
                         ),
                       ),
-                      subtitle: const Text("No messages yet"),
-                    );
-                  }
-
-                  var lastMessage = messageSnapshot.data!.docs.first;
-                  String lastMessageText = lastMessage['message'] ?? '';
-                  String senderId = lastMessage['senderId'] ?? '';
-                  DateTime lastMessageTime =
-                      (lastMessage['timestamp'] as Timestamp).toDate();
-                  String formattedTime =
-                      DateFormat('hh:mm a').format(lastMessageTime);
-
-                  bool isReadByOthers = (lastMessage['readBy'] as List?)
-                          ?.any((id) => id != widget.userId) ??
-                      false;
-
-                  return ListTile(
-                    onLongPress: () {
-                      deleteChatDialog(context, group.id!);
-                    },
-                    onTap: () {
-                      context
-                          .read<GroupCubit>()
-                          .markAllMessagesAsRead(group.id!, widget.userId);
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => MessagingScreen(
-                          userImage: group.members!.firstWhere(
-                                (member) => member['uid'] != widget.userId,
-                                orElse: () => null,
-                              )['userImage'] ??
-                              '',
-                          groupId: group.id!,
-                          userId: widget.userId,
-                          userName: group.members!.firstWhere(
-                                  (member) => member['uid'] != widget.userId,
-                                  orElse: () => null)['userName'] ??
-                              'No other members',
-                          userCategory: group.members!.firstWhere(
-                                  (member) => member['uid'] != widget.userId,
-                                  orElse: () => null)['serviceCategory'] ??
-                              '',
-                        ),
-                      ));
-                    },
-                    leading: Card(
-                        elevation: 1,
-                        margin: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100)),
-                        child: group.members!.firstWhere(
-                                  (member) => member['uid'] != widget.userId,
-                                  orElse: () => null,
-                                )['userImage'] ==
-                                null
-                            ? Image.asset(ImageAssets.chatImage, height: 50.0)
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(25),
-                                child: FadeInImage(
-                                  height: 50,
-                                  width: 50,
-                                  fit: BoxFit.cover,
-                                  imageErrorBuilder: (_, child, stackTrash) =>
-                                      Image.asset(ImageAssets.chatImage,
-                                          height: 50.0),
-                                  placeholder:
-                                      const AssetImage(ImageAssets.chatImage),
-                                  image: NetworkImage(group.members!.firstWhere(
-                                    (member) => member['uid'] != widget.userId,
-                                    orElse: () => null,
-                                  )['userImage']),
-                                ),
-                              )),
-                    title: Text(
-                      group.members!.firstWhere(
-                            (member) => member['uid'] != widget.userId,
-                            orElse: () => null,
-                          )['userName'] ??
-                          'No other members',
-                      style: GoogleFonts.nunitoSans(
-                        textStyle: const TextStyle(
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    subtitle: Text(lastMessageText,
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    trailing: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(formattedTime,
-                            style: const TextStyle(color: Colors.grey)),
-                        const SizedBox(height: 5.0),
-                        if (senderId == widget.userId) ...[
-                          isReadByOthers
-                              ? Icon(Icons.done_all,
-                                  size: 15.sp, color: AppTheme.primaryColor)
-                              : Icon(Icons.done,
-                                  size: 15.sp, color: AppTheme.primaryColor),
-                        ],
-                        StreamBuilder<int>(
-                          stream:
-                              getUnreadMessagesCount(group.id!, widget.userId),
-                          builder: (context, snapshot) {
-                            final unreadCount = snapshot.data ?? 0;
-                            return unreadCount != 0
-                                ? Container(
-                                    width: 25.0,
-                                    height: 25.0,
-                                    decoration: BoxDecoration(
-                                        color: AppTheme.primaryColor,
-                                        borderRadius:
-                                            BorderRadius.circular(100.0)),
-                                    child: Center(
-                                      child: Text(
-                                        unreadCount.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12.0,
-                                          fontWeight: FontWeight.w600,
+                      subtitle: Text(lastMessageText,
+                          maxLines: 1, overflow: TextOverflow.ellipsis),
+                      trailing: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(formattedTime,
+                              style: const TextStyle(color: Colors.grey)),
+                          const SizedBox(height: 5.0),
+                          if (senderId == widget.userId) ...[
+                            isReadByOthers
+                                ? Icon(Icons.done_all,
+                                    size: 15.sp, color: AppTheme.primaryColor)
+                                : Icon(Icons.done,
+                                    size: 15.sp, color: AppTheme.primaryColor),
+                          ],
+                          StreamBuilder<int>(
+                            stream: getUnreadMessagesCount(
+                                group.id!, widget.userId),
+                            builder: (context, snapshot) {
+                              final unreadCount = snapshot.data ?? 0;
+                              return unreadCount != 0
+                                  ? Container(
+                                      width: 25.0,
+                                      height: 25.0,
+                                      decoration: BoxDecoration(
+                                          color: AppTheme.primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(100.0)),
+                                      child: Center(
+                                        child: Text(
+                                          unreadCount.toString(),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  )
-                                : const SizedBox();
-                          },
-                        ),
-                      ],
+                                    )
+                                  : const SizedBox();
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },

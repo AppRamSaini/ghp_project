@@ -25,7 +25,8 @@ List<Map<String, dynamic>> optionList = [
 ];
 List<Map<String, dynamic>> optionList0 = [
   {"icon": Icons.delete, "menu": "Delete", "menu_id": 1},
-  {"icon": Icons.visibility, "menu": "View Details", "menu_id": 2}
+  {"icon": Icons.visibility, "menu": "View Details", "menu_id": 2},
+  {"icon": Icons.info_outline_rounded, "menu": "Create Complaint", "menu_id": 4}
 ];
 // for staff ide
 List<Map<String, dynamic>> optionList2 = [

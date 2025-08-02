@@ -976,8 +976,9 @@ class _CreateParcelSecurityStaffSideState
                       }
                     },
                     child: Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: globalBottomPadding(context),
                       child: Container(
+                        margin: EdgeInsets.all(12),
                         width: double.infinity,
                         height: 50,
                         decoration: BoxDecoration(

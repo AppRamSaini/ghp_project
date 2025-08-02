@@ -414,7 +414,6 @@ Widget residentSideHeader(BuildContext context) {
                   .map((doc) =>
                       GroupModel.fromMap(doc.data() as Map<String, dynamic>))
                   .toList();
-
               return StreamBuilder<List<int>>(
                 stream: getTotalUnreadCounts(groups, user.id.toString()),
                 builder: (context, unreadSnapshot) {
