@@ -264,11 +264,23 @@ class _OutgoingDocumentsScreenState extends State<OutgoingDocumentsScreen> {
                       if (documentsList.isEmpty) {
                         return emptyDataWidget("Documents not found!");
                       }
+
                       return ListView.builder(
                         shrinkWrap: true,
                         itemCount: documentsList.length,
                         physics: const BouncingScrollPhysics(),
                         itemBuilder: (context, index) {
+                          status() {
+                            return Text(
+                              documentsList[index].status.toString(),
+                              style: TextStyle(
+                                  color:
+                                      documentsList[index].status == 'requested'
+                                          ? Colors.deepPurpleAccent
+                                          : Colors.blue),
+                            );
+                          }
+
                           return Container(
                             margin: const EdgeInsets.only(bottom: 10),
                             decoration: BoxDecoration(
@@ -309,13 +321,19 @@ class _OutgoingDocumentsScreenState extends State<OutgoingDocumentsScreen> {
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
-                                  Text(
-                                    "Date: ${DateFormat('d MMM, yyyy').format(documentsList[index].createdAt!)}",
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.black45,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Date: ${DateFormat('d MMM, yyyy').format(documentsList[index].createdAt!)}  ",
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.black45,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      SizedBox(width: 20),
+                                      status()
+                                    ],
                                   ),
                                 ],
                               ),

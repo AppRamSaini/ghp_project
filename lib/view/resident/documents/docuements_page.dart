@@ -1,5 +1,6 @@
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
+import 'package:ghp_society_management/controller/documents/delete_request/delete_request_cubit.dart';
 import 'package:ghp_society_management/controller/documents/documents_count/document_count_cubit.dart';
 import 'package:ghp_society_management/controller/documents/send_request/send_request_docs_cubit.dart';
 import 'package:ghp_society_management/main.dart';
@@ -14,30 +15,38 @@ class DocumentsScreen extends StatefulWidget {
 }
 
 class _DocumentsScreenState extends State<DocumentsScreen> {
-  late DocumentCountCubit documentCountCubit;
-
   @override
   void initState() {
     super.initState();
-    documentCountCubit = DocumentCountCubit()..documentCountType();
+    onFetchData();
+  }
+
+  Future onFetchData() async {
+    context.read<DocumentCountCubit>().documentCountType();
   }
 
   @override
   Widget build(BuildContext context) {
-    documentCountCubit.documentCountType();
     return MultiBlocListener(
       listeners: [
+        BlocListener<DeleteRequestCubit, DeleteRequestState>(
+          listener: (context, state) async {
+            if (state is DeleteRequestSuccessfully) {
+              onFetchData();
+            }
+          },
+        ),
         BlocListener<UploadDocumentCubit, UploadDocumentState>(
           listener: (context, state) async {
             if (state is UploadDocumentSuccessfully) {
-              documentCountCubit.documentCountType();
+              onFetchData();
             }
           },
         ),
         BlocListener<SendDocsRequestCubit, SendDocsRequestState>(
           listener: (context, state) async {
             if (state is SendDocsRequestSuccessfully) {
-              documentCountCubit.documentCountType();
+              onFetchData();
             }
           },
         ),
@@ -46,43 +55,43 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         appBar: appbarWidget(title: 'Documents'),
         body: SafeArea(
           child: RefreshIndicator(
-            onRefresh: () async {
-              documentCountCubit.documentCountType();
-            },
+            onRefresh: onFetchData,
             child: BlocBuilder<DocumentCountCubit, DocumentCountState>(
-              bloc: documentCountCubit,
               builder: (context, state) {
                 if (state is DocumentCountLoaded) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildDocumentTile(
-                          title: "Request By Management",
-                          count: state.incomingRequestCount,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
+                  return SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildDocumentTile(
+                            title: "Request By Management",
+                            count: state.incomingRequestCount,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const IncomingDocumentsScreen()),
+                              );
+                            },
+                          ),
+                          _buildDocumentTile(
+                            title: "Request By Me",
+                            count: state.outGoingRequestCount,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
                                   builder: (context) =>
-                                      const IncomingDocumentsScreen()),
-                            );
-                          },
-                        ),
-                        _buildDocumentTile(
-                          title: "Request By Me",
-                          count: state.outGoingRequestCount,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const OutgoingDocumentsScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                                      const OutgoingDocumentsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 } else if (state is DocumentCountLoading) {

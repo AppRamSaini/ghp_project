@@ -74,37 +74,42 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
       },
       child: Scaffold(
         appBar: appbarWidget(title: 'Upload Document'),
-        bottomNavigationBar: Container(
-          color: Colors.white,
-          child: GestureDetector(
-            onTap: () {
-              if (formkey.currentState!.validate()) {
-                if (documentFiles.isEmpty) {
-                  snackBar(context, 'Kindly upload document files', Icons.crop,
-                      AppTheme.redColor);
-                } else {
-                  context.read<UploadDocumentCubit>().updateDocument(context,
-                      widget.incomingRequestData.id.toString(), documentFiles);
+        bottomNavigationBar: Padding(
+          padding: globalBottomPadding(context),
+          child: Container(
+            color: Colors.white,
+            child: GestureDetector(
+              onTap: () {
+                if (formkey.currentState!.validate()) {
+                  if (documentFiles.isEmpty) {
+                    snackBar(context, 'Kindly upload document files',
+                        Icons.crop, AppTheme.redColor);
+                  } else {
+                    context.read<UploadDocumentCubit>().updateDocument(
+                        context,
+                        widget.incomingRequestData.id.toString(),
+                        documentFiles);
+                  }
                 }
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Container(
-                width: double.infinity,
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: AppTheme.primaryColor),
-                child: Center(
-                  child: Text('Upload Document',
-                      style: GoogleFonts.nunitoSans(
-                        textStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )),
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: AppTheme.primaryColor),
+                  child: Center(
+                    child: Text('Upload Document',
+                        style: GoogleFonts.nunitoSans(
+                          textStyle: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )),
+                  ),
                 ),
               ),
             ),

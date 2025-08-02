@@ -5,11 +5,11 @@ import 'package:ghp_society_management/controller/parcel/parcel_pending_counts/p
 import 'package:ghp_society_management/controller/parcel/receive_parcel/receive_parcel_cubit.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_element/sos_element_cubit.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
-import 'package:ghp_society_management/view/resident/setting/setting_screen.dart';
 import 'package:ghp_society_management/view/security_staff/dashboard/home.dart';
 import 'package:ghp_society_management/view/security_staff/parcel_flow_security_staff/parcel_listing.dart';
 import 'package:ghp_society_management/view/security_staff/resident_checkouts/resident_checkouts.dart';
 import 'package:ghp_society_management/view/security_staff/scan_qr.dart';
+import 'package:ghp_society_management/view/security_staff/settings.dart';
 
 class SecurityGuardDashboard extends StatefulWidget {
   int? index = 0;
@@ -52,7 +52,7 @@ class SecurityGuardDashboardState extends State<SecurityGuardDashboard> {
     const ResidentsCheckoutsHistory(),
     QrCodeScanner(),
     const ParcelListingSecurityStaffSide(),
-    SettingScreen(forStaffSide: true),
+    SecurityStaffSettings(),
   ];
 
   @override
@@ -96,127 +96,133 @@ class SecurityGuardDashboardState extends State<SecurityGuardDashboard> {
             },
             children: lst,
           ),
-          bottomNavigationBar: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 10)]),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
+          bottomNavigationBar: Padding(
+            padding: globalBottomPadding(context),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(color: Colors.grey, blurRadius: 10)
+                      ]),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            currentIndex = 0;
+                            _pageController.jumpToPage(0);
+
+                            context
+                                .read<ParcelCountsCubit>()
+                                .fetchParcelCounts(); // Fetch latest count
+                            setState(() {});
+                          },
+                          child: bottomBarWidget(
+                              ImageAssets.homeImage, "Home", currentIndex, 0)),
+                      GestureDetector(
+                          onTap: () {
+                            currentIndex = 1;
+                            _pageController.jumpToPage(1);
+                            context
+                                .read<ParcelCountsCubit>()
+                                .fetchParcelCounts(); // Fetch latest count
+                            setState(() {});
+                          },
+                          child: bottomBarWidget(ImageAssets.documentImage,
+                              "CheckOut", currentIndex, 1)),
+                      FloatingActionButton(
+                          backgroundColor: AppTheme.primaryColor,
+                          heroTag: "hero1",
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100)),
+                          onPressed: () {
+                            currentIndex = 2;
+                            _pageController.jumpToPage(2);
+                            context
+                                .read<ParcelCountsCubit>()
+                                .fetchParcelCounts(); // Fetch latest count
+
+                            setState(() {});
+                            // Navigator.push(context,
+                            //     MaterialPageRoute(builder: (_) => QrCodeScanner()));
+                          },
+                          child: Image.asset('assets/images/qr.png',
+                              color: Colors.white, height: 32)),
+                      GestureDetector(
                         onTap: () {
-                          currentIndex = 0;
-                          _pageController.jumpToPage(0);
-
-                          context
-                              .read<ParcelCountsCubit>()
-                              .fetchParcelCounts(); // Fetch latest count
-                          setState(() {});
-                        },
-                        child: bottomBarWidget(
-                            ImageAssets.homeImage, "Home", currentIndex, 0)),
-                    GestureDetector(
-                        onTap: () {
-                          currentIndex = 1;
-                          _pageController.jumpToPage(1);
-                          context
-                              .read<ParcelCountsCubit>()
-                              .fetchParcelCounts(); // Fetch latest count
-                          setState(() {});
-                        },
-                        child: bottomBarWidget(ImageAssets.documentImage,
-                            "CheckOut", currentIndex, 1)),
-                    FloatingActionButton(
-                        backgroundColor: AppTheme.primaryColor,
-                        heroTag: "hero1",
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100)),
-                        onPressed: () {
-                          currentIndex = 2;
-                          _pageController.jumpToPage(2);
+                          currentIndex = 3;
+                          _pageController.jumpToPage(3);
                           context
                               .read<ParcelCountsCubit>()
                               .fetchParcelCounts(); // Fetch latest count
 
                           setState(() {});
-                          // Navigator.push(context,
-                          //     MaterialPageRoute(builder: (_) => QrCodeScanner()));
                         },
-                        child: Image.asset('assets/images/qr.png',
-                            color: Colors.white, height: 32)),
-                    GestureDetector(
-                      onTap: () {
-                        currentIndex = 3;
-                        _pageController.jumpToPage(3);
-                        context
-                            .read<ParcelCountsCubit>()
-                            .fetchParcelCounts(); // Fetch latest count
-
-                        setState(() {});
-                      },
-                      child: BlocBuilder<ParcelCountsCubit, ParcelCountsState>(
-                        builder: (context, state) {
-                          int parcelCount =
-                              LocalStorage.localStorage.getInt('counts') ?? 0;
-                          if (state is ParcelCountsLoaded) {
-                            parcelCount =
-                                state.count; // Use data from the cubit
-                            LocalStorage.localStorage
-                                .setInt('counts', parcelCount); // Save it
-                          }
-                          return Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                child: bottomBarWidget(ImageAssets.parcelIcon,
-                                    "Parcel", currentIndex, 3),
-                              ),
-                              parcelCount == 0
-                                  ? const SizedBox()
-                                  : Positioned(
-                                      right: 0,
-                                      top: 0,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(5),
-                                        decoration: const BoxDecoration(
-                                            color: Colors.redAccent,
-                                            shape: BoxShape.circle),
-                                        constraints: const BoxConstraints(
-                                            minWidth: 18, minHeight: 18),
-                                        child: Text(
-                                          parcelCount.toString(),
-                                          style: const TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.white),
-                                          textAlign: TextAlign.center,
+                        child:
+                            BlocBuilder<ParcelCountsCubit, ParcelCountsState>(
+                          builder: (context, state) {
+                            int parcelCount =
+                                LocalStorage.localStorage.getInt('counts') ?? 0;
+                            if (state is ParcelCountsLoaded) {
+                              parcelCount =
+                                  state.count; // Use data from the cubit
+                              LocalStorage.localStorage
+                                  .setInt('counts', parcelCount); // Save it
+                            }
+                            return Stack(
+                              alignment: Alignment.topRight,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  child: bottomBarWidget(ImageAssets.parcelIcon,
+                                      "Parcel", currentIndex, 3),
+                                ),
+                                parcelCount == 0
+                                    ? const SizedBox()
+                                    : Positioned(
+                                        right: 0,
+                                        top: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(5),
+                                          decoration: const BoxDecoration(
+                                              color: Colors.redAccent,
+                                              shape: BoxShape.circle),
+                                          constraints: const BoxConstraints(
+                                              minWidth: 18, minHeight: 18),
+                                          child: Text(
+                                            parcelCount.toString(),
+                                            style: const TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                            ],
-                          );
-                        },
+                              ],
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        currentIndex = 4;
-                        _pageController.jumpToPage(4);
-                        setState(() {});
-                      },
-                      child: bottomBarWidget(
-                          ImageAssets.settingImage, "Setting", currentIndex, 4),
-                    ),
-                  ],
+                      GestureDetector(
+                        onTap: () {
+                          currentIndex = 4;
+                          _pageController.jumpToPage(4);
+                          setState(() {});
+                        },
+                        child: bottomBarWidget(ImageAssets.settingImage,
+                            "Setting", currentIndex, 4),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

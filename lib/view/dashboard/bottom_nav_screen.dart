@@ -345,55 +345,60 @@ class DashboardState extends State<Dashboard> {
                 DailyHelpListingHistoryResidentSide(),
                 SettingScreen()
               ]),
-          bottomNavigationBar: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 10)]),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
+          bottomNavigationBar: Padding(
+            padding: globalBottomPadding(context),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(color: Colors.grey, blurRadius: 10)
+                      ]),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            currentIndex = 0;
+                            _pageController.jumpToPage(0);
+                            setState(() {});
+                          },
+                          child: bottomBarWidget(
+                              ImageAssets.homeImage, "Home", currentIndex, 0)),
+                      GestureDetector(
+                          onTap: () {
+                            currentIndex = 1;
+                            _pageController.jumpToPage(1);
+                            setState(() {});
+                          },
+                          child: bottomBarWidget(ImageAssets.documentImage,
+                              "Documents", currentIndex, 1)),
+                      GestureDetector(
+                          onTap: () {
+                            currentIndex = 2;
+                            _pageController.jumpToPage(2);
+                            setState(() {});
+                          },
+                          child: bottomBarWidget(ImageAssets.calendarImage,
+                              "Daily Help", currentIndex, 2)),
+                      GestureDetector(
                         onTap: () {
-                          currentIndex = 0;
-                          _pageController.jumpToPage(0);
+                          currentIndex = 3;
+                          _pageController.jumpToPage(3);
                           setState(() {});
                         },
-                        child: bottomBarWidget(
-                            ImageAssets.homeImage, "Home", currentIndex, 0)),
-                    GestureDetector(
-                        onTap: () {
-                          currentIndex = 1;
-                          _pageController.jumpToPage(1);
-                          setState(() {});
-                        },
-                        child: bottomBarWidget(ImageAssets.documentImage,
-                            "Documents", currentIndex, 1)),
-                    GestureDetector(
-                        onTap: () {
-                          currentIndex = 2;
-                          _pageController.jumpToPage(2);
-                          setState(() {});
-                        },
-                        child: bottomBarWidget(ImageAssets.calendarImage,
-                            "Daily Help", currentIndex, 2)),
-                    GestureDetector(
-                      onTap: () {
-                        currentIndex = 3;
-                        _pageController.jumpToPage(3);
-                        setState(() {});
-                      },
-                      child: bottomBarWidget(
-                          ImageAssets.settingImage, "Setting", currentIndex, 3),
-                    ),
-                  ],
+                        child: bottomBarWidget(ImageAssets.settingImage,
+                            "Setting", currentIndex, 3),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

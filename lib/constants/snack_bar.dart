@@ -332,3 +332,8 @@ AppBar appbarWidget({required String title, List<Widget>? actions}) => AppBar(
       ),
     ),
     actions: actions);
+
+/// global padding data
+
+EdgeInsetsGeometry globalBottomPadding(BuildContext context) =>
+    EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom);

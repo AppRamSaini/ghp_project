@@ -51,43 +51,46 @@ class _SendDocumentsRequestScreeState extends State<SendDocumentsRequestScree> {
       },
       child: Scaffold(
         appBar: appbarWidget(title: 'Send Request'),
-        bottomNavigationBar: Container(
-          color: Colors.white,
-          child: GestureDetector(
-            onTap: () {
-              if (formkey.currentState!.validate()) {
-                if (selectedValue == null) {
-                  snackBar(context, 'Kindly select document type', Icons.done,
-                      AppTheme.redColor);
-                } else {
-                  Map requestData = {
-                    "subject": documentName.text.toString(),
-                    "document_type_id": selectedDocId.toString(),
-                    "description": description.text.toString()
-                  };
-                  context
-                      .read<SendDocsRequestCubit>()
-                      .sendDocsRequestAPI(requestData);
+        bottomNavigationBar: Padding(
+          padding: globalBottomPadding(context),
+          child: Container(
+            color: Colors.white,
+            child: GestureDetector(
+              onTap: () {
+                if (formkey.currentState!.validate()) {
+                  if (selectedValue == null) {
+                    snackBar(context, 'Kindly select document type', Icons.done,
+                        AppTheme.redColor);
+                  } else {
+                    Map requestData = {
+                      "subject": documentName.text.toString(),
+                      "document_type_id": selectedDocId.toString(),
+                      "description": description.text.toString()
+                    };
+                    context
+                        .read<SendDocsRequestCubit>()
+                        .sendDocsRequestAPI(requestData);
+                  }
                 }
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Container(
-                width: double.infinity,
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: AppTheme.primaryColor),
-                child: Center(
-                  child: Text('Send Request',
-                      style: GoogleFonts.nunitoSans(
-                        textStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )),
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: AppTheme.primaryColor),
+                  child: Center(
+                    child: Text('Send Request',
+                        style: GoogleFonts.nunitoSans(
+                          textStyle: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )),
+                  ),
                 ),
               ),
             ),

@@ -29,8 +29,8 @@ class SelectSocietyCubit extends Cubit<SelectSocietyState> {
     }
 
     try {
-      final response = await apiManager.getRequest(
-          'https://dev-society.ghpjaipur.com/api/user/v1/societies');
+      final response = await apiManager
+          .getRequest("https://society.ghpjaipur.com/api/user/v1/societies");
       final resData = json.decode(response.body.toString());
 
       if (response.statusCode == 200 && resData['status'] == true) {
