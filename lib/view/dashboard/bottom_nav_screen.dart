@@ -388,7 +388,7 @@ class DashboardState extends State<Dashboard> {
                         setState(() {});
                       },
                       child: bottomBarWidget(
-                          ImageAssets.settingImage, "Settings", currentIndex, 3),
+                          ImageAssets.settingImage, "Setting", currentIndex, 3),
                     ),
                   ],
                 ),

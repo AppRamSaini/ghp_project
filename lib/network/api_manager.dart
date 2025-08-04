@@ -20,7 +20,7 @@ class ApiManager {
       if (kDebugMode) {
         print('API URL: $url');
         print('Token: $token');
-        // print('Property ID: $propertyId (usePropertyID: $usePropertyID)');
+        print('Property ID: $propertyId (usePropertyID: $usePropertyID)');
       }
 
       final headers = {
