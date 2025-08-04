@@ -1,4 +1,3 @@
-import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/model/user_model.dart';
@@ -39,31 +38,25 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
   }
 
   void _handleStaffTap(Datum staff) {
-    showLoadingDialog(context, (ctx) {
-      dialogContext = ctx;
-    });
-
     final uuid = const Uuid();
     final String groupId = uuid.v6();
 
     userList = UserModel(
-      userImage: staff.image,
-      uid: staff.userId.toString(),
-      userName: staff.name,
-      serviceCategory: staff.staffCategory?.name.isNotEmpty == true
-          ? staff.staffCategory!.name
-          : staff.role.toString(),
-    );
+        userImage: staff.image,
+        uid: staff.userId.toString(),
+        userName: staff.name,
+        serviceCategory: staff.staffCategory?.name.isNotEmpty == true
+            ? staff.staffCategory!.name
+            : staff.role.toString());
 
     context.read<GroupCubit>().createGroup(
-          userList!,
-          groupId,
-          context,
-          widget.userId,
-          widget.userName,
-          widget.userImage,
-          userList!.serviceCategory ?? '',
-        );
+        userList!,
+        groupId,
+        context,
+        widget.userId,
+        widget.userName,
+        widget.userImage,
+        userList!.serviceCategory ?? '');
   }
 
   Widget _buildStaffTile(Datum staff) {

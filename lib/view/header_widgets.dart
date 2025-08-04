@@ -399,6 +399,8 @@ Widget residentSideHeader(BuildContext context) {
           builder: (context, state) {
         if (state is UserProfileLoaded) {
           final user = state.userProfile.first.data?.user;
+
+          print("---------sdsdsd------>>>>>>>>>>>>>>>>>>>>>>${user!.image}");
           return StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('groups')
@@ -407,7 +409,7 @@ Widget residentSideHeader(BuildContext context) {
             builder: (context, snapshot) {
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                 return chatIcon(0, context, user.id.toString(),
-                    user.imageUrl.toString(), user.name.toString(), 'resident');
+                    user.image.toString(), user.name.toString(), 'resident');
               }
 
               List<GroupModel> groups = snapshot.data!.docs

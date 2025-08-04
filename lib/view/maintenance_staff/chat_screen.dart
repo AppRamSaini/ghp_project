@@ -132,6 +132,11 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                           ?.any((id) => id != widget.userId) ??
                       false;
 
+                  String images = group.members!.firstWhere(
+                        (member) => member['uid'] != widget.userId,
+                        orElse: () => null,
+                      )['userImage'] ??
+                      '';
                   return Card(
                     color: Colors.white,
                     child: ListTile(
@@ -167,31 +172,20 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                           margin: EdgeInsets.zero,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(100)),
-                          child: group.members!.firstWhere(
-                                    (member) => member['uid'] != widget.userId,
-                                    orElse: () => null,
-                                  )['userImage'] ==
-                                  null
-                              ? Image.asset(ImageAssets.chatImage, height: 50.0)
-                              : ClipRRect(
-                                  borderRadius: BorderRadius.circular(25),
-                                  child: FadeInImage(
-                                    height: 50,
-                                    width: 50,
-                                    fit: BoxFit.cover,
-                                    imageErrorBuilder: (_, child, stackTrash) =>
-                                        Image.asset(ImageAssets.chatImage,
-                                            height: 50.0),
-                                    placeholder:
-                                        const AssetImage(ImageAssets.chatImage),
-                                    image:
-                                        NetworkImage(group.members!.firstWhere(
-                                      (member) =>
-                                          member['uid'] != widget.userId,
-                                      orElse: () => null,
-                                    )['userImage']),
-                                  ),
-                                )),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(25),
+                            child: FadeInImage(
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                              imageErrorBuilder: (_, child, stackTrash) =>
+                                  Image.asset(ImageAssets.chatImage,
+                                      height: 50.0),
+                              placeholder:
+                                  const AssetImage(ImageAssets.chatImage),
+                              image: NetworkImage(images),
+                            ),
+                          )),
                       title: Text(
                         group.members!.firstWhere(
                               (member) => member['uid'] != widget.userId,

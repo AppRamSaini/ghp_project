@@ -76,6 +76,10 @@ class GroupCubit extends Cubit<void> {
         .collection("messages")
         .doc(chatId.toString())
         .set(newChat.toJson());
+    await db.collection("groups").doc(groupId).update({
+      'lastMessage': message.isNotEmpty ? message : "📷 Image",
+      'lastMessageTimestamp': Timestamp.now(),
+    });
 
     isLoading = false;
   }
@@ -92,30 +96,44 @@ class GroupCubit extends Cubit<void> {
     }
   }
 
-  Future createGroup(UserModel userData, String groupId, BuildContext context,
-      String userId, String firstName, String userImage, String userCategory,
-      {bool fromStaff = false}) async {
+  Future createGroup(
+    UserModel userData,
+    String groupId,
+    BuildContext context,
+    String userId,
+    String firstName,
+    String userImage,
+    String userCategory, {
+    bool fromStaff = false,
+  }) async {
     showLoadingDialog(context, (ctx) {
       dialogueContext = ctx;
     });
+
     isLoading = true;
 
     try {
+      // 1. Check if existing group already created
       String? existingGroupId = await checkExistingGroup(userId, userData.uid!);
 
       if (existingGroupId != null) {
-        Navigator.of(context).pop();
-        Navigator.of(dialogueContext!).pop();
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (builder) => MessagingScreen(
-                groupId: existingGroupId,
-                userId: userId,
-                userImage: userData.userImage ?? '',
-                userName: userData.userName!,
-                userCategory: userCategory)));
+        // First pop dialog safely
+        if (dialogueContext != null) Navigator.of(dialogueContext!).pop();
+
+        // Now navigate to existing message screen
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (builder) => MessagingScreen(
+            groupId: existingGroupId,
+            userId: userId,
+            userImage: userData.userImage ?? '',
+            userName: userData.userName!,
+            userCategory: userCategory,
+          ),
+        ));
         return;
       }
 
+      // 2. No existing group - create new
       List<UserModel> selectedMembers = [
         UserModel(
           uid: userId,
@@ -134,25 +152,25 @@ class GroupCubit extends Cubit<void> {
         "userIds": [userId, userData.uid!]
       });
 
+      // 3. Update local group list
       await getGroups(userId);
 
-      if (!fromStaff) {
-        Navigator.of(context).pop();
-        Navigator.of(dialogueContext!).pop();
-      }
+      // 4. Safely close dialog
+      if (dialogueContext != null) Navigator.of(dialogueContext!).pop();
 
+      // 5. Go to messaging screen
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (builder) => MessagingScreen(
-              groupId: groupId,
-              userId: userId,
-              userImage: userData.userImage ?? '',
-              userName: userData.userName!,
-              userCategory: userCategory)));
-
-      Navigator.of(dialogueContext!).pop();
+        builder: (builder) => MessagingScreen(
+          groupId: groupId,
+          userId: userId,
+          userImage: userData.userImage ?? '',
+          userName: userData.userName!,
+          userCategory: userCategory,
+        ),
+      ));
     } catch (e) {
       print("Error in createGroup: $e");
-      Navigator.of(dialogueContext!).pop();
+      if (dialogueContext != null) Navigator.of(dialogueContext!).pop();
     } finally {
       isLoading = false;
     }

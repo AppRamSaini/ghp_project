@@ -25,7 +25,6 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   int selectedValue = 0;
   final formkey = GlobalKey<FormState>();
-  File? imageFile;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -42,6 +41,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   String imgFile = '';
+  File? imageFile;
 
   initData() {
     nameController.text =
@@ -56,10 +56,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   final ImagePicker picker = ImagePicker();
-  XFile? pickedImage;
 
   @override
   Widget build(BuildContext context) {
+    print('$imgFile');
+
     return BlocListener<EditProfileCubit, EditProfileState>(
       listener: (context, state) async {
         if (state is EditProfileLoading) {
@@ -101,61 +102,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     alignment: Alignment.center,
                     child: Stack(
                       children: [
-                        (imageFile == null && imgFile == null)
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(200),
-                                child: FadeInImage(
-                                  height: 120,
-                                  width: 120,
-                                  fit: BoxFit.fill,
-                                  placeholder:
-                                      AssetImage('assets/images/default.jpg'),
-                                  image: NetworkImage(''),
-                                  imageErrorBuilder: (_, child, st) =>
-                                      Image.asset('assets/images/default.jpg',
-                                          height: 120,
-                                          width: 120,
-                                          fit: BoxFit.fill),
-                                ),
-                              )
-                            : (imageFile == null)
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(200),
-                                    child: FadeInImage(
-                                      height: 120,
-                                      width: 120,
-                                      fit: BoxFit.fill,
-                                      placeholder: AssetImage(
-                                          'assets/images/default.jpg'),
-                                      image: NetworkImage(imgFile),
-                                      imageErrorBuilder: (_, child, st) =>
-                                          Image.asset(
-                                              'assets/images/default.jpg',
-                                              height: 120,
-                                              width: 120,
-                                              fit: BoxFit.fill),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(200),
+                          child: SizedBox(
+                            height: 120,
+                            width: 120,
+                            child: imageFile != null
+                                ? Image.file(
+                                    imageFile!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => Image.asset(
+                                      'assets/images/default.jpg',
+                                      fit: BoxFit.cover,
                                     ),
                                   )
-                                : ClipRRect(
-                                    borderRadius: BorderRadius.circular(200),
-                                    child: FadeInImage(
-                                      height: 120,
-                                      width: 120,
-                                      fit: BoxFit.fill,
-                                      placeholder: AssetImage(
-                                          'assets/images/default.jpg'),
-                                      image: NetworkImage(''),
-                                      imageErrorBuilder: (_, child, st) =>
-                                          Image.asset(
-                                              'assets/images/default.jpg',
-                                              height: 120,
-                                              width: 120,
-                                              fit: BoxFit.fill),
-                                    ),
-                                  ),
+                                : (imgFile != null && imgFile.isNotEmpty)
+                                    ? FadeInImage(
+                                        fit: BoxFit.cover,
+                                        placeholder: AssetImage(
+                                            'assets/images/default.jpg'),
+                                        image: NetworkImage(imgFile),
+                                        imageErrorBuilder: (_, __, ___) =>
+                                            Image.asset(
+                                          'assets/images/default.jpg',
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Image.asset(
+                                        'assets/images/default.jpg',
+                                        fit: BoxFit.cover,
+                                      ),
+                          ),
+                        ),
                         Positioned(
-                          top: 55.h,
-                          left: 70,
+                          top: 75,
+                          left: 80,
                           child: GestureDetector(
                             onTap: () {
                               uploadFileWidget(
@@ -170,7 +151,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             },
                             child: Image.asset(
                               ImageAssets.cameraImage,
-                              height: 40.h,
+                              height: 40,
                             ),
                           ),
                         ),
@@ -394,7 +375,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void pickAndCropImage({required ImageSource source}) async {
-    pickedImage = await picker.pickImage(source: source);
+    XFile? pickedImage = await picker.pickImage(source: source);
     if (pickedImage != null) {
       CroppedFile? croppedImage = await ImageCropper().cropImage(
         sourcePath: pickedImage!.path,

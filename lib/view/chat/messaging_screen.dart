@@ -62,7 +62,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: size.width * 0.26,
+        leadingWidth: size.width * 0.28,
         leading: widget.userImage.isEmpty
             ? Row(
                 mainAxisSize: MainAxisSize.min,
@@ -80,13 +80,16 @@ class _MessagingScreenState extends State<MessagingScreen> {
                   IconButton(
                       onPressed: () => Navigator.pop(context),
                       icon: Icon(Icons.arrow_back)),
-                  FadeInImage.assetNetwork(
-                      placeholder: ImageAssets.chatImage,
-                      image: widget.userImage,
-                      imageErrorBuilder: (_, __, ___) => Image.asset(
-                          ImageAssets.chatImage,
-                          height: 50,
-                          color: AppTheme.white)),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: FadeInImage.assetNetwork(
+                        placeholder: ImageAssets.chatImage,
+                        image: widget.userImage,
+                        imageErrorBuilder: (_, __, ___) => Image.asset(
+                            ImageAssets.chatImage,
+                            height: 50,
+                            color: AppTheme.white)),
+                  ),
                 ],
               ),
         title: Column(
@@ -162,9 +165,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  vertical: 5,
-                                  horizontal: 15,
-                                ),
+                                    vertical: 5, horizontal: 15),
                                 decoration: BoxDecoration(
                                   color:
                                       isMe ? Colors.grey : Colors.grey.shade200,
@@ -210,7 +211,10 @@ class _MessagingScreenState extends State<MessagingScreen> {
                                                 ? Icons.done_all
                                                 : Icons.done,
                                             size: 15.sp,
-                                            color: Colors.white,
+                                            color: message.readBy.any(
+                                                    (id) => id != widget.userId)
+                                                ? Colors.blue
+                                                : Colors.white,
                                           )
                                         ],
                                       ],
@@ -228,7 +232,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
               ),
             ),
             Container(
-              color: Colors.white,
+              color: Colors.grey.withOpacity(0.2),
               padding:
                   const EdgeInsets.only(left: 15, right: 15, bottom: 5, top: 8),
               child: Row(
@@ -237,19 +241,18 @@ class _MessagingScreenState extends State<MessagingScreen> {
                     child: TextFormField(
                       controller: _messageController,
                       style: GoogleFonts.nunitoSans(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white),
                       decoration: InputDecoration(
                         isDense: true,
                         filled: true,
                         hintText: "Type here..",
-                        fillColor: AppTheme.greyColor,
+                        fillColor: AppTheme.primaryColor,
                         hintStyle: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey,
+                          color: Colors.white,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -263,11 +266,14 @@ class _MessagingScreenState extends State<MessagingScreen> {
                   const SizedBox(width: 10),
                   GestureDetector(
                     onTap: _sendMessage,
-                    child: Image.asset(
-                      ImageAssets.sendMessageImage,
-                      height: 40,
-                      width: 40,
-                      color: Colors.deepPurpleAccent,
+                    child: CircleAvatar(
+                      backgroundColor: AppTheme.primaryColor,
+                      child: Image.asset(
+                        ImageAssets.sendMessageImage,
+                        height: 40,
+                        width: 40,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],

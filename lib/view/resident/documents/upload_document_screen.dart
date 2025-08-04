@@ -435,129 +435,132 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
       context: context,
       enableDrag: false,
       builder: (BuildContext context) {
-        return Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
-            ),
-            padding: const EdgeInsets.all(15),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                const SizedBox(height: 10),
-                Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[300]!),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: editProfileOptionList.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          ListTile(
-                            onTap: () async {
-                              final ImagePicker picker = ImagePicker();
-                              XFile? pickedImage;
-                              if (index == 0) {
-                                pickedImage = await picker.pickImage(
-                                    source: ImageSource.gallery);
-                                if (pickedImage != null) {
-                                  final result = await cropAndCompressImage(
-                                      File(pickedImage.path));
-                                  documentFiles.add(File(result!.path));
-                                }
-                              } else {
-                                FilePickerResult? result =
-                                    await FilePicker.platform.pickFiles(
-                                  type: FileType.custom,
-                                  allowedExtensions: [
-                                    'pdf',
-                                    'doc',
-                                    'docx',
-                                    'txt'
-                                  ],
-                                );
-
-                                if (result != null) {
-                                  File file = File(result.files.single.path!);
-                                  documentFiles.add(File(file.path));
-                                }
-                                //
-                                // try {
-                                //   final String? path = await FlutterDocumentPicker.openDocument(
-                                //     params: FlutterDocumentPickerParams(
-                                //       allowedMimeTypes: [
-                                //         'application/pdf',
-                                //         'application/msword',
-                                //         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                                //         'text/plain',
-                                //       ],
-                                //     ),
-                                //   );
-                                //
-                                //   if (path != null) {
-                                //     File file = File(path);
-                                //     documentFiles.add(file);
-                                //     print("Selected File: ${file.path}");
-                                //   }
-                                // } catch (e) {
-                                //   print("Error picking file: $e");
-                                // }
-                              }
-                              Navigator.of(context).pop();
-                              setState(() {});
-                            },
-                            leading: Icon(
-                              editProfileOptionIconsList[index],
-                              color: AppTheme.primaryColor,
-                            ),
-                            title: Text(
-                              editProfileOptionList[index],
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          index == editProfileOptionIconsList.length - 1
-                              ? const SizedBox()
-                              : Divider(color: Colors.grey[300]),
-                        ],
-                      );
-                    },
-                  ),
+        return Padding(
+          padding: globalBottomPadding(context),
+          child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(20),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 50.h,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppTheme.primaryColor),
-                      child: Center(
-                        child: Text('Cancel ',
-                            style: GoogleFonts.nunitoSans(
-                              textStyle: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
+              ),
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  const SizedBox(height: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey[300]!),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: editProfileOptionList.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            ListTile(
+                              onTap: () async {
+                                final ImagePicker picker = ImagePicker();
+                                XFile? pickedImage;
+                                if (index == 0) {
+                                  pickedImage = await picker.pickImage(
+                                      source: ImageSource.gallery);
+                                  if (pickedImage != null) {
+                                    final result = await cropAndCompressImage(
+                                        File(pickedImage.path));
+                                    documentFiles.add(File(result!.path));
+                                  }
+                                } else {
+                                  FilePickerResult? result =
+                                      await FilePicker.platform.pickFiles(
+                                    type: FileType.custom,
+                                    allowedExtensions: [
+                                      'pdf',
+                                      'doc',
+                                      'docx',
+                                      'txt'
+                                    ],
+                                  );
+
+                                  if (result != null) {
+                                    File file = File(result.files.single.path!);
+                                    documentFiles.add(File(file.path));
+                                  }
+                                  //
+                                  // try {
+                                  //   final String? path = await FlutterDocumentPicker.openDocument(
+                                  //     params: FlutterDocumentPickerParams(
+                                  //       allowedMimeTypes: [
+                                  //         'application/pdf',
+                                  //         'application/msword',
+                                  //         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                  //         'text/plain',
+                                  //       ],
+                                  //     ),
+                                  //   );
+                                  //
+                                  //   if (path != null) {
+                                  //     File file = File(path);
+                                  //     documentFiles.add(file);
+                                  //     print("Selected File: ${file.path}");
+                                  //   }
+                                  // } catch (e) {
+                                  //   print("Error picking file: $e");
+                                  // }
+                                }
+                                Navigator.of(context).pop();
+                                setState(() {});
+                              },
+                              leading: Icon(
+                                editProfileOptionIconsList[index],
+                                color: AppTheme.primaryColor,
                               ),
-                            )),
+                              title: Text(
+                                editProfileOptionList[index],
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            index == editProfileOptionIconsList.length - 1
+                                ? const SizedBox()
+                                : Divider(color: Colors.grey[300]),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Container(
+                        width: double.infinity,
+                        height: 50.h,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: AppTheme.primaryColor),
+                        child: Center(
+                          child: Text('Cancel ',
+                              style: GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ));
+                ],
+              )),
+        );
       },
     );
   }

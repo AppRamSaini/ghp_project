@@ -26,6 +26,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
+    print("--------------->>>>>>>>>>>>>>>>>>>>>>${widget.userImage}");
     return Scaffold(
       appBar: appbarWidget(title: 'Chat'),
       floatingActionButton: FloatingActionButton(
@@ -76,7 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
               if (messageSnapshot.docs.isEmpty) {
                 return {
                   'group': group,
-                  'lastMessageTimestamp': DateTime.now(),
+                  'lastMessageTimestamp': DateTime(1970),
                 };
               }
 
