@@ -63,7 +63,7 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
   // popup menu filter
   Widget popMenusForFilter({required BuildContext context}) {
     return CircleAvatar(
-      backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+      backgroundColor: AppTheme.white.withOpacity(0.5),
       child: PopupMenuButton(
         elevation: 10,
         padding: EdgeInsets.zero,

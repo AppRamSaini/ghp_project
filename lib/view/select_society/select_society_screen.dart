@@ -76,138 +76,142 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
         },
       ),
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: onRefresh,
-          child: BlocBuilder<SelectSocietyCubit, SelectSocietyState>(
-            bloc: _selectSocietyCubit,
-            builder: (context, state) {
-              if (state is SelectSocietyLoading) {
-                return dashboardSimmerLoading(context, forHomePage: true);
-              }
-              if (state is SelectSocietyFailed) {
-                return Center(
-                    child: Text(state.errorMsg,
-                        style:
-                            const TextStyle(color: Colors.deepPurpleAccent)));
-              }
-              if (state is SelectSocietyInternetError) {
-                return Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 12.h, top: 12.h),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Internet connection error!',
-                            style: GoogleFonts.nunitoSans(
-                                textStyle: const TextStyle(
-                                    color: Colors.red, fontSize: 16))),
-                        const SizedBox(height: 15),
-                        GestureDetector(
-                          onTap: () => onRefresh,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: AppTheme.primaryColor.withOpacity(0.15)),
-                            child: Text(
-                              'Retry!',
+        child: GestureDetector(
+
+          onTap: ()=>FocusScope.of(context).unfocus(),
+          child: RefreshIndicator(
+            onRefresh: onRefresh,
+            child: BlocBuilder<SelectSocietyCubit, SelectSocietyState>(
+              bloc: _selectSocietyCubit,
+              builder: (context, state) {
+                if (state is SelectSocietyLoading) {
+                  return dashboardSimmerLoading(context, forHomePage: true);
+                }
+                if (state is SelectSocietyFailed) {
+                  return Center(
+                      child: Text(state.errorMsg,
+                          style:
+                              const TextStyle(color: Colors.deepPurpleAccent)));
+                }
+                if (state is SelectSocietyInternetError) {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 12.h, top: 12.h),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Internet connection error!',
                               style: GoogleFonts.nunitoSans(
-                                textStyle: TextStyle(
-                                    color: AppTheme.primaryColor, fontSize: 16),
+                                  textStyle: const TextStyle(
+                                      color: Colors.red, fontSize: 16))),
+                          const SizedBox(height: 15),
+                          GestureDetector(
+                            onTap: () => onRefresh,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: AppTheme.primaryColor.withOpacity(0.15)),
+                              child: Text(
+                                'Retry!',
+                                style: GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                      color: AppTheme.primaryColor, fontSize: 16),
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              }
-
-              var societyList = _selectSocietyCubit.societyList;
-
-              if (state is SelectSocietySearchedLoaded) {
-                societyList = state.selectedSociety;
-              }
-              if (societyList.isEmpty) {
-                return emptyDataWidget('Society Not Found!');
-              }
-
-              return ListView.builder(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                controller: _scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: societyList.length + 1,
-                shrinkWrap: true,
-                itemBuilder: ((context, index) {
-                  if (index == societyList.length) {
-                    return _selectSocietyCubit.state is SelectSocietyLoadMore
-                        ? const Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Center(
-                                child: CircularProgressIndicator.adaptive()))
-                        : const SizedBox.shrink();
-                  }
-
-                  // Calculate background color based on index
-                  Color backgroundColor = bgColors[index % bgColors.length];
-                  return GestureDetector(
-                    onTap: () async {
-                      LocalStorage.localStorage
-                          .setString('societyId', '${societyList[index].id}');
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (builder) => LoginScreen(
-                              societyId: societyList[index].id.toString())));
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(top: 10),
-                      decoration: BoxDecoration(
-                          color: backgroundColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Image.asset(ImageAssets.societyImage,
-                                    height: 35.h,
-                                    width: 35.h,
-                                    color: backgroundColor.withOpacity(0.5))),
-                            SizedBox(width: 10.w),
-                            Expanded(
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                  Text(societyList[index].name.toString(),
-                                      style: GoogleFonts.ptSans(
-                                          textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.w500))),
-                                  Text(societyList[index].location.toString(),
-                                      style: GoogleFonts.ptSans(
-                                          textStyle: TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w500)))
-                                ])),
-                            Icon(
-                              Icons.navigate_next,
-                              color: backgroundColor.withOpacity(0.8),
-                              size: 30,
-                            )
-                          ],
-                        ),
+                          )
+                        ],
                       ),
                     ),
                   );
-                }),
-              );
-            },
+                }
+
+                var societyList = _selectSocietyCubit.societyList;
+
+                if (state is SelectSocietySearchedLoaded) {
+                  societyList = state.selectedSociety;
+                }
+                if (societyList.isEmpty) {
+                  return emptyDataWidget('Society Not Found!');
+                }
+
+                return ListView.builder(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: societyList.length + 1,
+                  shrinkWrap: true,
+                  itemBuilder: ((context, index) {
+                    if (index == societyList.length) {
+                      return _selectSocietyCubit.state is SelectSocietyLoadMore
+                          ? const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(
+                                  child: CircularProgressIndicator.adaptive()))
+                          : const SizedBox.shrink();
+                    }
+
+                    // Calculate background color based on index
+                    Color backgroundColor = bgColors[index % bgColors.length];
+                    return GestureDetector(
+                      onTap: () async {
+                        LocalStorage.localStorage
+                            .setString('societyId', '${societyList[index].id}');
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (builder) => LoginScreen(
+                                societyId: societyList[index].id.toString())));
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 10),
+                        decoration: BoxDecoration(
+                            color: backgroundColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Image.asset(ImageAssets.societyImage,
+                                      height: 35.h,
+                                      width: 35.h,
+                                      color: backgroundColor.withOpacity(0.5))),
+                              SizedBox(width: 10.w),
+                              Expanded(
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                    Text(societyList[index].name.toString(),
+                                        style: GoogleFonts.ptSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15.sp,
+                                                fontWeight: FontWeight.w500))),
+                                    Text(societyList[index].location.toString(),
+                                        style: GoogleFonts.ptSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black87,
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500)))
+                                  ])),
+                              Icon(
+                                Icons.navigate_next,
+                                color: backgroundColor.withOpacity(0.8),
+                                size: 30,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                );
+              },
+            ),
           ),
         ),
       ),

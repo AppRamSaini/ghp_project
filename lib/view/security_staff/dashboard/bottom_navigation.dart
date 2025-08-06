@@ -96,19 +96,20 @@ class SecurityGuardDashboardState extends State<SecurityGuardDashboard> {
             },
             children: lst,
           ),
-          bottomNavigationBar: Padding(
-            padding: globalBottomPadding(context),
+          bottomNavigationBar: SafeArea(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  decoration: const BoxDecoration(
+                  margin: EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
                       color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(color: Colors.grey, blurRadius: 10)
-                      ]),
+                      border: Border(
+                        top: BorderSide(
+                            color: Colors.grey.withOpacity(0.3), width: 1.0),
+                      )),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -236,11 +237,12 @@ class SecurityGuardDashboardState extends State<SecurityGuardDashboard> {
         Image.asset(icon,
             color:
                 currentIndex == index ? Colors.deepPurpleAccent : Colors.black,
-            height: 18),
+            height: 18),   5.verticalSpace,
         Text(
           label,
-          style: TextStyle(
+          style: GoogleFonts.montserrat(
             fontSize: 13,
+            fontWeight: FontWeight.w500,
             color:
                 currentIndex == index ? Colors.deepPurpleAccent : Colors.black,
           ),

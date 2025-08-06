@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/crop_image.dart';
+import 'package:ghp_society_management/constants/custom_btns.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/edit_profile/edit_profile_cubit.dart';
@@ -25,7 +27,6 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   int selectedValue = 0;
   final formkey = GlobalKey<FormState>();
-  File? imageFile;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -42,6 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   String imgFile = '';
+  File? imageFile;
 
   initData() {
     nameController.text =
@@ -56,10 +58,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   final ImagePicker picker = ImagePicker();
-  XFile? pickedImage;
 
   @override
   Widget build(BuildContext context) {
+    print('$imgFile');
+
     return BlocListener<EditProfileCubit, EditProfileState>(
       listener: (context, state) async {
         if (state is EditProfileLoading) {
@@ -89,312 +92,292 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       },
       child: Scaffold(
         appBar: appbarWidget(title: 'Edit Profile'),
-        body: Form(
-          key: formkey,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Stack(
-                      children: [
-                        (imageFile == null && imgFile == null)
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(200),
-                                child: FadeInImage(
-                                  height: 120,
-                                  width: 120,
-                                  fit: BoxFit.fill,
-                                  placeholder:
-                                      AssetImage('assets/images/default.jpg'),
-                                  image: NetworkImage(''),
-                                  imageErrorBuilder: (_, child, st) =>
-                                      Image.asset('assets/images/default.jpg',
-                                          height: 120,
-                                          width: 120,
-                                          fit: BoxFit.fill),
+        body:
+
+
+
+        Column(
+          children: [
+            Expanded(
+              child: GestureDetector
+                (onTap: ()=>FocusScope.of(context).unfocus(),
+                child: Form(
+                  key: formkey,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(200),
+                                  child: SizedBox(
+                                    height: 120,
+                                    width: 120,
+                                    child: imageFile != null
+                                        ? Image.file(
+                                            imageFile!,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (_, __, ___) => Image.asset(
+                                              'assets/images/default.jpg',
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                        : (imgFile != null && imgFile.isNotEmpty)
+                                            ? FadeInImage(
+                                                fit: BoxFit.cover,
+                                                placeholder: AssetImage(
+                                                    'assets/images/default.jpg'),
+                                                image: NetworkImage(imgFile),
+                                                imageErrorBuilder: (_, __, ___) =>
+                                                    Image.asset(
+                                                  'assets/images/default.jpg',
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )
+                                            : Image.asset(
+                                                'assets/images/default.jpg',
+                                                fit: BoxFit.cover,
+                                              ),
+                                  ),
                                 ),
-                              )
-                            : (imageFile == null)
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(200),
-                                    child: FadeInImage(
-                                      height: 120,
-                                      width: 120,
-                                      fit: BoxFit.fill,
-                                      placeholder: AssetImage(
-                                          'assets/images/default.jpg'),
-                                      image: NetworkImage(imgFile),
-                                      imageErrorBuilder: (_, child, st) =>
-                                          Image.asset(
-                                              'assets/images/default.jpg',
-                                              height: 120,
-                                              width: 120,
-                                              fit: BoxFit.fill),
-                                    ),
-                                  )
-                                : ClipRRect(
-                                    borderRadius: BorderRadius.circular(200),
-                                    child: FadeInImage(
-                                      height: 120,
-                                      width: 120,
-                                      fit: BoxFit.fill,
-                                      placeholder: AssetImage(
-                                          'assets/images/default.jpg'),
-                                      image: NetworkImage(''),
-                                      imageErrorBuilder: (_, child, st) =>
-                                          Image.asset(
-                                              'assets/images/default.jpg',
-                                              height: 120,
-                                              width: 120,
-                                              fit: BoxFit.fill),
+                                Positioned(
+                                  top: 75,
+                                  left: 80,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      uploadFileWidget(
+                                        context: context,
+                                        fromGallery: () async {
+                                          pickAndCropImage(source: ImageSource.gallery);
+                                        },
+                                        fromCamera: () async {
+                                          pickAndCropImage(source: ImageSource.camera);
+                                        },
+                                      );
+                                    },
+                                    child: Image.asset(
+                                      ImageAssets.cameraImage,
+                                      height: 40,
                                     ),
                                   ),
-                        Positioned(
-                          top: 55.h,
-                          left: 70,
-                          child: GestureDetector(
-                            onTap: () {
-                              uploadFileWidget(
-                                context: context,
-                                fromGallery: () async {
-                                  pickAndCropImage(source: ImageSource.gallery);
-                                },
-                                fromCamera: () async {
-                                  pickAndCropImage(source: ImageSource.camera);
-                                },
-                              );
-                            },
-                            child: Image.asset(
-                              ImageAssets.cameraImage,
-                              height: 40.h,
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 50.h),
-                  Text('Name',
-                      style: GoogleFonts.nunitoSans(
-                        textStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )),
-                  SizedBox(height: 10.h),
-                  TextFormField(
-                    controller: nameController,
-                    style: GoogleFonts.nunitoSans(
-                      color: AppTheme.backgroundColor,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    keyboardType: TextInputType.text,
-                    validator: (text) {
-                      if (text == null || text.isEmpty) {
-                        return 'Please enter user name';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Enter name',
-                      contentPadding: EdgeInsets.only(left: 8.w),
-                      filled: true,
-                      hintStyle: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.normal),
-                      fillColor: AppTheme.greyColor,
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  Text('Phone',
-                      style: GoogleFonts.nunitoSans(
-                          textStyle: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w500))),
-                  SizedBox(height: 10.h),
-                  TextFormField(
-                    controller: phoneController,
-                    maxLength: 10,
-                    style: GoogleFonts.nunitoSans(
-                        color: AppTheme.backgroundColor,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w500),
-                    keyboardType: TextInputType.number,
-                    validator: (text) {
-                      if (text == null || text.isEmpty) {
-                        return 'Please enter phone number';
-                      } else if (text.length < 10 || text.length > 10) {
-                        return 'Phone number length must be equal to 10';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      counter: const SizedBox(),
-                      hintText: 'Enter number',
-                      contentPadding: EdgeInsets.only(left: 8.w),
-                      filled: true,
-                      hintStyle: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.normal),
-                      fillColor: AppTheme.greyColor,
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  Text('Email',
-                      style: GoogleFonts.nunitoSans(
-                          textStyle: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w500))),
-                  SizedBox(height: 10.h),
-                  TextFormField(
-                    controller: emailController,
-                    style: GoogleFonts.nunitoSans(
-                        color: AppTheme.backgroundColor,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w500),
-                    keyboardType: TextInputType.text,
-                    validator: (text) {
-                      if (text == null || text.isEmpty) {
-                        return 'Please enter email';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Enter email',
-                      contentPadding: EdgeInsets.only(left: 8.w),
-                      filled: true,
-                      hintStyle: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.normal),
-                      fillColor: AppTheme.greyColor,
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: BorderSide(
-                          color: AppTheme.greyColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 50.h),
-                  Container(
-                    color: Colors.white,
-                    child: GestureDetector(
-                      onTap: () {
-                        if (formkey.currentState!.validate()) {
-                          context.read<EditProfileCubit>().editProfile(
-                              nameController.text,
-                              emailController.text,
-                              phoneController.text,
-                              imageFile);
-                        }
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: AppTheme.primaryColor,
-                            borderRadius: BorderRadius.circular(30)),
-                        child: Center(
-                          child: Text('Save Changes',
+                          SizedBox(height: 50.h),
+                          Text('Name',
                               style: GoogleFonts.nunitoSans(
                                 textStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14.sp,
+                                  color: Colors.black,
+                                  fontSize: 15.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
                               )),
-                        ),
+                          SizedBox(height: 10.h),
+                          TextFormField(
+                            controller: nameController,
+                            style: GoogleFonts.nunitoSans(
+                              color: AppTheme.backgroundColor,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.done,
+                            validator: (text) {
+                              if (text == null || text.isEmpty) {
+                                return 'Please enter user name';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Enter name',
+                              contentPadding: EdgeInsets.only(left: 8.w),
+                              filled: true,
+                              hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.normal),
+                              fillColor: AppTheme.greyColor,
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10.h),
+                          Text('Phone',
+                              style: GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w500))),
+                          SizedBox(height: 10.h),
+                          TextFormField(
+                            controller: phoneController,
+                            maxLength: 10,
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            style: GoogleFonts.nunitoSans(
+                                color: AppTheme.backgroundColor,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500),
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.done,
+                            validator: (text) {
+                              if (text == null || text.isEmpty) {
+                                return 'Please enter phone number';
+                              } else if (text.length < 10 || text.length > 10) {
+                                return 'Phone number length must be equal to 10';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+
+                              counter: const SizedBox(),
+                              hintText: 'Enter number',
+                              contentPadding: EdgeInsets.only(left: 8.w),
+                              filled: true,
+                              hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.normal),
+                              fillColor: AppTheme.greyColor,
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10.h),
+                          Text('Email',
+                              style: GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w500))),
+                          SizedBox(height: 10.h),
+                          TextFormField(
+                            controller: emailController,
+                            style: GoogleFonts.nunitoSans(
+                                color: AppTheme.backgroundColor,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500),
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.done,
+                            validator: (text) {
+                              if (text == null || text.isEmpty) {
+                                return 'Please enter email';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Enter email',
+                              contentPadding: EdgeInsets.only(left: 8.w),
+                              filled: true,
+                              hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.normal),
+                              fillColor: AppTheme.greyColor,
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 50.h),
+
+                        ],
                       ),
                     ),
-                  )
-                ],
+                  ),
+                ),
               ),
             ),
-          ),
+            customBtn(
+              onTap: () {
+                if (formkey.currentState!.validate()) {
+                  context.read<EditProfileCubit>().editProfile(
+                      nameController.text,
+                      emailController.text,
+                      phoneController.text,
+                      imageFile);
+                }
+              },
+              txt:"Save Changes",
+            )
+          ],
         ),
       ),
     );
   }
 
   void pickAndCropImage({required ImageSource source}) async {
-    pickedImage = await picker.pickImage(source: source);
+    XFile? pickedImage = await picker.pickImage(source: source);
     if (pickedImage != null) {
       CroppedFile? croppedImage = await ImageCropper().cropImage(
         sourcePath: pickedImage!.path,

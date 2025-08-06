@@ -1,3 +1,4 @@
+import 'package:ghp_society_management/constants/custom_btns.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
@@ -656,7 +657,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                                     ],
                                                   ),
                                                   subtitle: Text(
-                                                      "TOWER/BLOC:  ${requestList[index].blockName}  Property NO:  ${requestList[index].aprtNo}"
+                                                      "TOWER/BLOCK:  ${requestList[index].blockName}  Property NO:  ${requestList[index].aprtNo}"
                                                           .toUpperCase(),
                                                       style: GoogleFonts
                                                           .nunitoSans(
@@ -824,7 +825,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                 ),
                               ),
                               Text(
-                                  "TOWER/BLOC:  ${serviceDetails.blockName}   PROPERTY NO:  ${serviceDetails.aprtNo}",
+                                  "TOWER/BLOCK:  ${serviceDetails.blockName}   PROPERTY NO:  ${serviceDetails.aprtNo}",
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.grey, fontSize: 12)),
                             ],
@@ -978,110 +979,97 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                 border: Border.all(color: AppTheme.staffPrimaryColor)));
         return Scaffold(
           backgroundColor: Colors.transparent,
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8)),
-                width: MediaQuery.sizeOf(context).width,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                        padding:
-                            EdgeInsets.only(top: 10.w, left: 10.w, right: 10.w),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Enter OTP",
-                                  style: GoogleFonts.nunitoSans(
-                                      color: Colors.black,
-                                      fontSize: 20.sp,
-                                      fontWeight: FontWeight.w600)),
-                              GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Icon(Icons.close))
-                            ])),
-                    Divider(color: Colors.grey.withOpacity(0.1)),
-                    Padding(
-                        padding: EdgeInsets.only(
-                            top: 10.w, left: 10.w, right: 10.w, bottom: 10.h),
-                        child: Text(
-                            'Please enter the OTP to verify and complete the service from residence.',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.nunitoSans(
-                                color: Colors.black,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w400))),
-                    SizedBox(height: 10.h),
-                    Center(
-                        child: Pinput(
-                            controller: controller,
-                            defaultPinTheme: defaultPinTheme,
-                            separatorBuilder: (index) =>
-                                const SizedBox(width: 10),
-                            hapticFeedbackType: HapticFeedbackType.lightImpact,
-                            onCompleted: (pin) {
+          body: GestureDetector(
+            onTap: ()=>FocusScope.of(context).unfocus(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8)),
+                  width: MediaQuery.sizeOf(context).width,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                          padding:
+                              EdgeInsets.only(top: 10.w, left: 10.w, right: 10.w),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Enter OTP",
+                                    style: GoogleFonts.nunitoSans(
+                                        color: Colors.black,
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.w600)),
+                                GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Icon(Icons.close))
+                              ])),
+                      Divider(color: Colors.grey.withOpacity(0.1)),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              top: 10.w, left: 10.w, right: 10.w, bottom: 10.h),
+                          child: Text(
+                              'Please enter the OTP to verify and complete the service from residence.',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.nunitoSans(
+                                  color: Colors.black,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w400))),
+                      SizedBox(height: 10.h),
+                      Center(
+                          child: Pinput(
+                              controller: controller,
+                              defaultPinTheme: defaultPinTheme,
+                              separatorBuilder: (index) =>
+                                  const SizedBox(width: 10),
+                              hapticFeedbackType: HapticFeedbackType.lightImpact,
+                              onCompleted: (pin) {
+                                context
+                                    .read<DoneServiceCubit>()
+                                    .doneService(id.toString(), controller.text);
+                                Navigator.of(context).pop();
+                              },
+                              cursor: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                        width: 22,
+                                        height: 1,
+                                        color: focusedBorderColor)
+                                  ]))),
+                      SizedBox(height: 10.h),
+                      Padding(
+                        padding: EdgeInsets.all(15.w),
+                        child: customBtn(
+                          onTap: () {
+                            if (controller.text.isNotEmpty) {
                               context
                                   .read<DoneServiceCubit>()
                                   .doneService(id.toString(), controller.text);
-                              Navigator.of(context).pop();
-                            },
-                            cursor: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                      width: 22,
-                                      height: 1,
-                                      color: focusedBorderColor)
-                                ]))),
-                    SizedBox(height: 10.h),
-                    Padding(
-                      padding: EdgeInsets.all(15.w),
-                      child: GestureDetector(
-                        onTap: () {
-                          if (controller.text.isNotEmpty) {
-                            context
-                                .read<DoneServiceCubit>()
-                                .doneService(id.toString(), controller.text);
-                          } else {
-                            snackBar(context, 'OTP Filed Required!',
-                                Icons.warning, Colors.red);
-                          }
-                        },
-                        child: Container(
-                          height: 50,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: AppTheme.primaryColor),
-                          child: Center(
-                            child: Text(
-                              'Mark as Done',
-                              style: GoogleFonts.nunitoSans(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
+                            } else {
+                              snackBar(context, 'OTP Filed Required!',
+                                  Icons.warning, Colors.red);
+                            }
+                          },
+                          txt:"Mark As Done",
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                  ],
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

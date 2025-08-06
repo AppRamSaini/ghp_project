@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/download_share_gatepass.dart';
 import 'package:ghp_society_management/constants/export.dart';
@@ -9,6 +10,7 @@ import 'package:screenshot/screenshot.dart';
 
 class VisitorGatePass extends StatefulWidget {
   final VisitorsListing visitors;
+
   const VisitorGatePass({super.key, required this.visitors});
 
   @override
@@ -56,63 +58,66 @@ class _VisitorGatePassState extends State<VisitorGatePass> {
         ),
       ],
       child: Scaffold(
-        bottomNavigationBar: Container(
-          color: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                height: 42,
-                width: 150,
-                decoration: BoxDecoration(
-                    color: AppTheme.primaryColor,
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.grey.withOpacity(0.1))),
-                child: TextButton.icon(
-                  onPressed: () async {
-                    await captureAndSharePng(screenshotController);
-                  },
-                  icon: const Icon(Icons.share, color: Colors.white),
-                  label: const Text(
-                    "Share now",
-                    style: TextStyle(color: Colors.white),
+        bottomNavigationBar: Padding(
+          padding: globalBottomPadding(context),
+          child: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  height: 42,
+                  width: 150,
+                  decoration: BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: Colors.grey.withOpacity(0.1))),
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      await captureAndSharePng(screenshotController);
+                    },
+                    icon: const Icon(Icons.share, color: Colors.white),
+                    label: const Text(
+                      "Share now",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                height: 42,
-                width: 150,
-                decoration: BoxDecoration(
-                    color: AppTheme.primaryColor,
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.grey.withOpacity(0.1))),
-                child: TextButton.icon(
-                  onPressed: () async {
-                    await context
-                        .read<DownloadDocumentCubit>()
-                        .downloadQRCode(screenshotController);
-                  },
-                  icon: const Icon(Icons.download, color: Colors.white),
-                  label: const Text(
-                    "Download",
-                    style: TextStyle(color: Colors.white),
+                Container(
+                  height: 42,
+                  width: 150,
+                  decoration: BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: Colors.grey.withOpacity(0.1))),
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      await context
+                          .read<DownloadDocumentCubit>()
+                          .downloadQRCode(screenshotController);
+                    },
+                    icon: const Icon(Icons.download, color: Colors.white),
+                    label: const Text(
+                      "Download",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-
-        appBar: AppBar(title: Text('Visitors Gate Pass',
-            style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600)))),
+        appBar: AppBar(
+            title: Text('Visitors Gate Pass',
+                style: GoogleFonts.nunitoSans(
+                    textStyle: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600)))),
         body: Padding(
-          padding: const EdgeInsets.only(
-              top: 30, right: 12, left: 12, bottom: 10),
+          padding:
+              const EdgeInsets.only(top: 30, right: 12, left: 12, bottom: 10),
           child: Screenshot(
             controller: screenshotController,
             child: Container(
@@ -121,8 +126,7 @@ class _VisitorGatePassState extends State<VisitorGatePass> {
                   borderRadius: BorderRadius.circular(4),
                   boxShadow: [
                     BoxShadow(
-                        color: Colors.black45.withOpacity(0.2),
-                        blurRadius: 10)
+                        color: Colors.black45.withOpacity(0.2), blurRadius: 10)
                   ]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -137,68 +141,58 @@ class _VisitorGatePassState extends State<VisitorGatePass> {
                             topRight: Radius.circular(4),
                             topLeft: Radius.circular(4))),
                     child: Text("Visitors Gate Pass".toUpperCase(),
-                        style:  GoogleFonts.nunitoSans(
+                        style: GoogleFonts.nunitoSans(
                             textStyle: TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
-                                fontWeight:
-                                FontWeight.w600))),
+                                fontWeight: FontWeight.w600))),
                   ),
                   const SizedBox(height: 20),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           widget.visitors.image != null
                               ? CircleAvatar(
                                   radius: 35.h,
-                                  backgroundImage: NetworkImage(widget
-                                      .visitors.image
-                                      .toString()))
+                                  backgroundImage: NetworkImage(
+                                      widget.visitors.image.toString()))
                               : CircleAvatar(
                                   radius: 35.h,
                                   backgroundImage: const AssetImage(
                                       'assets/images/default.jpg')),
                           const SizedBox(width: 10),
                           Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  capitalizeWords(widget
-                                      .visitors.visitorName
-                                      .toString()),
+                                  capitalizeWords(
+                                      widget.visitors.visitorName.toString()),
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.black87,
                                           fontSize: 16.sp,
-                                          fontWeight:
-                                              FontWeight.w600))),
-                              Text(
-                                  "+91 ${widget.visitors.phone.toString()}",
+                                          fontWeight: FontWeight.w600))),
+                              Text("+91 ${widget.visitors.phone.toString()}",
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.grey,
                                           fontSize: 14.sp,
-                                          fontWeight:
-                                              FontWeight.w600))),
+                                          fontWeight: FontWeight.w600))),
                               Text(
                                   "Location :  ${widget.visitors.member!.blockName.toString()} - ${widget.visitors.member!.aprtNo.toString()}",
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.grey,
                                           fontSize: 14.sp,
-                                          fontWeight:
-                                              FontWeight.w600)))
+                                          fontWeight: FontWeight.w600)))
                             ],
                           )
                         ]),
                   ),
                   const SizedBox(height: 30),
-                  Text(
-                      'Show the QR code for the security \nguard to scan',
+                  Text('Show the QR code for the security \nguard to scan',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.nunitoSans(
                           textStyle: TextStyle(
@@ -212,8 +206,8 @@ class _VisitorGatePassState extends State<VisitorGatePass> {
                       padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                              color: Colors.grey.withOpacity(0.1))),
+                          border:
+                              Border.all(color: Colors.grey.withOpacity(0.1))),
                       child: QrImageView(
                         data: jsonDetails,
                         version: QrVersions.auto,

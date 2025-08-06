@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
@@ -99,8 +102,34 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: Colors.green,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            onPressed: () => Navigator.push(
-                context, MaterialPageRoute(builder: (_) => BillScreen())),
+            onPressed: () async{
+              // FirebaseMessaging messaging = FirebaseMessaging.instance;
+              //
+              // // Push Notification की परमिशन पहले लें
+              // await messaging.requestPermission(
+              //   alert: true,
+              //   badge: true,
+              //   sound: true
+              // );
+              //
+              // String? token;
+              //
+              // if (Platform.isIOS) {
+              //   // iOS के लिए APNS Token प्राप्त करें
+              //   token = await messaging.getAPNSToken();
+              //   print("APNS Token: $token");
+              // } else {
+              //   // Android के लिए FCM Token प्राप्त करें
+              //   token = await messaging.getToken();
+              //   print("FCM Token: $token");
+              // }
+
+
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => BillScreen()));
+
+            }
+              ,
             child: Image.asset('assets/images/pay_img.png')),
         appBar: AppBar(
             leadingWidth: size.width,

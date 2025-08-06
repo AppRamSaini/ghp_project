@@ -1,26 +1,26 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/model/chat_model.dart';
 import 'package:ghp_society_management/model/group_model.dart';
 import 'package:ghp_society_management/model/user_model.dart';
 import 'package:ghp_society_management/view/chat/messaging_screen.dart';
-
+import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
-
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GroupCubit extends Cubit<void> {
   final db = FirebaseFirestore.instance;
   final uuid = const Uuid();
-
   List<UserModel> groupMembers = [];
   List<GroupModel> groupList = [];
   String selectedImagePath = "";
   bool isLoading = false;
-
   int readCounter = 0;
+  BuildContext? dialogueContext;
 
   GroupCubit() : super(null);
 
@@ -30,37 +30,115 @@ class GroupCubit extends Cubit<void> {
     }
   }
 
-  BuildContext? dialogueContext;
+  Future<String?> uploadImageToFirebase(File imageFile) async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference ref =
+          FirebaseStorage.instance.ref().child('chat_images/$fileName');
+      UploadTask uploadTask = ref.putFile(imageFile);
+      TaskSnapshot snapshot = await uploadTask.whenComplete(() {});
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print("Image upload error: $e");
+      return null;
+    }
+  }
 
-  /*Future createGroup(UserModel userData, String groupId, BuildContext context,
-      String userId, String firstName, String userImage, String userCategory,
-      {bool fromStaff = false}) async {
+  Future<void> sendGroupMessage(
+    String message,
+    String groupId,
+    String senderName,
+    String userId, {
+    File? imageFile,
+  }) async {
+    isLoading = true;
+    var chatId = DateTime.now();
+
+    String? imageUrl;
+    if (imageFile != null) {
+      imageUrl = await uploadImageToFirebase(imageFile);
+    }
+
+    var newChat = ChatModel(
+      id: chatId.toString(),
+      message: message,
+      imageUrl: imageUrl ?? '',
+      senderId: userId,
+      senderName: senderName,
+      readBy: [userId],
+      timestamp: Timestamp.now(),
+    );
+
+    await db
+        .collection("groups")
+        .doc(groupId)
+        .collection("messages")
+        .doc(chatId.toString())
+        .set(newChat.toJson());
+    await db.collection("groups").doc(groupId).update({
+      'lastMessage': message.isNotEmpty ? message : "📷 Image",
+      'lastMessageTimestamp': Timestamp.now(),
+    });
+
+    isLoading = false;
+  }
+
+  Future<void> pickImageAndSendMessage(
+      String groupId, String senderName, String userId) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      await sendGroupMessage('', groupId, senderName, userId,
+          imageFile: imageFile);
+    }
+  }
+
+  Future createGroup(
+    UserModel userData,
+    String groupId,
+    BuildContext context,
+    String userId,
+    String firstName,
+    String userImage,
+    String userCategory, {
+    bool fromStaff = false,
+  }) async {
     showLoadingDialog(context, (ctx) {
       dialogueContext = ctx;
     });
-    isLoading = true;
-    try {
-      String? existingGroupId = await checkExistingGroup(userId, userData.uid!);
-      if (existingGroupId != null) {
-        if (!fromStaff) {
-          Navigator.of(context).pop();
-        }
-        Navigator.of(dialogueContext!).pop();
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (builder) => MessagingScreen(
-                groupId: existingGroupId,
-                userId: userId,
-                userImage: userData.userImage ?? '',
-                userName: userData.userName!,
-                userCategory: userCategory)));
 
+    isLoading = true;
+
+    try {
+      // 1. Check if existing group already created
+      String? existingGroupId = await checkExistingGroup(userId, userData.uid!);
+
+      if (existingGroupId != null) {
+        // First pop dialog safely
+        if (dialogueContext != null) Navigator.of(dialogueContext!).pop();
+
+        // Now navigate to existing message screen
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (builder) => MessagingScreen(
+            groupId: existingGroupId,
+            userId: userId,
+            userImage: userData.userImage ?? '',
+            userName: userData.userName!,
+            userCategory: userCategory,
+          ),
+        ));
         return;
       }
+
+      // 2. No existing group - create new
       List<UserModel> selectedMembers = [
         UserModel(
           uid: userId,
           userName: firstName,
-          serviceCategory: '',
+          serviceCategory: userCategory,
           userImage: userImage,
         ),
         userData,
@@ -74,95 +152,25 @@ class GroupCubit extends Cubit<void> {
         "userIds": [userId, userData.uid!]
       });
 
+      // 3. Update local group list
       await getGroups(userId);
-      if (!fromStaff) {
-        Navigator.of(context).pop();
-        Navigator.of(dialogueContext!).pop();
-      }
+
+      // 4. Safely close dialog
+      if (dialogueContext != null) Navigator.of(dialogueContext!).pop();
+
+      // 5. Go to messaging screen
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (builder) => MessagingScreen(
-              groupId: groupId,
-              userId: userId,
-              userImage: userData.userImage ?? '',
-              userName: userData.userName!,
-              userCategory: userCategory)));
-      Navigator.of(dialogueContext!).pop();
-    } catch (e) {
-      print("Error in createGroup: $e");
-      Navigator.of(dialogueContext!).pop();
-    } finally {
-      isLoading = false;
-    }
-  }*/
-
-  Future createGroup(UserModel userData, String groupId, BuildContext context,
-      String userId, String firstName, String userImage, String userCategory,
-      {bool fromStaff = false} // ये नया पैरामीटर ऐड किया गया है।
-      ) async {
-    showLoadingDialog(context, (ctx) {
-      dialogueContext = ctx;
-    });
-    isLoading = true;
-
-    try {
-      // पहले से कोई ग्रुप है या नहीं, चेक करें
-      String? existingGroupId = await checkExistingGroup(userId, userData.uid!);
-
-      if (existingGroupId != null) {
-        // अगर ग्रुप पहले से है, तो चैट स्क्रीन पर डायरेक्ट भेजें
-        Navigator.of(context).pop();
-        Navigator.of(dialogueContext!).pop();
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (builder) => MessagingScreen(
-                groupId: existingGroupId,
-                userId: userId,
-                userImage: userData.userImage ?? '',
-                userName: userData.userName!,
-                userCategory: userCategory)));
-        return;
-      }
-
-      // नया ग्रुप बनाना है
-      List<UserModel> selectedMembers = [
-        UserModel(
-          uid: userId,
-          userName: firstName,
-          serviceCategory: userCategory, // अब serviceCategory भी ऐड होगी
-          userImage: userImage,
+        builder: (builder) => MessagingScreen(
+          groupId: groupId,
+          userId: userId,
+          userImage: userData.userImage ?? '',
+          userName: userData.userName!,
+          userCategory: userCategory,
         ),
-        userData, // दूसरा यूजर
-      ];
-
-      await db.collection("groups").doc(groupId).set({
-        "id": groupId,
-        "members": selectedMembers.map((e) => e.toMap()).toList(),
-        "createdAt": DateTime.now().toString(),
-        "timeStamp": Timestamp.now(),
-        "userIds": [userId, userData.uid!]
-      });
-
-      // ग्रुप लिस्ट अपडेट करें
-      await getGroups(userId);
-
-      // अगर स्टाफ चैट शुरू कर रहा है, तो लॉजिक हैंडल करें
-      if (!fromStaff) {
-        Navigator.of(context).pop();
-        Navigator.of(dialogueContext!).pop();
-      }
-
-      // चैट स्क्रीन पर रीडायरेक्ट करें
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (builder) => MessagingScreen(
-              groupId: groupId,
-              userId: userId,
-              userImage: userData.userImage ?? '',
-              userName: userData.userName!,
-              userCategory: userCategory)));
-
-      Navigator.of(dialogueContext!).pop();
+      ));
     } catch (e) {
       print("Error in createGroup: $e");
-      Navigator.of(dialogueContext!).pop();
+      if (dialogueContext != null) Navigator.of(dialogueContext!).pop();
     } finally {
       isLoading = false;
     }
@@ -188,7 +196,7 @@ class GroupCubit extends Cubit<void> {
 
           if (containsUserId && containsOtherUserId) {
             print('Group already exists with both users: ${group.id}');
-            return group.id; // Return the existing group ID if found
+            return group.id;
           }
         }
       }
@@ -235,31 +243,6 @@ class GroupCubit extends Cubit<void> {
     });
   }
 
-  Future<void> sendGroupMessage(
-      String message, String groupId, String senderName, String userId) async {
-    isLoading = true;
-    var chatId = DateTime.now();
-
-    var newChat = ChatModel(
-      id: chatId.toString(),
-      message: message,
-      imageUrl:
-          "https://freerangestock.com/sample/118824/people-and-chat-vector-icon.jpg",
-      senderId: userId,
-      senderName: senderName,
-      readBy: [userId],
-      timestamp: Timestamp.now(),
-    );
-
-    await db
-        .collection("groups")
-        .doc(groupId)
-        .collection("messages")
-        .doc(chatId.toString())
-        .set(newChat.toJson());
-    isLoading = false;
-  }
-
   Stream<List<ChatModel>> getGroupMessages(String groupId) {
     return db
         .collection("groups")
@@ -290,18 +273,13 @@ class GroupCubit extends Cubit<void> {
   }
 
   Future<void> markAllMessagesAsRead(String chatId, String userId) async {
-    // Reference to the messages collection for the specific chat
     CollectionReference messagesRef =
         db.collection("groups").doc(chatId).collection("messages");
 
-    // Get all messages in the chat
     QuerySnapshot snapshot = await messagesRef.get();
 
-    // Loop through each message and update the readBy field
     for (QueryDocumentSnapshot doc in snapshot.docs) {
       DocumentReference messageRef = doc.reference;
-
-      // Add the user's ID to the `readBy` array, if not already present
       await messageRef.update({
         "readBy": FieldValue.arrayUnion([userId]),
       });
@@ -309,13 +287,10 @@ class GroupCubit extends Cubit<void> {
   }
 
   Stream<List<QueryDocumentSnapshot>> getAllMessagesStream(String chatId) {
-    // Reference to the messages collection for the specific chat
     CollectionReference messagesRef =
         db.collection("groups").doc(chatId).collection("messages");
 
-    // Listen to real-time updates from the messages collection
     return messagesRef.snapshots().map((snapshot) {
-      // Return the entire list of messages in the chat
       return snapshot.docs;
     });
   }

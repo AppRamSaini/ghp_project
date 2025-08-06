@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_in/check_in_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_out/check_out_cubit.dart';
@@ -91,9 +92,7 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
             bloc: _visitorsDetailsCubit,
             builder: (context, state) {
               if (state is VisitorsDetailsLoading) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive(
-                        backgroundColor: Colors.deepPurpleAccent));
+                return notificationShimmerLoading();
               } else if (state is VisitorsDetailsLoaded) {
                 List<VisitorsDetails> visitorsData = state.visitorDetails;
                 DateTime parsedTime = DateFormat("HH:mm:ss")
@@ -391,7 +390,7 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500)))
                                   ]),
-                              Padding(
+                              /*       Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 3),
                                   child: Divider(
@@ -441,7 +440,7 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
                                                 fontWeight: FontWeight.w500))),
                                   );
                                 },
-                              ),
+                              ),*/
                               Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 3),

@@ -988,6 +988,7 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                 return null;
                               },
                               keyboardType: TextInputType.multiline,
+                              textInputAction: TextInputAction.done,
                               decoration: InputDecoration(
                                 counter: const SizedBox(),
                                 hintText: 'Describe reason here...',
@@ -1043,7 +1044,8 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                 }
                                 return null;
                               },
-                              keyboardType: TextInputType.multiline,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.done,
                               decoration: InputDecoration(
                                 counter: const SizedBox(),
                                 hintText: 'Deliver name',
@@ -1082,13 +1084,14 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                               ),
                             ),
                             const SizedBox(height: 5),
-                            Text('Deliver contact numbe',
+                            Text('Deliver contact number',
                                 style: GoogleFonts.nunitoSans(
                                     color: Colors.black,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500)),
                             TextFormField(
                               controller: phone,
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               style: GoogleFonts.nunitoSans(
                                   color: Colors.black,
                                   fontSize: 14,
@@ -1101,8 +1104,8 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                 }
                                 return null;
                               },
-                              keyboardType: TextInputType.number,
-                              maxLength: 10,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.done,                              maxLength: 10,
                               decoration: InputDecoration(
                                 counter: const SizedBox(),
                                 hintText: 'Deliver phone',

@@ -337,3 +337,15 @@ AppBar appbarWidget({required String title, List<Widget>? actions}) => AppBar(
 
 EdgeInsetsGeometry globalBottomPadding(BuildContext context) =>
     EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom);
+
+/// scroll management
+
+scrollManagement(ScrollController _scrollController) {
+  Future.delayed(Duration(milliseconds: 350), () {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  });
+}

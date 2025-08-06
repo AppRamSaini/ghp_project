@@ -23,6 +23,7 @@ Future<void> requestNotificationPermission() async {
 }
 
 Future<void> main() async {
+  print("App Started");
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

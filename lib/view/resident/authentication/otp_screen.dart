@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/constants/custom_btns.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/verify_otp/verify_otp_cubit.dart';
@@ -90,33 +91,42 @@ class _OtpScreenState extends State<OtpScreen> {
     return BlocListener<VerifyOtpCubit, VerifyOtpState>(
       listener: _handleStateChanges,
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Stack(
-                children: [
-                  Image.asset(ImageAssets.loginImage,
-                      height: size.height * 0.5,
-                      width: size.width,
-                      fit: BoxFit.cover),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: size.height * 0.05, left: size.width * 0.035),
-                    child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: CircleAvatar(
-                          child: Icon(Icons.arrow_back_ios_outlined),
-                        )),
-                  )
-                ],
+        body: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Stack(
+                        children: [
+                          Image.asset(ImageAssets.loginImage,
+                              height: size.height * 0.5,
+                              width: size.width,
+                              fit: BoxFit.cover),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: size.height * 0.05,
+                                left: size.width * 0.035),
+                            child: GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: CircleAvatar(
+                                  child: Icon(Icons.arrow_back_ios_outlined),
+                                )),
+                          )
+                        ],
+                      ),
+                      _buildTitle(),
+                      SizedBox(height: size.height * 0.03),
+                      _buildOtpField(defaultPinTheme),
+                    ],
+                  ),
+                ),
               ),
-              _buildTitle(),
-              SizedBox(height: size.height * 0.03),
-              _buildOtpField(defaultPinTheme),
-              SizedBox(height: size.height * 0.02),
-              _buildLoginButton(),
-            ],
-          ),
+            ),
+            _buildLoginButton(),
+          ],
         ),
       ),
     );
@@ -149,10 +159,9 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   Widget _buildLoginButton() {
-    return GestureDetector(
+    return customBtn(
       onTap: () async {
         FirebaseMessaging messaging = FirebaseMessaging.instance;
-        // Push Notification की परमिशन पहले लें
         await messaging.requestPermission(
             alert: true, badge: true, sound: true);
 
@@ -173,87 +182,54 @@ class _OtpScreenState extends State<OtpScreen> {
               .verifyOtp(widget.phoneNumber, _otpController.text, token ?? "");
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-        child: Container(
-          width: double.infinity,
-          height: 50,
-          decoration: BoxDecoration(
-              color: AppTheme.primaryColor,
-              borderRadius: BorderRadius.circular(30)),
-          child: Center(
-            child: Text(
-              'Log In',
-              style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+      txt: "Log In",
     );
   }
 
   Widget _buildOtpField(PinTheme defaultPinTheme) {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Pinput(
+      controller: _otpController,
+
+      defaultPinTheme: defaultPinTheme,
+      separatorBuilder: (_) => const SizedBox(width: 20),
+      onCompleted: (pin) async {
+        FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+        // Push Notification की परमिशन पहले लें
+        await messaging.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+
+        String? token;
+
+        if (Platform.isIOS) {
+          // iOS के लिए APNS Token प्राप्त करें
+          token = await messaging.getAPNSToken();
+          print("APNS Token: $token");
+        } else {
+          // Android के लिए FCM Token प्राप्त करें
+          token = await messaging.getToken();
+          print("FCM Token: $token");
+        }
+        context
+            .read<VerifyOtpCubit>()
+            .verifyOtp(widget.phoneNumber, pin, token ?? "fcm_token");
+
+        print('Token Sent: $token');
+      },
+      cursor: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text('ENTER OTP',
-              style: GoogleFonts.nunitoSans(
-                  textStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500))),
-          SizedBox(height: 10),
-          Pinput(
-            controller: _otpController,
-            defaultPinTheme: defaultPinTheme,
-            separatorBuilder: (_) => const SizedBox(width: 20),
-            hapticFeedbackType: HapticFeedbackType.lightImpact,
-            onCompleted: (pin) async {
-              FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-              // Push Notification की परमिशन पहले लें
-              await messaging.requestPermission(
-                alert: true,
-                badge: true,
-                sound: true,
-              );
-
-              String? token;
-
-              if (Platform.isIOS) {
-                // iOS के लिए APNS Token प्राप्त करें
-                token = await messaging.getAPNSToken();
-                print("APNS Token: $token");
-              } else {
-                // Android के लिए FCM Token प्राप्त करें
-                token = await messaging.getToken();
-                print("FCM Token: $token");
-              }
-              context
-                  .read<VerifyOtpCubit>()
-                  .verifyOtp(widget.phoneNumber, pin, token ?? "rees");
-
-              print('Token Sent: $token');
-            },
-            cursor: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 9),
-                  width: 22,
-                  height: 1,
-                  color: AppTheme.primaryColor,
-                ),
-              ],
-            ),
-          ),],),);
+          Container(
+            margin: const EdgeInsets.only(bottom: 9),
+            width: 25,
+            height: 2,
+            color: AppTheme.primaryColor,
+          ),
+        ],
+      ),
+    );
   }
 }

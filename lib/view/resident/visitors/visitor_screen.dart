@@ -567,106 +567,111 @@ void visitorsModelBottomSheet(
     context: buildContext,
     enableDrag: false,
     builder: (BuildContext _context) {
-      return Container(
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Actions',
-                        style: TextStyle(color: Colors.black)),
-                    GestureDetector(
-                        onTap: () => Navigator.pop(_context),
-                        child: const Icon(Icons.clear, color: Colors.black))
-                  ]),
-            ),
-            Divider(color: Colors.black45.withOpacity(0.1)),
-            ListTile(
-                onTap: () {
-                  Map<String, String> statusData;
-                  Navigator.pop(_context);
-                  if (visitors.status == 'active') {
-                    statusData = {"status": "inactive"};
-                  } else {
-                    statusData = {"status": "active"};
-                  }
-                  _context
-                      .read<UpdateVisitorsStatusCubit>()
-                      .updateVisitorsStatusAPI(
-                          visitorId: visitors.id.toString(),
-                          statusBody: statusData);
-                },
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                leading: const Icon(Icons.block, color: Colors.red),
-                title: Text(visitors.status == 'active' ? 'Block' : 'UnBlock')),
-            Divider(color: Colors.black45.withOpacity(0.1), height: 0),
-            ListTile(
-                onTap: () {
-                  Navigator.pop(_context);
-                  visitorsDeletePermissionDialog(buildContext, () {
-                    Navigator.pop(buildContext);
-                    buildContext
-                        .read<DeleteVisitorCubit>()
-                        .deleteVisitorAPI(visitors.id.toString());
-                  });
-                },
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('Delete')),
-            Divider(color: Colors.black45.withOpacity(0.1), height: 0),
-            ListTile(
-                onTap: () {
-                  Navigator.pop(_context);
-                  Navigator.push(
-                      _context,
-                      MaterialPageRoute(
-                          builder: (_) => VisitorGatePass(visitors: visitors)));
-                },
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                leading: const Icon(Icons.qr_code, color: Colors.green),
-                title: const Text('Generate QR')),
-            Divider(color: Colors.black45.withOpacity(0.1), height: 0),
-            ListTile(
-                onTap: () {
-                  Navigator.pop(_context);
-                  Navigator.push(
-                      _context,
-                      MaterialPageRoute(
-                          builder: (_) => VisitorsDetailsPage(
-                              visitorsId: visitors.id.toString())));
-                },
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                leading: const Icon(Icons.visibility, color: Colors.teal),
-                title: const Text('Visitor\'s Details')),
-            Divider(color: Colors.black45.withOpacity(0.1), height: 0),
-            ListTile(
-                onTap: () {
-                  if (visitors.visitorFeedback != null) {
+      return Padding(
+        padding: globalBottomPadding(_context),
+        child: Container(
+          decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 3),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Actions',
+                          style: TextStyle(color: Colors.black)),
+                      GestureDetector(
+                          onTap: () => Navigator.pop(_context),
+                          child: const Icon(Icons.clear, color: Colors.black))
+                    ]),
+              ),
+              Divider(color: Colors.black45.withOpacity(0.1)),
+              ListTile(
+                  onTap: () {
+                    Map<String, String> statusData;
                     Navigator.pop(_context);
-                    snackBar(_context, 'Visitor`s Feedback AllReady Added!',
-                        Icons.warning, AppTheme.redColor);
-                  } else {
+                    if (visitors.status == 'active') {
+                      statusData = {"status": "inactive"};
+                    } else {
+                      statusData = {"status": "active"};
+                    }
+                    _context
+                        .read<UpdateVisitorsStatusCubit>()
+                        .updateVisitorsStatusAPI(
+                            visitorId: visitors.id.toString(),
+                            statusBody: statusData);
+                  },
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: const Icon(Icons.block, color: Colors.red),
+                  title:
+                      Text(visitors.status == 'active' ? 'Block' : 'UnBlock')),
+              Divider(color: Colors.black45.withOpacity(0.1), height: 0),
+              ListTile(
+                  onTap: () {
                     Navigator.pop(_context);
-                    visitorsFeedbackDialog(buildContext, visitors);
-                  }
-                },
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                leading: const Icon(Icons.feedback, color: Colors.blue),
-                title: const Text('Visitor\'s Feedback')),
-          ],
+                    visitorsDeletePermissionDialog(buildContext, () {
+                      Navigator.pop(buildContext);
+                      buildContext
+                          .read<DeleteVisitorCubit>()
+                          .deleteVisitorAPI(visitors.id.toString());
+                    });
+                  },
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: const Icon(Icons.delete, color: Colors.red),
+                  title: const Text('Delete')),
+              Divider(color: Colors.black45.withOpacity(0.1), height: 0),
+              ListTile(
+                  onTap: () {
+                    Navigator.pop(_context);
+                    Navigator.push(
+                        _context,
+                        MaterialPageRoute(
+                            builder: (_) =>
+                                VisitorGatePass(visitors: visitors)));
+                  },
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: const Icon(Icons.qr_code, color: Colors.green),
+                  title: const Text('Generate QR')),
+              Divider(color: Colors.black45.withOpacity(0.1), height: 0),
+              ListTile(
+                  onTap: () {
+                    Navigator.pop(_context);
+                    Navigator.push(
+                        _context,
+                        MaterialPageRoute(
+                            builder: (_) => VisitorsDetailsPage(
+                                visitorsId: visitors.id.toString())));
+                  },
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: const Icon(Icons.visibility, color: Colors.teal),
+                  title: const Text('Visitor\'s Details')),
+              Divider(color: Colors.black45.withOpacity(0.1), height: 0),
+              ListTile(
+                  onTap: () {
+                    if (visitors.visitorFeedback != null) {
+                      Navigator.pop(_context);
+                      snackBar(_context, 'Visitor`s Feedback AllReady Added!',
+                          Icons.warning, AppTheme.redColor);
+                    } else {
+                      Navigator.pop(_context);
+                      visitorsFeedbackDialog(buildContext, visitors);
+                    }
+                  },
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: const Icon(Icons.feedback, color: Colors.blue),
+                  title: const Text('Visitor\'s Feedback')),
+            ],
+          ),
         ),
       );
     },
