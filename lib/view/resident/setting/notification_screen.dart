@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/notification_settings/get_notification_settings/get_notification_settings_cubit.dart';
@@ -20,10 +21,10 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  Map<String, bool> toggleStates = {}; // Toggle states for each setting
+  Map<String, bool> toggleStates = {};
   late GetNotificationSettingsCubit _getNotificationSettingsCubit;
   String updateValue = '';
-  String updatingSetting = ''; // Holds the setting being updated
+  String updatingSetting = '';
 
   @override
   void initState() {
@@ -43,34 +44,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appbarWidget(title: 'Notification Settings'),
-      body: BlocListener<UpdateNotificationSettingsCubit,
-          UpdateNotificationSettingsState>(
+      body: BlocListener<UpdateNotificationSettingsCubit, UpdateNotificationSettingsState>(
         listener: (context, state) {
           if (state is UpdateNotificationSettingsLoading) {
-            /*  showLoadingDialog(context, (ctx) {
+            showLoadingDialog(context, (ctx) {
               dialogueContext = ctx;
-            });*/
-          } else if (state is UpdateNotificationSettingsSuccessfully) {
-            // snackBar(context, state.message.toString(), Icons.done,
-            //     AppTheme.guestColor);
-
-            // Navigator.of(dialogueContext!).pop();
-            // Update the toggle state only upon success
-            setState(() {
-              toggleStates[updatingSetting] = updateValue == 'enabled';
-              updatingSetting = '';
             });
+          } else if (state is UpdateNotificationSettingsSuccessfully) {
+            Navigator.of(dialogueContext!).pop();
+            snackBar(context, state.message.toString(), Icons.done, AppTheme.guestColor);
+            // ✅ No refresh, no rollback – UI already updated
           } else if (state is UpdateNotificationSettingsInternetError) {
-            snackBar(context, state.errorMessage.toString(), Icons.done,
-                AppTheme.redColor);
-
-            // Navigator.of(dialogueContext!).pop();
+            Navigator.of(dialogueContext!).pop();
+            snackBar(context, state.errorMessage.toString(), Icons.error, AppTheme.redColor);
+            // ❌ Optional rollback skipped as per your requirement
           }
         },
         child: RefreshIndicator(
           onRefresh: onRefresh,
-          child: BlocBuilder<GetNotificationSettingsCubit,
-              GetNotificationSettingsState>(
+          child: BlocBuilder<GetNotificationSettingsCubit, GetNotificationSettingsState>(
             bloc: _getNotificationSettingsCubit,
             builder: (context, state) {
               if (state is GetNotificationSettingsLoading) {
@@ -78,11 +70,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
               } else if (state is GetNotificationSettingsLoaded) {
                 List<NotificationSetting> data = state.notificationSettings;
 
-                // Clear old toggle states before adding new
-                toggleStates.clear();
-
-                for (var setting in data) {
-                  toggleStates[setting.name] = setting.status == "enabled";
+                // ✅ Only populate once
+                if (toggleStates.isEmpty) {
+                  for (var setting in data) {
+                    toggleStates[setting.name] = setting.status == "enabled";
+                  }
                 }
 
                 if (data.isEmpty) {
@@ -90,8 +82,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 }
 
                 return ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                   itemCount: data.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
@@ -99,27 +90,50 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         .name
                         .replaceAll('_', ' ')
                         .split(' ')
-                        .map(
-                            (word) => word[0].toUpperCase() + word.substring(1))
+                        .map((word) => word[0].toUpperCase() + word.substring(1))
                         .join(' ');
 
-                    return _buildSwitchRow(
+                    return
+
+                     _buildSwitchRow(
                       formattedTitle,
                       toggleStates[data[index].name] ?? false,
-                      (value) {
-                        setState(() {
-                          updatingSetting = data[index].name;
-                          updateValue = value ? 'enabled' : 'disabled';
-                          var bodyData = {
-                            "name": data[index].name,
-                            "status": updateValue
-                          };
-                          context
-                              .read<UpdateNotificationSettingsCubit>()
-                              .updateNotificationSettingsAPI(bodyData);
+                          (value) async {
+                        final settingName = data[index].name;
+                        final newValue = value ? 'enabled' : 'disabled';
+
+                        // Show loading dialog
+                        showLoadingDialog(context, (ctx) {
+                          dialogueContext = ctx;
                         });
+
+                        var bodyData = {
+                          "name": settingName,
+                          "status": newValue,
+                        };
+
+                        // Call API
+                        final cubit = context.read<UpdateNotificationSettingsCubit>();
+                        final isSuccess = await cubit.updateNotificationSettingsAPI(bodyData);
+
+                        print(isSuccess);
+                        // Remove loading dialog
+                        if (dialogueContext != null) {
+                          Navigator.of(dialogueContext!).pop();
+                        }
+
+                        if (isSuccess) {
+                          setState(() {
+                            toggleStates[settingName] = value; // ✅ Only update if success
+                          });
+
+                          snackBar(context, "Updated successfully", Icons.done, AppTheme.guestColor);
+                        } else {
+                          snackBar(context, "Failed to update", Icons.error, AppTheme.redColor);
+                        }
                       },
                     );
+
                   },
                 );
               } else if (state is GetNotificationSettingsFailed) {

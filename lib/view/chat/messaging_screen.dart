@@ -233,53 +233,55 @@ class _MessagingScreenState extends State<MessagingScreen> {
                 },
               ),
             ),
-            Padding(
-              padding:    const EdgeInsets.only(left: 15, right: 15),
-
-
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _messageController,
-                      style: GoogleFonts.nunitoSans(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white),
-                      textInputAction: TextInputAction.done,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        filled: true,
-                        hintText: "Type here..",
-                        fillColor: AppTheme.primaryColor,
-                        hintStyle: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w400,
+            SafeArea(
+              child: Padding(
+                padding:    const EdgeInsets.only(left: 15, right: 15),
+              
+              
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _messageController,
+                        style: GoogleFonts.nunitoSans(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
+                        textInputAction: TextInputAction.done,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          filled: true,
+                          hintText: "Type here..",
+                          fillColor: AppTheme.primaryColor,
+                          hintStyle: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: _sendMessage,
+                      child: CircleAvatar(
+                        backgroundColor: AppTheme.primaryColor,
+                        child: Image.asset(
+                          ImageAssets.sendMessageImage,
+                          height: 40,
+                          width: 40,
                           color: Colors.white,
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: _sendMessage,
-                    child: CircleAvatar(
-                      backgroundColor: AppTheme.primaryColor,
-                      child: Image.asset(
-                        ImageAssets.sendMessageImage,
-                        height: 40,
-                        width: 40,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

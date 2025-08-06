@@ -12,7 +12,7 @@ class GetNotificationSettingsCubit extends Cubit<GetNotificationSettingsState> {
   List<NotificationSetting> notificationSettingsList = [];
 
   /// FETCH MY BILLS
-  Future<void> fetchGetNotificationSettingsAPI() async {
+  Future fetchGetNotificationSettingsAPI() async {
     if (state is GetNotificationSettingsLoading) return;
     emit(GetNotificationSettingsLoading());
     try {

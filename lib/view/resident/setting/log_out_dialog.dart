@@ -289,6 +289,7 @@ void visitorsFeedbackDialog(BuildContext context, VisitorsListing visitors) {
                         maxLines: 5,
                         minLines: null,
                         keyboardType: TextInputType.multiline,
+                        textInputAction: TextInputAction.done,
                         decoration: InputDecoration(
                           counter: const SizedBox(),
                           hintText: 'Describe feedback here...',

@@ -108,13 +108,8 @@ class _VisitorGatePassState extends State<VisitorGatePass> {
             ),
           ),
         ),
-        appBar: AppBar(
-            title: Text('Visitors Gate Pass',
-                style: GoogleFonts.nunitoSans(
-                    textStyle: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(
+            title: "Visitors Gate Pass"),
         body: Padding(
           padding:
               const EdgeInsets.only(top: 30, right: 12, left: 12, bottom: 10),
