@@ -44,7 +44,4 @@ class UpdateNotificationSettingsCubit
       return false;
     }
   }
-
-
-  ////
 }
