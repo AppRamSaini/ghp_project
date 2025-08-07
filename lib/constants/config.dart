@@ -1,14 +1,13 @@
 class Config {
   static const String baseURL =
-      // 'https://dev-society.ghpjaipur.com/api/user/v1/'; // dev url
-      'https://society.ghpjaipur.com/api/user/v1/'; // production url
+      'https://dev-society.ghpjaipur.com/api/user/v1/'; // dev url
+// 'https://society.ghpjaipur.com/api/user/v1/'; // production url
 // 'https://ghp-society.laraveldevelopmentcompany.com/api/user/v1/'; // old url
 }
 
 /// new code
-
 class Routes {
-  static const String society = 'societies';
+  static const String society = '${Config.baseURL}societies';
   static const String sendOtp = 'otp';
   static const String verifyOtp = 'otp-verify';
   static const String logout = 'logout';
@@ -74,10 +73,8 @@ class Routes {
   static String createComplaints = 'complaint/create';
   static String getSliders = 'sliders';
   static String termsOfConditions = 'terms-of-use';
-  static String privacyPolicy =
-      'https://society.ghpjaipur.com/api/user/v1/privacy-policy';
-  static String privacyPolicyPage =
-      'https://society.ghpjaipur.com/api/user/v1/privacy-policy-page';
+  static String privacyPolicy = '${Config.baseURL}privacy-policy';
+  static String privacyPolicyPage = '${Config.baseURL}privacy-policy-page';
   static String getNotificationSettings = 'settings/notifications';
   static String updateNotificationSettings = 'settings/notification';
 

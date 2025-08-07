@@ -1,6 +1,6 @@
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
-import 'package:ghp_society_management/view/resident/authentication/login_screen.dart';
+import 'package:ghp_society_management/view/authentication/login_screen.dart';
 
 class SelectSocietyScreen extends StatefulWidget {
   const SelectSocietyScreen({super.key});
@@ -77,8 +77,7 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
       ),
       body: SafeArea(
         child: GestureDetector(
-
-          onTap: ()=>FocusScope.of(context).unfocus(),
+          onTap: () => FocusScope.of(context).unfocus(),
           child: RefreshIndicator(
             onRefresh: onRefresh,
             child: BlocBuilder<SelectSocietyCubit, SelectSocietyState>(
@@ -112,12 +111,14 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                                   horizontal: 30, vertical: 10),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(30),
-                                  color: AppTheme.primaryColor.withOpacity(0.15)),
+                                  color:
+                                      AppTheme.primaryColor.withOpacity(0.15)),
                               child: Text(
                                 'Retry!',
                                 style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: AppTheme.primaryColor, fontSize: 16),
+                                      color: AppTheme.primaryColor,
+                                      fontSize: 16),
                                 ),
                               ),
                             ),

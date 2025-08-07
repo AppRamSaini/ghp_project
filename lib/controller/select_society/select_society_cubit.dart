@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:ghp_society_management/constants/config.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/model/select_society_model.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
@@ -29,8 +30,7 @@ class SelectSocietyCubit extends Cubit<SelectSocietyState> {
     }
 
     try {
-      final response = await apiManager
-          .getRequest("https://society.ghpjaipur.com/api/user/v1/societies");
+      final response = await apiManager.getRequest(Routes.society);
       final resData = json.decode(response.body.toString());
 
       if (response.statusCode == 200 && resData['status'] == true) {

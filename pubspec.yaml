@@ -66,6 +66,8 @@ dependencies:
   video_compress: ^3.1.4
   image: ^4.5.4
   firebase_storage: ^12.4.10
+  sms_autofill: ^2.4.1
+  firebase_auth: ^5.7.0
 
 
 

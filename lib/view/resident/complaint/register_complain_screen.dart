@@ -39,6 +39,7 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
   final controller = TextEditingController();
 
   ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<CreateComplaintsCubit, CreateComplaintsState>(
@@ -143,7 +144,7 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: TextFormField(
-                            onTap: () =>scrollManagement(_scrollController),
+                            onTap: () => scrollManagement(_scrollController),
                             controller: controller,
                             textInputAction: TextInputAction.done,
                             maxLines: 5,
