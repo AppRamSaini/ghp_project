@@ -1,6 +1,3 @@
-// To parse this JSON data, do
-//
-//     final userProfileModel = userProfileModelFromJson(jsonString);
 
 import 'dart:convert';
 
@@ -13,7 +10,7 @@ String userProfileModelToJson(UserProfileModel data) =>
 class UserProfileModel {
   bool? status;
   String? message;
-  Data? data;
+  UserProfileData? data;
 
   UserProfileModel({
     this.status,
@@ -25,7 +22,9 @@ class UserProfileModel {
       UserProfileModel(
         status: json["status"],
         message: json["message"],
-        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+        data: json["data"] == null
+            ? null
+            : UserProfileData.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -35,16 +34,17 @@ class UserProfileModel {
       };
 }
 
-class Data {
+class UserProfileData {
   User? user;
   List<UnpaidBill>? unpaidBills;
 
-  Data({
+  UserProfileData({
     this.user,
     this.unpaidBills,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory UserProfileData.fromJson(Map<String, dynamic> json) =>
+      UserProfileData(
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         unpaidBills: json["unpaid_bills"] == null
             ? []
@@ -63,34 +63,46 @@ class Data {
 class UnpaidBill {
   int? id;
   int? userId;
+  int? memberId;
   int? serviceId;
   String? billType;
-  String? amount;
-  DateTime? dueDate;
+  String? installment;
   int? societyId;
-  int? createdBy;
   String? invoiceNumber;
+  dynamic paymentLink;
+  String? paymentStatus;
   String? status;
+  String? amount;
+  String? advanceAmount;
+  String? prevMonthPending;
+  DateTime? paymentDate;
+  DateTime? dueDate;
+  dynamic collectorId;
   DateTime? createdAt;
   DateTime? updatedAt;
-  dynamic deletedAt;
   int? dueDateRemainDays;
   int? dueDateDelayDays;
 
   UnpaidBill({
     this.id,
     this.userId,
+    this.memberId,
     this.serviceId,
     this.billType,
-    this.amount,
-    this.dueDate,
+    this.installment,
     this.societyId,
-    this.createdBy,
     this.invoiceNumber,
+    this.paymentLink,
+    this.paymentStatus,
     this.status,
+    this.amount,
+    this.advanceAmount,
+    this.prevMonthPending,
+    this.paymentDate,
+    this.dueDate,
+    this.collectorId,
     this.createdAt,
     this.updatedAt,
-    this.deletedAt,
     this.dueDateRemainDays,
     this.dueDateDelayDays,
   });
@@ -98,22 +110,30 @@ class UnpaidBill {
   factory UnpaidBill.fromJson(Map<String, dynamic> json) => UnpaidBill(
         id: json["id"],
         userId: json["user_id"],
+        memberId: json["member_id"],
         serviceId: json["service_id"],
         billType: json["bill_type"],
+        installment: json["installment"],
+        societyId: json["society_id"],
+        invoiceNumber: json["invoice_number"],
+        paymentLink: json["payment_link"],
+        paymentStatus: json["payment_status"],
+        status: json["status"],
         amount: json["amount"],
+        advanceAmount: json["advance_amount"],
+        prevMonthPending: json["prev_month_pending"],
+        paymentDate: json["payment_date"] == null
+            ? null
+            : DateTime.parse(json["payment_date"]),
         dueDate:
             json["due_date"] == null ? null : DateTime.parse(json["due_date"]),
-        societyId: json["society_id"],
-        createdBy: json["created_by"],
-        invoiceNumber: json["invoice_number"],
-        status: json["status"],
+        collectorId: json["collector_id"],
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]),
         updatedAt: json["updated_at"] == null
             ? null
             : DateTime.parse(json["updated_at"]),
-        deletedAt: json["deleted_at"],
         dueDateRemainDays: json["due_date_remain_days"],
         dueDateDelayDays: json["due_date_delay_days"],
       );
@@ -121,18 +141,24 @@ class UnpaidBill {
   Map<String, dynamic> toJson() => {
         "id": id,
         "user_id": userId,
+        "member_id": memberId,
         "service_id": serviceId,
         "bill_type": billType,
+        "installment": installment,
+        "society_id": societyId,
+        "invoice_number": invoiceNumber,
+        "payment_link": paymentLink,
+        "payment_status": paymentStatus,
+        "status": status,
         "amount": amount,
+        "advance_amount": advanceAmount,
+        "prev_month_pending": prevMonthPending,
+        "payment_date": paymentDate?.toIso8601String(),
         "due_date":
             "${dueDate!.year.toString().padLeft(4, '0')}-${dueDate!.month.toString().padLeft(2, '0')}-${dueDate!.day.toString().padLeft(2, '0')}",
-        "society_id": societyId,
-        "created_by": createdBy,
-        "invoice_number": invoiceNumber,
-        "status": status,
+        "collector_id": collectorId,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
-        "deleted_at": deletedAt,
         "due_date_remain_days": dueDateRemainDays,
         "due_date_delay_days": dueDateDelayDays,
       };
@@ -154,17 +180,14 @@ class User {
   String? societyName;
   String? unitType;
   String? floorNumber;
-  String? blockName;
   String? aprtNo;
-  BlockInfo? blockInfo;
+  Property? property;
   dynamic categoryName;
   dynamic categoryId;
-  int? memberId;
   int? societyId;
   dynamic staffId;
   String? imageUrl;
   LastCheckinDetail? lastCheckinDetail;
-  List<UnpaidBill>? myUnpaidBills;
 
   User({
     this.id,
@@ -182,17 +205,14 @@ class User {
     this.societyName,
     this.unitType,
     this.floorNumber,
-    this.blockName,
     this.aprtNo,
-    this.blockInfo,
+    this.property,
     this.categoryName,
     this.categoryId,
-    this.memberId,
     this.societyId,
     this.staffId,
     this.imageUrl,
     this.lastCheckinDetail,
-    this.myUnpaidBills,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -215,24 +235,18 @@ class User {
         societyName: json["society_name"],
         unitType: json["unit_type"],
         floorNumber: json["floor_number"],
-        blockName: json["block_name"],
         aprtNo: json["aprt_no"],
-        blockInfo: json["block_info"] == null
+        property: json["property"] == null
             ? null
-            : BlockInfo.fromJson(json["block_info"]),
+            : Property.fromJson(json["property"]),
         categoryName: json["category_name"],
         categoryId: json["category_id"],
-        memberId: json["member_id"],
         societyId: json["society_id"],
         staffId: json["staff_id"],
         imageUrl: json["image_url"],
         lastCheckinDetail: json["last_checkin_detail"] == null
             ? null
             : LastCheckinDetail.fromJson(json["last_checkin_detail"]),
-        myUnpaidBills: json["my_unpaid_bills"] == null
-            ? []
-            : List<UnpaidBill>.from(
-                json["my_unpaid_bills"]!.map((x) => UnpaidBill.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -251,95 +265,14 @@ class User {
         "society_name": societyName,
         "unit_type": unitType,
         "floor_number": floorNumber,
-        "block_name": blockName,
         "aprt_no": aprtNo,
-        "block_info": blockInfo?.toJson(),
+        "property": property?.toJson(),
         "category_name": categoryName,
         "category_id": categoryId,
-        "member_id": memberId,
         "society_id": societyId,
         "staff_id": staffId,
         "image_url": imageUrl,
         "last_checkin_detail": lastCheckinDetail?.toJson(),
-        "my_unpaid_bills": myUnpaidBills == null
-            ? []
-            : List<dynamic>.from(myUnpaidBills!.map((x) => x.toJson())),
-      };
-}
-
-class BlockInfo {
-  int? id;
-  String? propertyNumber;
-  String? floor;
-  String? ownership;
-  String? bhk;
-  String? totalFloor;
-  String? unitType;
-  String? unitSize;
-  int? unitQty;
-  String? name;
-  int? totalUnits;
-  int? societyId;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  dynamic deletedAt;
-
-  BlockInfo({
-    this.id,
-    this.propertyNumber,
-    this.floor,
-    this.ownership,
-    this.bhk,
-    this.totalFloor,
-    this.unitType,
-    this.unitSize,
-    this.unitQty,
-    this.name,
-    this.totalUnits,
-    this.societyId,
-    this.createdAt,
-    this.updatedAt,
-    this.deletedAt,
-  });
-
-  factory BlockInfo.fromJson(Map<String, dynamic> json) => BlockInfo(
-        id: json["id"],
-        propertyNumber: json["property_number"],
-        floor: json["floor"],
-        ownership: json["ownership"],
-        bhk: json["bhk"],
-        totalFloor: json["total_floor"],
-        unitType: json["unit_type"],
-        unitSize: json["unit_size"],
-        unitQty: json["unit_qty"],
-        name: json["name"],
-        totalUnits: json["total_units"],
-        societyId: json["society_id"],
-        createdAt: json["created_at"] == null
-            ? null
-            : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null
-            ? null
-            : DateTime.parse(json["updated_at"]),
-        deletedAt: json["deleted_at"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "property_number": propertyNumber,
-        "floor": floor,
-        "ownership": ownership,
-        "bhk": bhk,
-        "total_floor": totalFloor,
-        "unit_type": unitType,
-        "unit_size": unitSize,
-        "unit_qty": unitQty,
-        "name": name,
-        "total_units": totalUnits,
-        "society_id": societyId,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
-        "deleted_at": deletedAt,
       };
 }
 
@@ -349,10 +282,12 @@ class LastCheckinDetail {
   String? status;
   dynamic requestedAt;
   DateTime? checkinAt;
-  dynamic checkoutAt;
+  String? checkinType;
+  DateTime? checkoutAt;
+  String? checkoutType;
   dynamic requestBy;
   int? checkinBy;
-  dynamic checkoutBy;
+  int? checkoutBy;
   dynamic visitorOf;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -360,8 +295,8 @@ class LastCheckinDetail {
   int? byResident;
   dynamic byDailyHelp;
   dynamic dailyHelpForMember;
-  CheckedInBy? checkedInBy;
-  dynamic checkedOutBy;
+  CheckedBy? checkedInBy;
+  CheckedBy? checkedOutBy;
 
   LastCheckinDetail({
     this.id,
@@ -369,7 +304,9 @@ class LastCheckinDetail {
     this.status,
     this.requestedAt,
     this.checkinAt,
+    this.checkinType,
     this.checkoutAt,
+    this.checkoutType,
     this.requestBy,
     this.checkinBy,
     this.checkoutBy,
@@ -393,7 +330,11 @@ class LastCheckinDetail {
         checkinAt: json["checkin_at"] == null
             ? null
             : DateTime.parse(json["checkin_at"]),
-        checkoutAt: json["checkout_at"],
+        checkinType: json["checkin_type"],
+        checkoutAt: json["checkout_at"] == null
+            ? null
+            : DateTime.parse(json["checkout_at"]),
+        checkoutType: json["checkout_type"],
         requestBy: json["request_by"],
         checkinBy: json["checkin_by"],
         checkoutBy: json["checkout_by"],
@@ -410,8 +351,10 @@ class LastCheckinDetail {
         dailyHelpForMember: json["daily_help_for_member"],
         checkedInBy: json["checked_in_by"] == null
             ? null
-            : CheckedInBy.fromJson(json["checked_in_by"]),
-        checkedOutBy: json["checked_out_by"],
+            : CheckedBy.fromJson(json["checked_in_by"]),
+        checkedOutBy: json["checked_out_by"] == null
+            ? null
+            : CheckedBy.fromJson(json["checked_out_by"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -420,7 +363,9 @@ class LastCheckinDetail {
         "status": status,
         "requested_at": requestedAt,
         "checkin_at": checkinAt?.toIso8601String(),
-        "checkout_at": checkoutAt,
+        "checkin_type": checkinType,
+        "checkout_at": checkoutAt?.toIso8601String(),
+        "checkout_type": checkoutType,
         "request_by": requestBy,
         "checkin_by": checkinBy,
         "checkout_by": checkoutBy,
@@ -432,11 +377,11 @@ class LastCheckinDetail {
         "by_daily_help": byDailyHelp,
         "daily_help_for_member": dailyHelpForMember,
         "checked_in_by": checkedInBy?.toJson(),
-        "checked_out_by": checkedOutBy,
+        "checked_out_by": checkedOutBy?.toJson(),
       };
 }
 
-class CheckedInBy {
+class CheckedBy {
   int? id;
   String? uid;
   String? role;
@@ -444,14 +389,14 @@ class CheckedInBy {
   String? name;
   String? email;
   dynamic emailVerifiedAt;
-  String? image;
+  dynamic image;
   String? phone;
   DateTime? createdAt;
   DateTime? updatedAt;
   String? deviceId;
   String? imageUrl;
 
-  CheckedInBy({
+  CheckedBy({
     this.id,
     this.uid,
     this.role,
@@ -467,7 +412,7 @@ class CheckedInBy {
     this.imageUrl,
   });
 
-  factory CheckedInBy.fromJson(Map<String, dynamic> json) => CheckedInBy(
+  factory CheckedBy.fromJson(Map<String, dynamic> json) => CheckedBy(
         id: json["id"],
         uid: json["uid"],
         role: json["role"],
@@ -501,5 +446,61 @@ class CheckedInBy {
         "updated_at": updatedAt?.toIso8601String(),
         "device_id": deviceId,
         "image_url": imageUrl,
+      };
+}
+
+class Property {
+  int? id;
+  String? name;
+  String? floorNumber;
+  String? unitType;
+  String? aprtNo;
+  String? email;
+  String? phone;
+  int? blockId;
+  String? blockName;
+  String? bhk;
+  String? unitSize;
+
+  Property({
+    this.id,
+    this.name,
+    this.floorNumber,
+    this.unitType,
+    this.aprtNo,
+    this.email,
+    this.phone,
+    this.blockId,
+    this.blockName,
+    this.bhk,
+    this.unitSize,
+  });
+
+  factory Property.fromJson(Map<String, dynamic> json) => Property(
+        id: json["id"],
+        name: json["name"],
+        floorNumber: json["floor_number"],
+        unitType: json["unit_type"],
+        aprtNo: json["aprt_no"],
+        email: json["email"],
+        phone: json["phone"],
+        blockId: json["block_id"],
+        blockName: json["block_name"],
+        bhk: json["bhk"],
+        unitSize: json["unit_size"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "floor_number": floorNumber,
+        "unit_type": unitType,
+        "aprt_no": aprtNo,
+        "email": email,
+        "phone": phone,
+        "block_id": blockId,
+        "block_name": blockName,
+        "bhk": bhk,
+        "unit_size": unitSize,
       };
 }

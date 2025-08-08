@@ -17,7 +17,7 @@ class DocumentCountCubit extends Cubit<DocumentCountState> {
     emit(DocumentCountLoading());
     try {
       var responseData =
-          await apiManager.getRequest(Config.baseURL + Routes.documentsCounts);
+          await apiManager.getRequest(Config.baseURL + Routes.documentsCounts,usePropertyID: true);
       var data = json.decode((responseData.body.toString()));
 
       print(responseData.statusCode);

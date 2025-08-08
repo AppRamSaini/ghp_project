@@ -1,5 +1,5 @@
 import 'package:ghp_society_management/constants/export.dart';
-
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/documents/incoming_documents/incoming_documents_cubit.dart';
 import 'package:ghp_society_management/view/resident/documents/upload_document_screen.dart';
 import 'package:intl/intl.dart';
@@ -17,15 +17,19 @@ class _IncomingDocumentsScreenState extends State<IncomingDocumentsScreen> {
   List<String> filterTypes = ["all", "pending", "received"];
 
   int selectedFilter = 0;
-  late IncomingDocumentsCubit incomingDocumentsCubit;
+
+  // late IncomingDocumentsCubit incomingDocumentsCubit;
 
   bool searchBarOpen = false;
   final TextEditingController textController = TextEditingController();
 
   initCubit() {
-    incomingDocumentsCubit = context.read<IncomingDocumentsCubit>();
-    incomingDocumentsCubit.fetchIncomingDocuments(
-        filter: filterTypes[selectedFilter]);
+    // incomingDocumentsCubit = IncomingDocumentsCubit();
+    context
+        .read<IncomingDocumentsCubit>()
+        .fetchIncomingDocuments(filter: filterTypes[selectedFilter].toString());
+    // incomingDocumentsCubit.fetchIncomingDocuments(
+    //     filter: filterTypes[selectedFilter]);
   }
 
   final ScrollController _scrollController = ScrollController();
@@ -47,19 +51,13 @@ class _IncomingDocumentsScreenState extends State<IncomingDocumentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Text('Request By Management',
-              style: GoogleFonts.nunitoSans(
-                  textStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600)))),
+      appBar: appbarWidget(title: 'Request By Management'),
       body: SafeArea(
         child: BlocListener<UploadDocumentCubit, UploadDocumentState>(
           listener: (context, state) async {
             if (state is UploadDocumentSuccessfully) {
-              await incomingDocumentsCubit.fetchIncomingDocuments(
-                  filter: filterTypes[selectedFilter]);
+              context.read<IncomingDocumentsCubit>().fetchIncomingDocuments(
+                  filter: filterTypes[selectedFilter].toString());
             }
           },
           child: RefreshIndicator(
@@ -67,8 +65,8 @@ class _IncomingDocumentsScreenState extends State<IncomingDocumentsScreen> {
               setState(() {
                 selectedFilter = 0;
               });
-              await incomingDocumentsCubit.fetchIncomingDocuments(
-                  filter: filterTypes[selectedFilter]);
+              context.read<IncomingDocumentsCubit>().fetchIncomingDocuments(
+                  filter: filterTypes[selectedFilter].toString());
             },
             child: Container(
               width: double.infinity,
@@ -93,8 +91,13 @@ class _IncomingDocumentsScreenState extends State<IncomingDocumentsScreen> {
                               onTap: () {
                                 setState(() {
                                   selectedFilter = index;
-                                  incomingDocumentsCubit.fetchIncomingDocuments(
-                                      filter: filterTypes[index].toString());
+                                  context
+                                      .read<IncomingDocumentsCubit>()
+                                      .fetchIncomingDocuments(
+                                          filter:
+                                              filterTypes[index].toString());
+                                  // incomingDocumentsCubit.fetchIncomingDocuments(
+                                  //     filter: filterTypes[index].toString());
                                 });
                               },
                               child: Container(
@@ -110,8 +113,7 @@ class _IncomingDocumentsScreenState extends State<IncomingDocumentsScreen> {
                                   borderRadius: BorderRadius.circular(10.r),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 20),
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
                                   child: Center(
                                       child: Text(
                                     filterList[index],
@@ -132,72 +134,70 @@ class _IncomingDocumentsScreenState extends State<IncomingDocumentsScreen> {
                     Expanded(
                       child: BlocBuilder<IncomingDocumentsCubit,
                           IncomingDocumentsState>(
+                        // bloc: incomingDocumentsCubit,
                         builder: (context, state) {
-                          if (state is IncomingDocumentsLoading &&
-                              context
-                                  .read<IncomingDocumentsCubit>()
-                                  .documentList
-                                  .isEmpty) {
-                            return const Center(
-                                child: CircularProgressIndicator.adaptive(
-                                    backgroundColor: Colors.deepPurpleAccent));
-                          }
-
-                          if (state is IncomingDocumentsFailed) {
+                          if (state is IncomingDocumentsLoading) {
+                            return notificationShimmerLoading();
+                          } else if (state is IncomingDocumentsFailed) {
                             return Center(
                                 child: Text(state.errorMsg.toString(),
                                     style: const TextStyle(
                                         color: Colors.deepPurpleAccent)));
-                          }
-
-                          if (state is IncomingDocumentsEmpty) {
-                            return const Center(
-                                child: Text("No incoming documents found",
-                                    style: TextStyle(
-                                        color: Colors.deepPurpleAccent)));
-                          }
-                          if (state is IncomingDocumentsInternetError) {
+                          } else if (state is IncomingDocumentsInternetError) {
                             return Center(
                                 child: Text(state.errorMsg.toString(),
                                     style: const TextStyle(
                                         color: Colors.deepPurpleAccent)));
-                          }
-                          var cubit = context.read<IncomingDocumentsCubit>();
-                          var documentsList = cubit.documentList;
+                          } else if (state is IncomingDocumentsLoaded) {
+                            var documentsList = state.incomingDocuments;
 
-                          if (documentsList.isEmpty) {
-                            return const Center(
-                                child: Text("No incoming documents found",
+                            if (documentsList.isEmpty) {
+                              return emptyDataWidget(
+                                  "No incoming documents found");
+                            }
+
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              controller: _scrollController,
+                              itemCount: documentsList.length + 1,
+                              itemBuilder: (context, index) {
+                                if (index == documentsList.length) {
+                                  return state is IncomingDocumentsLoadingMore
+                                      ? const Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Center(
+                                              child:
+                                                  CircularProgressIndicator()))
+                                      : const SizedBox.shrink();
+                                }
+
+                                status() {
+                                  return Text(
+                                    documentsList[index].status == 'requested'
+                                        ? "pending"
+                                        : documentsList[index]
+                                            .status
+                                            .toString(),
                                     style: TextStyle(
-                                        color: Colors.deepPurpleAccent)));
-                          }
+                                        color: documentsList[index].status ==
+                                                'uploaded'
+                                            ? Colors.blue
+                                            : Colors.red),
+                                  );
+                                }
 
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            controller: _scrollController,
-                            itemCount: documentsList.length + 1,
-                            itemBuilder: (context, index) {
-                              if (index == documentsList.length) {
-                                return cubit.state
-                                        is IncomingDocumentsLoadingMore
-                                    ? const Padding(
-                                        padding: EdgeInsets.all(16.0),
-                                        child: Center(
-                                            child: CircularProgressIndicator()))
-                                    : const SizedBox.shrink();
-                              }
-
-                              return Container(
-                                margin: const EdgeInsets.only(bottom: 10),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border:
-                                        Border.all(color: Colors.grey[300]!),
-                                    borderRadius: BorderRadius.circular(10.r)),
-                                child: ListTile(
-                                  onTap: () {
-                                    // if (documentsList[index].status ==
-                                    //     'requested') {
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border:
+                                          Border.all(color: Colors.grey[300]!),
+                                      borderRadius:
+                                          BorderRadius.circular(10.r)),
+                                  child: ListTile(
+                                    onTap: () {
+                                      // if (documentsList[index].status ==
+                                      //     'requested') {
                                       Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (builder) =>
@@ -205,74 +205,83 @@ class _IncomingDocumentsScreenState extends State<IncomingDocumentsScreen> {
                                                       incomingRequestData:
                                                           documentsList[
                                                               index])));
-                                    // } else {
-                                    //   snackBar(
-                                    //       context,
-                                    //       'This Document AlReady Uploaded!',
-                                    //       Icons.info_outline,
-                                    //       AppTheme.redColor);
-                                    // }
-                                  },
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  leading: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      // } else {
+                                      //   snackBar(
+                                      //       context,
+                                      //       'This Document AlReady Uploaded!',
+                                      //       Icons.info_outline,
+                                      //       AppTheme.redColor);
+                                      // }
+                                    },
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    leading: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Image.asset(ImageAssets.settingLogo,
+                                              height: 50,
+                                              color:
+                                                  documentsList[index].status ==
+                                                          'requested'
+                                                      ? Colors.deepPurpleAccent
+                                                      : Colors.blue)
+                                        ]),
+                                    title: Text(
+                                      documentsList[index].subject!.toString(),
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    subtitle: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Image.asset(ImageAssets.settingLogo,
-                                            height: 50,
-                                            color:
-                                                documentsList[index].status ==
-                                                        'requested'
-                                                    ? Colors.deepPurpleAccent
-                                                    : Colors.blue)
-                                      ]),
-                                  title: Text(
-                                    documentsList[index].subject!.toString(),
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Doc Type: ${documentsList[index].documentType}",
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.black45,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Date: ${DateFormat('d MMM, yyyy').format(documentsList[index].createdAt!)}",
+                                              style: GoogleFonts.poppins(
+                                                color: Colors.black45,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            SizedBox(width: 20),
+                                            status()
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    trailing: CircleAvatar(
+                                      backgroundColor: Colors.deepPurpleAccent
+                                          .withOpacity(0.1),
+                                      child: const Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        size: 20,
+                                        color: Colors.deepPurpleAccent,
+                                      ),
                                     ),
                                   ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Doc Type: ${documentsList[index].documentType}",
-                                        style: GoogleFonts.poppins(
-                                          color: Colors.black45,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                      Text(
-                                        "Date: ${DateFormat('d MMM, yyyy').format(documentsList[index].createdAt!)}",
-                                        style: GoogleFonts.poppins(
-                                          color: Colors.black45,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  trailing: CircleAvatar(
-                                    backgroundColor: Colors.deepPurpleAccent
-                                        .withOpacity(0.1),
-                                    child: const Icon(
-                                      Icons.arrow_forward_ios_rounded,
-                                      size: 20,
-                                      color: Colors.deepPurpleAccent,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
+                                );
+                              },
+                            );
+                          } else {
+                            return notificationShimmerLoading();
+                          }
                         },
                       ),
                     )

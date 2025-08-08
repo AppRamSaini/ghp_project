@@ -1,5 +1,6 @@
 
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:intl/intl.dart';
 
 class NoticeBoardScreen extends StatefulWidget {
@@ -74,9 +75,12 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
             builder: (context, state) {
               if (state is NoticeModelLoading &&
                   _noticeModelCubit.noticeList.isEmpty) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+                return notificationShimmerLoading();
               }
+
+
+
+
               if (state is NoticeModelFailed) {
                 return Center(
                     child: Text(state.errorMsg,
@@ -96,11 +100,10 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
               }
 
               if (noticeList.isEmpty) {
-                return const Center(
-                    child: Text('Notice Not Found!',
-                        style: TextStyle(
-                            color: Colors.deepPurpleAccent)));
+                return emptyDataWidget('Notice Not Found!');
+
               }
+
 
               return ListView.builder(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -256,7 +259,8 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
       context: context,
       builder: (BuildContext context) {
         return Padding(
-          padding: EdgeInsets.all(10.w),
+          padding: EdgeInsets.all(30),
+
           child: AlertDialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

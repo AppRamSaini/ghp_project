@@ -1,4 +1,5 @@
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/view/resident/rent/property_detail_screen.dart';
 
 class BuyPropertyScreen extends StatefulWidget {
@@ -47,16 +48,9 @@ class _BuyPropertyScreenState extends State<BuyPropertyScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-            title: Text('Buy/Rent Property',
-                style: GoogleFonts.nunitoSans(
-                    textStyle: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(title: 'Buy/Rent Property'),
         body: Column(
           children: [
-            SizedBox(height: 10.h),
             Row(
               children: [
                 Expanded(
@@ -136,28 +130,19 @@ class _BuyPropertyScreenState extends State<BuyPropertyScreen> {
                   builder: (context, state) {
                     if (state is BuyRentPropertyLoading &&
                         _buyRentPropertyCubit.propertyList.isEmpty) {
-                      return const Center(
-                          child: CircularProgressIndicator.adaptive());
+                      return notificationShimmerLoading();
                     }
                     if (state is BuyRentPropertyFailed) {
-                      return Center(
-                          child: Text(state.errorMsg,
-                              style: const TextStyle(
-                                  color: Colors.deepPurpleAccent)));
+                      return emptyDataWidget(state.errorMsg);
                     }
                     if (state is BuyRentPropertyInternetError) {
-                      return Center(
-                          child: Text(state.errorMsg.toString(),
-                              style: const TextStyle(color: Colors.red)));
+                      return emptyDataWidget(state.errorMsg);
                     }
 
                     var properyListing = _buyRentPropertyCubit.propertyList;
 
                     if (properyListing.isEmpty) {
-                      return const Center(
-                          child: Text('Property Not Found!',
-                              style:
-                                  TextStyle(color: Colors.deepPurpleAccent)));
+                      return emptyDataWidget('Property Not Found!');
                     }
 
                     return ListView.builder(
@@ -266,8 +251,7 @@ class _BuyPropertyScreenState extends State<BuyPropertyScreen> {
                                                                     TextStyle(
                                                                   color: Colors
                                                                       .black,
-                                                                  fontSize:
-                                                                      12,
+                                                                  fontSize: 12,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,

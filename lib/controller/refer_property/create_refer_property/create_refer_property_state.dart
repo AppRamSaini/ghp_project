@@ -9,7 +9,10 @@ final class CreateReferPropertyLoading extends CreateReferPropertyState {}
 
 final class CreateReferPropertysuccessfully extends CreateReferPropertyState {}
 
-final class CreateReferPropertyFailed extends CreateReferPropertyState {}
+final class CreateReferPropertyFailed extends CreateReferPropertyState {
+  final String message;
+  CreateReferPropertyFailed({required this.message});
+}
 
 final class CreateReferPropertyInternetError extends CreateReferPropertyState {}
 
