@@ -341,7 +341,7 @@ class DashboardState extends State<Dashboard> {
                 setState(() => currentIndex = index);
               },
               children: [
-                HomeScreen(onChanged: onChanged),
+                ResidentHomePage(onChanged: onChanged),
                 const DocumentsScreen(),
                 DailyHelpListingHistoryResidentSide(),
                 SettingScreen()

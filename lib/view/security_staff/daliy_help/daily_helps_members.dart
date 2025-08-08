@@ -231,6 +231,7 @@ class _DailyHelpListingHistoryState extends State<DailyHelpListingHistory> {
                                     SizedBox(width: 10.w)
                                   ]),
                                   popMenusForStaff(
+                                      optionList: optionListForStaff,
                                       fromResidentPage: false,
                                       context: context,
                                       requestData: newHistoryLogs[index])
@@ -398,15 +399,19 @@ class _DailyHelpListingHistoryState extends State<DailyHelpListingHistory> {
   }
 }
 
-List<Map<String, dynamic>> optionList3 = [
+List<Map<String, dynamic>> optionListForStaff = [
   {"icon": Icons.visibility, "menu": "View Details", "menu_id": 0},
   {"icon": Icons.qr_code, "menu": "Scan By QR", "menu_id": 1},
   {"icon": Icons.scanner, "menu": "Scan By Manual", "menu_id": 2},
+];
+List<Map<String, dynamic>> optionListForResident = [
+  {"icon": Icons.visibility, "menu": "View Details", "menu_id": 0},
 ];
 
 Widget popMenusForStaff(
     {bool fromResidentPage = false,
     required BuildContext context,
+    required List<Map<String, dynamic>> optionList,
     required DailyHelp requestData}) {
   return Padding(
     padding: const EdgeInsets.only(right: 5),
@@ -422,7 +427,7 @@ Widget popMenusForStaff(
             color: Colors.deepPurpleAccent, size: 18.0),
         offset: const Offset(0, 50),
         itemBuilder: (BuildContext bc) {
-          return optionList3
+          return optionList
               .map(
                 (selectedOption) => PopupMenuItem(
                   padding: EdgeInsets.zero,

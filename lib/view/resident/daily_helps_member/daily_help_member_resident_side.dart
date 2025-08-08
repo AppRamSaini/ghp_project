@@ -215,6 +215,7 @@ class DailyHelpListingHistoryResidentSideState
                                     SizedBox(width: 10.w)
                                   ]),
                                   popMenusForStaff(
+                                      optionList: optionListForResident,
                                       fromResidentPage: true,
                                       context: context,
                                       requestData: newHistoryLogs[index])
