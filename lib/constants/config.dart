@@ -2,7 +2,6 @@ class Config {
   static const String baseURL =
       // 'https://dev-society.ghpjaipur.com/api/user/v1/'; // dev url
       'https://society.ghpjaipur.com/api/user/v1/'; // production url
-// 'https://ghp-society.laraveldevelopmentcompany.com/api/user/v1/'; // old url
 }
 
 /// new code
