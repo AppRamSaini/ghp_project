@@ -195,8 +195,6 @@ class _SlidersManagementState extends State<SlidersManagement> {
                     setState(() {
                       _currentPage = index;
                     });
-
-                    // ✅ Handle infinite loop jump
                     if (index == sliders.length - 1) {
                       Future.delayed(const Duration(milliseconds: 300), () {
                         _pageController.jumpToPage(1);

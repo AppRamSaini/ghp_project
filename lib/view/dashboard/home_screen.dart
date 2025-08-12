@@ -7,6 +7,7 @@ import 'package:ghp_society_management/controller/property_listing/property_list
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
 import 'package:ghp_society_management/view/dashboard/view_all_features.dart';
+import 'package:ghp_society_management/view/resident/bills/bill_screen.dart';
 import 'package:ghp_society_management/view/resident/bills/home_bill_section.dart';
 import 'package:ghp_society_management/view/resident/complaint/comlaint_page.dart';
 import 'package:ghp_society_management/view/resident/notice_board/notice_board_screen.dart';
@@ -271,10 +272,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       //   print("FCM Token: $token");
                       // }
 
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => MyBillsPage(types: 'all')));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => BillScreen()));
                     },
                     child: Image.asset('assets/images/pay_img.png')))),
         appBar: AppBar(
