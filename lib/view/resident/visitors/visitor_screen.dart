@@ -446,8 +446,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                             ),
                                           ],
                                         ),
-
-                                        /// Using Wrap ensures text wraps to new line if needed
                                         Wrap(children: [
                                           Text(
                                               'Visitors Types : ${visitors.typeOfVisitor}',
@@ -456,7 +454,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                                       color: Colors.black54,
                                                       fontSize: 12)))
                                         ]),
-
                                         Wrap(
                                           children: [
                                             Text(
@@ -567,6 +564,11 @@ void visitorsModelBottomSheet(
     context: buildContext,
     enableDrag: false,
     builder: (BuildContext _context) {
+      visitorsCheckIn() {
+        print("00000000000${visitors.lastCheckinDetail}");
+        return '';
+      }
+
       return Padding(
         padding: globalBottomPadding(_context),
         child: Container(
@@ -611,21 +613,29 @@ void visitorsModelBottomSheet(
                   leading: const Icon(Icons.block, color: Colors.red),
                   title:
                       Text(visitors.status == 'active' ? 'Block' : 'UnBlock')),
-              Divider(color: Colors.black45.withOpacity(0.1), height: 0),
-              ListTile(
-                  onTap: () {
-                    Navigator.pop(_context);
-                    visitorsDeletePermissionDialog(buildContext, () {
-                      Navigator.pop(buildContext);
-                      buildContext
-                          .read<DeleteVisitorCubit>()
-                          .deleteVisitorAPI(visitors.id.toString());
-                    });
-                  },
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                  leading: const Icon(Icons.delete, color: Colors.red),
-                  title: const Text('Delete')),
+              visitors.lastCheckinDetail.status.isEmpty
+                  ? Column(
+                      children: [
+                        Divider(
+                            color: Colors.black45.withOpacity(0.1), height: 0),
+                        ListTile(
+                            onTap: () {
+                              Navigator.pop(_context);
+                              visitorsDeletePermissionDialog(buildContext, () {
+                                Navigator.pop(buildContext);
+                                buildContext
+                                    .read<DeleteVisitorCubit>()
+                                    .deleteVisitorAPI(visitors.id.toString());
+                              });
+                            },
+                            contentPadding: EdgeInsets.zero,
+                            dense: true,
+                            leading:
+                                const Icon(Icons.delete, color: Colors.red),
+                            title: const Text('Delete')),
+                      ],
+                    )
+                  : SizedBox(),
               Divider(color: Colors.black45.withOpacity(0.1), height: 0),
               ListTile(
                   onTap: () {

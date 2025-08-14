@@ -6,6 +6,7 @@ import 'package:ghp_society_management/controller/my_bills/my_bills_cubit.dart';
 import 'package:ghp_society_management/controller/property_listing/property_listing_cubit.dart';
 import 'package:ghp_society_management/controller/user_profile/user_profile_cubit.dart';
 import 'package:ghp_society_management/model/property_listing_model.dart';
+import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ManageProperty extends StatefulWidget {
@@ -44,75 +45,86 @@ class _ManagePropertyState extends State<ManageProperty> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PropertyListingCubit, PropertyListingState>(
-      bloc: _propertyListingCubit,
-      builder: (context, state) {
-        if (state is PropertyListingLoading) {
-          return CircleAvatar(
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<PropertyListingCubit, PropertyListingState>(
+          listener: (context, state) {
+            if (state is UnAuthenticatedUser) {
+              sessionExpiredDialog(context);
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<PropertyListingCubit, PropertyListingState>(
+        bloc: _propertyListingCubit,
+        builder: (context, state) {
+          if (state is PropertyListingLoading) {
+            return CircleAvatar(
+                backgroundColor: AppTheme.white.withOpacity(0.5),
+                child: Icon(Icons.keyboard_arrow_down_sharp,
+                    size: 30, color: AppTheme.resolvedButtonColor));
+          } else if (state is PropertyListingError) {
+            return SizedBox();
+          } else if (state is PropertyListingLoaded) {
+            final propData = state.propertyList.data ?? [];
+            if (propData.isEmpty) {
+              return Center(
+                  child: CircleAvatar(
+                      backgroundColor: AppTheme.white.withOpacity(0.5),
+                      child: Icon(Icons.keyboard_arrow_down_sharp,
+                          size: 30, color: AppTheme.resolvedButtonColor)));
+            }
+
+            final storedPropId =
+                LocalStorage.localStorage.getString('property_id');
+
+            selectedValue ??= propData.firstWhere(
+              (element) => element.id.toString() == storedPropId,
+              orElse: () => propData.first,
+            );
+
+            if (storedPropId == null || storedPropId.isEmpty) {
+              LocalStorage.localStorage
+                  .setString('property_id', selectedValue!.id.toString());
+              context.read<UserProfileCubit>().fetchUserProfile();
+              context
+                  .read<MyBillsCubit>()
+                  .fetchMyBills(context: context, billTypes: "all");
+            }
+
+            return CircleAvatar(
               backgroundColor: AppTheme.white.withOpacity(0.5),
-              child:
-                  Icon(Icons.more_horiz, color: AppTheme.resolvedButtonColor));
-        } else if (state is PropertyListingError) {
-          return SizedBox();
-        } else if (state is PropertyListingLoaded) {
-          final propData = state.propertyList.data ?? [];
-          if (propData.isEmpty) {
-            return Center(
-                child: CircleAvatar(
-                    backgroundColor: AppTheme.white.withOpacity(0.5),
-                    child: Icon(Icons.more_horiz,
-                        color: AppTheme.resolvedButtonColor)));
-          }
-
-          final storedPropId =
-              LocalStorage.localStorage.getString('property_id');
-
-          selectedValue ??= propData.firstWhere(
-            (element) => element.id.toString() == storedPropId,
-            orElse: () => propData.first,
-          );
-
-          if (storedPropId == null || storedPropId.isEmpty) {
-            LocalStorage.localStorage
-                .setString('property_id', selectedValue!.id.toString());
-            context.read<UserProfileCubit>().fetchUserProfile();
-            context
-                .read<MyBillsCubit>()
-                .fetchMyBills(context: context, billTypes: "all");
-          }
-
-          return CircleAvatar(
-            backgroundColor: AppTheme.white.withOpacity(0.5),
-            child: PopupMenuButton<PropertyList>(
-              initialValue:
-                  propData.contains(selectedValue) ? selectedValue : null,
-              onSelected: _onPropertyChanged,
-              offset: Offset(0, 40),
-              itemBuilder: (context) {
-                return propData.map((item) {
-                  return PopupMenuItem<PropertyList>(
-                    value: item,
-                    child: Text(
-                      "${item.name ?? ''} - (${item.aprtNo})",
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+              child: PopupMenuButton<PropertyList>(
+                initialValue:
+                    propData.contains(selectedValue) ? selectedValue : null,
+                onSelected: _onPropertyChanged,
+                offset: Offset(0, 40),
+                itemBuilder: (context) {
+                  return propData.map((item) {
+                    return PopupMenuItem<PropertyList>(
+                      value: item,
+                      child: Text(
+                        "Property : ${item.aprtNo}",
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  );
-                }).toList();
-              },
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5)),
-              color: AppTheme.white,
-              child:
-                  Icon(Icons.more_horiz, color: AppTheme.resolvedButtonColor),
-            ),
-          );
-        } else {
-          return const SizedBox();
-        }
-      },
+                    );
+                  }).toList();
+                },
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5)),
+                color: AppTheme.white,
+                child: Icon(Icons.keyboard_arrow_down_sharp,
+                    size: 30, color: AppTheme.resolvedButtonColor),
+              ),
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
+      ),
     );
   }
 }

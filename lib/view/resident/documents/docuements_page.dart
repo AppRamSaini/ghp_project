@@ -36,6 +36,13 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             }
           },
         ),
+        BlocListener<DocumentCountCubit, DocumentCountState>(
+          listener: (context, state) async {
+            if (state is UnAuthenticatedUser) {
+              sessionExpiredDialog(context);
+            }
+          },
+        ),
         BlocListener<UploadDocumentCubit, UploadDocumentState>(
           listener: (context, state) async {
             if (state is UploadDocumentSuccessfully) {

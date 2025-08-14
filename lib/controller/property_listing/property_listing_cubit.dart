@@ -22,6 +22,7 @@ class PropertyListingCubit extends Cubit<PropertyListingState> {
       final response =
           await _apiManager.getRequest("${Routes.propertyListing}/$societyId");
 
+      print("------->>>>${response.statusCode}");
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         final propertyData = PropertyListingModel.fromJson(jsonResponse);
@@ -34,6 +35,8 @@ class PropertyListingCubit extends Cubit<PropertyListingState> {
           emit(PropertyListingError(
               errorMsg: propertyData.message ?? 'Unknown error occurred'));
         }
+      } else if (response.statusCode == 401) {
+        emit(UnAuthenticatedUser());
       } else {
         emit(PropertyListingError(
             errorMsg: "Something went wrong! [${response.statusCode}]"));

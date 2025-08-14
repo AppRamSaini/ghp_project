@@ -51,8 +51,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     phoneController.text =
         userProfileCubit.userProfile.first.data!.user!.phone.toString();
     emailController.text =
-        userProfileCubit.userProfile.first.data!.user!.email.toString();
-
+        userProfileCubit.userProfile.first.data!.user!.email ?? '';
     imgFile = userProfileCubit.userProfile.first.data!.user!.image.toString();
     setState(() {});
   }
@@ -92,15 +91,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       },
       child: Scaffold(
         appBar: appbarWidget(title: 'Edit Profile'),
-        body:
-
-
-
-        Column(
+        body: Column(
           children: [
             Expanded(
-              child: GestureDetector
-                (onTap: ()=>FocusScope.of(context).unfocus(),
+              child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
                 child: Form(
                   key: formkey,
                   child: SingleChildScrollView(
@@ -122,19 +117,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         ? Image.file(
                                             imageFile!,
                                             fit: BoxFit.cover,
-                                            errorBuilder: (_, __, ___) => Image.asset(
+                                            errorBuilder: (_, __, ___) =>
+                                                Image.asset(
                                               'assets/images/default.jpg',
                                               fit: BoxFit.cover,
                                             ),
                                           )
-                                        : (imgFile != null && imgFile.isNotEmpty)
+                                        : (imgFile != null &&
+                                                imgFile.isNotEmpty)
                                             ? FadeInImage(
                                                 fit: BoxFit.cover,
                                                 placeholder: AssetImage(
                                                     'assets/images/default.jpg'),
                                                 image: NetworkImage(imgFile),
-                                                imageErrorBuilder: (_, __, ___) =>
-                                                    Image.asset(
+                                                imageErrorBuilder:
+                                                    (_, __, ___) => Image.asset(
                                                   'assets/images/default.jpg',
                                                   fit: BoxFit.cover,
                                                 ),
@@ -153,10 +150,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       uploadFileWidget(
                                         context: context,
                                         fromGallery: () async {
-                                          pickAndCropImage(source: ImageSource.gallery);
+                                          pickAndCropImage(
+                                              source: ImageSource.gallery);
                                         },
                                         fromCamera: () async {
-                                          pickAndCropImage(source: ImageSource.camera);
+                                          pickAndCropImage(
+                                              source: ImageSource.camera);
                                         },
                                       );
                                     },
@@ -240,7 +239,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           TextFormField(
                             controller: phoneController,
                             maxLength: 10,
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             style: GoogleFonts.nunitoSans(
                                 color: AppTheme.backgroundColor,
                                 fontSize: 15.sp,
@@ -256,7 +257,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               return null;
                             },
                             decoration: InputDecoration(
-
                               counter: const SizedBox(),
                               hintText: 'Enter number',
                               contentPadding: EdgeInsets.only(left: 8.w),
@@ -350,7 +350,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                           ),
                           SizedBox(height: 50.h),
-
                         ],
                       ),
                     ),
@@ -368,7 +367,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       imageFile);
                 }
               },
-              txt:"Save Changes",
+              txt: "Save Changes",
             )
           ],
         ),
@@ -380,32 +379,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     XFile? pickedImage = await picker.pickImage(source: source);
     if (pickedImage != null) {
       CroppedFile? croppedImage = await ImageCropper().cropImage(
-        sourcePath: pickedImage!.path,
-        aspectRatio: const CropAspectRatio(
-            ratioX: 1, ratioY: 1), // Set the aspect ratio for a square image
-        uiSettings: [
-          AndroidUiSettings(
-              toolbarTitle: 'Cropper',
-              toolbarColor: AppTheme.backgroundColor,
-              toolbarWidgetColor: Colors.white,
-              aspectRatioPresets: [
-                CropAspectRatioPreset.original,
-                CropAspectRatioPreset.square,
-                CropAspectRatioPreset.ratio4x3
-              ],
-              lockAspectRatio: false,
-              hideBottomControls: true),
-          IOSUiSettings(
-              title: 'Cropper',
-              aspectRatioPresets: [
-                CropAspectRatioPreset.original,
-                CropAspectRatioPreset.square,
-                CropAspectRatioPreset.ratio4x3,
-              ],
-              aspectRatioLockEnabled: true,
-              resetButtonHidden: true)
-        ],
-      );
+          sourcePath: pickedImage!.path,
+          aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+          uiSettings: uiSettings);
 
       if (croppedImage != null) {
         imageFile = File(croppedImage.path);
@@ -414,3 +390,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 }
+
+/// for global image cropper
+List<PlatformUiSettings>? uiSettings = [
+  AndroidUiSettings(
+    toolbarTitle: 'Image Cropper',
+    toolbarColor: AppTheme.backgroundColor,
+    toolbarWidgetColor: Colors.white,
+    initAspectRatio: CropAspectRatioPreset.original,
+    lockAspectRatio: false,
+    hideBottomControls: false,
+    cropFrameStrokeWidth: 2,
+    cropGridStrokeWidth: 1,
+    showCropGrid: true,
+  ),
+  IOSUiSettings(
+    title: 'Image Cropper',
+    aspectRatioPresets: [
+      CropAspectRatioPreset.original,
+      CropAspectRatioPreset.square,
+      CropAspectRatioPreset.ratio4x3
+    ],
+    aspectRatioLockEnabled: true,
+    resetButtonHidden: false,
+    rotateButtonsHidden: false,
+  )
+];

@@ -244,7 +244,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
             padding: EdgeInsets.symmetric(horizontal: size.width * 0.035),
             child: Column(
               children: [
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
                 MasonryGridView.count(
                   crossAxisCount: 4,
                   mainAxisSpacing: 10,
@@ -293,7 +293,6 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                     );
                   },
                 ),
-                SizedBox(height: size.height * 0.02),
                 const Expanded(
                   child: VisitorsTabBar(),
                 )

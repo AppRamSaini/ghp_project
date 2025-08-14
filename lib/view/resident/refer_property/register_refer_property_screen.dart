@@ -72,6 +72,7 @@ class _RegisterReferPropertyScreenState
   }
 
   ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -150,7 +151,6 @@ class _RegisterReferPropertyScreenState
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: TextFormField(
-                            onTap: () => scrollManagement(_scrollController),
                             textInputAction: TextInputAction.done,
                             controller: propertyName,
                             style: GoogleFonts.nunitoSans(

@@ -1,4 +1,3 @@
-import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/edit_profile_screen.dart';
@@ -12,7 +11,6 @@ import 'package:ghp_society_management/view/resident/setting/notification_screen
 import 'package:ghp_society_management/view/resident/setting/privacy_policy.dart';
 import 'package:ghp_society_management/view/resident/setting/term_of_use.dart';
 import 'package:ghp_society_management/view/security_staff/daliy_help/daily_helps_members.dart';
-import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   bool forStaffSide;
@@ -127,32 +125,9 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LogoutCubit, LogoutState>(
-      listener: (context, state) async {
-        if (state is LogoutLoading) {
-          showLoadingDialog(context, (ctx) {
-            dialogueContext = ctx;
-          });
-        } else if (state is LogoutSuccessfully) {
-          snackBar(context, 'User logout successfully', Icons.done,
-              AppTheme.guestColor);
-
-          Navigator.of(dialogueContext).pop();
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (builder) => const SelectSocietyScreen()),
-              (route) => false);
-        } else if (state is LogoutFailed) {
-          snackBar(
-              context, 'User logout failed', Icons.warning, AppTheme.redColor);
-
-          Navigator.of(dialogueContext).pop();
-        } else if (state is LogoutInternetError) {
-          snackBar(context, 'Internet connection failed', Icons.wifi_off,
-              AppTheme.redColor);
-
-          Navigator.of(dialogueContext).pop();
-        } else if (state is LogoutSessionError) {
+    return BlocListener<UserProfileCubit, UserProfileState>(
+      listener: (context, state) {
+        if (state is UserProfileLogout) {
           sessionExpiredDialog(context);
         }
       },

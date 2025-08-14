@@ -33,9 +33,9 @@ class DailyHelpListingHistoryResidentSideState
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<NoticeModelCubit, NoticeModelState>(
+    return BlocListener<DailyHelpListingCubit, DailyHelpListingState>(
       listener: (context, state) {
-        if (state is NoticeModelLogout) {
+        if (state is UnAuthenticatedUser) {
           sessionExpiredDialog(context);
         }
       },

@@ -28,6 +28,7 @@ class _SendDocumentsRequestScreeState extends State<SendDocumentsRequestScree> {
   late BuildContext dialogueContext;
 
   ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SendDocsRequestCubit, SendDocsRequestState>(
@@ -76,7 +77,6 @@ class _SendDocumentsRequestScreeState extends State<SendDocumentsRequestScree> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: TextFormField(
-                            onTap: () => scrollManagement(_scrollController),
                             textInputAction: TextInputAction.done,
                             controller: documentName,
                             style: GoogleFonts.nunitoSans(
@@ -214,7 +214,6 @@ class _SendDocumentsRequestScreeState extends State<SendDocumentsRequestScree> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: TextFormField(
-                            onTap: () => scrollManagement(_scrollController),
                             textInputAction: TextInputAction.done,
                             controller: description,
                             maxLines: 5,

@@ -178,7 +178,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                 radius: 24,
                                 child: otherMember['userImage'] == null ||
                                         otherMember['userImage'] == ''
-                                    ? null
+                                    ? Icon(Icons.person,
+                                        color: AppTheme.remainingColor)
                                     : ClipOval(
                                         child: FadeInImage(
                                         placeholder:

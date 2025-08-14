@@ -41,28 +41,31 @@ class _BuyPropertyDetailScreenState extends State<BuyPropertyDetailScreen> {
               builder: (context, state) {
                 if (state is PropertyDetailsLoaded) {
                   var propertyDetails = state.detailsList.first;
-                  return Container(
-                    color: Colors.white,
-                    child: GestureDetector(
-                      onTap: () =>
-                          phoneCallLauncher(propertyDetails.phone.toString()),
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                        width: double.infinity,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: AppTheme.primaryColor),
-                        child: Center(
-                          child: Text('Contact Owner ',
-                              style: GoogleFonts.nunitoSans(
-                                textStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              )),
+                  return Padding(
+                    padding: globalBottomPadding(context),
+                    child: Container(
+                      color: Colors.white,
+                      child: GestureDetector(
+                        onTap: () =>
+                            phoneCallLauncher(propertyDetails.phone.toString()),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          width: double.infinity,
+                          height: 50,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: AppTheme.primaryColor),
+                          child: Center(
+                            child: Text('Contact Owner ',
+                                style: GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                )),
+                          ),
                         ),
                       ),
                     ),

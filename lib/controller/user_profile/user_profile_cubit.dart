@@ -15,11 +15,15 @@ class UserProfileCubit extends Cubit<UserProfileState> {
 
   ApiManager apiManager = ApiManager();
   List<UserProfileModel> userProfile = [];
+
   fetchUserProfile({String userId = ''}) async {
     emit(UserProfileLoading());
     try {
-      var responseData = await apiManager
-          .getRequest("${Config.baseURL + Routes.userProfile}/$userId",usePropertyID: true);
+      var responseData = await apiManager.getRequest(
+          "${Config.baseURL + Routes.userProfile}/$userId",
+          usePropertyID: true);
+
+      print("--------->>>${responseData.statusCode}");
 
       if (responseData.statusCode == 200) {
         var decodedList =

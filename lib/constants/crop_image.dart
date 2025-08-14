@@ -5,38 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
+import 'package:ghp_society_management/view/resident/resident_profile/edit_profile_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 /// crop image
 Future cropImage(source) async {
   CroppedFile? croppedFile = await ImageCropper().cropImage(
-    sourcePath: source,
-    aspectRatio: const CropAspectRatio(
-        ratioX: 1, ratioY: 1), // Set the aspect ratio for a square image
-    uiSettings: [
-      AndroidUiSettings(
-          toolbarTitle: 'Cropper',
-          toolbarColor: AppTheme.backgroundColor,
-          toolbarWidgetColor: Colors.white,
-          aspectRatioPresets: [
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.square,
-            CropAspectRatioPreset.ratio4x3
-          ],
-          lockAspectRatio: false,
-          hideBottomControls: true),
-      IOSUiSettings(
-          title: 'Cropper',
-          aspectRatioPresets: [
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.square,
-            CropAspectRatioPreset.ratio4x3,
-          ],
-          aspectRatioLockEnabled: true,
-          resetButtonHidden: true)
-    ],
-  );
+      sourcePath: source,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      uiSettings: uiSettings);
 
   return croppedFile;
 }

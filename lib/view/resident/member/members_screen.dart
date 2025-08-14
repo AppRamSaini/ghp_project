@@ -10,7 +10,6 @@ import 'package:ghp_society_management/controller/members/members_cubit.dart';
 import 'package:ghp_society_management/controller/members_element/members_element_cubit.dart';
 import 'package:ghp_society_management/model/members_element_model.dart';
 import 'package:ghp_society_management/model/members_model.dart';
-import 'package:ghp_society_management/model/user_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MemberScreen extends StatefulWidget {
@@ -31,7 +30,6 @@ class _MemberScreenState extends State<MemberScreen> {
     {"type": "Staff", "value": "guard"},
   ];
 
-  int _selectedIndex = 0;
   bool _searchBarOpen = false;
 
   String? _userId;
@@ -40,7 +38,6 @@ class _MemberScreenState extends State<MemberScreen> {
   String? _floorId;
 
   List<Block> _blocks = [];
-  UserModel? _userList;
 
   @override
   void initState() {
@@ -81,9 +78,9 @@ class _MemberScreenState extends State<MemberScreen> {
       _textController.clear();
     });
 
-    if (_blockName != null) {
-      _membersCubit.fetchMembers(_blockName!, _floorId ?? '', '');
-    }
+    // if (_blockName != null) {
+    //   _membersCubit.fetchMembers(_blockName!, _floorId ?? '', '');
+    // }
   }
 
   void _onBlockChanged(String? newBlock) {
@@ -112,7 +109,6 @@ class _MemberScreenState extends State<MemberScreen> {
         onExpansionComplete: _onSearchBarExpanded,
         onCollapseComplete: _onSearchBarCollapsed,
         onPressButton: (_) {
-          _onRefresh();
           setState(() => _searchBarOpen = true);
         },
         onChanged: (_) => _onSearch(_textController.text),
@@ -141,9 +137,9 @@ class _MemberScreenState extends State<MemberScreen> {
                   _fetchMembers(_blockName!);
                 }
 
-                if (_blockName != null) {
-                  _fetchMembers(_blockName!);
-                }
+                // if (_blockName != null) {
+                //   _fetchMembers(_blockName!);
+                // }
               }
 
               return BlocBuilder<MembersCubit, MembersState>(
@@ -432,9 +428,8 @@ class _MemberScreenState extends State<MemberScreen> {
       margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: AppTheme.remainingColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(6),
-      ),
+          color: AppTheme.remainingColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(6)),
       child: Text("VACANT",
           style: TextStyle(color: AppTheme.remainingColor, fontSize: 20)),
     );
