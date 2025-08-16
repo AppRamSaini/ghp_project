@@ -1,24 +1,26 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:bloc/bloc.dart';
+
 import 'package:ghp_society_management/constants/config.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/model/select_society_model.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
-import 'package:meta/meta.dart';
+
 part 'select_society_state.dart';
 
 class SelectSocietyCubit extends Cubit<SelectSocietyState> {
   SelectSocietyCubit() : super(SelectSocietyInitial());
-  ApiManager apiManager = ApiManager();
+
+  final ApiManager apiManager = ApiManager();
   List<SocietyList> societyList = [];
 
   int currentPage = 1;
   bool isLoadingMore = false;
   bool hasMore = true;
 
-  fetchSocietyList({bool loadMore = false}) async {
-    if (isLoadingMore || !hasMore) {
+  Future<void> fetchSocietyList({bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMore || !hasMore) return;
       isLoadingMore = true;
       emit(SelectSocietyLoadMore());
     } else {
@@ -28,43 +30,49 @@ class SelectSocietyCubit extends Cubit<SelectSocietyState> {
     }
 
     try {
-      var response =
-          await apiManager.getRequest(Config.baseURL + Routes.society);
+      final response = await apiManager.getRequest(Routes.society);
+      final resData = json.decode(response.body.toString());
 
-      var resData = json.decode(response.body.toString());
-      if (response.statusCode == 200) {
-        if (resData['status']) {
-          var newSocietyList = (resData['data']['societies']['data'] as List)
-              .map((e) => SocietyList.fromJson(e))
-              .toList();
+      if (response.statusCode == 200 && resData['status'] == true) {
+        final societiesData = resData['data']?['societies']?['data'];
 
-          // Update pagination data
-          currentPage = resData['data']['societies']['current_page'];
-          int lastPage = resData['data']['societies']['last_page'];
-          hasMore = currentPage < lastPage;
+        currentPage = resData['data']['societies']['current_page'] ?? 1;
+        final lastPage = resData['data']['societies']['last_page'] ?? 1;
+        hasMore = currentPage < lastPage;
+
+        if (societiesData is List) {
+          final newSocieties =
+              societiesData.map((e) => SocietyList.fromJson(e)).toList();
+
           if (loadMore) {
-            societyList.addAll(newSocietyList);
+            societyList.addAll(newSocieties);
           } else {
-            societyList = newSocietyList;
+            societyList = newSocieties;
           }
           emit(SelectSocietyLoaded(selectedSociety: societyList));
         } else {
-          emit(SelectSocietyFailed(errorMsg: resData['message'].toString()));
+          emit(SelectSocietyFailed(errorMsg: "Invalid data format received."));
         }
       } else {
-        emit(SelectSocietyFailed(errorMsg: resData['message'].toString()));
+        emit(SelectSocietyFailed(
+            errorMsg:
+                resData['message']?.toString() ?? "Something went wrong"));
       }
     } on SocketException {
       emit(SelectSocietyInternetError(errorMsg: "Internet Connection Error!"));
     } catch (e) {
-      emit(SelectSocietyFailed(errorMsg: "Error ${e.toString()}"));
+      emit(SelectSocietyFailed(errorMsg: "Error: ${e.toString()}"));
     } finally {
       isLoadingMore = false;
     }
   }
 
-  /// search society
-  searchSociety(String query) {
+  void searchSociety(String query) {
+    if (query.trim().isEmpty) {
+      emit(SelectSocietyLoaded(selectedSociety: societyList));
+      return;
+    }
+
     final List<SocietyList> filteredList = societyList.where((event) {
       return event.name.toString().toLowerCase().contains(query.toLowerCase());
     }).toList();
@@ -74,10 +82,10 @@ class SelectSocietyCubit extends Cubit<SelectSocietyState> {
     emit(SelectSocietySearchedLoaded(selectedSociety: filteredList));
   }
 
-  /// load more data
-  void loadMoreNotice() {
-    if (state is NoticeModelLoaded && hasMore) {
-      fetchSocietyList(loadMore: true); // Load more bills
+  void loadMoreSocieties() {
+    if (state is SelectSocietyLoaded && hasMore && !isLoadingMore) {
+      currentPage++;
+      fetchSocietyList(loadMore: true);
     }
   }
 }

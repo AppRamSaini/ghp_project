@@ -1,12 +1,14 @@
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/notification/notification_listing/notification_list_cubit.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
+import 'package:ghp_society_management/view/maintenance_staff/bottom_nav_screen.dart';
 import 'package:ghp_society_management/view/security_staff/dashboard/bottom_navigation.dart';
-import 'package:ghp_society_management/view/staff/bottom_nav_screen.dart';
 import 'package:intl/intl.dart';
 
 class NotificationListing extends StatefulWidget {
   final int index;
+
   const NotificationListing({super.key, required this.index});
 
   @override
@@ -43,11 +45,7 @@ class _NotificationListingState extends State<NotificationListing> {
   }
 
   Future<bool> onBack() async {
-    List pagesList =  [
-      Dashboard(),
-      SecurityGuardDashboard(),
-      StaffDashboard()
-    ];
+    List pagesList = [Dashboard(), SecurityGuardDashboard(), StaffDashboard()];
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => pagesList[widget.index]),
@@ -61,36 +59,23 @@ class _NotificationListingState extends State<NotificationListing> {
     return WillPopScope(
       onWillPop: onBack,
       child: Scaffold(
-        appBar: AppBar(title: Text('Notifications',
-            style: TextStyle(
-                color: Colors.black,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600))),
+        appBar: appbarWidget(title: 'Notifications'),
         body: RefreshIndicator(
           onRefresh: onRefresh,
-          child: BlocBuilder<NotificationListingCubit,
-              NotificationListingState>(
+          child:
+              BlocBuilder<NotificationListingCubit, NotificationListingState>(
             bloc: _notificationListingCubit,
             builder: (context, state) {
-              if (state is NotificationListingLoading &&
-                  _notificationListingCubit
-                      .notificationList.isEmpty) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+              if (state is NotificationListingLoading) {
+                return notificationShimmerLoading();
               }
 
               if (state is NotificationListingFailed) {
-                return Center(
-                    child: Text(state.errorMsg,
-                        style: const TextStyle(
-                            color: Colors.deepPurpleAccent)));
+                return emptyDataWidget(state.errorMsg);
               }
 
               if (state is NotificationListingEmpty) {
-                return const Center(
-                    child: Text("No notifications found",
-                        style: TextStyle(
-                            color: Colors.deepPurpleAccent)));
+                return emptyDataWidget("No notifications found");
               }
               if (state is NotificationListingInternetError) {
                 return Center(
@@ -102,8 +87,7 @@ class _NotificationListingState extends State<NotificationListing> {
                 _notificationListingCubit.readNotifications();
               }
 
-              var documentsList =
-                  _notificationListingCubit.notificationList;
+              var documentsList = _notificationListingCubit.notificationList;
               return ListView.builder(
                 controller: _scrollController,
                 itemCount: documentsList.length + 1,
@@ -114,32 +98,27 @@ class _NotificationListingState extends State<NotificationListing> {
                             is NotificationListingLoadingMore
                         ? const Padding(
                             padding: EdgeInsets.all(16.0),
-                            child: Center(
-                                child: CircularProgressIndicator()))
+                            child: Center(child: CircularProgressIndicator()))
                         : const SizedBox.shrink();
                   }
 
-                  String formattedDate =
-                      DateFormat('dd MMM yyyy hh:mm a')
-                          .format(documentsList[index].createdAt!);
+                  String formattedDate = DateFormat('dd MMM yyyy hh:mm a')
+                      .format(documentsList[index].createdAt!);
 
                   return Padding(
                     padding: const EdgeInsets.all(12),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          border:
-                              Border.all(color: Colors.grey[300]!)),
+                          border: Border.all(color: Colors.grey[300]!)),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(children: [
                               CircleAvatar(
-                                  child: Image.asset(
-                                      "assets/images/bell.png",
+                                  child: Image.asset("assets/images/bell.png",
                                       color: Colors.deepPurpleAccent,
                                       height: 22.h)),
                               SizedBox(width: 10.w),
@@ -157,8 +136,7 @@ class _NotificationListingState extends State<NotificationListing> {
                                             textStyle: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 14,
-                                                fontWeight: FontWeight
-                                                    .w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(formattedDate,
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(

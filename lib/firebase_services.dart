@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
@@ -9,14 +10,11 @@ import 'package:ghp_society_management/view/resident/visitors/incomming_request.
 import 'package:vibration/vibration.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
-
-
-
+    FlutterLocalNotificationsPlugin();
 
 Future<void> setupLocalNotifications() async {
   const AndroidInitializationSettings androidInitSettings =
-  AndroidInitializationSettings('@mipmap/ic_launcher');
+      AndroidInitializationSettings('@mipmap/ic_launcher');
 
   final InitializationSettings initSettings = InitializationSettings(
     android: androidInitSettings,
@@ -24,11 +22,6 @@ Future<void> setupLocalNotifications() async {
 
   await flutterLocalNotificationsPlugin.initialize(initSettings);
 }
-
-
-
-
-
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 // FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -53,15 +46,24 @@ class FirebaseNotificationService {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       // Foreground
-      FirebaseMessaging.onMessage
-          .listen((message) => _handleMessage(message, isForeground: true));
+      FirebaseMessaging.onMessage.listen((message) {
+        print('------->>>>>Foreground message');
+
+        _handleMessage(message, isForeground: true);
+      });
 
       // Background - tapped from system tray
-      FirebaseMessaging.onMessageOpenedApp
-          .listen((message) => _handleMessage(message, isForeground: false));
+      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        print('------->>>>> Background - tapped from system tray');
+
+        _handleMessage(message, isForeground: false);
+      });
 
       // Terminated - first time app opened via notification
       FirebaseMessaging.instance.getInitialMessage().then((message) {
+        print(
+            '------->>>>>Terminated - first time app opened via notification');
+
         if (message != null) {
           _handleMessage(message, isForeground: false, fromTerminated: true);
         }
@@ -73,6 +75,8 @@ class FirebaseNotificationService {
       {bool isForeground = false, bool fromTerminated = false}) {
     final data = message.data;
     final type = data['type'] ?? '';
+
+    print('------------------------------>>>>>>>$data');
 
     if (type == 'incoming_request') {
       LocalStorage.localStorage.setString("visitor_id", data['visitor_id']);
@@ -175,20 +179,20 @@ class FirebaseNotificationService {
     flutterLocalNotificationsPlugin.initialize(initSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse response) async {
-          if (response.actionId == 'ALLOW_ACTION') {
-            _handleApiCall('allowed');
-          } else if (response.actionId == 'DECLINE_ACTION') {
-            _handleApiCall('not_allowed');
-          }
-          _stopVibrationAndRingtone();
-        });
+      if (response.actionId == 'ALLOW_ACTION') {
+        _handleApiCall('allowed');
+      } else if (response.actionId == 'DECLINE_ACTION') {
+        _handleApiCall('not_allowed');
+      }
+      _stopVibrationAndRingtone();
+    });
   }
 
   /// API Call for Visitor Approval
   static void _handleApiCall(String status) async {
     try {
       final visitorId =
-      LocalStorage.localStorage.getString("visitor_id").toString();
+          LocalStorage.localStorage.getString("visitor_id").toString();
       final data = {"visitor_id": visitorId, "status": status};
 
       navigatorKey.currentState?.context
@@ -198,9 +202,4 @@ class FirebaseNotificationService {
       print("API Error: $e");
     }
   }
-
-
-
-
-
 }

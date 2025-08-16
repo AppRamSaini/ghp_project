@@ -1,5 +1,6 @@
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/rent_or_sell_property/delete_property/delete_property_cubit.dart';
 import 'package:ghp_society_management/model/buy_or_rent_property_model.dart';
 import 'package:ghp_society_management/view/resident/rent/property_detail_screen.dart';
@@ -83,16 +84,9 @@ class _ManagePropertyScreenState extends State<ManagePropertyScreen> {
         )
       ],
       child: Scaffold(
-        appBar: AppBar(
-            title: Text('View/Manage Existing Property',
-                style: GoogleFonts.nunitoSans(
-                    textStyle: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(title: 'View/Manage Existing Property'),
         body: Column(
           children: [
-            SizedBox(height: 10.h),
             Row(
               children: [
                 Expanded(
@@ -169,16 +163,11 @@ class _ManagePropertyScreenState extends State<ManagePropertyScreen> {
               child: BlocBuilder<BuyRentPropertyCubit, BuyRentPropertyState>(
                   bloc: _buyRentPropertyCubit,
                   builder: (context, state) {
-                    if (state is BuyRentPropertyLoading &&
-                        _buyRentPropertyCubit.propertyList.isEmpty) {
-                      return const Center(
-                          child: CircularProgressIndicator.adaptive());
+                    if (state is BuyRentPropertyLoading) {
+                      return notificationShimmerLoading();
                     }
                     if (state is BuyRentPropertyFailed) {
-                      return Center(
-                          child: Text(state.errorMsg,
-                              style: const TextStyle(
-                                  color: Colors.deepPurpleAccent)));
+                      return emptyDataWidget(state.errorMsg);
                     }
                     if (state is BuyRentPropertyInternetError) {
                       return Center(
@@ -189,10 +178,7 @@ class _ManagePropertyScreenState extends State<ManagePropertyScreen> {
                     var properyListing = _buyRentPropertyCubit.propertyList;
 
                     if (properyListing.isEmpty) {
-                      return const Center(
-                          child: Text('Property Not Found!',
-                              style:
-                                  TextStyle(color: Colors.deepPurpleAccent)));
+                      return emptyDataWidget('Property Not Found!');
                     }
 
                     return ListView.builder(
@@ -256,81 +242,110 @@ class _ManagePropertyScreenState extends State<ManagePropertyScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                    capitalizeWords(propertyList
-                                                        .unitType
-                                                        .toString()),
-                                                    style: GoogleFonts.ptSans(
-                                                      textStyle: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    )),
-                                                SizedBox(height: 5.h),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                        'TOWER : ${propertyList.blockName.toString()}   |   FLOOR :  ${propertyList.floor.toString()}',
-                                                        style:
-                                                            GoogleFonts.ptSans(
-                                                          textStyle: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w500,
+                                            Expanded(
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                          capitalizeWords(
+                                                              propertyList
+                                                                  .unitType
+                                                                  .toString()),
+                                                          style: GoogleFonts
+                                                              .ptSans(
+                                                            textStyle:
+                                                                TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                          )),
+                                                      SizedBox(height: 5.h),
+                                                      Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Image.asset(
+                                                              ImageAssets
+                                                                  .bedImage,
+                                                              height: 20.h),
+                                                          const SizedBox(
+                                                              width: 8),
+                                                          Text(
+                                                              "${propertyList.bhk.toString()} BHK",
+                                                              style: GoogleFonts
+                                                                  .ptSans(
+                                                                textStyle:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              )),
+                                                          const SizedBox(
+                                                              width: 8),
+                                                          Flexible(
+                                                            child: Text(
+                                                                selectedValue ==
+                                                                        0
+                                                                    ? '₹${double.parse(propertyList.rentPerMonth.toString()).toInt()}/month'
+                                                                    : '₹${double.parse(propertyList.housePrice.toString()).toInt()}/month',
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                )),
                                                           ),
-                                                        )),
-                                                  ],
-                                                ),
-                                              ],
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  actionMenuButtons(
+                                                      options: optionsList,
+                                                      propertyList:
+                                                          propertyList,
+                                                      context: context)
+                                                ],
+                                              ),
                                             ),
-                                            actionMenuButtons(
-                                                options: optionsList,
-                                                propertyList: propertyList,
-                                                context: context)
                                           ],
                                         ),
                                         SizedBox(height: 5.h),
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Image.asset(ImageAssets.bedImage,
-                                                height: 20.h),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                                "${propertyList.bhk.toString()} BHK",
-                                                style: GoogleFonts.ptSans(
-                                                  textStyle: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )),
-                                            const SizedBox(width: 8),
-                                            Flexible(
-                                              child: Text(
-                                                  selectedValue == 0
-                                                      ? '₹${double.parse(propertyList.rentPerMonth.toString()).toInt()}/month'
-                                                      : '₹${double.parse(propertyList.housePrice.toString()).toInt()}/month',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                  )),
-                                            ),
-                                          ],
-                                        ),
+                                        Text(
+                                            'TOWER : ${propertyList.blockName.toString()} | FLOOR : ${propertyList.floor.toString()} | PROPETY NO : ${propertyList.unitNumber.toString()}',
+                                            style: GoogleFonts.ptSans(
+                                              textStyle: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            )),
                                       ],
                                     ),
                                   )

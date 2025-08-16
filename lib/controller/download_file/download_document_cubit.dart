@@ -6,7 +6,9 @@ import 'package:ghp_society_management/constants/download_share_gatepass.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
 import 'package:meta/meta.dart';
 import 'package:screenshot/screenshot.dart';
+
 import '../../model/outgoing_document_model.dart';
+
 part 'download_document_state.dart';
 
 class DownloadDocumentCubit extends Cubit<DownloadDocumentState> {
@@ -21,15 +23,15 @@ class DownloadDocumentCubit extends Cubit<DownloadDocumentState> {
         emit(DownloadDocumentSuccess(
             successMsg: "File downloaded successfully"));
       } else {
-        emit(DownloadDocumentFailed(errorMsg: "File download error!"));
+        emit(DownloadDocumentFailed(errorMsg: "File download failed!"));
       }
     } on SocketException {
       emit(DownloadDocumentInternetError(
-          errorMsg: 'Internet Connection Failed!'));
+          errorMsg: 'Internet Connection Error!'));
     } on TimeoutException {
-      emit(DownloadDocumentTimeout(errorMsg: 'server timeout exception'));
+      emit(DownloadDocumentTimeout(errorMsg: 'Server timeout exception'));
     } catch (e) {
-      emit(DownloadDocumentFailed(errorMsg: "File download error!"));
+      emit(DownloadDocumentFailed(errorMsg: "File download failed"));
     }
   }
 
@@ -41,14 +43,14 @@ class DownloadDocumentCubit extends Cubit<DownloadDocumentState> {
       if (imageDownloading) {
         emit(QRSuccess(successMsg: "Gate pass downloaded successfully"));
       } else {
-        emit(QRFailed(errorMsg: "Gate pass download error!"));
+        emit(QRFailed(errorMsg: "Downloading failed. Try again!"));
       }
     } on SocketException {
-      emit(QRInternetError(errorMsg: 'Internet Connection Failed!'));
+      emit(QRInternetError(errorMsg: 'Internet Connection Error!'));
     } on TimeoutException {
-      emit(QRTimeout(errorMsg: 'server timeout exception'));
+      emit(QRTimeout(errorMsg: 'Server timeout exception'));
     } catch (e) {
-      emit(QRFailed(errorMsg: "Gate pass download error!"));
+      emit(QRFailed(errorMsg: "Downloading failed. Try again!"));
     }
   }
 }
