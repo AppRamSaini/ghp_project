@@ -116,7 +116,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
     if (pickedTime != null) {
       final now = DateTime.now();
       final selectedDate =
-          DateFormat('yyyy-MM-dd').parse(date!.text); // चुनी गई तारीख
+      DateFormat('yyyy-MM-dd').parse(date!.text); // चुनी गई तारीख
 
       if (selectedDate
           .isAtSameMomentAs(DateTime(now.year, now.month, now.day))) {
@@ -138,7 +138,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
         // Format time in "HH:mm:ss" format
         final formattedTimeString =
             "${formattedTime.hour.toString().padLeft(2, '0')}:"
-            "${formattedTime.minute.toString().padLeft(2, '0')}:00"; // Always add seconds as 00
+            "${formattedTime.minute.toString().padLeft(
+            2, '0')}:00"; // Always add seconds as 00
         time?.text = formattedTimeString;
       });
     }
@@ -184,7 +185,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
 
   fromCamera(BuildContext context) async {
     final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera);
+    await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       croppedImagesList!.clear();
       croppedImagesList!.add(await cropImage(pickedFile.path));
@@ -194,7 +195,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
 
   fromGallery(BuildContext context) async {
     final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    await ImagePicker().pickImage(source: ImageSource.gallery);
 
     print('------>>>>>$pickedFile');
     if (pickedFile != null) {
@@ -510,84 +511,84 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                         widget.isTypeResidence
                             ? const SizedBox()
                             : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Select Residence',
-                                      style: GoogleFonts.nunitoSans(
-                                          textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w500))),
-                                  SizedBox(height: 10.h),
-                                  TextFormField(
-                                    onTap: () async {
-                                      // _searchMemberCubit.fetchSearchMember('');
-                                      // _showSearchDialog();
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Select Residence',
+                                style: GoogleFonts.nunitoSans(
+                                    textStyle: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500))),
+                            SizedBox(height: 10.h),
+                            TextFormField(
+                              onTap: () async {
+                                // _searchMemberCubit.fetchSearchMember('');
+                                // _showSearchDialog();
 
-                                      final result = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => SelectMembers()));
+                                final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SelectMembers()));
 
-                                      if (result != null) {
-                                        residenceController.text = result['name'];
-                                        residenceId = result['user_id'];
-                                        propertyID = result['property_id'];
-                                        setState(() {});
-                                      }
-                                    },
-                                    readOnly: true,
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 16),
-                                    controller: residenceController,
-                                    // initialList: searchDataList
-                                    //     .map((item) => item.label)
-                                    //     .toList(),
-                                    // getSelectedValue: (value) {
-                                    //   SearchItem selectedItem =
-                                    //       searchDataList.firstWhere(
-                                    //           (item) => item.label == value.label);
-                                    //   setState(() {
-                                    //     residenceID = selectedItem.id.toString();
-                                    //     blocController.text =
-                                    //         selectedItem.block.toString();
-                                    //     flatController.text =
-                                    //         selectedItem.flat.toString();
-                                    //     floorController.text =
-                                    //         selectedItem.floor.toString();
-                                    //   });
-                                    // },
-                                    decoration: InputDecoration(
-                                      hintText: 'Select resident',
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 12.h, horizontal: 10.0),
-                                      filled: true,
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.normal),
-                                      fillColor: AppTheme.greyColor,
-                                      errorBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(15.0),
-                                          borderSide:
-                                              BorderSide(color: AppTheme.greyColor)),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(15.0),
-                                          borderSide:
-                                              BorderSide(color: AppTheme.greyColor)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(15.0),
-                                          borderSide:
-                                              BorderSide(color: AppTheme.greyColor)),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(15.0),
-                                          borderSide:
-                                              BorderSide(color: AppTheme.greyColor)),
-                                    ),
-                                  ),
-                                  SizedBox(height: 10.h),
-                                ],
+                                if (result != null) {
+                                  residenceController.text = result['name'];
+                                  residenceId = result['user_id'];
+                                  propertyID = result['property_id'];
+                                  setState(() {});
+                                }
+                              },
+                              readOnly: true,
+                              style: const TextStyle(
+                                  color: Colors.black87, fontSize: 16),
+                              controller: residenceController,
+                              // initialList: searchDataList
+                              //     .map((item) => item.label)
+                              //     .toList(),
+                              // getSelectedValue: (value) {
+                              //   SearchItem selectedItem =
+                              //       searchDataList.firstWhere(
+                              //           (item) => item.label == value.label);
+                              //   setState(() {
+                              //     residenceID = selectedItem.id.toString();
+                              //     blocController.text =
+                              //         selectedItem.block.toString();
+                              //     flatController.text =
+                              //         selectedItem.flat.toString();
+                              //     floorController.text =
+                              //         selectedItem.floor.toString();
+                              //   });
+                              // },
+                              decoration: InputDecoration(
+                                hintText: 'Select resident',
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12.h, horizontal: 10.0),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal),
+                                fillColor: AppTheme.greyColor,
+                                errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide:
+                                    BorderSide(color: AppTheme.greyColor)),
+                                focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide:
+                                    BorderSide(color: AppTheme.greyColor)),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide:
+                                    BorderSide(color: AppTheme.greyColor)),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide:
+                                    BorderSide(color: AppTheme.greyColor)),
                               ),
+                            ),
+                            SizedBox(height: 10.h),
+                          ],
+                        ),
                         Text('Type of Visitor',
                             style: GoogleFonts.nunitoSans(
                                 textStyle: TextStyle(
@@ -608,15 +609,17 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                             color: Colors.grey,
                                             fontSize: 15,
                                             fontWeight: FontWeight.normal))),
-                                items: state.visitorsElement.first.data.visitorTypes
-                                    .map((item) => DropdownMenuItem<String>(
-                                          value: item.type,
-                                          child: Text(
-                                            item.type,
-                                            style: const TextStyle(
-                                                fontSize: 14, color: Colors.black),
-                                          ),
-                                        ))
+                                items: state.visitorsElement.first.data
+                                    .visitorTypes
+                                    .map((item) =>
+                                    DropdownMenuItem<String>(
+                                      value: item.type,
+                                      child: Text(
+                                        item.type,
+                                        style: const TextStyle(
+                                            fontSize: 14, color: Colors.black),
+                                      ),
+                                    ))
                                     .toList(),
                                 onChanged: (value) {
                                   setState(() {
@@ -630,9 +633,12 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                 buttonStyleData: ButtonStyleData(
                                     decoration: BoxDecoration(
                                         color: AppTheme.greyColor,
-                                        borderRadius: BorderRadius.circular(10))),
+                                        borderRadius: BorderRadius.circular(
+                                            10))),
                                 dropdownStyleData: DropdownStyleData(
-                                  maxHeight: MediaQuery.sizeOf(context).height / 2,
+                                  maxHeight: MediaQuery
+                                      .sizeOf(context)
+                                      .height / 2,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
                                         10), // Set border radius for dropdown
@@ -663,7 +669,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                           builder: (context, state) {
                             if (state is VisitorsElementLoaded) {
                               return DropdownButton2<String>(
-                                  underline: Container(color: Colors.transparent),
+                                  underline: Container(
+                                      color: Colors.transparent),
                                   isExpanded: true,
                                   value: visitorFrequency,
                                   hint: Text('Select Visitor Frequency',
@@ -675,15 +682,18 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                         ),
                                       )),
                                   items: state
-                                      .visitorsElement.first.data.visitingFrequencies
-                                      .map((item) => DropdownMenuItem<String>(
-                                            value: item.frequency,
-                                            child: Text(
-                                              item.frequency,
-                                              style: const TextStyle(
-                                                  fontSize: 14, color: Colors.black),
-                                            ),
-                                          ))
+                                      .visitorsElement.first.data
+                                      .visitingFrequencies
+                                      .map((item) =>
+                                      DropdownMenuItem<String>(
+                                        value: item.frequency,
+                                        child: Text(
+                                          item.frequency,
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black),
+                                        ),
+                                      ))
                                       .toList(),
                                   onChanged: (value) {
                                     setState(() {
@@ -697,14 +707,19 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                   buttonStyleData: ButtonStyleData(
                                       decoration: BoxDecoration(
                                           color: AppTheme.greyColor,
-                                          borderRadius: BorderRadius.circular(10))),
+                                          borderRadius: BorderRadius.circular(
+                                              10))),
                                   dropdownStyleData: DropdownStyleData(
                                       maxHeight:
-                                          MediaQuery.sizeOf(context).height / 2,
+                                      MediaQuery
+                                          .sizeOf(context)
+                                          .height / 2,
                                       decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10))),
+                                          borderRadius: BorderRadius.circular(
+                                              10))),
                                   menuItemStyleData: const MenuItemStyleData(
-                                      padding: EdgeInsets.symmetric(horizontal: 16)));
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16)));
                             } else {
                               return const SizedBox();
                             }
@@ -715,7 +730,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween,
                                   children: [
                                     Text('Visitor Name',
                                         style: GoogleFonts.nunitoSans(
@@ -751,9 +767,11 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                   ]),
                               SizedBox(height: 10.h),
                               SizedBox(
-                                  width: MediaQuery.of(context).size.width,
+                                  width: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width,
                                   child: TextFormField(
-                                    onTap: ()=>scrollManagement(_scrollController),
                                       controller: visitorName,
                                       style: GoogleFonts.nunitoSans(
                                         color: Colors.black,
@@ -780,24 +798,25 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                           fillColor: AppTheme.greyColor,
                                           errorBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           focusedErrorBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme.greyColor))))),
+                                                  color: AppTheme
+                                                      .greyColor))))),
                               SizedBox(height: 10.h),
                               Text('Number',
                                   style: GoogleFonts.nunitoSans(
@@ -807,7 +826,10 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                           fontWeight: FontWeight.w500))),
                               SizedBox(height: 10.h),
                               SizedBox(
-                                  width: MediaQuery.of(context).size.width,
+                                  width: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width,
                                   child: TextFormField(
                                       controller: number,
                                       style: GoogleFonts.nunitoSans(
@@ -842,24 +864,25 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                           fillColor: AppTheme.greyColor,
                                           errorBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           focusedErrorBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme.greyColor))))),
+                                                  color: AppTheme
+                                                      .greyColor))))),
                               /*       Wrap(
                                     children: List.generate(
                                         usersList.length,
@@ -1037,9 +1060,11 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                           Expanded(
                               child: SizedBox(
                                   child: TextFormField(
-                                      // onTap: () {
-                                      //   _selectDate(context);
-                                      // },
+                                      onTap: () {
+                                        if (widget.isTypeResidence) {
+                                          _selectDate(context);
+                                        }
+                                      },
                                       readOnly: true,
                                       controller: date,
                                       style: GoogleFonts.nunitoSans(
@@ -1065,7 +1090,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                                 }
                                               },
                                               child:
-                                                  const Icon(Icons.calendar_month)),
+                                              const Icon(Icons.calendar_month)),
                                           filled: true,
                                           hintStyle: TextStyle(
                                               color: Colors.grey,
@@ -1074,28 +1099,42 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                           fillColor: AppTheme.greyColor,
                                           errorBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           focusedErrorBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme.greyColor)))))),
+                                                  color: AppTheme
+                                                      .greyColor)))))),
                           SizedBox(width: 10.w),
                           Expanded(
                               child: SizedBox(
                                   child: TextFormField(
+                                      onTap: () {
+                                        if (widget.isTypeResidence) {
+                                          if (date!.text.isEmpty) {
+                                            snackBar(
+                                                context,
+                                                'Kindly select first date!',
+                                                Icons.info,
+                                                AppTheme.redColor);
+                                          } else {
+                                            _selectTime(context);
+                                          }
+                                        }
+                                      },
                                       readOnly: true,
                                       controller: time,
                                       style: GoogleFonts.nunitoSans(
@@ -1128,7 +1167,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                                   }
                                                 }
                                               },
-                                              child: const Icon(Icons.timelapse)),
+                                              child: const Icon(
+                                                  Icons.timelapse)),
                                           filled: true,
                                           hintStyle: TextStyle(
                                               color: Colors.grey,
@@ -1137,24 +1177,25 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                           fillColor: AppTheme.greyColor,
                                           errorBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           focusedErrorBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15.0),
+                                              BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme.greyColor))))))
+                                                  color: AppTheme
+                                                      .greyColor))))))
                         ]),
                         SizedBox(height: 10.h),
                         Text('Vehicle Number',
@@ -1165,7 +1206,10 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                     fontWeight: FontWeight.w500))),
                         SizedBox(height: 10.h),
                         SizedBox(
-                            width: MediaQuery.of(context).size.width,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
                             child: TextFormField(
 
                                 controller: vehicleNumber,
@@ -1176,11 +1220,12 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                 ),
                                 keyboardType: TextInputType.text,
                                 textInputAction: TextInputAction.done,
-                                inputFormatters: [
-                                  VehicleNumberFormatter(), // Custom formatter
-                                  LengthLimitingTextInputFormatter(
-                                      13), // Max length = 13
-                                ],
+
+                                // inputFormatters: [
+                                //   VehicleNumberFormatter(), // Custom formatter
+                                //   LengthLimitingTextInputFormatter(
+                                //       13), // Max length = 13
+                                // ],
                                 decoration: InputDecoration(
                                     hintText: 'Enter vehicle number',
                                     contentPadding: EdgeInsets.symmetric(
@@ -1192,21 +1237,26 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                         fontWeight: FontWeight.normal),
                                     fillColor: AppTheme.greyColor,
                                     errorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
+                                        borderRadius: BorderRadius.circular(
+                                            15.0),
                                         borderSide:
-                                            BorderSide(color: AppTheme.greyColor)),
+                                        BorderSide(color: AppTheme.greyColor)),
                                     focusedErrorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
+                                        borderRadius: BorderRadius.circular(
+                                            15.0),
                                         borderSide:
-                                            BorderSide(color: AppTheme.greyColor)),
+                                        BorderSide(color: AppTheme.greyColor)),
                                     focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
+                                        borderRadius: BorderRadius.circular(
+                                            15.0),
                                         borderSide:
-                                            BorderSide(color: AppTheme.greyColor)),
+                                        BorderSide(color: AppTheme.greyColor)),
                                     enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
+                                        borderRadius: BorderRadius.circular(
+                                            15.0),
                                         borderSide:
-                                            BorderSide(color: AppTheme.greyColor))))),
+                                        BorderSide(
+                                            color: AppTheme.greyColor))))),
                         SizedBox(height: 10.h),
                         Text('Purpose of Visit ',
                             style: GoogleFonts.nunitoSans(
@@ -1216,7 +1266,10 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                     fontWeight: FontWeight.w500))),
                         SizedBox(height: 10.h),
                         SizedBox(
-                            width: MediaQuery.of(context).size.width,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
                             child: TextFormField(
                                 controller: purposeController,
                                 style: GoogleFonts.nunitoSans(
@@ -1245,21 +1298,26 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                         fontWeight: FontWeight.normal),
                                     fillColor: AppTheme.greyColor,
                                     errorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
+                                        borderRadius: BorderRadius.circular(
+                                            15.0),
                                         borderSide:
-                                            BorderSide(color: AppTheme.greyColor)),
+                                        BorderSide(color: AppTheme.greyColor)),
                                     focusedErrorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
+                                        borderRadius: BorderRadius.circular(
+                                            15.0),
                                         borderSide:
-                                            BorderSide(color: AppTheme.greyColor)),
+                                        BorderSide(color: AppTheme.greyColor)),
                                     focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
+                                        borderRadius: BorderRadius.circular(
+                                            15.0),
                                         borderSide:
-                                            BorderSide(color: AppTheme.greyColor)),
+                                        BorderSide(color: AppTheme.greyColor)),
                                     enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15.0),
+                                        borderRadius: BorderRadius.circular(
+                                            15.0),
                                         borderSide:
-                                            BorderSide(color: AppTheme.greyColor))))),
+                                        BorderSide(
+                                            color: AppTheme.greyColor))))),
                         SizedBox(height: 10.h),
                         Text('Valid Till',
                             style: GoogleFonts.nunitoSans(
@@ -1270,49 +1328,59 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                         SizedBox(height: 10.h),
                         BlocBuilder<VisitorsElementCubit, VisitorsElementState>(
                             builder: (context, state) {
-                          if (state is VisitorsElementLoaded) {
-                            return DropdownButton2<String>(
-                                underline: Container(color: Colors.transparent),
-                                isExpanded: true,
-                                value: validTill,
-                                items: state
-                                    .visitorsElement.first.data.visitorValidity
-                                    .map((item) => DropdownMenuItem<String>(
-                                        value: item.type,
-                                        child: Text(item.type,
-                                            style: const TextStyle(
-                                                fontSize: 14, color: Colors.black))))
-                                    .toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    validTill = value;
-                                  });
-                                },
-                                hint: Text('Select Valid till',
-                                    style: GoogleFonts.nunitoSans(
-                                        textStyle: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.normal))),
-                                iconStyleData: const IconStyleData(
-                                    icon: Icon(Icons.arrow_drop_down,
-                                        color: Colors.black45),
-                                    iconSize: 24),
-                                buttonStyleData: ButtonStyleData(
-                                    decoration: BoxDecoration(
-                                        color: AppTheme.greyColor,
-                                        // Background color for the button
-                                        borderRadius: BorderRadius.circular(10))),
-                                dropdownStyleData: DropdownStyleData(
-                                    maxHeight: MediaQuery.sizeOf(context).height / 2,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10))),
-                                menuItemStyleData: const MenuItemStyleData(
-                                    padding: EdgeInsets.symmetric(horizontal: 16)));
-                          } else {
-                            return const SizedBox();
-                          }
-                        }),
+                              if (state is VisitorsElementLoaded) {
+                                return DropdownButton2<String>(
+                                    underline: Container(
+                                        color: Colors.transparent),
+                                    isExpanded: true,
+                                    value: validTill,
+                                    items: state
+                                        .visitorsElement.first.data
+                                        .visitorValidity
+                                        .map((item) =>
+                                        DropdownMenuItem<String>(
+                                            value: item.type,
+                                            child: Text(item.type,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black))))
+                                        .toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        validTill = value;
+                                      });
+                                    },
+                                    hint: Text('Select Valid till',
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight
+                                                    .normal))),
+                                    iconStyleData: const IconStyleData(
+                                        icon: Icon(Icons.arrow_drop_down,
+                                            color: Colors.black45),
+                                        iconSize: 24),
+                                    buttonStyleData: ButtonStyleData(
+                                        decoration: BoxDecoration(
+                                            color: AppTheme.greyColor,
+                                            // Background color for the button
+                                            borderRadius: BorderRadius.circular(
+                                                10))),
+                                    dropdownStyleData: DropdownStyleData(
+                                        maxHeight: MediaQuery
+                                            .sizeOf(context)
+                                            .height / 2,
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                                10))),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 16)));
+                              } else {
+                                return const SizedBox();
+                              }
+                            }),
                         const SizedBox(height: 15),
                         Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -1335,7 +1403,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                   });
                             },
                             onRemove: (index) {
-                              setState(() => croppedImagesList!.removeAt(index));
+                              setState(() =>
+                                  croppedImagesList!.removeAt(index));
                             },
                             croppedImagesList: croppedImagesList),
                         SizedBox(height: 30.h),
@@ -1416,10 +1485,9 @@ class SearchItem {
   var block;
   var flat;
 
-  SearchItem(
-      {required this.label,
-      required this.id,
-      required this.block,
-      required this.floor,
-      required this.flat});
+  SearchItem({required this.label,
+    required this.id,
+    required this.block,
+    required this.floor,
+    required this.flat});
 }

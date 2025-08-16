@@ -3,7 +3,7 @@ description: "A new Flutter project."
 
 publish_to: 'none'
 
-version: 1.0.7+8
+version: 1.0.8+9
 
 environment:
   sdk: ^3.6.1
@@ -66,6 +66,11 @@ dependencies:
   video_compress: ^3.1.4
   image: ^4.5.4
   firebase_storage: ^12.4.10
+  sms_autofill: ^2.4.1
+  firebase_auth: ^5.7.0
+  showcaseview: ^4.0.1
+  flutter_sound: ^9.28.0
+  carousel_slider: ^5.1.1
 
 
 
@@ -85,3 +90,7 @@ flutter:
     - assets/images/
     - assets/sounds/
     - assets/icons/
+
+
+
+

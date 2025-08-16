@@ -11,8 +11,10 @@ import 'package:permission_handler/permission_handler.dart';
 
 class QrCodeScanner extends StatefulWidget {
   final bool fromResidentSide;
+  final String? visitorId;
 
-  const QrCodeScanner({super.key, this.fromResidentSide = false});
+  const QrCodeScanner(
+      {super.key, this.visitorId, this.fromResidentSide = false});
 
   @override
   State<QrCodeScanner> createState() => _QrCodeScannerState();

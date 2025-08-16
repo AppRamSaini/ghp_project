@@ -42,6 +42,8 @@ class DailyHelpListingCubit extends Cubit<DailyHelpListingState> {
         } else {
           emit(DailyHelpListingError(errorMsg: responseData['message']));
         }
+      } else if (response.statusCode == 401) {
+        emit(UnAuthenticatedUser());
       } else {
         emit(DailyHelpListingError(errorMsg: responseData['message']));
       }

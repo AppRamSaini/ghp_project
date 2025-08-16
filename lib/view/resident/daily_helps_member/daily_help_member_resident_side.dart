@@ -33,9 +33,9 @@ class DailyHelpListingHistoryResidentSideState
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<NoticeModelCubit, NoticeModelState>(
+    return BlocListener<DailyHelpListingCubit, DailyHelpListingState>(
       listener: (context, state) {
-        if (state is NoticeModelLogout) {
+        if (state is UnAuthenticatedUser) {
           sessionExpiredDialog(context);
         }
       },
@@ -215,6 +215,7 @@ class DailyHelpListingHistoryResidentSideState
                                     SizedBox(width: 10.w)
                                   ]),
                                   popMenusForStaff(
+                                      optionList: optionListForResident,
                                       fromResidentPage: true,
                                       context: context,
                                       requestData: newHistoryLogs[index])

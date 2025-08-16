@@ -340,12 +340,8 @@ EdgeInsetsGeometry globalBottomPadding(BuildContext context) =>
 
 /// scroll management
 
-scrollManagement(ScrollController _scrollController) {
-  Future.delayed(Duration(milliseconds: 350), () {
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
-  });
-}
+TextStyle customTitle() => GoogleFonts.montserrat(
+    fontSize: 18, fontWeight: FontWeight.w500, color: AppTheme.white);
+
+TextStyle customDes() => GoogleFonts.montserrat(
+    fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.white);

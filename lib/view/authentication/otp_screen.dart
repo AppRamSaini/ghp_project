@@ -1,4 +1,3 @@
-// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -17,6 +16,7 @@ import 'package:ghp_society_management/view/maintenance_staff//bottom_nav_screen
 import 'package:ghp_society_management/view/security_staff/dashboard/bottom_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
+import 'package:sms_autofill/sms_autofill.dart'; // NEW
 
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
@@ -27,9 +27,38 @@ class OtpScreen extends StatefulWidget {
   State<OtpScreen> createState() => _OtpScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
+class _OtpScreenState extends State<OtpScreen> with CodeAutoFill {
   final TextEditingController _otpController = TextEditingController();
   late BuildContext _dialogueContext;
+
+  @override
+  void initState() {
+    super.initState();
+    _listenForOtp();
+  }
+
+  void _listenForOtp() async {
+    await SmsAutoFill().listenForCode();
+    listenForCode(); // For CodeAutoFill mixin
+  }
+
+  @override
+  void codeUpdated() {
+    setState(() {
+      _otpController.text = code ?? '';
+    });
+
+    if ((code ?? '').length == 4) {
+      _submitOtp(code!);
+    }
+  }
+
+  @override
+  void dispose() {
+    cancel();
+    _otpController.dispose();
+    super.dispose();
+  }
 
   void _handleStateChanges(BuildContext context, VerifyOtpState state) {
     if (state is VerifyOtpLoading) {
@@ -91,7 +120,8 @@ class _OtpScreenState extends State<OtpScreen> {
     return BlocListener<VerifyOtpCubit, VerifyOtpState>(
       listener: _handleStateChanges,
       child: Scaffold(
-        body: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: GestureDetector(
@@ -111,7 +141,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                 left: size.width * 0.035),
                             child: GestureDetector(
                                 onTap: () => Navigator.pop(context),
-                                child: CircleAvatar(
+                                child: const CircleAvatar(
                                   child: Icon(Icons.arrow_back_ios_outlined),
                                 )),
                           )
@@ -161,64 +191,38 @@ class _OtpScreenState extends State<OtpScreen> {
   Widget _buildLoginButton() {
     return customBtn(
       onTap: () async {
-        FirebaseMessaging messaging = FirebaseMessaging.instance;
-        await messaging.requestPermission(
-            alert: true, badge: true, sound: true);
-
-        String? token;
-
-        if (Platform.isIOS) {
-          // iOS के लिए APNS Token प्राप्त करें
-          token = await messaging.getAPNSToken();
-          print("APNS Token: $token");
-        } else {
-          // Android के लिए FCM Token प्राप्त करें
-          token = await messaging.getToken();
-          print("FCM Token: $token");
-        }
         if (_otpController.text.isNotEmpty && _otpController.text.length == 4) {
-          context
-              .read<VerifyOtpCubit>()
-              .verifyOtp(widget.phoneNumber, _otpController.text, token ?? "");
+          _submitOtp(_otpController.text);
         }
       },
       txt: "Log In",
     );
   }
 
+  void _submitOtp(String otp) async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission(alert: true, badge: true, sound: true);
+
+    String? token;
+    if (Platform.isIOS) {
+      token = await messaging.getAPNSToken();
+    } else {
+      token = await messaging.getToken();
+    }
+
+    context
+        .read<VerifyOtpCubit>()
+        .verifyOtp(widget.phoneNumber, otp, token ?? "");
+  }
+
   Widget _buildOtpField(PinTheme defaultPinTheme) {
     return Pinput(
       controller: _otpController,
-
       defaultPinTheme: defaultPinTheme,
       separatorBuilder: (_) => const SizedBox(width: 20),
-      onCompleted: (pin) async {
-        FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-        // Push Notification की परमिशन पहले लें
-        await messaging.requestPermission(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-
-        String? token;
-
-        if (Platform.isIOS) {
-          // iOS के लिए APNS Token प्राप्त करें
-          token = await messaging.getAPNSToken();
-          print("APNS Token: $token");
-        } else {
-          // Android के लिए FCM Token प्राप्त करें
-          token = await messaging.getToken();
-          print("FCM Token: $token");
-        }
-        context
-            .read<VerifyOtpCubit>()
-            .verifyOtp(widget.phoneNumber, pin, token ?? "fcm_token");
-
-        print('Token Sent: $token');
-      },
+      length: 4,
+      keyboardType: TextInputType.number,
+      onCompleted: (pin) => _submitOtp(pin),
       cursor: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

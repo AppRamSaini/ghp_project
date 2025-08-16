@@ -13,8 +13,8 @@ import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/visitors_listing_model.dart';
 import 'package:ghp_society_management/timer_countdown.dart';
 import 'package:ghp_society_management/view/security_staff/scan_qr.dart';
-import 'package:ghp_society_management/view/security_staff/visitors/visitors_details_page.dart';
 import 'package:ghp_society_management/view/security_staff/visitors/visitors_list_page.dart';
+import 'package:ghp_society_management/view/security_staff/visitors/visitors_management.dart';
 import 'package:intl/intl.dart';
 
 class VisitorsTabBar extends StatefulWidget {
@@ -429,7 +429,7 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                   }
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 5),
               TabBar(
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
@@ -624,14 +624,6 @@ Widget customVisitorsWidget(
                   : const SizedBox()
             ],
           ),
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => VisitorsDetailsPage2(visitorsId: {
-                          "visitor_id": visitorsData.id.toString()
-                        })));
-          },
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -674,20 +666,10 @@ Widget customVisitorsWidget(
                         ),
                       ),
                     ),
-              status == 'Requested' ||
-                      // status == 'Completed' ||
-                      status == 'Not Arrived'
-                  ? const SizedBox()
-                  : GestureDetector(
-                      onTap: () => phoneCallLauncher(visitorsData.member == null
-                          ? visitorsData.phone.toString()
-                          : visitorsData.member!.phone.toString()),
-                      child: const CircleAvatar(
-                          backgroundColor: Colors.blue,
-                          radius: 18,
-                          child:
-                              Icon(Icons.call, size: 15, color: Colors.white)),
-                    )
+              popMenusForStaffVisitors(
+                  options: status == 'Re Send' ? optionList1 : optionList2,
+                  visitorsData: visitorsData,
+                  context: context)
             ],
           ),
         ),
@@ -698,8 +680,7 @@ Widget customVisitorsWidget(
                 child: Text(
                     "Arriving At : ${visitorsDate.toString()} $formattedTime",
                     style:
-                        const TextStyle(color: Colors.black45, fontSize: 12)),
-              ),
+                        const TextStyle(color: Colors.black45, fontSize: 12))),
         Divider(color: Colors.grey.withOpacity(0.2)),
         visitorsData.member == null
             ? const SizedBox()
@@ -714,12 +695,12 @@ Widget customVisitorsWidget(
                           Text('Name',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black54, fontSize: 14.sp))),
+                                      color: Colors.black54, fontSize: 12))),
                           Text(visitorsData.member!.name.toString(),
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 12.sp,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.w600))),
                         ],
                       ),
@@ -729,13 +710,12 @@ Widget customVisitorsWidget(
                             Text('Tower/Block',
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 12.sp))),
+                                        color: Colors.black54, fontSize: 12))),
                             Text(visitorsData.member!.blockName.toString(),
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
                                         color: Colors.black,
-                                        fontSize: 12.sp,
+                                        fontSize: 12,
                                         fontWeight: FontWeight.w600)))
                           ]),
                       // Column(
@@ -759,13 +739,12 @@ Widget customVisitorsWidget(
                             Text('Property No',
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 12.sp))),
+                                        color: Colors.black54, fontSize: 12))),
                             Text(visitorsData.member!.aprtNo.toString(),
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
                                         color: Colors.black,
-                                        fontSize: 12.sp,
+                                        fontSize: 12,
                                         fontWeight: FontWeight.w600)))
                           ]),
                     ]),

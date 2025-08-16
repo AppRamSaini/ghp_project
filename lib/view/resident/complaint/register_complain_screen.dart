@@ -39,6 +39,7 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
   final controller = TextEditingController();
 
   ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<CreateComplaintsCubit, CreateComplaintsState>(
@@ -62,214 +63,212 @@ class _RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
           Navigator.of(dialogueContext!).pop();
         }
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: appbarWidget(title: 'Register Complaint'),
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 10.h),
-                        Text('Area',
-                            style: GoogleFonts.nunitoSans(
-                              textStyle: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )),
-                        SizedBox(height: 10.h),
-                        BlocBuilder<SosElementCubit, SosElementState>(
-                          builder: (context, state) {
-                            if (state is SosElementLoaded) {
-                              return DropdownButton2<String>(
-                                  hint: const Text('--select--',
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 14)),
-                                  underline:
-                                      Container(color: Colors.transparent),
-                                  isExpanded: true,
-                                  value: selectedValue,
-                                  items: state.sosElement.first.data.areas
-                                      .map((item) => DropdownMenuItem<String>(
-                                          value: item.name,
-                                          child: Text(item.name,
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.black))))
-                                      .toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedValue = value;
-                                    });
-                                  },
-                                  iconStyleData: const IconStyleData(
-                                      icon: Icon(Icons.arrow_drop_down,
-                                          color: Colors.black45),
-                                      iconSize: 24),
-                                  buttonStyleData: ButtonStyleData(
-                                      decoration: BoxDecoration(
-                                          color: AppTheme.greyColor,
-                                          borderRadius:
-                                              BorderRadius.circular(10))),
-                                  dropdownStyleData: DropdownStyleData(
-                                      maxHeight:
-                                          MediaQuery.sizeOf(context).height / 2,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10))),
-                                  menuItemStyleData: const MenuItemStyleData(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16)));
-                            } else {
-                              return const SizedBox();
-                            }
-                          },
-                        ),
-                        SizedBox(height: 10.h),
-                        Text('Complaint Description',
-                            style: GoogleFonts.nunitoSans(
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          appBar: appbarWidget(title: 'Register Complaint'),
+          body: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10.h),
+                          Text('Area',
+                              style: GoogleFonts.nunitoSans(
                                 textStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.w600))),
-                        SizedBox(height: 10.h),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: TextFormField(
-                            onTap: () =>scrollManagement(_scrollController),
-                            controller: controller,
-                            textInputAction: TextInputAction.done,
-                            maxLines: 5,
-                            style: GoogleFonts.nunitoSans(
-                                color: Colors.black,
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w500),
-                            decoration: InputDecoration(
-                              hintText: 'Enter your description..',
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 12.h, horizontal: 10.0),
-                              filled: true,
-                              hintStyle: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.normal),
-                              fillColor: AppTheme.greyColor,
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide:
-                                    BorderSide(color: AppTheme.greyColor),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide(
-                                  color: AppTheme.greyColor,
+                                  color: Colors.black,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide(
-                                  color: AppTheme.greyColor,
+                              )),
+                          SizedBox(height: 10.h),
+                          BlocBuilder<SosElementCubit, SosElementState>(
+                            builder: (context, state) {
+                              if (state is SosElementLoaded) {
+                                return DropdownButton2<String>(
+                                    hint: const Text('Select Type',
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 14)),
+                                    underline:
+                                        Container(color: Colors.transparent),
+                                    isExpanded: true,
+                                    value: selectedValue,
+                                    items: state.sosElement.first.data.areas
+                                        .map((item) => DropdownMenuItem<String>(
+                                            value: item.name,
+                                            child: Text(item.name,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black))))
+                                        .toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedValue = value;
+                                      });
+                                    },
+                                    iconStyleData: const IconStyleData(
+                                        icon: Icon(Icons.arrow_drop_down,
+                                            color: Colors.black45),
+                                        iconSize: 24),
+                                    buttonStyleData: ButtonStyleData(
+                                        decoration: BoxDecoration(
+                                            color: AppTheme.greyColor,
+                                            borderRadius:
+                                                BorderRadius.circular(10))),
+                                    dropdownStyleData: DropdownStyleData(
+                                        maxHeight: MediaQuery.sizeOf(context).height /
+                                            2,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10))),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                        padding: EdgeInsets.symmetric(horizontal: 16)));
+                              } else {
+                                return const SizedBox();
+                              }
+                            },
+                          ),
+                          SizedBox(height: 10.h),
+                          Text('Complaint Description',
+                              style: GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w600))),
+                          SizedBox(height: 10.h),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: TextFormField(
+                              controller: controller,
+                              textInputAction: TextInputAction.done,
+                              maxLines: 5,
+                              style: GoogleFonts.nunitoSans(
+                                  color: Colors.black,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w500),
+                              decoration: InputDecoration(
+                                hintText: 'Enter your description..',
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12.h, horizontal: 10.0),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.normal),
+                                fillColor: AppTheme.greyColor,
+                                errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide:
+                                        BorderSide(color: AppTheme.greyColor)),
+                                focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    borderSide:
+                                        BorderSide(color: AppTheme.greyColor)),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: BorderSide(
+                                    color: AppTheme.greyColor,
+                                  ),
                                 ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                borderSide: BorderSide(
-                                  color: AppTheme.greyColor,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: BorderSide(
+                                    color: AppTheme.greyColor,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 10.h),
-                        Text('Upload Media',
-                            style: GoogleFonts.nunitoSans(
-                              textStyle: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )),
-                        SizedBox(height: 10.h),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            GestureDetector(
-                                onTap: () {
-                                  // if (imagesList.length < 2) {
-                                  //
-                                  // } else {
-                                  //   snackbarMessage(context);
-                                  // }
+                          SizedBox(height: 10.h),
+                          Text('Upload Media',
+                              style: GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              )),
+                          SizedBox(height: 10.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              GestureDetector(
+                                  onTap: () {
+                                    // if (imagesList.length < 2) {
+                                    //
+                                    // } else {
+                                    //   snackbarMessage(context);
+                                    // }
 
-                                  _showPicker(context: context);
-                                },
-                                child: Image.asset(ImageAssets.galleryImage,
-                                    height: 90.h, width: 100.w)),
-                            GestureDetector(
+                                    _showPicker(context: context);
+                                  },
+                                  child: Image.asset(ImageAssets.galleryImage,
+                                      height: 90.h, width: 100.w)),
+                              GestureDetector(
+                                  onTap: () {
+                                    // if (videoList.length < 2) {
+                                    //   _showPicker(
+                                    //       context: context, isPickVideo: true);
+                                    // } else {
+                                    //   snackbarMessage(context);
+                                    // }
+                                    _showPicker(
+                                        context: context, isPickVideo: true);
+                                  },
+                                  child: Image.asset(ImageAssets.videoImage,
+                                      height: 90.h, width: 100.w)),
+                              GestureDetector(
                                 onTap: () {
-                                  // if (videoList.length < 2) {
-                                  //   _showPicker(
-                                  //       context: context, isPickVideo: true);
+                                  // if (audioList.length < 2) {
+                                  //   getMP3();
                                   // } else {
                                   //   snackbarMessage(context);
                                   // }
-                                  _showPicker(
-                                      context: context, isPickVideo: true);
+                                  getMP3();
                                 },
-                                child: Image.asset(ImageAssets.videoImage,
-                                    height: 90.h, width: 100.w)),
-                            GestureDetector(
-                              onTap: () {
-                                // if (audioList.length < 2) {
-                                //   getMP3();
-                                // } else {
-                                //   snackbarMessage(context);
-                                // }
-                                getMP3();
-                              },
-                              child: Image.asset(ImageAssets.audioImage,
-                                  height: 90.h, width: 100.w),
-                            ),
-                          ],
-                        ),
-                        Wrap(
-                          children: [
-                            _buildMediaGrid(imagesList, videoList, audioList),
-                          ],
-                        ),
-                        20.verticalSpace
-                      ],
-                    ),
-                  )),
-            ),
-            customBtn(
-              onTap: () {
-                if (selectedValue == null) {
-                  snackBar(context, 'Please select area', Icons.location_on,
-                      AppTheme.redColor);
-                } else if (controller.text.isEmpty) {
-                  snackBar(context, 'Please enter some description',
-                      Icons.description, AppTheme.redColor);
-                } else {
-                  context.read<CreateComplaintsCubit>().createComplaints(
-                      serviceCategoryId: widget.categoryId.toString(),
-                      area: selectedValue.toString(),
-                      description: controller.text.toString(),
-                      imageList: imagesList,
-                      videoList: videoList,
-                      audioList: audioList);
-                }
-              },
-              txt: "Submit",
-            ),
-          ],
+                                child: Image.asset(ImageAssets.audioImage,
+                                    height: 90.h, width: 100.w),
+                              ),
+                            ],
+                          ),
+                          Wrap(
+                            children: [
+                              _buildMediaGrid(imagesList, videoList, audioList),
+                            ],
+                          ),
+                          20.verticalSpace
+                        ],
+                      ),
+                    )),
+              ),
+              customBtn(
+                onTap: () {
+                  if (selectedValue == null) {
+                    snackBar(context, 'Please select area', Icons.location_on,
+                        AppTheme.redColor);
+                  } else if (controller.text.isEmpty) {
+                    snackBar(context, 'Please enter some description',
+                        Icons.description, AppTheme.redColor);
+                  } else {
+                    context.read<CreateComplaintsCubit>().createComplaints(
+                        serviceCategoryId: widget.categoryId.toString(),
+                        area: selectedValue.toString(),
+                        description: controller.text.toString(),
+                        imageList: imagesList,
+                        videoList: videoList,
+                        audioList: audioList);
+                  }
+                },
+                txt: "Submit",
+              ),
+            ],
+          ),
         ),
       ),
     );

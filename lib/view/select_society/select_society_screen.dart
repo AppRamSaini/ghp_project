@@ -1,6 +1,6 @@
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
-import 'package:ghp_society_management/view/resident/authentication/login_screen.dart';
+import 'package:ghp_society_management/view/authentication/login_screen.dart';
 
 class SelectSocietyScreen extends StatefulWidget {
   const SelectSocietyScreen({super.key});
@@ -13,25 +13,24 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
   TextEditingController textController = TextEditingController();
   bool searchBarOpen = false;
   final ScrollController _scrollController = ScrollController();
-  late SelectSocietyCubit _selectSocietyCubit;
 
   @override
   void initState() {
-    _selectSocietyCubit = SelectSocietyCubit()..fetchSocietyList();
-    _scrollController.addListener(_onScroll);
     super.initState();
+    onRefresh();
+    _scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent < 300) {
-      _selectSocietyCubit.loadMoreSocieties();
+      context.read<SelectSocietyCubit>().loadMoreSocieties();
     }
   }
 
   Future onRefresh() async {
-    _selectSocietyCubit = SelectSocietyCubit()..fetchSocietyList();
-    setState(() {});
+    context.read<SelectSocietyCubit>().fetchSocietyList();
+    // setState(() {});
   }
 
   @override
@@ -62,7 +61,7 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
         onCollapseComplete: () {
           setState(() {
             searchBarOpen = false;
-            _selectSocietyCubit.fetchSocietyList();
+            onRefresh();
             textController.clear();
           });
         },
@@ -72,17 +71,15 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
           });
         },
         onChanged: (value) {
-          _selectSocietyCubit.searchSociety(value);
+          context.read<SelectSocietyCubit>().searchSociety(value);
         },
       ),
       body: SafeArea(
         child: GestureDetector(
-
-          onTap: ()=>FocusScope.of(context).unfocus(),
+          onTap: () => FocusScope.of(context).unfocus(),
           child: RefreshIndicator(
             onRefresh: onRefresh,
             child: BlocBuilder<SelectSocietyCubit, SelectSocietyState>(
-              bloc: _selectSocietyCubit,
               builder: (context, state) {
                 if (state is SelectSocietyLoading) {
                   return dashboardSimmerLoading(context, forHomePage: true);
@@ -112,12 +109,14 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                                   horizontal: 30, vertical: 10),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(30),
-                                  color: AppTheme.primaryColor.withOpacity(0.15)),
+                                  color:
+                                      AppTheme.primaryColor.withOpacity(0.15)),
                               child: Text(
                                 'Retry!',
                                 style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: AppTheme.primaryColor, fontSize: 16),
+                                      color: AppTheme.primaryColor,
+                                      fontSize: 16),
                                 ),
                               ),
                             ),
@@ -128,7 +127,8 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                   );
                 }
 
-                var societyList = _selectSocietyCubit.societyList;
+                var societyList =
+                    context.read<SelectSocietyCubit>().societyList;
 
                 if (state is SelectSocietySearchedLoaded) {
                   societyList = state.selectedSociety;
@@ -146,7 +146,8 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                   shrinkWrap: true,
                   itemBuilder: ((context, index) {
                     if (index == societyList.length) {
-                      return _selectSocietyCubit.state is SelectSocietyLoadMore
+                      return context.read<SelectSocietyCubit>().state
+                              is SelectSocietyLoadMore
                           ? const Padding(
                               padding: EdgeInsets.all(16.0),
                               child: Center(

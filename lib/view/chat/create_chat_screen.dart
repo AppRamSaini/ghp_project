@@ -66,15 +66,14 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
         contentPadding: EdgeInsets.symmetric(horizontal: 10),
         dense: true,
         leading: Card(
-          elevation: 1,
-          shape: const CircleBorder(),
-          child: CircleAvatar(
-            radius: 25.r,
-            backgroundImage: staff.image != null
-                ? NetworkImage(staff.image!)
-                : const AssetImage(ImageAssets.chatImage) as ImageProvider,
-          ),
-        ),
+            elevation: 1,
+            shape: const CircleBorder(),
+            child: CircleAvatar(
+                radius: 25.r,
+                backgroundImage: staff.image != null
+                    ? NetworkImage(staff.image!)
+                    : const AssetImage(ImageAssets.chatImage)
+                        as ImageProvider)),
         title: Text(
           capitalizeWords(staff.name),
           style: GoogleFonts.nunitoSans(
@@ -92,7 +91,7 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
           ),
         ),
         trailing: const CircleAvatar(
-          child: Icon(Icons.chat, size: 18),
+          child: Icon(Icons.send_rounded, size: 18),
         ),
       ),
     );

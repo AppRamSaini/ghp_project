@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:ghp_society_management/constants/config.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
@@ -16,8 +17,9 @@ class DocumentCountCubit extends Cubit<DocumentCountState> {
   documentCountType() async {
     emit(DocumentCountLoading());
     try {
-      var responseData =
-          await apiManager.getRequest(Config.baseURL + Routes.documentsCounts,usePropertyID: true);
+      var responseData = await apiManager.getRequest(
+          Config.baseURL + Routes.documentsCounts,
+          usePropertyID: true);
       var data = json.decode((responseData.body.toString()));
 
       print(responseData.statusCode);
@@ -34,6 +36,8 @@ class DocumentCountCubit extends Cubit<DocumentCountState> {
         } else {
           emit(DocumentCountFailed(errorMsg: data['message'].toString()));
         }
+      } else if (responseData.statusCode == 401) {
+        emit(UnAuthenticatedUser());
       } else {
         emit(DocumentCountFailed(errorMsg: data['message'].toString()));
       }

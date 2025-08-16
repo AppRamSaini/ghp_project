@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
@@ -17,8 +14,78 @@ import 'package:ghp_society_management/view/resident/notice_board/notice_board_s
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:ghp_society_management/view/resident/visitors/visitor_screen.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../resident/parcel_flow/parcel_listing.dart';
+
+/// Global key for the first showcase widget
+final GlobalKey _firstShowcaseWidget = GlobalKey();
+
+/// Global key for the last showcase widget
+final GlobalKey _lastShowcaseWidget = GlobalKey();
+
+class ResidentHomePage extends StatelessWidget {
+  final Function(int index) onChanged;
+
+  const ResidentHomePage({super.key, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ShowCaseWidget(
+        hideFloatingActionWidgetForShowcase: [_lastShowcaseWidget],
+        globalFloatingActionWidget: (showcaseContext) => FloatingActionWidget(
+          left: 16,
+          bottom: 16,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: ShowCaseWidget.of(showcaseContext).dismiss,
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xffEE5366)),
+              child: const Text(
+                'Skip',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ),
+        ),
+        onStart: (index, key) {},
+        onComplete: (index, key) {
+          if (index == 4) {
+            SystemChrome.setSystemUIOverlayStyle(
+              SystemUiOverlayStyle.light.copyWith(
+                statusBarIconBrightness: Brightness.dark,
+                statusBarColor: Colors.white,
+              ),
+            );
+          }
+        },
+        blurValue: 1,
+        autoPlayDelay: const Duration(seconds: 3),
+        builder: (context) => HomeScreen(onChanged: onChanged),
+        globalTooltipActionConfig: const TooltipActionConfig(
+            position: TooltipActionPosition.inside,
+            alignment: MainAxisAlignment.spaceBetween,
+            actionGap: 20),
+        globalTooltipActions: [
+          TooltipActionButton(
+              type: TooltipDefaultActionType.previous,
+              textStyle: const TextStyle(color: Colors.white),
+              hideActionWidgetForShowcase: [_firstShowcaseWidget]),
+          TooltipActionButton(
+            type: TooltipDefaultActionType.next,
+            textStyle: const TextStyle(color: Colors.white),
+            hideActionWidgetForShowcase: [_lastShowcaseWidget],
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class HomeScreen extends StatefulWidget {
   final Function(int index) onChanged;
@@ -62,6 +129,30 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
+  final GlobalKey _one = GlobalKey();
+  final GlobalKey _two = GlobalKey();
+  final GlobalKey _three = GlobalKey();
+  final GlobalKey _four = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      bool seen = await hasSeenShowcase();
+      if (!seen) {
+        ShowCaseWidget.of(context).startShowCase([
+          _firstShowcaseWidget,
+          _one,
+          _two,
+          _three,
+          _four,
+          _lastShowcaseWidget
+        ]);
+        await setShowcaseSeen();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -98,39 +189,93 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.green,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            onPressed: () async{
-              // FirebaseMessaging messaging = FirebaseMessaging.instance;
-              //
-              // // Push Notification की परमिशन पहले लें
-              // await messaging.requestPermission(
-              //   alert: true,
-              //   badge: true,
-              //   sound: true
-              // );
-              //
-              // String? token;
-              //
-              // if (Platform.isIOS) {
-              //   // iOS के लिए APNS Token प्राप्त करें
-              //   token = await messaging.getAPNSToken();
-              //   print("APNS Token: $token");
-              // } else {
-              //   // Android के लिए FCM Token प्राप्त करें
-              //   token = await messaging.getToken();
-              //   print("FCM Token: $token");
-              // }
+        floatingActionButton: Padding(
+            padding: const EdgeInsets.only(top: 12, right: 5),
+            child: Showcase(
+                targetPadding: const EdgeInsets.all(5),
+                key: _three,
+                title: 'Bill Payment',
+                description:
+                    "Quick bill payments with a complete view of upcoming and due bills.",
+                tooltipBackgroundColor: AppTheme.guestColor,
+                textColor: Colors.white,
+                titleTextStyle: customTitle(),
+                descTextStyle: customDes(),
+                floatingActionWidget: FloatingActionWidget(
+                  left: 16,
+                  bottom: 16,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xffEE5366),
+                      ),
+                      onPressed: ShowCaseWidget.of(context).dismiss,
+                      child: const Text(
+                        'Close Showcase',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                targetShapeBorder: const CircleBorder(),
+                tooltipActionConfig: const TooltipActionConfig(
+                  alignment: MainAxisAlignment.spaceBetween,
+                  gapBetweenContentAndAction: 10,
+                  position: TooltipActionPosition.outside,
+                ),
+                tooltipActions: const [
+                  TooltipActionButton(
+                    backgroundColor: Colors.transparent,
+                    type: TooltipDefaultActionType.previous,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 4,
+                    ),
+                    textStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  TooltipActionButton(
+                    type: TooltipDefaultActionType.next,
+                    backgroundColor: Colors.white,
+                    textStyle: TextStyle(
+                      color: Colors.pinkAccent,
+                    ),
+                  ),
+                ],
+                child: FloatingActionButton(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50)),
+                    onPressed: () async {
+                      // FirebaseMessaging messaging = FirebaseMessaging.instance;
+                      //
+                      // // Push Notification की परमिशन पहले लें
+                      // await messaging.requestPermission(
+                      //   alert: true,
+                      //   badge: true,
+                      //   sound: true
+                      // );
+                      //
+                      // String? token;
+                      //
+                      // if (Platform.isIOS) {
+                      //   // iOS के लिए APNS Token प्राप्त करें
+                      //   token = await messaging.getAPNSToken();
+                      //   print("APNS Token: $token");
+                      // } else {
+                      //   // Android के लिए FCM Token प्राप्त करें
+                      //   token = await messaging.getToken();
+                      //   print("FCM Token: $token");
+                      // }
 
-
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => BillScreen()));
-
-            }
-              ,
-            child: Image.asset('assets/images/pay_img.png')),
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => BillScreen()));
+                    },
+                    child: Image.asset('assets/images/pay_img.png')))),
         appBar: AppBar(
             leadingWidth: size.width,
             leading: BlocBuilder<UserProfileCubit, UserProfileState>(
@@ -157,43 +302,63 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                   return ListTile(
                     dense: true,
-                    leading: GestureDetector(
-                        onTap: () => profileViewAlertDialog(
-                            context, state.userProfile.first),
-                        child: state.userProfile.first.data!.user!.image != null
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(100),
-                                child: FadeInImage(
-                                    height: 50,
-                                    width: 50,
-                                    fit: BoxFit.fill,
-                                    placeholder:
-                                        AssetImage('assets/images/default.jpg'),
-                                    image: NetworkImage(state
-                                        .userProfile.first.data!.user!.image
-                                        .toString()),
-                                    imageErrorBuilder: (_, child, st) =>
-                                        Image.asset('assets/images/default.jpg',
-                                            height: 50,
-                                            width: 50,
-                                            fit: BoxFit.fill)),
-                              )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(100),
-                                child: FadeInImage(
-                                  height: 50,
-                                  width: 50,
-                                  fit: BoxFit.fill,
-                                  placeholder:
-                                      AssetImage('assets/images/default.jpg'),
-                                  image: AssetImage(''),
-                                  imageErrorBuilder: (_, child, st) =>
-                                      Image.asset('assets/images/default.jpg',
-                                          height: 50,
-                                          width: 50,
-                                          fit: BoxFit.fill),
-                                ),
-                              )),
+                    leading: Showcase(
+                        key: _firstShowcaseWidget,
+                        title: "Profile Data",
+                        description: 'Your personal details, all in one place.',
+                        titleTextStyle:
+                            customTitle().copyWith(color: Colors.black),
+                        descTextStyle:
+                            customDes().copyWith(color: AppTheme.blueColor),
+                        onBarrierClick: () {
+                          ShowCaseWidget.of(context)
+                              .hideFloatingActionWidgetForKeys(
+                                  [_firstShowcaseWidget, _lastShowcaseWidget]);
+                        },
+                        tooltipActionConfig: const TooltipActionConfig(
+                            alignment: MainAxisAlignment.end,
+                            position: TooltipActionPosition.outside,
+                            gapBetweenContentAndAction: 10),
+                        child: GestureDetector(
+                            onTap: () => profileViewAlertDialog(
+                                context, state.userProfile.first),
+                            child: state.userProfile.first.data!.user!.image !=
+                                    null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(100),
+                                    child: FadeInImage(
+                                        height: 50,
+                                        width: 50,
+                                        fit: BoxFit.fill,
+                                        placeholder: AssetImage(
+                                            'assets/images/default.jpg'),
+                                        image: NetworkImage(state
+                                            .userProfile.first.data!.user!.image
+                                            .toString()),
+                                        imageErrorBuilder: (_, child, st) =>
+                                            Image.asset(
+                                                'assets/images/default.jpg',
+                                                height: 50,
+                                                width: 50,
+                                                fit: BoxFit.fill)),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(100),
+                                    child: FadeInImage(
+                                      height: 50,
+                                      width: 50,
+                                      fit: BoxFit.fill,
+                                      placeholder: AssetImage(
+                                          'assets/images/default.jpg'),
+                                      image: AssetImage(''),
+                                      imageErrorBuilder: (_, child, st) =>
+                                          Image.asset(
+                                              'assets/images/default.jpg',
+                                              height: 50,
+                                              width: 50,
+                                              fit: BoxFit.fill),
+                                    ),
+                                  ))),
                     title: Text(
                         state.userProfile.first.data!.user!.name.toString(),
                         style: GoogleFonts.nunitoSans(
@@ -241,7 +406,155 @@ class _HomeScreenState extends State<HomeScreen> {
             actions: [
               Padding(
                   padding: const EdgeInsets.only(right: 10),
-                  child: residentSideHeader(context))
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12, right: 70),
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Showcase(
+                                  targetPadding: const EdgeInsets.all(5),
+                                  key: _one,
+                                  title: 'Chat with Staffs',
+                                  description:
+                                      "Chat instantly with security staff or service providers anytime",
+                                  tooltipBackgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  textColor: Colors.white,
+                                  titleTextStyle: customTitle(),
+                                  descTextStyle: customDes(),
+                                  floatingActionWidget: FloatingActionWidget(
+                                    left: 16,
+                                    bottom: 16,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              const Color(0xffEE5366),
+                                        ),
+                                        onPressed:
+                                            ShowCaseWidget.of(context).dismiss,
+                                        child: const Text(
+                                          'Skip',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  targetShapeBorder: const CircleBorder(),
+                                  tooltipActionConfig:
+                                      const TooltipActionConfig(
+                                    alignment: MainAxisAlignment.spaceBetween,
+                                    gapBetweenContentAndAction: 10,
+                                    position: TooltipActionPosition.outside,
+                                  ),
+                                  tooltipActions: const [
+                                    TooltipActionButton(
+                                      backgroundColor: Colors.transparent,
+                                      type: TooltipDefaultActionType.previous,
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 4,
+                                      ),
+                                      textStyle: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    TooltipActionButton(
+                                      type: TooltipDefaultActionType.next,
+                                      backgroundColor: Colors.white,
+                                      textStyle: TextStyle(
+                                        color: Colors.pinkAccent,
+                                      ),
+                                    ),
+                                  ],
+                                  child: Container(
+                                    width: 30,
+                                    height: 30,
+                                  )),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12, right: 5),
+                            child: Align(
+                              alignment: Alignment.topRight,
+                              child: Showcase(
+                                  targetPadding: const EdgeInsets.all(5),
+                                  key: _two,
+                                  title: 'Property Selector',
+                                  description:
+                                      "In the app, you can click on this property select icon to choose another property.",
+                                  tooltipBackgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  textColor: Colors.white,
+                                  titleTextStyle: customTitle(),
+                                  descTextStyle: customDes(),
+                                  floatingActionWidget: FloatingActionWidget(
+                                    left: 16,
+                                    bottom: 16,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              const Color(0xffEE5366),
+                                        ),
+                                        onPressed:
+                                            ShowCaseWidget.of(context).dismiss,
+                                        child: const Text(
+                                          'Close Showcase',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  targetShapeBorder: const CircleBorder(),
+                                  tooltipActionConfig:
+                                      const TooltipActionConfig(
+                                    alignment: MainAxisAlignment.spaceBetween,
+                                    gapBetweenContentAndAction: 10,
+                                    position: TooltipActionPosition.outside,
+                                  ),
+                                  tooltipActions: const [
+                                    TooltipActionButton(
+                                      backgroundColor: Colors.transparent,
+                                      type: TooltipDefaultActionType.previous,
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 4,
+                                      ),
+                                      textStyle: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    TooltipActionButton(
+                                      type: TooltipDefaultActionType.next,
+                                      backgroundColor: Colors.white,
+                                      textStyle: TextStyle(
+                                        color: Colors.pinkAccent,
+                                      ),
+                                    ),
+                                  ],
+                                  child: Container(
+                                    width: 30,
+                                    height: 30,
+                                  )),
+                            ),
+                          ),
+                        ],
+                      ),
+                      residentSideHeader(context),
+                    ],
+                  ))
             ]),
         body: RefreshIndicator(
           onRefresh: fetchBill,

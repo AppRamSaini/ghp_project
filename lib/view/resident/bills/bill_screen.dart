@@ -71,24 +71,24 @@ class _BillScreenState extends State<BillScreen> {
       listeners: [
         BlocListener<UserProfileCubit, UserProfileState>(
             listener: (context, state) {
-              if (state is UserProfileLoaded) {
-                Future.delayed(const Duration(milliseconds: 5), () {
-                  List<UnpaidBill> billData =
+          if (state is UserProfileLoaded) {
+            Future.delayed(const Duration(milliseconds: 5), () {
+              List<UnpaidBill> billData =
                   state.userProfile.first.data!.unpaidBills!;
-                  if (billData.isNotEmpty) {
-                    if (!showingBill) {
-                      setState(() {
-                        showingBill = true;
-                      });
-                      checkPaymentReminder(
-                          context: context,
-                          myUnpaidBill:
+              if (billData.isNotEmpty) {
+                if (!showingBill) {
+                  setState(() {
+                    showingBill = true;
+                  });
+                  checkPaymentReminder(
+                      context: context,
+                      myUnpaidBill:
                           state.userProfile.first.data!.unpaidBills!.first);
-                    }
-                  }
-                });
+                }
               }
-            }),
+            });
+          }
+        }),
       ],
       child: Scaffold(
         appBar: appbarWidget(title: 'My Bills'),
@@ -226,7 +226,7 @@ class _BillScreenState extends State<BillScreen> {
                                   borderRadius: BorderRadius.circular(10)),
                               child: Column(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   ListTile(
                                       dense: true,
@@ -240,19 +240,19 @@ class _BillScreenState extends State<BillScreen> {
                                       leading: Container(
                                           decoration: BoxDecoration(
                                               borderRadius:
-                                              BorderRadius.circular(5.r),
+                                                  BorderRadius.circular(5.r),
                                               color: AppTheme.primaryColor
                                                   .withOpacity(0.5)),
                                           child: Padding(
                                               padding:
-                                              const EdgeInsets.all(10.0),
+                                                  const EdgeInsets.all(10.0),
                                               child: Image.asset(ImageAssets.receiptImage,
                                                   height: 20.h,
                                                   width: 25.h,
                                                   color: Colors.white))),
                                       title: Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(bill.service!.name.toString(),
                                               style: const TextStyle(
@@ -266,76 +266,76 @@ class _BillScreenState extends State<BillScreen> {
                                       ),
                                       subtitle: bill.status == 'paid'
                                           ? Text("₹ ${bill.amount} paid On ${delayData()}",
-                                          style: const TextStyle(color: Colors.black, fontSize: 12))
+                                              style: const TextStyle(color: Colors.black, fontSize: 12))
                                           : Text("Due On ${delayData()}", style: const TextStyle(color: Colors.black, fontSize: 12))),
                                   bill.status == 'paid'
                                       ? Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 10, left: 15, right: 10),
-                                      child: SizedBox(
-                                          height: 30,
-                                          width: MediaQuery.sizeOf(context)
-                                              .width,
-                                          child: marqueeText(
-                                              "👍Thanks for being a wonderful resident!")))
+                                          padding: const EdgeInsets.only(
+                                              bottom: 10, left: 15, right: 10),
+                                          child: SizedBox(
+                                              height: 30,
+                                              width: MediaQuery.sizeOf(context)
+                                                  .width,
+                                              child: marqueeText(
+                                                  "👍Thanks for being a wonderful resident!")))
                                       : Container(
-                                    margin: EdgeInsets.only(
-                                        bottom: 10, left: 10, right: 10),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(30),
-                                        color: Colors.white),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text('₹ ${bill.amount}',
-                                            style: GoogleFonts.nunitoSans(
-                                                textStyle: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight
-                                                        .bold))),
-                                        Text(
-                                            "Property : ${bill.property!.aprtNo.toString() ?? ''}"
-                                                .toUpperCase(),
-                                            style: const TextStyle(
-                                                color: Colors.black45,
-                                                fontSize: 14)),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            await LocalStorage
-                                                .localStorage
-                                                .setString('bill_id',
-                                                bill.id.toString());
-                                            payBillFun(
-                                                double.parse(bill.amount
-                                                    .toString()),
-                                                context);
-                                          },
-                                          child: Container(
-                                              padding: const EdgeInsets
-                                                  .symmetric(
-                                                  horizontal: 16,
-                                                  vertical: 5),
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(30),
-                                                  color: Colors.green
-                                                      .withOpacity(0.3)),
-                                              child: Text('Pay',
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .w600))),
+                                          margin: EdgeInsets.only(
+                                              bottom: 10, left: 10, right: 10),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              color: Colors.white),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text('₹ ${bill.amount}',
+                                                  style: GoogleFonts.nunitoSans(
+                                                      textStyle: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight
+                                                              .bold))),
+                                              Text(
+                                                  "Property : ${bill.property!.aprtNo.toString() ?? ''}"
+                                                      .toUpperCase(),
+                                                  style: const TextStyle(
+                                                      color: Colors.black45,
+                                                      fontSize: 14)),
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  await LocalStorage
+                                                      .localStorage
+                                                      .setString('bill_id',
+                                                          bill.id.toString());
+                                                  payBillFun(
+                                                      double.parse(bill.amount
+                                                          .toString()),
+                                                      context);
+                                                },
+                                                child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 5),
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(30),
+                                                        color: Colors.green
+                                                            .withOpacity(0.3)),
+                                                    child: Text('Pay',
+                                                        style: TextStyle(
+                                                            color: Colors.red,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600))),
+                                              )
+                                            ],
+                                          ),
                                         )
-                                      ],
-                                    ),
-                                  )
                                 ],
                               ),
                             );

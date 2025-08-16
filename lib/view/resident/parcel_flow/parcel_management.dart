@@ -24,7 +24,7 @@ List<Map<String, dynamic>> optionList = [
   {"icon": Icons.info_outline_rounded, "menu": "Create Complaint", "menu_id": 4}
 ];
 List<Map<String, dynamic>> optionList0 = [
-  {"icon": Icons.delete, "menu": "Delete", "menu_id": 1},
+  // {"icon": Icons.delete, "menu": "Delete", "menu_id": 1},
   {"icon": Icons.visibility, "menu": "View Details", "menu_id": 2},
   {"icon": Icons.info_outline_rounded, "menu": "Create Complaint", "menu_id": 4}
 ];
@@ -98,12 +98,14 @@ Widget popMenusForStaff(
         if (value['menu_id'] == 0) {
           phoneCallLauncher(requestData.member!.phone.toString());
         } else if (value['menu_id'] == 1) {
-          visitorsDeletePermissionDialog(context, () {
-            Navigator.pop(context);
-            context
-                .read<ParcelDeletetCubit>()
-                .deleteParcelApi(requestData.id.toString());
-          });
+          if (options != optionList0) {
+            visitorsDeletePermissionDialog(context, () {
+              Navigator.pop(context);
+              context
+                  .read<ParcelDeletetCubit>()
+                  .deleteParcelApi(requestData.id.toString());
+            });
+          }
         } else if (value['menu_id'] == 2) {
           Navigator.push(
               context,

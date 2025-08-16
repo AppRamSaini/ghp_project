@@ -100,6 +100,7 @@ class _CreateParcelPageState extends State<CreateParcelPage> {
   late BuildContext dialogueContext;
 
   ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -158,7 +159,6 @@ class _CreateParcelPageState extends State<CreateParcelPage> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: TextFormField(
-
                             textInputAction: TextInputAction.done,
                             controller: parcelIDController,
                             style: GoogleFonts.nunitoSans(
@@ -215,7 +215,6 @@ class _CreateParcelPageState extends State<CreateParcelPage> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: TextFormField(
-
                             textInputAction: TextInputAction.done,
                             controller: nameController,
                             style: GoogleFonts.nunitoSans(
@@ -272,7 +271,6 @@ class _CreateParcelPageState extends State<CreateParcelPage> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: TextFormField(
-
                             textInputAction: TextInputAction.done,
                             controller: senderNameController,
                             style: GoogleFonts.nunitoSans(
@@ -521,6 +519,17 @@ class _CreateParcelPageState extends State<CreateParcelPage> {
                             Expanded(
                               child: SizedBox(
                                 child: TextFormField(
+                                  onTap: () {
+                                    if (date!.text.isEmpty) {
+                                      snackBar(
+                                          context,
+                                          'Kindly select first date!',
+                                          Icons.info,
+                                          AppTheme.redColor);
+                                    } else {
+                                      _selectTime(context);
+                                    }
+                                  },
                                   readOnly: true,
                                   controller: time,
                                   style: GoogleFonts.nunitoSans(

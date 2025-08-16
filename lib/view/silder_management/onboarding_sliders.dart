@@ -1,5 +1,4 @@
-import 'dart:async';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/sliders_model.dart';
@@ -15,49 +14,45 @@ class OnboardingSlidersManagement extends StatefulWidget {
 
 class _OnboardingSlidersManagementState
     extends State<OnboardingSlidersManagement> {
-  int _currentPage = 0;
+  int _currentPage = 1;
   late PageController _pageController;
-  Timer? _autoScrollTimer;
 
   @override
   void initState() {
     super.initState();
+    // context.read<SlidersCubit>().fetchSlidersAPI();
     _pageController = PageController(initialPage: _currentPage);
-    _startAutoScroll();
   }
 
-  void _startAutoScroll() {
-    _autoScrollTimer?.cancel();
-    _autoScrollTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
-      if (!mounted) return;
+  final CarouselSliderController _controller = CarouselSliderController();
 
-      List<SliderList> slidersList = context.read<SlidersCubit>().slidersList;
-
-      if (slidersList.isEmpty || !_pageController.hasClients) return;
-
-      int nextPage = _currentPage + 1;
-      if (nextPage >= slidersList.length) {
-        nextPage = 0;
-      }
-
-      _pageController.animateToPage(
-        nextPage,
-        duration: const Duration(milliseconds: 1200),
-        curve: Curves.easeInOut,
-      );
-
-      setState(() {
-        _currentPage = nextPage;
-      });
-    });
+  void onPageChange(int index, CarouselPageChangedReason changeReason) {
+    setState(() => _currentPage = index);
   }
 
-  @override
-  void dispose() {
-    _autoScrollTimer?.cancel();
-    _pageController.dispose();
-    super.dispose();
-  }
+  List<Widget> imageSlide(List<SliderList> imgList) => imgList
+      .map(
+        (item) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: FadeInImage(
+              placeholder: const AssetImage('assets/images/default.jpg'),
+              image: NetworkImage(item.image ?? ''),
+              fit: BoxFit.cover,
+              height: size.height * 0.4,
+              width: double.infinity,
+              imageErrorBuilder: (_, __, ___) => Image.asset(
+                'assets/images/default.jpg',
+                fit: BoxFit.cover,
+                height: size.height * 0.4,
+                width: double.infinity,
+              ),
+            ),
+          ),
+        ),
+      )
+      .toList();
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +62,7 @@ class _OnboardingSlidersManagementState
           return dummy();
         } else if (state is SlidersLoaded) {
           List<SliderList> slidersList = state.sliders;
+          if (slidersList.isEmpty) return dummy();
           return Column(
             children: [
               Padding(
@@ -79,7 +75,7 @@ class _OnboardingSlidersManagementState
                         height: size.height * 0.13, fit: BoxFit.fill),
                     SizedBox(height: size.height * 0.02),
                     AnimatedSwitcher(
-                      duration: Duration(milliseconds: 500),
+                      duration: Duration(milliseconds: 100),
                       transitionBuilder: (child, animation) =>
                           FadeTransition(opacity: animation, child: child),
                       child: Text(
@@ -94,7 +90,7 @@ class _OnboardingSlidersManagementState
                     ),
                     SizedBox(height: 8),
                     AnimatedSwitcher(
-                      duration: Duration(milliseconds: 500),
+                      duration: Duration(milliseconds: 100),
                       transitionBuilder: (child, animation) =>
                           FadeTransition(opacity: animation, child: child),
                       child: Text(
@@ -108,7 +104,7 @@ class _OnboardingSlidersManagementState
                     ),
                     const SizedBox(height: 5),
                     AnimatedSwitcher(
-                      duration: Duration(milliseconds: 500),
+                      duration: Duration(milliseconds: 100),
                       transitionBuilder: (child, animation) =>
                           FadeTransition(opacity: animation, child: child),
                       child: Text(
@@ -125,37 +121,15 @@ class _OnboardingSlidersManagementState
                 ),
               ),
               SizedBox(height: size.height * 0.03),
-              SizedBox(
-                height: size.height * 0.38,
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: slidersList.length,
-                  onPageChanged: (index) {
-                    setState(() {
-                      _currentPage = index;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: FadeInImage(
-                              height: size.height * 0.4,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              imageErrorBuilder: (_, child, stackTrack) =>
-                                  Image.asset('assets/images/default.jpg',
-                                      height: size.height * 0.4,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover),
-                              image: NetworkImage(
-                                  slidersList[index].image.toString()),
-                              placeholder: const AssetImage(
-                                  'assets/images/default.jpg'))),
-                    );
-                  },
-                ),
+              CarouselSlider(
+                items: imageSlide(slidersList),
+                options: CarouselOptions(
+                    height: size.height * 0.38,
+                    viewportFraction: 0.99,
+                    enlargeCenterPage: true,
+                    onPageChanged: onPageChange,
+                    autoPlay: true),
+                carouselController: _controller,
               ),
               SizedBox(height: 10.h),
               Row(

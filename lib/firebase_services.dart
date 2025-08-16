@@ -46,15 +46,24 @@ class FirebaseNotificationService {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       // Foreground
-      FirebaseMessaging.onMessage
-          .listen((message) => _handleMessage(message, isForeground: true));
+      FirebaseMessaging.onMessage.listen((message) {
+        print('------->>>>>Foreground message');
+
+        _handleMessage(message, isForeground: true);
+      });
 
       // Background - tapped from system tray
-      FirebaseMessaging.onMessageOpenedApp
-          .listen((message) => _handleMessage(message, isForeground: false));
+      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        print('------->>>>> Background - tapped from system tray');
+
+        _handleMessage(message, isForeground: false);
+      });
 
       // Terminated - first time app opened via notification
       FirebaseMessaging.instance.getInitialMessage().then((message) {
+        print(
+            '------->>>>>Terminated - first time app opened via notification');
+
         if (message != null) {
           _handleMessage(message, isForeground: false, fromTerminated: true);
         }
@@ -66,6 +75,8 @@ class FirebaseNotificationService {
       {bool isForeground = false, bool fromTerminated = false}) {
     final data = message.data;
     final type = data['type'] ?? '';
+
+    print('------------------------------>>>>>>>$data');
 
     if (type == 'incoming_request') {
       LocalStorage.localStorage.setString("visitor_id", data['visitor_id']);

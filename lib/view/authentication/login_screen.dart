@@ -3,7 +3,7 @@ import 'package:ghp_society_management/constants/custom_btns.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/main.dart';
-import 'package:ghp_society_management/view/resident/authentication/otp_screen.dart';
+import 'package:ghp_society_management/view/authentication/otp_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -28,9 +28,10 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         body: Column(
           children: [
-             Expanded(child:GestureDetector(onTap: ()=>    FocusScope.of(context).unfocus(),
-
-                 child: buildForm(context))),
+            Expanded(
+                child: GestureDetector(
+                    onTap: () => FocusScope.of(context).unfocus(),
+                    child: buildForm(context))),
             buildBottomButton(context),
           ],
         ),
@@ -236,17 +237,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   /// --- Bottom Send OTP Button
   Widget buildBottomButton(BuildContext context) => customBtn(
-    onTap: () {
-      FocusScope.of(context).unfocus();
-      if (formKey.currentState!.validate() && checked) {
-        context
-            .read<SendOtpCubit>()
-            .sendOtp(phoneNumber.text, widget.societyId);
-      } else if (!checked) {
-        snackBar(context, 'Please confirm the Terms & conditions',
-            Icons.warning, AppTheme.redColor);
-      }
-    },
-    txt: "Send OTP",
-  );
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          if (formKey.currentState!.validate() && checked) {
+            context
+                .read<SendOtpCubit>()
+                .sendOtp(phoneNumber.text, widget.societyId);
+          } else if (!checked) {
+            snackBar(context, 'Please confirm the Terms & conditions',
+                Icons.warning, AppTheme.redColor);
+          }
+        },
+        txt: "Send OTP",
+      );
 }
