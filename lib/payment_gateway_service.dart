@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:ghp_society_management/config.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:ghp_society_management/constants/config.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 payBillFun(double amount, BuildContext context) {
   Razorpay razorpay = Razorpay();
@@ -14,7 +15,7 @@ payBillFun(double amount, BuildContext context) {
 
   var options = {
     'key': RazorpayConfig.razorpayKey,
-    'amount': (amount * 100).toInt(), // Razorpay works in paise
+    'amount': (amount * 100).toInt(),
     'name': 'GHP Society Management',
     'description': 'Maintenance Bill',
     'retry': {'enabled': true, 'max_count': 1},
@@ -28,11 +29,11 @@ payBillFun(double amount, BuildContext context) {
   };
 
   razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
-          (res) => handlePaymentErrorResponse(res, context));
+      (res) => handlePaymentErrorResponse(res, context));
   razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
-          (res) => handlePaymentSuccessResponse(res, context));
+      (res) => handlePaymentSuccessResponse(res, context));
   razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
-          (res) => handleExternalWalletSelected(res, context));
+      (res) => handleExternalWalletSelected(res, context));
 
   razorpay.open(options);
 }
@@ -138,14 +139,14 @@ Future<void> _submitPaymentStatus(
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const Dashboard()),
-                    (route) => false);
+                (route) => false);
           });
         }
       } else {
         print(response.reasonPhrase);
       }
     } else {
-      debugPrint("Called -----EROROR");
+      debugPrint("Called -----ERROR");
       var response = await apiManager.postRequest(
         body,
         "${Config.baseURL}${Routes.billPayment}",

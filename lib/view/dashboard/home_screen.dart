@@ -331,13 +331,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                         width: 50,
                                         fit: BoxFit.fill,
                                         placeholder: AssetImage(
-                                            'assets/images/default.jpg'),
+                                            'assets/images/profile_icon.png'),
                                         image: NetworkImage(state
                                             .userProfile.first.data!.user!.image
                                             .toString()),
                                         imageErrorBuilder: (_, child, st) =>
                                             Image.asset(
-                                                'assets/images/default.jpg',
+                                                'assets/images/profile_icon.png',
                                                 height: 50,
                                                 width: 50,
                                                 fit: BoxFit.fill)),
@@ -349,11 +349,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       width: 50,
                                       fit: BoxFit.fill,
                                       placeholder: AssetImage(
-                                          'assets/images/default.jpg'),
+                                          'assets/images/profile_icon.png'),
                                       image: AssetImage(''),
                                       imageErrorBuilder: (_, child, st) =>
                                           Image.asset(
-                                              'assets/images/default.jpg',
+                                              'assets/images/profile_icon.png',
                                               height: 50,
                                               width: 50,
                                               fit: BoxFit.fill),
@@ -387,10 +387,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 50,
                           width: 50,
                           fit: BoxFit.fill,
-                          placeholder: AssetImage('assets/images/default.jpg'),
+                          placeholder:
+                              AssetImage('assets/images/profile_icon.png'),
                           image: AssetImage(""),
                           imageErrorBuilder: (_, child, st) => Image.asset(
-                              'assets/images/default.jpg',
+                              'assets/images/profile_icon.png',
                               height: 50,
                               width: 50,
                               fit: BoxFit.fill),

@@ -152,13 +152,13 @@ class DailyHelpGatePassState extends State<DailyHelpGatePass> {
                                       width: 70,
                                       fit: BoxFit.fill,
                                       placeholder: AssetImage(
-                                          'assets/images/default.jpg'),
+                                          'assets/images/profile_icon.png'),
                                       image: NetworkImage(widget
                                           .dailyHelpUser!.image
                                           .toString()),
                                       imageErrorBuilder: (_, child, st) =>
                                           Image.asset(
-                                              'assets/images/default.jpg',
+                                              'assets/images/profile_icon.png',
                                               height: 70,
                                               width: 70,
                                               fit: BoxFit.fill),
@@ -171,11 +171,11 @@ class DailyHelpGatePassState extends State<DailyHelpGatePass> {
                                       width: 70,
                                       fit: BoxFit.fill,
                                       placeholder: AssetImage(
-                                          'assets/images/default.jpg'),
+                                          'assets/images/profile_icon.png'),
                                       image: AssetImage(''),
                                       imageErrorBuilder: (_, child, st) =>
                                           Image.asset(
-                                              'assets/images/default.jpg',
+                                              'assets/images/profile_icon.png',
                                               height: 70,
                                               width: 70,
                                               fit: BoxFit.fill),

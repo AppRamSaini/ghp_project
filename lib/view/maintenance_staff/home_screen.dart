@@ -167,7 +167,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                             : const CircleAvatar(
                                                 radius: 22,
                                                 backgroundImage: AssetImage(
-                                                    'assets/images/default.jpg'))),
+                                                    'assets/images/profile_icon.png'))),
                                     const SizedBox(width: 10),
                                     Flexible(
                                       child: Column(
@@ -230,7 +230,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                     const CircleAvatar(
                                         radius: 22,
                                         backgroundImage: AssetImage(
-                                            'assets/images/default.jpg')),
+                                            'assets/images/profile_icon.png')),
                                     const SizedBox(width: 10),
                                     Flexible(
                                       child: Column(
@@ -980,7 +980,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
         return Scaffold(
           backgroundColor: Colors.transparent,
           body: GestureDetector(
-            onTap: ()=>FocusScope.of(context).unfocus(),
+            onTap: () => FocusScope.of(context).unfocus(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -996,8 +996,8 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                          padding:
-                              EdgeInsets.only(top: 10.w, left: 10.w, right: 10.w),
+                          padding: EdgeInsets.only(
+                              top: 10.w, left: 10.w, right: 10.w),
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -1030,11 +1030,11 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                               defaultPinTheme: defaultPinTheme,
                               separatorBuilder: (index) =>
                                   const SizedBox(width: 10),
-                              hapticFeedbackType: HapticFeedbackType.lightImpact,
+                              hapticFeedbackType:
+                                  HapticFeedbackType.lightImpact,
                               onCompleted: (pin) {
-                                context
-                                    .read<DoneServiceCubit>()
-                                    .doneService(id.toString(), controller.text);
+                                context.read<DoneServiceCubit>().doneService(
+                                    id.toString(), controller.text);
                                 Navigator.of(context).pop();
                               },
                               cursor: Column(
@@ -1059,7 +1059,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                                   Icons.warning, Colors.red);
                             }
                           },
-                          txt:"Mark As Done",
+                          txt: "Mark As Done",
                         ),
                       ),
                       SizedBox(

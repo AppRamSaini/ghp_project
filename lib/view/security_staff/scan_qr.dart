@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_profile.dart';
 import 'package:ghp_society_management/view/security_staff/daliy_help/daily_help_details.dart';
@@ -58,62 +57,110 @@ class _QrCodeScannerState extends State<QrCodeScanner>
     }
   }
 
+  /// Helper Method for Navigation
+  void _navigateToVisitorDetails(String visitorId) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => VisitorsDetailsPage2(
+          visitorsId: {'visitor_id': visitorId},
+          isTypesScan: true,
+        ),
+      ),
+    );
+  }
+
   void _handleDetection(BarcodeCapture capture) async {
     for (var barcode in capture.barcodes) {
-      if (barcode.rawValue != null) {
-        showLoadingDialog(context, (ctx) => dialogueContext = ctx);
+      if (barcode.rawValue == null) continue;
 
+      // // Show loading dialog
+      // showLoadingDialog(context, (ctx) => dialogueContext = ctx);
+
+      try {
+        final qrData = barcode.rawValue!;
+        Map<String, dynamic>? parsedData;
         try {
-          final qrData = barcode.rawValue!;
-          final Map<String, dynamic> parsedData = jsonDecode(qrData);
+          parsedData = jsonDecode(qrData);
+        } catch (_) {
+          throw Exception("Invalid QR format. Not a valid JSON.");
+        }
 
-          await controller.stop();
-          Navigator.pop(dialogueContext);
+        await controller.stop();
+        //
+        // // ✅ Safe pop check
+        // if (mounted && Navigator.canPop(dialogueContext)) {
+        //   Navigator.pop(dialogueContext);
+        // }
 
-          if (parsedData.containsKey('visitor_id')) {
-            Navigator.pushReplacement(
+        if (parsedData!.containsKey('visitor_id')) {
+          final scannedVisitorId = parsedData['visitor_id'];
+
+          if (widget.visitorId == null) {
+            _navigateToVisitorDetails(scannedVisitorId);
+          } else if (widget.visitorId != scannedVisitorId) {
+            if (mounted && Navigator.canPop(context)) {
+              Navigator.of(context, rootNavigator: true).pop();
+            }
+            snackBar(
               context,
-              MaterialPageRoute(
-                builder: (_) => VisitorsDetailsPage2(
-                  visitorsId: {'visitor_id': parsedData['visitor_id']},
-                  isTypesScan: true,
-                ),
-              ),
+              "Scanned visitor QR is different. Please scan the correct visitor QR code.",
+              Icons.warning,
+              AppTheme.redColor,
             );
-          } else if (parsedData.containsKey('resident_id')) {
+          } else {
+            _navigateToVisitorDetails(scannedVisitorId);
+          }
+        } else if (parsedData.containsKey('resident_id')) {
+          if (widget.visitorId == null) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (_) => ResidentProfileDetails(
-                  residentId: {'resident_id': parsedData['resident_id']},
+                  residentId: {'resident_id': parsedData!['resident_id']},
                   forQRPage: true,
                   forResident: widget.fromResidentSide,
                 ),
               ),
             );
-          } else if (parsedData.containsKey('daily_help_id')) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => DailyHelpProfileDetails(
-                  dailyHelpId: {'daily_help_id': parsedData['daily_help_id']},
-                  forQRPage: true,
-                  forDetailsPage: false,
-                  fromResidentPage: widget.fromResidentSide,
-                ),
-              ),
-            );
           } else {
-            throw Exception("Key not found in QR");
+            final scannedVisitorId = parsedData['visitor_id'];
+            if (widget.visitorId != scannedVisitorId) {
+              if (mounted && Navigator.canPop(context)) {
+                Navigator.of(context, rootNavigator: true).pop();
+              }
+              snackBar(
+                context,
+                "Scanned visitor ID is different. Please scan the correct visitor QR code.",
+                Icons.warning,
+                AppTheme.redColor,
+              );
+            }
           }
-        } catch (e) {
-          Navigator.of(context, rootNavigator: true).pop();
-          snackBar(context, "Error processing QR code.", Icons.warning,
-              AppTheme.redColor);
+        } else if (parsedData.containsKey('daily_help_id')) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => DailyHelpProfileDetails(
+                dailyHelpId: {'daily_help_id': parsedData!['daily_help_id']},
+                forQRPage: true,
+                forDetailsPage: false,
+                fromResidentPage: widget.fromResidentSide,
+              ),
+            ),
+          );
+        } else {
+          throw Exception("Unsupported QR type. Key not found.");
         }
-
-        break;
+      } catch (e) {
+        // // ✅ Safe pop check
+        // if (mounted && Navigator.canPop(context)) {
+        //   Navigator.of(context, rootNavigator: true).pop();
+        // }
+        snackBar(context, e.toString(), Icons.warning, AppTheme.redColor);
       }
+
+      break;
     }
   }
 

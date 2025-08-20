@@ -166,13 +166,13 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
                                               .visitorDetails.first.image
                                               .toString()),
                                           placeholder: const AssetImage(
-                                              'assets/images/default.jpg'),
+                                              'assets/images/profile_icon.png'),
                                           imageErrorBuilder: (_, ss, st) =>
                                               Image.asset(
                                                   fit: BoxFit.cover,
                                                   height: 60,
                                                   width: 60,
-                                                  'assets/images/default.jpg'))),
+                                                  'assets/images/profile_icon.png'))),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(

@@ -49,11 +49,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
     final messageText = _messageController.text.trim();
     if (messageText.isNotEmpty) {
       context.read<GroupCubit>().sendGroupMessage(
-            messageText,
-            widget.groupId,
-            widget.userName,
-            widget.userId,
-          );
+          messageText, widget.groupId, widget.userName, widget.userId);
       _messageController.clear();
     }
   }
@@ -107,7 +103,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
             ),
             Text(
               widget.userCategory.isEmpty
-                  ? "Resident"
+                  ? "N/A"
                   : capitalizeWords(widget.userCategory.replaceAll("_", ' ')),
               style: GoogleFonts.nunitoSans(
                 textStyle: TextStyle(
@@ -143,10 +139,9 @@ class _MessagingScreenState extends State<MessagingScreen> {
                   WidgetsBinding.instance
                       .addPostFrameCallback((_) => _scrollToBottom());
 
-                  context.read<GroupCubit>().markAllMessagesAsRead(
-                        widget.groupId,
-                        widget.userId,
-                      );
+                  context
+                      .read<GroupCubit>()
+                      .markAllMessagesAsRead(widget.groupId, widget.userId);
 
                   return ListView.builder(
                     controller: _scrollController,
@@ -235,9 +230,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
             ),
             SafeArea(
               child: Padding(
-                padding:    const EdgeInsets.only(left: 15, right: 15),
-              
-              
+                padding: const EdgeInsets.only(left: 15, right: 15),
                 child: Row(
                   children: [
                     Expanded(

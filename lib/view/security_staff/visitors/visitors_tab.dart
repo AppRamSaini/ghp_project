@@ -580,9 +580,10 @@ Widget customVisitorsWidget(
           leading: ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: FadeInImage(
-                  placeholder: const AssetImage("assets/images/default.jpg"),
+                  placeholder:
+                      const AssetImage("assets/images/profile_icon.png"),
                   imageErrorBuilder: (context, error, stackTrace) {
-                    return Image.asset("assets/images/default.jpg",
+                    return Image.asset("assets/images/profile_icon.png",
                         height: 50, width: 50, fit: BoxFit.cover);
                   },
                   image: NetworkImage(visitorsData.image.toString()),
@@ -783,7 +784,9 @@ class VisitorActionsHandler {
       } else {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => QrCodeScanner()),
+          MaterialPageRoute(
+              builder: (_) =>
+                  QrCodeScanner(visitorId: visitorsData.id.toString())),
         );
       }
     } else if (status == 'Check OUT') {

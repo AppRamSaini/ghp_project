@@ -1,7 +1,7 @@
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/main.dart';
-import 'package:ghp_society_management/payment_gateway_service.dart';
 import 'package:ghp_society_management/view/resident/bills/bill_detail_screen.dart';
+import 'package:ghp_society_management/view/resident/bills/bill_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -69,7 +69,7 @@ class MyBillsPageState extends State<MyBillsPage> {
               height: size.height * 0.15,
               decoration: BoxDecoration(
                 color: Colors.grey,
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
           );
@@ -78,23 +78,12 @@ class MyBillsPageState extends State<MyBillsPage> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: List.generate(
-                state.hasMore ? state.bills.length + 1 : state.bills.length,
+                state.bills.isNotEmpty ? 1 : 0,
                 (index) {
-                  if (index == state.bills.length) {
-                    return const Center(
-                        child: CircularProgressIndicator.adaptive());
-                  }
                   final bill = state.bills[index];
 
                   String delayData() {
                     return convertDateFormat(bill.dueDate!);
-                    // if (delay > 0) {
-                    //   return "Due in ${bill.dueDateRemainDays} Days";
-                    // } else {
-                    //   return bill.dueDateDelayDays == 0
-                    //       ? 'Today Is Last Day'
-                    //       : "${bill.dueDateDelayDays} Days Delay";
-                    // }
                   }
 
                   return Container(
@@ -108,16 +97,10 @@ class MyBillsPageState extends State<MyBillsPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ListTile(
-                            dense: true,
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => BillDetailScreen(
-                                        billId: bill.id.toString()))),
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 8),
-                            leading: Container(
+                        Row(
+                          children: [
+                            Container(
+                                margin: EdgeInsets.only(left: 10, top: 10),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5.r),
                                     color: Colors.black.withOpacity(0.1)),
@@ -127,25 +110,70 @@ class MyBillsPageState extends State<MyBillsPage> {
                                         height: 20.h,
                                         width: 25.h,
                                         color: Colors.white))),
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(bill.service!.name.toString(),
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 14)),
-                                Text(bill.invoiceNumber.toString(),
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 12)),
-                              ],
-                            ),
-                            subtitle: bill.status == 'paid'
-                                ? Text(
-                                    "₹ ${bill.amount} paid On ${delayData()}",
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 10))
-                                : Text("Due On ${delayData()}",
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 10))),
+                            SizedBox(width: 10),
+                            Flexible(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 15),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(bill.service!.name.toString(),
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14)),
+                                        bill.status == 'paid'
+                                            ? Text(
+                                                "₹ ${bill.amount} paid On ${delayData()}",
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10))
+                                            : Text("Due On ${delayData()}",
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10))
+                                      ],
+                                    ),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(bill.invoiceNumber.toString(),
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12)),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 3),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color: bill.status == 'paid'
+                                                  ? Colors.green
+                                                      .withOpacity(0.2)
+                                                  : Colors.red
+                                                      .withOpacity(0.2)),
+                                          child: Text(
+                                              capitalizeWords(
+                                                  bill.status.toString()),
+                                              style: TextStyle(
+                                                  color: bill.status == 'paid'
+                                                      ? Colors.green
+                                                      : Colors.red,
+                                                  fontSize: 14)),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                         bill.status == 'paid'
                             ? Padding(
                                 padding: const EdgeInsets.only(
@@ -167,27 +195,30 @@ class MyBillsPageState extends State<MyBillsPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('₹ ${bill.amount}',
-                                        style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold))),
+                                    payAmount(bill),
                                     Text(
                                         "Property : ${bill.property!.aprtNo.toString() ?? ''}"
                                             .toUpperCase(),
                                         style: const TextStyle(
                                             color: Colors.black45,
                                             fontSize: 14)),
+                                    SizedBox(),
                                     GestureDetector(
                                       onTap: () async {
-                                        await LocalStorage.localStorage
-                                            .setString(
-                                                'bill_id', bill.id.toString());
-                                        payBillFun(
-                                            double.parse(
-                                                bill.amount.toString()),
-                                            context);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    BillDetailScreen(
+                                                        billId: bill.id
+                                                            .toString())));
+                                        // await LocalStorage.localStorage
+                                        //     .setString(
+                                        //         'bill_id', bill.id.toString());
+                                        // payBillFun(
+                                        //     double.parse(
+                                        //         bill.amount.toString()),
+                                        //     context);
                                       },
                                       child: Container(
                                           padding: const EdgeInsets.symmetric(
@@ -197,7 +228,7 @@ class MyBillsPageState extends State<MyBillsPage> {
                                                   BorderRadius.circular(30),
                                               color: Colors.green
                                                   .withOpacity(0.3)),
-                                          child: Text('Pay',
+                                          child: Text('View Details',
                                               style: TextStyle(
                                                   color: Colors.red,
                                                   fontWeight:
@@ -205,7 +236,7 @@ class MyBillsPageState extends State<MyBillsPage> {
                                     )
                                   ],
                                 ),
-                              )
+                              ),
                       ],
                     ),
                   );

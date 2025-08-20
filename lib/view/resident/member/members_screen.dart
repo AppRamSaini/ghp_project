@@ -392,7 +392,7 @@ class _MemberScreenState extends State<MemberScreen> {
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 8),
         leading: const CircleAvatar(
-            backgroundImage: AssetImage("assets/images/default.jpg")),
+            backgroundImage: AssetImage("assets/images/profile_icon.png")),
         title: Text(name ?? '',
             style: TextStyle(color: Colors.black, fontSize: 14)),
         subtitle: Text(

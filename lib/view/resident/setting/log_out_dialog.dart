@@ -237,11 +237,11 @@ void visitorsFeedbackDialog(BuildContext context, VisitorsListing visitors) {
                             borderRadius: BorderRadius.circular(100),
                             child: FadeInImage(
                                 placeholder: const AssetImage(
-                                    "assets/images/default.jpg"),
+                                    "assets/images/profile_icon.png"),
                                 imageErrorBuilder:
                                     (context, error, stackTrace) {
                                   return Image.asset(
-                                      "assets/images/default.jpg",
+                                      "assets/images/profile_icon.png",
                                       height: 60,
                                       width: 60,
                                       fit: BoxFit.cover);
@@ -582,11 +582,14 @@ void memberDetailsDialog(BuildContext context, PropertyNumber members) {
                       leading: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
                           child: FadeInImage(
-                              placeholder:
-                                  const AssetImage("assets/images/default.jpg"),
+                              placeholder: const AssetImage(
+                                  "assets/images/profile_icon.png"),
                               imageErrorBuilder: (context, error, stackTrace) {
-                                return Image.asset("assets/images/default.jpg",
-                                    height: 50, width: 50, fit: BoxFit.cover);
+                                return Image.asset(
+                                    "assets/images/profile_icon.png",
+                                    height: 50,
+                                    width: 50,
+                                    fit: BoxFit.cover);
                               },
                               image: NetworkImage(''),
                               fit: BoxFit.cover,
@@ -1092,7 +1095,9 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                     fontWeight: FontWeight.w500)),
                             TextFormField(
                               controller: phone,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
                               style: GoogleFonts.nunitoSans(
                                   color: Colors.black,
                                   fontSize: 14,
@@ -1106,7 +1111,8 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                 return null;
                               },
                               keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.done,                              maxLength: 10,
+                              textInputAction: TextInputAction.done,
+                              maxLength: 10,
                               decoration: InputDecoration(
                                 counter: const SizedBox(),
                                 hintText: 'Deliver phone',
@@ -1361,13 +1367,13 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                                       width: 70,
                                       fit: BoxFit.fill,
                                       placeholder: AssetImage(
-                                          'assets/images/default.jpg'),
+                                          'assets/images/profile_icon.png'),
                                       image: NetworkImage(profileDetails
                                           .data!.user!.image
                                           .toString()),
                                       imageErrorBuilder: (_, child, st) =>
                                           Image.asset(
-                                              'assets/images/default.jpg',
+                                              'assets/images/profile_icon.png',
                                               height: 70,
                                               width: 70,
                                               fit: BoxFit.fill),
@@ -1380,11 +1386,11 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                                       width: 70,
                                       fit: BoxFit.fill,
                                       placeholder: AssetImage(
-                                          'assets/images/default.jpg'),
+                                          'assets/images/profile_icon.png'),
                                       image: AssetImage(''),
                                       imageErrorBuilder: (_, child, st) =>
                                           Image.asset(
-                                              'assets/images/default.jpg',
+                                              'assets/images/profile_icon.png',
                                               height: 70,
                                               width: 70,
                                               fit: BoxFit.fill),

@@ -258,7 +258,7 @@ class _SelectMembersState extends State<SelectMembers> {
         dense: true,
         contentPadding: EdgeInsets.symmetric(horizontal: 5),
         leading: const CircleAvatar(
-            backgroundImage: AssetImage("assets/images/default.jpg")),
+            backgroundImage: AssetImage("assets/images/profile_icon.png")),
         title: Text(name, style: const TextStyle(fontSize: 14)),
         subtitle: Text("PROPERTY NO - $propertyNo",
             style: const TextStyle(fontSize: 12)),

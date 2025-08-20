@@ -68,7 +68,7 @@ class Bill {
   String? prevMonthPending;
   DateTime? paymentDate;
   DateTime? dueDate;
-  dynamic collectorId;
+  int? collectorId;
   DateTime? createdAt;
   DateTime? updatedAt;
   int? dueDateRemainDays;
@@ -179,18 +179,18 @@ class Property {
   String? floorNumber;
   String? unitType;
   String? aprtNo;
-  dynamic maintenanceBill;
-  dynamic maintenanceBillDueDate;
+  int? maintenanceBill;
+  DateTime? maintenanceBillDueDate;
   String? ownershipType;
   String? contructionType;
   String? occupancyStatus;
   dynamic ownerName;
-  String? emerName;
-  String? emerRelation;
-  String? emerPhone;
+  dynamic emerName;
+  dynamic emerRelation;
+  dynamic emerPhone;
   int? advancedPayment;
   dynamic createdAt;
-  dynamic updatedAt;
+  DateTime? updatedAt;
   dynamic deletedAt;
 
   Property({
@@ -235,7 +235,9 @@ class Property {
         unitType: json["unit_type"],
         aprtNo: json["aprt_no"],
         maintenanceBill: json["maintenance_bill"],
-        maintenanceBillDueDate: json["maintenance_bill_due_date"],
+        maintenanceBillDueDate: json["maintenance_bill_due_date"] == null
+            ? null
+            : DateTime.parse(json["maintenance_bill_due_date"]),
         ownershipType: json["ownership_type"],
         contructionType: json["contruction_type"],
         occupancyStatus: json["occupancy_status"],
@@ -245,7 +247,9 @@ class Property {
         emerPhone: json["emer_phone"],
         advancedPayment: json["advanced_payment"],
         createdAt: json["created_at"],
-        updatedAt: json["updated_at"],
+        updatedAt: json["updated_at"] == null
+            ? null
+            : DateTime.parse(json["updated_at"]),
         deletedAt: json["deleted_at"],
       );
 
@@ -263,7 +267,8 @@ class Property {
         "unit_type": unitType,
         "aprt_no": aprtNo,
         "maintenance_bill": maintenanceBill,
-        "maintenance_bill_due_date": maintenanceBillDueDate,
+        "maintenance_bill_due_date":
+            "${maintenanceBillDueDate!.year.toString().padLeft(4, '0')}-${maintenanceBillDueDate!.month.toString().padLeft(2, '0')}-${maintenanceBillDueDate!.day.toString().padLeft(2, '0')}",
         "ownership_type": ownershipType,
         "contruction_type": contructionType,
         "occupancy_status": occupancyStatus,
@@ -273,7 +278,7 @@ class Property {
         "emer_phone": emerPhone,
         "advanced_payment": advancedPayment,
         "created_at": createdAt,
-        "updated_at": updatedAt,
+        "updated_at": updatedAt?.toIso8601String(),
         "deleted_at": deletedAt,
       };
 }

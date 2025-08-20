@@ -275,11 +275,11 @@ class DailyHelpProfileDetailsState extends State<DailyHelpProfileDetails> {
                                             usersData.user!.image.toString()),
                                         onBackgroundImageError:
                                             (error, stack) => const AssetImage(
-                                                'assets/images/default.jpg'))
+                                                'assets/images/profile_icon.png'))
                                     : CircleAvatar(
                                         radius: 32.h,
                                         backgroundImage: const AssetImage(
-                                            'assets/images/default.jpg')),
+                                            'assets/images/profile_icon.png')),
                                 const SizedBox(width: 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

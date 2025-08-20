@@ -144,7 +144,7 @@ class _SecurityStaffSettingsState extends State<SecurityStaffSettings> {
                                                 width: 70,
                                                 fit: BoxFit.fill,
                                                 placeholder: AssetImage(
-                                                    'assets/images/default.jpg'),
+                                                    'assets/images/profile_icon.png'),
                                                 image: NetworkImage(state
                                                     .userProfile
                                                     .first
@@ -155,7 +155,7 @@ class _SecurityStaffSettingsState extends State<SecurityStaffSettings> {
                                                 imageErrorBuilder: (_, child,
                                                         st) =>
                                                     Image.asset(
-                                                        'assets/images/default.jpg',
+                                                        'assets/images/profile_icon.png',
                                                         height: 70,
                                                         width: 70,
                                                         fit: BoxFit.fill),
@@ -169,12 +169,12 @@ class _SecurityStaffSettingsState extends State<SecurityStaffSettings> {
                                                 width: 70,
                                                 fit: BoxFit.fill,
                                                 placeholder: AssetImage(
-                                                    'assets/images/default.jpg'),
+                                                    'assets/images/profile_icon.png'),
                                                 image: AssetImage(''),
                                                 imageErrorBuilder: (_, child,
                                                         st) =>
                                                     Image.asset(
-                                                        'assets/images/default.jpg',
+                                                        'assets/images/profile_icon.png',
                                                         height: 70,
                                                         width: 70,
                                                         fit: BoxFit.fill),

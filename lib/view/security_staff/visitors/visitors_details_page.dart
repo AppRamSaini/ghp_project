@@ -235,7 +235,7 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
                                   state.visitorDetails.first.image.toString()),
                               onBackgroundImageError: (error, stack) =>
                                   const AssetImage(
-                                      'assets/images/default.jpg')),
+                                      'assets/images/profile_icon.png')),
                           SizedBox(height: 10.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

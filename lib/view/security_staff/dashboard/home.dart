@@ -143,7 +143,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                       : const CircleAvatar(
                                           radius: 22,
                                           backgroundImage: AssetImage(
-                                              'assets/images/default.jpg'))),
+                                              'assets/images/profile_icon.png'))),
                               const SizedBox(width: 10),
                               Flexible(
                                 child: Column(
@@ -194,15 +194,15 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                             children: [
                               const CircleAvatar(
                                   radius: 22,
-                                  backgroundImage:
-                                      AssetImage('assets/images/default.jpg')),
+                                  backgroundImage: AssetImage(
+                                      'assets/images/profile_icon.png')),
                               const SizedBox(width: 10),
                               Flexible(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("Loading...",
+                                    Text("LOADING...",
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.white,
@@ -211,7 +211,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                                 overflow:
                                                     TextOverflow.ellipsis))),
                                     const SizedBox(height: 3),
-                                    Text('TOWER LOADING...',
+                                    Text('LOADING...',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.white,
