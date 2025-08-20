@@ -2,21 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-<!-- ✅ Required for WebView to load external URLs -->
-  <key>NSAppTransportSecurity</key>
-  <dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-  </dict>
-
-
-
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Ghp App</string>
+	<string>Ghp Society</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -42,48 +33,39 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-
-	<!-- ✅ Updated & Clear Purpose Strings Below -->
-
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>This app uses the camera to scan QR codes, take profile pictures, and capture images for product listings and service requests.</string>
-
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app uses your location to enable real-time driver tracking, service management, and safety features.</string>
-
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location helps us provide nearby service suggestions, real-time updates, and track delivery personnel.</string>
-
 	<key>NSMicrophoneUsageDescription</key>
 	<string>The microphone is used for audio recording during video capture, support calls, or voice-based commands.</string>
-
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app saves photos or videos (like profile pictures or captured service evidence) to your device library.</string>
-
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app allows you to select images from your library to update profile pictures or attach images in service requests.</string>
-
 	<key>NSUserNotificationUsageDescription</key>
 	<string>Notifications help you stay updated with booking status, alerts, offers, and reminders.</string>
-
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
 	</array>
-
 	<key>UIFileSharingEnabled</key>
-    <true/>
-    <key>LSSupportsOpeningDocumentsInPlace</key>
-    <true/>
-
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -97,7 +79,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
 	<key>com.apple.developer.siri</key>
 	<true/>
 </dict>
