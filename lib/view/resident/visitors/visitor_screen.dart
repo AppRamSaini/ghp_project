@@ -367,11 +367,11 @@ class _VisitorScreenState extends State<VisitorScreen> {
                                         borderRadius: BorderRadius.circular(8),
                                         child: FadeInImage(
                                             placeholder: const AssetImage(
-                                                "assets/images/default.jpg"),
+                                                "assets/images/profile_icon.png"),
                                             imageErrorBuilder:
                                                 (context, error, stackTrace) {
                                               return Image.asset(
-                                                  "assets/images/default.jpg",
+                                                  "assets/images/profile_icon.png",
                                                   height: 80,
                                                   width: 80,
                                                   fit: BoxFit.cover);

@@ -111,7 +111,7 @@ class ResidentGatePassState extends State<ResidentGatePass> {
         ),
         body: Padding(
           padding:
-          const EdgeInsets.only(top: 30, right: 12, left: 12, bottom: 10),
+              const EdgeInsets.only(top: 30, right: 12, left: 12, bottom: 10),
           child: Screenshot(
             controller: screenshotController,
             child: Container(
@@ -150,13 +150,13 @@ class ResidentGatePassState extends State<ResidentGatePass> {
                         children: [
                           widget.residentModel!.image != null
                               ? CircleAvatar(
-                              radius: 32.h,
-                              backgroundImage: NetworkImage(
-                                  widget.residentModel!.image.toString()))
+                                  radius: 32.h,
+                                  backgroundImage: NetworkImage(
+                                      widget.residentModel!.image.toString()))
                               : CircleAvatar(
-                              radius: 35.h,
-                              backgroundImage: const AssetImage(
-                                  'assets/images/default.jpg')),
+                                  radius: 35.h,
+                                  backgroundImage: const AssetImage(
+                                      'assets/images/profile_icon.png')),
                           const SizedBox(width: 10),
                           Flexible(
                             child: Column(
@@ -178,7 +178,7 @@ class ResidentGatePassState extends State<ResidentGatePass> {
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600))),
                                 Text(
-                                    "Tower/Bloc: ${widget.residentModel!.property!.blockName}, Property No: ${widget.residentModel!.aprtNo.toString()}",
+                                    "Tower/Block: ${widget.residentModel!.property!.blockName}, Property No: ${widget.residentModel!.aprtNo.toString()}",
                                     style: GoogleFonts.nunitoSans(
                                         color: Colors.black, fontSize: 12))
                               ],
@@ -206,7 +206,7 @@ class ResidentGatePassState extends State<ResidentGatePass> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
                           border:
-                          Border.all(color: Colors.grey.withOpacity(0.1))),
+                              Border.all(color: Colors.grey.withOpacity(0.1))),
                       child: QrImageView(
                         data: jsonDetails,
                         version: QrVersions.auto,

@@ -108,8 +108,7 @@ class _VisitorGatePassState extends State<VisitorGatePass> {
             ),
           ),
         ),
-        appBar: appbarWidget(
-            title: "Visitors Gate Pass"),
+        appBar: appbarWidget(title: "Visitors Gate Pass"),
         body: Padding(
           padding:
               const EdgeInsets.only(top: 30, right: 12, left: 12, bottom: 10),
@@ -156,7 +155,7 @@ class _VisitorGatePassState extends State<VisitorGatePass> {
                               : CircleAvatar(
                                   radius: 35.h,
                                   backgroundImage: const AssetImage(
-                                      'assets/images/default.jpg')),
+                                      'assets/images/profile_icon.png')),
                           const SizedBox(width: 10),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

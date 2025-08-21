@@ -119,7 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             fit: BoxFit.cover,
                                             errorBuilder: (_, __, ___) =>
                                                 Image.asset(
-                                              'assets/images/default.jpg',
+                                              'assets/images/profile_icon.png',
                                               fit: BoxFit.cover,
                                             ),
                                           )
@@ -128,16 +128,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ? FadeInImage(
                                                 fit: BoxFit.cover,
                                                 placeholder: AssetImage(
-                                                    'assets/images/default.jpg'),
+                                                    'assets/images/profile_icon.png'),
                                                 image: NetworkImage(imgFile),
                                                 imageErrorBuilder:
                                                     (_, __, ___) => Image.asset(
-                                                  'assets/images/default.jpg',
+                                                  'assets/images/profile_icon.png',
                                                   fit: BoxFit.cover,
                                                 ),
                                               )
                                             : Image.asset(
-                                                'assets/images/default.jpg',
+                                                'assets/images/profile_icon.png',
                                                 fit: BoxFit.cover,
                                               ),
                                   ),

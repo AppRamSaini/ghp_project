@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -202,34 +199,17 @@ class _OtpScreenState extends State<OtpScreen> with CodeAutoFill {
   void _submitOtp(String otp) async {
     // FirebaseMessaging messaging = FirebaseMessaging.instance;
     // await messaging.requestPermission(alert: true, badge: true, sound: true);
-
-    FirebaseMessaging.instance.onTokenRefresh.listen((token) {
-      debugPrint("New FCM Token: $token");
-    });
-
-    FirebaseMessaging.instance.getAPNSToken().then((apns) {
-      if (apns == null) {
-        debugPrint("APNS token abhi tak generate nahi hua");
-      }
-    });
-
-
-
+    //
     // String? token;
     // if (Platform.isIOS) {
     //   token = await messaging.getAPNSToken();
     // } else {
     //   token = await messaging.getToken();
     // }
-    //
-    //
-    // print("-------->>>>>>$token");
 
-
-    //
-    // context
-    //     .read<VerifyOtpCubit>()
-    //     .verifyOtp(widget.phoneNumber, otp, token ?? "");
+    context
+        .read<VerifyOtpCubit>()
+        .verifyOtp(widget.phoneNumber, otp, "fcm_token");
   }
 
   Widget _buildOtpField(PinTheme defaultPinTheme) {

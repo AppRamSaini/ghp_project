@@ -184,7 +184,7 @@ class _DailyHelpListingHistoryState extends State<DailyHelpListingHistory> {
                                             imageErrorBuilder: (_, child,
                                                     stackTrack) =>
                                                 Image.asset(
-                                                    'assets/images/default.jpg',
+                                                    'assets/images/profile_icon.png',
                                                     height: 60.h,
                                                     width: 55.w,
                                                     fit: BoxFit.cover),
@@ -193,7 +193,7 @@ class _DailyHelpListingHistoryState extends State<DailyHelpListingHistory> {
                                                     .imageUrl
                                                     .toString()),
                                             placeholder: const AssetImage(
-                                                'assets/images/default.jpg'))),
+                                                'assets/images/profile_icon.png'))),
                                     SizedBox(width: 10.w),
                                     Column(
                                         crossAxisAlignment:

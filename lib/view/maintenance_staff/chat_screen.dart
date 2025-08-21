@@ -160,10 +160,7 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                                     (member) => member['uid'] != widget.userId,
                                     orElse: () => null)['userName'] ??
                                 'No other members',
-                            userCategory: group.members!.firstWhere(
-                                    (member) => member['uid'] != widget.userId,
-                                    orElse: () => null)['serviceCategory'] ??
-                                '',
+                            userCategory: "Resident",
                           ),
                         ));
                       },

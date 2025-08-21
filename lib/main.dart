@@ -61,7 +61,8 @@ class _MyAppState extends State<MyApp> {
       child: ScreenUtilInit(
         designSize: Size(360, 690), // Set default design size
         builder: (context, child) {
-          return MaterialApp(title: "Ghp Society",
+          return MaterialApp(
+            title: "Ghp Society",
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               scaffoldBackgroundColor: Colors.white,
@@ -82,3 +83,5 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+/// UPDATE NEW CODE

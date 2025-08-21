@@ -1,12 +1,10 @@
 // ignore_for_file: must_be_immutable
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ghp_society_management/constants/app_theme.dart';
-import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/bill_details/bill_details_cubit.dart';
-import 'package:ghp_society_management/payment_gateway_service.dart';
+import 'package:ghp_society_management/model/my_bill_details_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -132,7 +130,7 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
                                     color: Colors.grey.withOpacity(0.2))),
                             Row(children: [
                               Expanded(
-                                  child: Text('Bill Amount ',
+                                  child: Text('Current Month Payment : ',
                                       style: GoogleFonts.nunitoSans(
                                           textStyle: TextStyle(
                                               color: Colors.black87,
@@ -143,6 +141,73 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
                                       style: TextStyle(
                                           color: Colors.black87, fontSize: 14)))
                             ]),
+                            Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Divider(
+                                    color: Colors.grey.withOpacity(0.2))),
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: Text('Installment Payment : ',
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black87,
+                                                fontSize: 14)))),
+                                Expanded(
+                                    child: Text(
+                                        "₹ ${billDetails.installment ?? '0.0'}",
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black87,
+                                                fontSize: 14))))
+                              ],
+                            ),
+                            Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Divider(
+                                    color: Colors.grey.withOpacity(0.2))),
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: Text(
+                                        'Previous Month Pending Payment : ',
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black87,
+                                                fontSize: 14)))),
+                                Expanded(
+                                    child: Text(
+                                        "₹ ${billDetails.prevMonthPending ?? '0.0'}",
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black87,
+                                                fontSize: 14))))
+                              ],
+                            ),
+                            Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Divider(
+                                    color: Colors.grey.withOpacity(0.2))),
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: Text('Advance payment : ',
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black87,
+                                                fontSize: 14)))),
+                                Expanded(
+                                    child: Text(
+                                        "₹ ${billDetails.advanceAmount ?? '0.0'}",
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black87,
+                                                fontSize: 14))))
+                              ],
+                            ),
                             Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 4),
@@ -213,24 +278,27 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    billDetails.status == 'unpaid'
-                        ? MaterialButton(
-                            height: 45,
-                            minWidth: MediaQuery.sizeOf(context).width * 0.9,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30)),
-                            onPressed: () async {
-                              await LocalStorage.localStorage.setString(
-                                  'bill_id', billDetails.id.toString());
-                              payBillFun(
-                                  double.parse(billDetails.amount.toString()),
-                                  context);
-                            },
-                            color: AppTheme.primaryColor,
-                            child: const Text('Pay Now',
-                                style: TextStyle(color: Colors.white)))
-                        : const SizedBox()
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                                color: Colors.grey.withOpacity(0.3))),
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: Text('TOTAL PAY AMOUNT : ',
+                                    style: GoogleFonts.nunitoSans(
+                                        textStyle: TextStyle(
+                                            color: Colors.black87,
+                                            fontSize: 16)))),
+                            Expanded(child: totalPayAmount(billDetails))
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               );
@@ -250,4 +318,34 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
       ),
     );
   }
+}
+
+/// pay bill widget
+totalPayAmount(Bill bill) {
+  num _toNum(dynamic v) {
+    if (v == null) return 0;
+    if (v is num) return v;
+    if (v is String) {
+      final cleaned = v.replaceAll(RegExp(r'[^0-9\.\-]'), '');
+      return num.tryParse(cleaned) ?? 0;
+    }
+    return 0;
+  }
+
+// जहां widget build हो रहा है:
+  final num billAmount = _toNum(bill.amount);
+  final num prevPending = _toNum(bill.prevMonthPending);
+  final num payAmount = billAmount + prevPending;
+
+// दिखाएँ:
+  return Text(
+    " ₹ ${payAmount.toString() ?? '0.0'}",
+    style: GoogleFonts.nunitoSans(
+      textStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
 }

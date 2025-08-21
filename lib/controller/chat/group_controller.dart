@@ -53,35 +53,45 @@ class GroupCubit extends Cubit<void> {
     File? imageFile,
   }) async {
     isLoading = true;
-    var chatId = DateTime.now();
 
-    String? imageUrl;
-    if (imageFile != null) {
-      imageUrl = await uploadImageToFirebase(imageFile);
+    try {
+      var chatId = DateTime.now().millisecondsSinceEpoch.toString();
+
+      String? imageUrl;
+      if (imageFile != null) {
+        imageUrl = await uploadImageToFirebase(imageFile);
+      }
+
+      var newChat = ChatModel(
+        id: chatId,
+        message: message,
+        imageUrl: imageUrl ?? '',
+        senderId: userId,
+        senderName: senderName,
+        readBy: [userId],
+        timestamp: FieldValue
+            .serverTimestamp(), // ✅ dynamic, no cast (Firestore will convert)
+      );
+
+      // Save chat inside messages collection
+      await db
+          .collection("groups")
+          .doc(groupId)
+          .collection("messages")
+          .doc(chatId)
+          .set(newChat.toJson());
+
+      // Update group doc with last message info
+      await db.collection("groups").doc(groupId).update({
+        "lastMessage": message.isEmpty ? "📷 Image" : message,
+        "lastMessageBy": senderName,
+        "timeStamp": Timestamp.now(), // ✅ for sorting groups
+      });
+    } catch (e) {
+      print("Error sending group message: $e");
+    } finally {
+      isLoading = false;
     }
-
-    var newChat = ChatModel(
-      id: chatId.toString(),
-      message: message,
-      imageUrl: imageUrl ?? '',
-      senderId: userId,
-      senderName: senderName,
-      readBy: [userId],
-      timestamp: Timestamp.now(),
-    );
-
-    await db
-        .collection("groups")
-        .doc(groupId)
-        .collection("messages")
-        .doc(chatId.toString())
-        .set(newChat.toJson());
-    await db.collection("groups").doc(groupId).update({
-      'lastMessage': message.isNotEmpty ? message : "📷 Image",
-      'lastMessageTimestamp': Timestamp.now(),
-    });
-
-    isLoading = false;
   }
 
   Future<void> pickImageAndSendMessage(
@@ -117,10 +127,8 @@ class GroupCubit extends Cubit<void> {
       String? existingGroupId = await checkExistingGroup(userId, userData.uid!);
 
       if (existingGroupId != null) {
-        // First pop dialog safely
         if (dialogueContext != null) Navigator.of(dialogueContext!).pop();
 
-        // Now navigate to existing message screen
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (builder) => MessagingScreen(
             groupId: existingGroupId,
@@ -147,18 +155,15 @@ class GroupCubit extends Cubit<void> {
       await db.collection("groups").doc(groupId).set({
         "id": groupId,
         "members": selectedMembers.map((e) => e.toMap()).toList(),
-        "createdAt": DateTime.now().toString(),
-        "timeStamp": Timestamp.now(),
-        "userIds": [userId, userData.uid!]
+        "createdAt": DateTime.now().toIso8601String(),
+        "timeStamp": Timestamp.now(), // ✅ group-level timestamp
+        "userIds": [userId, userData.uid!],
       });
 
-      // 3. Update local group list
       await getGroups(userId);
 
-      // 4. Safely close dialog
       if (dialogueContext != null) Navigator.of(dialogueContext!).pop();
 
-      // 5. Go to messaging screen
       Navigator.of(context).push(MaterialPageRoute(
         builder: (builder) => MessagingScreen(
           groupId: groupId,
@@ -209,19 +214,16 @@ class GroupCubit extends Cubit<void> {
 
   Future<void> getGroups(String userId) async {
     isLoading = true;
-    List<GroupModel> tempGroup = [];
-
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await db.collection("groups").get();
       List<GroupModel> groups =
           querySnapshot.docs.map((doc) => GroupModel.fromJson(doc)).toList();
 
-      tempGroup = groups
+      groupList = groups
           .where((group) =>
               group.members!.any((member) => member['uid'] == userId))
           .toList();
-      groupList = tempGroup;
     } catch (e) {
       print('Error fetching groups: $e');
     } finally {
@@ -229,32 +231,16 @@ class GroupCubit extends Cubit<void> {
     }
   }
 
-  Stream<List<GroupModel>> getGroupsStream(String userId) {
-    isLoading = true;
-    return db.collection('groups').snapshots().map((snapshot) {
-      List<GroupModel> tempGroup =
-          snapshot.docs.map((doc) => GroupModel.fromJson(doc)).toList();
-      groupList = tempGroup
-          .where((group) =>
-              group.members!.any((member) => member['uid'] == userId))
-          .toList();
-      isLoading = false;
-      return groupList;
-    });
-  }
-
   Stream<List<ChatModel>> getGroupMessages(String groupId) {
     return db
         .collection("groups")
         .doc(groupId)
         .collection("messages")
-        .orderBy("timestamp", descending: false)
+        .orderBy("timestamp", descending: false) // ✅ chat ordered by timestamp
         .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map((doc) => ChatModel.fromJson(doc.data()))
-              .toList(),
-        );
+        .map((snapshot) => snapshot.docs
+            .map((doc) => ChatModel.fromJson(doc.data()))
+            .toList());
   }
 
   Stream<List<ChatModel>> getLastMessage(String groupId) {
@@ -265,11 +251,9 @@ class GroupCubit extends Cubit<void> {
         .orderBy("timestamp", descending: true)
         .limit(1)
         .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map((doc) => ChatModel.fromJson(doc.data()))
-              .toList(),
-        );
+        .map((snapshot) => snapshot.docs
+            .map((doc) => ChatModel.fromJson(doc.data()))
+            .toList());
   }
 
   Future<void> markAllMessagesAsRead(String chatId, String userId) async {
@@ -287,11 +271,11 @@ class GroupCubit extends Cubit<void> {
   }
 
   Stream<List<QueryDocumentSnapshot>> getAllMessagesStream(String chatId) {
-    CollectionReference messagesRef =
-        db.collection("groups").doc(chatId).collection("messages");
-
-    return messagesRef.snapshots().map((snapshot) {
-      return snapshot.docs;
-    });
+    return db
+        .collection("groups")
+        .doc(chatId)
+        .collection("messages")
+        .snapshots()
+        .map((snapshot) => snapshot.docs);
   }
 }

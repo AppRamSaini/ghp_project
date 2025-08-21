@@ -6,7 +6,7 @@ class ChatModel {
   String? senderName;
   String? senderId;
   String? receiverId;
-  Timestamp? timestamp;
+  dynamic timestamp; // Can be FieldValue or Timestamp
   String? imageUrl;
   List<String> readBy;
 
@@ -28,7 +28,7 @@ class ChatModel {
         senderName = json["senderName"] as String?,
         senderId = json["senderId"] as String?,
         receiverId = json["receiverId"] as String?,
-        timestamp = json["timestamp"] as Timestamp?,
+        timestamp = json["timestamp"] ?? Timestamp.now(),
         imageUrl = json["imageUrl"] as String?,
         readBy = List<String>.from(json["readBy"] ?? []);
 

@@ -148,14 +148,14 @@ class _ResidentCheckoutsHistoryDetailsState
                                           width: 60,
                                           fit: BoxFit.fill,
                                           placeholder: AssetImage(
-                                              'assets/images/default.jpg'),
+                                              'assets/images/profile_icon.png'),
                                           image: NetworkImage(
                                               residentsCheckoutsData
                                                   .user!.imageUrl
                                                   .toString()),
                                           imageErrorBuilder: (_, child, st) =>
                                               Image.asset(
-                                                  'assets/images/default.jpg',
+                                                  'assets/images/profile_icon.png',
                                                   height: 70,
                                                   width: 60,
                                                   fit: BoxFit.fill),
@@ -168,11 +168,11 @@ class _ResidentCheckoutsHistoryDetailsState
                                           width: 70,
                                           fit: BoxFit.fill,
                                           placeholder: AssetImage(
-                                              'assets/images/default.jpg'),
+                                              'assets/images/profile_icon.png'),
                                           image: AssetImage(''),
                                           imageErrorBuilder: (_, child, st) =>
                                               Image.asset(
-                                                  'assets/images/default.jpg',
+                                                  'assets/images/profile_icon.png',
                                                   height: 70,
                                                   width: 70,
                                                   fit: BoxFit.fill),
