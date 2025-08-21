@@ -216,6 +216,24 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
                             Row(
                               children: [
                                 Expanded(
+                                    child: Text(
+                                        'Current Month Pending \nAmount : ',
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black87,
+                                                fontSize: 14)))),
+                                Expanded(
+                                    child: currentMonthPending(billDetails))
+                              ],
+                            ),
+                            Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Divider(
+                                    color: Colors.grey.withOpacity(0.2))),
+                            Row(
+                              children: [
+                                Expanded(
                                     child: Text('Service : ',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
@@ -338,6 +356,35 @@ totalPayAmount(Bill bill) {
   final num payAmount = billAmount + prevPending;
 
 // दिखाएँ:
+  return Text(
+    " ₹ ${payAmount.toString() ?? '0.0'}",
+    style: GoogleFonts.nunitoSans(
+      textStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
+}
+
+/// pay bill widget
+currentMonthPending(Bill bill) {
+  num _toNum(dynamic v) {
+    if (v == null) return 0;
+    if (v is num) return v;
+    if (v is String) {
+      final cleaned = v.replaceAll(RegExp(r'[^0-9\.\-]'), '');
+      return num.tryParse(cleaned) ?? 0;
+    }
+    return 0;
+  }
+
+// जहां widget build हो रहा है:
+  final num billAmount = _toNum(bill.amount);
+  final num installment = _toNum(bill.installment);
+  final num prevPending = _toNum(bill.prevMonthPending);
+  final num payAmount = (billAmount + prevPending) - installment;
   return Text(
     " ₹ ${payAmount.toString() ?? '0.0'}",
     style: GoogleFonts.nunitoSans(
