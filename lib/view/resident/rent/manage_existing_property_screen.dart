@@ -1,5 +1,6 @@
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/rent_or_sell_property/delete_property/delete_property_cubit.dart';
 import 'package:ghp_society_management/model/buy_or_rent_property_model.dart';
 import 'package:ghp_society_management/view/resident/rent/property_detail_screen.dart';
@@ -42,6 +43,12 @@ class _ManagePropertyScreenState extends State<ManagePropertyScreen> {
     }
   }
 
+  fetchData() {
+    _buyRentPropertyCubit.fetchProperty(
+        propertyType: 'myProperty', type: types[selectedValue].toString());
+    setState(() {});
+  }
+
   late BuildContext dialogueContext;
 
   @override
@@ -65,9 +72,7 @@ class _ManagePropertyScreenState extends State<ManagePropertyScreen> {
               snackBar(context, state.successMsg.toString(), Icons.done,
                   AppTheme.guestColor);
               Navigator.of(dialogueContext).pop();
-              _buyRentPropertyCubit.fetchProperty(
-                  propertyType: 'myProperty',
-                  type: types[selectedValue].toString());
+              fetchData();
             } else if (state is DeletePropertyFailed) {
               snackBar(context, state.errorMsg.toString(), Icons.warning,
                   AppTheme.redColor);
@@ -76,23 +81,15 @@ class _ManagePropertyScreenState extends State<ManagePropertyScreen> {
             } else if (state is DeletePropertyInternetError) {
               snackBar(context, state.errorMsg.toString(), Icons.wifi_off,
                   AppTheme.redColor);
-
               Navigator.of(dialogueContext).pop();
             }
           },
         )
       ],
       child: Scaffold(
-        appBar: AppBar(
-            title: Text('View/Manage Existing Property',
-                style: GoogleFonts.nunitoSans(
-                    textStyle: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600)))),
+        appBar: appbarWidget(title: 'Manage Existing Property'),
         body: Column(
           children: [
-            SizedBox(height: 10.h),
             Row(
               children: [
                 Expanded(
@@ -166,182 +163,215 @@ class _ManagePropertyScreenState extends State<ManagePropertyScreen> {
               ],
             ),
             Expanded(
-              child: BlocBuilder<BuyRentPropertyCubit, BuyRentPropertyState>(
-                  bloc: _buyRentPropertyCubit,
-                  builder: (context, state) {
-                    if (state is BuyRentPropertyLoading &&
-                        _buyRentPropertyCubit.propertyList.isEmpty) {
-                      return const Center(
-                          child: CircularProgressIndicator.adaptive());
-                    }
-                    if (state is BuyRentPropertyFailed) {
-                      return Center(
-                          child: Text(state.errorMsg,
-                              style: const TextStyle(
-                                  color: Colors.deepPurpleAccent)));
-                    }
-                    if (state is BuyRentPropertyInternetError) {
-                      return Center(
-                          child: Text(state.errorMsg.toString(),
-                              style: const TextStyle(color: Colors.red)));
-                    }
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  _buyRentPropertyCubit = BuyRentPropertyCubit()
+                    ..fetchProperty(
+                        propertyType: 'myProperty', type: types[selectedValue]);
+                  setState(() {});
+                },
+                child: BlocBuilder<BuyRentPropertyCubit, BuyRentPropertyState>(
+                    bloc: _buyRentPropertyCubit,
+                    builder: (context, state) {
+                      if (state is BuyRentPropertyLoading) {
+                        return notificationShimmerLoading();
+                      }
+                      if (state is BuyRentPropertyFailed) {
+                        return emptyDataWidget(state.errorMsg);
+                      }
+                      if (state is BuyRentPropertyInternetError) {
+                        return Center(
+                            child: Text(state.errorMsg.toString(),
+                                style: const TextStyle(color: Colors.red)));
+                      }
 
-                    var properyListing = _buyRentPropertyCubit.propertyList;
+                      var properyListing = _buyRentPropertyCubit.propertyList;
 
-                    if (properyListing.isEmpty) {
-                      return const Center(
-                          child: Text('Property Not Found!',
-                              style:
-                                  TextStyle(color: Colors.deepPurpleAccent)));
-                    }
+                      if (properyListing.isEmpty) {
+                        return emptyDataWidget('Property Not Found!');
+                      }
 
-                    return ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: properyListing.length + 1,
-                      shrinkWrap: true,
-                      itemBuilder: ((context, index) {
-                        if (index == properyListing.length) {
-                          return _buyRentPropertyCubit.state
-                                  is BuyRentPropertyLoadingMore
-                              ? const Padding(
-                                  padding: EdgeInsets.all(16.0),
-                                  child: Center(
-                                      child:
-                                          CircularProgressIndicator.adaptive()))
-                              : const SizedBox.shrink();
-                        }
+                      return ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: properyListing.length + 1,
+                        shrinkWrap: true,
+                        itemBuilder: ((context, index) {
+                          if (index == properyListing.length) {
+                            return _buyRentPropertyCubit.state
+                                    is BuyRentPropertyLoadingMore
+                                ? const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Center(
+                                        child: CircularProgressIndicator
+                                            .adaptive()))
+                                : const SizedBox.shrink();
+                          }
 
-                        final propertyList = properyListing[index];
+                          final propertyList = properyListing[index];
 
-                        List fileList = propertyList.files!;
+                          List fileList = propertyList.files!;
 
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.black.withOpacity(0.1)),
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: FadeInImage(
-                                        height: 70.h,
-                                        width: 70.w,
-                                        fit: BoxFit.cover,
-                                        imageErrorBuilder: (_, child,
-                                                stackTrack) =>
-                                            Image.asset(
-                                                'assets/images/default.jpg',
-                                                height: 70.h,
-                                                width: 70.w,
-                                                fit: BoxFit.cover),
-                                        image: NetworkImage(fileList.isNotEmpty
-                                            ? propertyList.files!.first.file
-                                                .toString()
-                                            : ''),
-                                        placeholder: const AssetImage(
-                                            'assets/images/default.jpg'),
-                                      )),
-                                  SizedBox(width: 10.w),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                    capitalizeWords(propertyList
-                                                        .unitType
-                                                        .toString()),
-                                                    style: GoogleFonts.ptSans(
-                                                      textStyle: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    )),
-                                                SizedBox(height: 5.h),
-                                                Row(
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.black.withOpacity(0.1)),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Row(
+                                  children: [
+                                    ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: FadeInImage(
+                                          height: 70.h,
+                                          width: 70.w,
+                                          fit: BoxFit.cover,
+                                          imageErrorBuilder: (_, child,
+                                                  stackTrack) =>
+                                              Image.asset(
+                                                  'assets/images/default.jpg',
+                                                  height: 70.h,
+                                                  width: 70.w,
+                                                  fit: BoxFit.cover),
+                                          image: NetworkImage(fileList
+                                                  .isNotEmpty
+                                              ? propertyList.files!.first.file
+                                                  .toString()
+                                              : ''),
+                                          placeholder: const AssetImage(
+                                              'assets/images/default.jpg'),
+                                        )),
+                                    SizedBox(width: 10.w),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
-                                                    Text(
-                                                        'TOWER : ${propertyList.blockName.toString()}   |   FLOOR :  ${propertyList.floor.toString()}',
-                                                        style:
-                                                            GoogleFonts.ptSans(
-                                                          textStyle: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          ),
-                                                        )),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                            capitalizeWords(
+                                                                propertyList
+                                                                    .unitType
+                                                                    .toString()),
+                                                            style: GoogleFonts
+                                                                .ptSans(
+                                                              textStyle:
+                                                                  TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            )),
+                                                        SizedBox(height: 5.h),
+                                                        Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Image.asset(
+                                                                ImageAssets
+                                                                    .bedImage,
+                                                                height: 20.h),
+                                                            const SizedBox(
+                                                                width: 8),
+                                                            Text(
+                                                                "${propertyList.bhk.toString()} BHK",
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .ptSans(
+                                                                  textStyle:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                )),
+                                                            const SizedBox(
+                                                                width: 8),
+                                                            Flexible(
+                                                              child: Text(
+                                                                  selectedValue ==
+                                                                          0
+                                                                      ? '₹${double.parse(propertyList.rentPerMonth.toString()).toInt()}/month'
+                                                                      : '₹${double.parse(propertyList.housePrice.toString()).toInt()}/month',
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  maxLines: 1,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  )),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    actionMenuButtons(
+                                                        options: optionsList,
+                                                        propertyList:
+                                                            propertyList,
+                                                        context: context)
                                                   ],
                                                 ),
-                                              ],
-                                            ),
-                                            actionMenuButtons(
-                                                options: optionsList,
-                                                propertyList: propertyList,
-                                                context: context)
-                                          ],
-                                        ),
-                                        SizedBox(height: 5.h),
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Image.asset(ImageAssets.bedImage,
-                                                height: 20.h),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                                "${propertyList.bhk.toString()} BHK",
-                                                style: GoogleFonts.ptSans(
-                                                  textStyle: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )),
-                                            const SizedBox(width: 8),
-                                            Flexible(
-                                              child: Text(
-                                                  selectedValue == 0
-                                                      ? '₹${double.parse(propertyList.rentPerMonth.toString()).toInt()}/month'
-                                                      : '₹${double.parse(propertyList.housePrice.toString()).toInt()}/month',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                  )),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 5.h),
+                                          Text(
+                                              'TOWER : ${propertyList.blockName.toString()} | FLOOR : ${propertyList.floor.toString()} | PROPETY NO : ${propertyList.unitNumber.toString()}',
+                                              style: GoogleFonts.ptSans(
+                                                textStyle: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              )),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      }),
-                    );
-                  }),
+                          );
+                        }),
+                      );
+                    }),
+              ),
             ),
           ],
         ),

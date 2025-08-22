@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +19,7 @@ class VisitorsIncomingRequestPage extends StatefulWidget {
   bool fromForegroundMsg;
   String? from;
   final Function(bool values) setPageValue;
+
   VisitorsIncomingRequestPage(
       {super.key,
       this.message,
@@ -175,6 +177,7 @@ class _VisitorsIncomingRequestPageState
   }
 
   late BuildContext dialogueContext;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

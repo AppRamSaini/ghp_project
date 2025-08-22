@@ -1,8 +1,8 @@
-import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/model/user_model.dart';
-import 'package:searchbar_animation/searchbar_animation.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../model/staff_model.dart';
 
 class CreateChatScreen extends StatefulWidget {
@@ -10,11 +10,12 @@ class CreateChatScreen extends StatefulWidget {
   final String userName;
   final String userImage;
 
-  const CreateChatScreen(
-      {super.key,
-      required this.userId,
-      required this.userName,
-      required this.userImage});
+  const CreateChatScreen({
+    super.key,
+    required this.userId,
+    required this.userName,
+    required this.userImage,
+  });
 
   @override
   State<CreateChatScreen> createState() => _CreateChatScreenState();
@@ -24,13 +25,99 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
   bool searchBarOpen = false;
   final TextEditingController textController = TextEditingController();
   UserModel? userList;
+  late BuildContext dialogContext;
+
   @override
   void initState() {
-    context.read<GetStaffCubit>().fetchStaffList();
     super.initState();
+    context.read<GetStaffCubit>().fetchStaffList();
   }
 
-  late BuildContext dialogContext;
+  Future<void> onRefresh() async {
+    context.read<GetStaffCubit>().fetchStaffList();
+  }
+
+  void _handleStaffTap(Datum staff) {
+    final uuid = const Uuid();
+    final String groupId = uuid.v6();
+
+    userList = UserModel(
+        userImage: staff.image,
+        uid: staff.userId.toString(),
+        userName: staff.name,
+        serviceCategory: staff.staffCategory?.name.isNotEmpty == true
+            ? staff.staffCategory!.name
+            : staff.role.toString());
+
+    context.read<GroupCubit>().createGroup(
+        userList!,
+        groupId,
+        context,
+        widget.userId,
+        widget.userName,
+        widget.userImage,
+        userList!.serviceCategory ?? '');
+  }
+
+  Widget _buildStaffTile(Datum staff) {
+    return InkWell(
+      onTap: () => _handleStaffTap(staff),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+        dense: true,
+        leading: Card(
+            elevation: 1,
+            shape: const CircleBorder(),
+            child: CircleAvatar(
+                radius: 25.r,
+                backgroundImage: staff.image != null
+                    ? NetworkImage(staff.image!)
+                    : const AssetImage(ImageAssets.chatImage)
+                        as ImageProvider)),
+        title: Text(
+          capitalizeWords(staff.name),
+          style: GoogleFonts.nunitoSans(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          staff.staffCategory?.name.isNotEmpty == true
+              ? staff.staffCategory!.name
+              : capitalizeWords(staff.role.replaceAll("_", ' ')),
+          style: GoogleFonts.nunitoSans(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        trailing: const CircleAvatar(
+          child: Icon(Icons.send_rounded, size: 18),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchList(List<Datum?> staffList) {
+    return ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: staffList.length,
+      itemBuilder: (context, index) {
+        final staff = staffList[index];
+        if (staff == null) return const SizedBox();
+        return _buildStaffTile(staff);
+      },
+    );
+  }
+
+  Widget _buildStaffList(List<Datum> staffList) {
+    return ListView.separated(
+      physics: const AlwaysScrollableScrollPhysics(),
+      separatorBuilder: (_, __) =>
+          Divider(height: 0.6, color: Colors.grey[300]),
+      itemCount: staffList.length,
+      itemBuilder: (context, index) => _buildStaffTile(staffList[index]),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +127,7 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
         title: 'Society Staff',
         textController: textController,
         searchBarOpen: searchBarOpen,
-        onExpansionComplete: () {
-          setState(() {
-            searchBarOpen = true;
-          });
-        },
+        onExpansionComplete: () => setState(() => searchBarOpen = true),
         onCollapseComplete: () {
           setState(() {
             searchBarOpen = false;
@@ -52,227 +135,45 @@ class _CreateChatScreenState extends State<CreateChatScreen> {
             context.read<GetStaffCubit>().fetchStaffList();
           });
         },
-        onPressButton: (isSearchBarOpens) {
-          setState(() {
-            searchBarOpen = true;
-          });
-        },
+        onPressButton: (_) => setState(() => searchBarOpen = true),
         onChanged: (value) {
           context.read<GetStaffCubit>().searchStaff(value);
         },
       ),
-      body: BlocBuilder<GetStaffCubit, GetStaffState>(
-        builder: (context, state) {
-          if (state is GetStaffLoaded) {
-            List<Datum> staffList = state.staffList.first.data.staffs.data;
-
-            if (staffList.isEmpty) {
+      body: RefreshIndicator(
+        onRefresh: onRefresh,
+        child: BlocBuilder<GetStaffCubit, GetStaffState>(
+          builder: (context, state) {
+            if (state is GetStaffLoading) {
+              return notificationShimmerLoading();
+            } else if (state is GetStaffFailed) {
+              return Center(
+                child: Text(state.errorMsg,
+                    style: const TextStyle(color: Colors.deepPurpleAccent)),
+              );
+            } else if (state is GetStaffInternetError) {
               return const Center(
-                  child: Text("Service Provider Not Found!",
-                      style: TextStyle(color: Colors.deepPurpleAccent)));
+                child: Text("Internet connection error",
+                    style: TextStyle(color: Colors.red)),
+              );
+            } else if (state is GetStaffSearchedLoaded) {
+              return state.staffList.isEmpty
+                  ? const Center(
+                      child: Text("Service Provider Not Found!",
+                          style: TextStyle(color: Colors.deepPurpleAccent)))
+                  : _buildSearchList(state.staffList);
+            } else if (state is GetStaffLoaded) {
+              final staffList = state.staffList.first.data.staffs.data;
+              return staffList.isEmpty
+                  ? const Center(
+                      child: Text("Service Provider Not Found!",
+                          style: TextStyle(color: Colors.deepPurpleAccent)))
+                  : _buildStaffList(staffList);
+            } else {
+              return const SizedBox();
             }
-
-            return ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: staffList.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () {
-                        showLoadingDialog(context, (ctx) {
-                          dialogContext = ctx;
-                        });
-
-                        var uuid = const Uuid();
-                        String groupId = uuid.v6();
-
-                        userList = UserModel(
-                            userImage: staffList[index].image,
-                            uid: staffList[index].userId.toString(),
-                            userName: staffList[index].name,
-                            serviceCategory:
-                                staffList[index].staffCategory!.name.isNotEmpty
-                                    ? staffList[index].staffCategory!.name
-                                    : staffList[index].role.toString());
-
-                        print('user--------->>>>>>${userList!.uid.toString()}');
-                        print(
-                            'user--------->>>>>>${widget.userId} ${widget.userName} ${widget.userImage} ${staffList[index].staffCategory?.name ?? ''}');
-                        //
-                        context.read<GroupCubit>().createGroup(
-                            userList!,
-                            groupId,
-                            context,
-                            widget.userId,
-                            widget.userName,
-                            widget.userImage,
-                            staffList[index].staffCategory!.name.isNotEmpty
-                                ? staffList[index].staffCategory!.name
-                                : staffList[index].role.toString());
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Row(
-                          children: [
-                            Card(
-                              elevation: 1,
-                              margin: EdgeInsets.zero,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(100)),
-                              child: staffList[index].image != null
-                                  ? CircleAvatar(
-                                      radius: 25.r,
-                                      backgroundColor: Colors.transparent,
-                                      backgroundImage:
-                                          NetworkImage(staffList[index].image!))
-                                  : Image.asset(ImageAssets.chatImage,
-                                      height: 50.0),
-                            ),
-                            const SizedBox(width: 10.0),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      capitalizeWords(
-                                          staffList[index].name.toString()),
-                                      style: GoogleFonts.nunitoSans(
-                                          textStyle: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.w600))),
-                                  Text(
-                                    staffList[index]
-                                            .staffCategory!
-                                            .name
-                                            .isNotEmpty
-                                        ? staffList[index]
-                                            .staffCategory!
-                                            .name
-                                            .toString()
-                                        : capitalizeWords(staffList[index]
-                                            .role
-                                            .toString()
-                                            .replaceAll("_", ' ')),
-                                    style: GoogleFonts.nunitoSans(
-                                        textStyle: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12.0,
-                                            fontWeight: FontWeight.w400)),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                    )
-                  ],
-                );
-              },
-            );
-          } else if (state is GetStaffSearchedLoaded) {
-            if (state.staffList.isEmpty) {
-              return const Center(
-                  child: Text("Service Provider Not Found!",
-                      style: TextStyle(color: Colors.deepPurpleAccent)));
-            }
-            return ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: state.staffList.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () {
-                        showLoadingDialog(context, (ctx) {
-                          dialogContext = ctx;
-                        });
-                        var uuid = const Uuid();
-                        String groupId = uuid.v6();
-                        userList = UserModel(
-                            userImage: state.staffList[index]!.image ?? '',
-                            uid: state.staffList[index]!.userId.toString(),
-                            userName: state.staffList[index]!.name.toString(),
-                            serviceCategory: state
-                                .staffList[index]!.staffCategory!.name
-                                .toString());
-                        context.read<GroupCubit>().createGroup(
-                            userList!,
-                            groupId,
-                            context,
-                            widget.userId,
-                            widget.userName,
-                            widget.userImage,
-                            state.staffList[index]!.staffCategory!.name
-                                .toString());
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          children: [
-                            Image.asset(ImageAssets.chatImage, height: 50.0),
-                            const SizedBox(width: 10.0),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(state.staffList[index]!.name,
-                                      style: GoogleFonts.nunitoSans(
-                                          textStyle: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.w600))),
-                                  Text(
-                                    state.staffList[index]!.staffCategory!.name,
-                                    style: GoogleFonts.nunitoSans(
-                                        textStyle: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12.0,
-                                            fontWeight: FontWeight.w400)),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Divider(
-                      color: Colors.grey[300],
-                    )
-                  ],
-                );
-              },
-            );
-          } else if (state is GetStaffLoading) {
-            return const Center(
-                child: CircularProgressIndicator.adaptive(
-                    backgroundColor: Colors.deepPurpleAccent));
-          } else if (state is GetStaffFailed) {
-            return Center(
-                child: Text(state.errorMsg.toString(),
-                    style: const TextStyle(color: Colors.deepPurpleAccent)));
-          } else if (state is GetStaffInternetError) {
-            return const Center(
-                child: Text('Internet connection error',
-                    style: TextStyle(color: Colors.red)));
-          } else {
-            return const SizedBox();
-          }
-        },
+          },
+        ),
       ),
     );
   }

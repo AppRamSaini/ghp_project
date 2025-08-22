@@ -8,14 +8,14 @@ class GroupModel {
   List<dynamic>? members;
   List<dynamic>? userIds;
 
-  String? createdAt;
+  DateTime? createdAt; // ⬅️ Timestamp को DateTime में बदला
   String? createdBy;
   String? status;
   String? lastMessage;
-  String? lastMessageTime;
+  DateTime? lastMessageTime; // ⬅️ भी DateTime
   String? lastMessageBy;
   int? unReadCount;
-  Timestamp? timeStamp;
+  DateTime? timeStamp; // ⬅️ Timestamp भी safe convert
 
   GroupModel({
     this.id,
@@ -43,17 +43,16 @@ class GroupModel {
     members = data["members"] ?? [];
     userIds = data["userIds"] ?? [];
 
-    createdAt = data["createdAt"];
+    createdAt = _convertToDateTime(data["createdAt"]);
     createdBy = data["createdBy"];
     status = data["status"];
     lastMessage = data["lastMessage"];
-    lastMessageTime = data["lastMessageTime"];
+    lastMessageTime = _convertToDateTime(data["lastMessageTime"]);
     lastMessageBy = data["lastMessageBy"];
-    unReadCount = data["unReadCount"];
-    timeStamp = data["timeStamp"];
+    unReadCount = data["unReadCount"] ?? 0;
+    timeStamp = _convertToDateTime(data["timeStamp"]);
   }
 
-  // New constructor to handle Map<String, dynamic> directly
   GroupModel.fromMap(Map<String, dynamic> data) {
     id = data["id"];
     name = data["name"];
@@ -62,14 +61,14 @@ class GroupModel {
     members = data["members"] ?? [];
     userIds = data["userIds"] ?? [];
 
-    createdAt = data["createdAt"];
+    createdAt = _convertToDateTime(data["createdAt"]);
     createdBy = data["createdBy"];
     status = data["status"];
     lastMessage = data["lastMessage"];
-    lastMessageTime = data["lastMessageTime"];
+    lastMessageTime = _convertToDateTime(data["lastMessageTime"]);
     lastMessageBy = data["lastMessageBy"];
-    unReadCount = data["unReadCount"];
-    timeStamp = data["timeStamp"];
+    unReadCount = data["unReadCount"] ?? 0;
+    timeStamp = _convertToDateTime(data["timeStamp"]);
   }
 
   Map<String, dynamic> toJson() {
@@ -81,14 +80,25 @@ class GroupModel {
     _data["members"] = members;
     _data["userIds"] = userIds;
 
-    _data["createdAt"] = createdAt;
+    _data["createdAt"] =
+        createdAt != null ? Timestamp.fromDate(createdAt!) : null;
     _data["createdBy"] = createdBy;
     _data["status"] = status;
     _data["lastMessage"] = lastMessage;
-    _data["lastMessageTime"] = lastMessageTime;
+    _data["lastMessageTime"] =
+        lastMessageTime != null ? Timestamp.fromDate(lastMessageTime!) : null;
     _data["lastMessageBy"] = lastMessageBy;
     _data["unReadCount"] = unReadCount;
-    _data["timeStamp"] = timeStamp;
+    _data["timeStamp"] =
+        timeStamp != null ? Timestamp.fromDate(timeStamp!) : null;
     return _data;
+  }
+
+  /// ✅ Helper method to safely convert Firestore Timestamp or String to DateTime
+  DateTime? _convertToDateTime(dynamic value) {
+    if (value == null) return null;
+    if (value is Timestamp) return value.toDate();
+    if (value is String) return DateTime.tryParse(value);
+    return null;
   }
 }

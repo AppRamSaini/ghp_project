@@ -1,11 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 
 void sessionExpiredDialog(BuildContext context) {
-  // Show the dialog
   showDialog(
     barrierDismissible: false,
     context: context,
@@ -34,10 +34,8 @@ void sessionExpiredDialog(BuildContext context) {
   Timer(const Duration(seconds: 3), () {
     // Close the dialog
     Navigator.of(context, rootNavigator: true).pop();
-
     // Clear local storage
     LocalStorage.localStorage.clear();
-
     // Navigate to the SelectSocietyScreen and remove all previous routes
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const SelectSocietyScreen()),

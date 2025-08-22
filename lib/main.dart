@@ -1,7 +1,7 @@
 import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:ghp_society_management/constants/export.dart';
-
 
 /// Handle Background Notification
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -23,6 +23,7 @@ Future<void> requestNotificationPermission() async {
 }
 
 Future<void> main() async {
+  print("App Started");
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -30,8 +31,6 @@ Future<void> main() async {
 
   await requestNotificationPermission();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  /// Local Notification + Foreground Notification Setup
   FirebaseNotificationService.initialize(); // InitializeNotificationHandler
 
   runApp(MyApp());
@@ -61,14 +60,16 @@ class _MyAppState extends State<MyApp> {
         designSize: Size(360, 690), // Set default design size
         builder: (context, child) {
           return MaterialApp(
+            title: "Ghp Society",
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               scaffoldBackgroundColor: Colors.white,
               useMaterial3: true,
-              appBarTheme: const AppBarTheme(
-                backgroundColor: Colors.white,
+              appBarTheme: AppBarTheme(
+                titleTextStyle: TextStyle(color: AppTheme.white),
+                backgroundColor: AppTheme.primaryColor,
                 centerTitle: false,
-                iconTheme: IconThemeData(color: Colors.black),
+                iconTheme: IconThemeData(color: Colors.white),
               ),
             ),
             navigatorKey: navigatorKey,
@@ -80,3 +81,5 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+/// UPDATE NEW CODE
