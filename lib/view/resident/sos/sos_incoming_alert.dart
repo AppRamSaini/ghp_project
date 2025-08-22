@@ -129,6 +129,7 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
                     AppTheme.guestColor);
                 Future.delayed(const Duration(milliseconds: 10), () {
                   Navigator.of(dialogueContext).pop();
+                  Navigator.pop(context);
                 });
               } else if (state is AcknowledgedFailed) {
                 snackBar(context, state.errorMsg.toString(), Icons.warning,

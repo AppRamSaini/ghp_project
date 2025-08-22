@@ -46,7 +46,6 @@ class _ManagePropertyScreenState extends State<ManagePropertyScreen> {
   fetchData() {
     _buyRentPropertyCubit.fetchProperty(
         propertyType: 'myProperty', type: types[selectedValue].toString());
-
     setState(() {});
   }
 
@@ -169,7 +168,6 @@ class _ManagePropertyScreenState extends State<ManagePropertyScreen> {
                   _buyRentPropertyCubit = BuyRentPropertyCubit()
                     ..fetchProperty(
                         propertyType: 'myProperty', type: types[selectedValue]);
-
                   setState(() {});
                 },
                 child: BlocBuilder<BuyRentPropertyCubit, BuyRentPropertyState>(

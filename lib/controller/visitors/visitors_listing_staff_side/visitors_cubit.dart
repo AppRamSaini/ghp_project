@@ -113,16 +113,17 @@ class VisitorsListingCubit extends Cubit<VisitorsListingState> {
 
   /// Load more visitors
   void loadMoreVisitorsUsers(BuildContext context, String types, String search,
-      String fromDate, String toDate) {
+      String fromDate, String toDate,
+      {bool forStaffSide = false}) {
     if (state is VisitorsListingLoaded && hasMore) {
       fetchVisitorsListing(
-        toDate: toDate,
-        fromDate: fromDate,
-        search: search,
-        context: context,
-        filterTypes: types,
-        loadMore: true,
-      );
+          toDate: toDate,
+          fromDate: fromDate,
+          search: search,
+          context: context,
+          filterTypes: types,
+          loadMore: true,
+          fotStaffSide: forStaffSide);
     }
   }
 

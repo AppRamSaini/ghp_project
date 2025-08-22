@@ -11,11 +11,12 @@ class StaffChatScreen extends StatefulWidget {
   final String userName;
   final String userImage;
 
-  const StaffChatScreen(
-      {super.key,
-      required this.userId,
-      required this.userName,
-      required this.userImage});
+  const StaffChatScreen({
+    super.key,
+    required this.userId,
+    required this.userName,
+    required this.userImage,
+  });
 
   @override
   State<StaffChatScreen> createState() => _StaffChatScreenState();
@@ -37,8 +38,11 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
-                child: Text('Data Not Available!',
-                    style: TextStyle(color: Colors.deepPurpleAccent)));
+              child: Text(
+                'Data Not Available!',
+                style: TextStyle(color: Colors.deepPurpleAccent),
+              ),
+            );
           }
 
           List<GroupModel> groups = snapshot.data!.docs
@@ -46,197 +50,126 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                   GroupModel.fromMap(doc.data() as Map<String, dynamic>))
               .toList();
 
-          return ListView.separated(
-            separatorBuilder: (_, index) =>
-                Divider(color: Colors.grey.withOpacity(0.2), height: 0),
-            itemCount: groups.length,
-            itemBuilder: (context, index) {
-              GroupModel group = groups[index];
+          // अब हम हर group का lastMessageTime निकालेंगे और sort करेंगे
+          return StreamBuilder<List<Map<String, dynamic>>>(
+            stream: _getGroupsWithLastMessage(groups),
+            builder: (context, groupSnapshot) {
+              if (!groupSnapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-              return StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('groups')
-                    .doc(group.id!)
-                    .collection('messages')
-                    .orderBy('timestamp', descending: true)
-                    .snapshots(),
-                builder: (context, messageSnapshot) {
-                  if (!messageSnapshot.hasData ||
-                      messageSnapshot.data!.docs.isEmpty) {
-                    return Card(
-                      elevation: 10,
-                      child: ListTile(
-                        onLongPress: () {
-                          deleteChatDialog(context, group.id!);
-                        },
-                        leading: Card(
-                            elevation: 1,
-                            margin: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100)),
-                            child: group.members!.firstWhere(
-                                      (member) =>
-                                          member['uid'] != widget.userId,
-                                      orElse: () => null,
-                                    )['userImage'] ==
-                                    null
-                                ? Image.asset(ImageAssets.chatImage,
-                                    height: 50.0)
-                                : ClipRRect(
-                                    borderRadius: BorderRadius.circular(25),
-                                    child: FadeInImage(
-                                      height: 50,
-                                      width: 50,
-                                      fit: BoxFit.cover,
-                                      imageErrorBuilder:
-                                          (_, child, stackTrash) => Image.asset(
-                                              ImageAssets.chatImage,
-                                              height: 50.0),
-                                      placeholder: const AssetImage(
-                                          ImageAssets.chatImage),
-                                      image: NetworkImage(
-                                          group.members!.firstWhere(
-                                        (member) =>
-                                            member['uid'] != widget.userId,
-                                        orElse: () => null,
-                                      )['userImage']),
-                                    ),
-                                  )),
-                        title: Text(
-                          group.members!.firstWhere(
-                                (member) => member['uid'] != widget.userId,
-                                orElse: () => null,
-                              )['userName'] ??
-                              'No other members',
-                          style: GoogleFonts.nunitoSans(
-                            textStyle: const TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        subtitle: const Text("No messages yet"),
-                      ),
-                    );
-                  }
+              var sortedGroups = groupSnapshot.data!;
 
-                  var lastMessage = messageSnapshot.data!.docs.first;
-                  String lastMessageText = lastMessage['message'] ?? '';
-                  String senderId = lastMessage['senderId'] ?? '';
-                  DateTime lastMessageTime =
-                      (lastMessage['timestamp'] as Timestamp).toDate();
-                  String formattedTime =
-                      DateFormat('hh:mm a').format(lastMessageTime);
+              return ListView.separated(
+                separatorBuilder: (_, __) =>
+                    Divider(color: Colors.grey.withOpacity(0.2), height: 0),
+                itemCount: sortedGroups.length,
+                itemBuilder: (context, index) {
+                  var groupData = sortedGroups[index];
+                  GroupModel group = groupData['group'];
+                  var lastMessage = groupData['lastMessage'];
+                  DateTime lastMessageTime = groupData['lastMessageTime'];
 
-                  bool isReadByOthers = (lastMessage['readBy'] as List?)
+                  String lastMessageText =
+                      lastMessage?['message'] ?? 'No messages yet';
+                  String senderId = lastMessage?['senderId'] ?? '';
+                  String formattedTime = lastMessageTime.year == 1970
+                      ? ''
+                      : DateFormat('hh:mm a').format(lastMessageTime);
+
+                  bool isReadByOthers = (lastMessage?['readBy'] as List?)
                           ?.any((id) => id != widget.userId) ??
                       false;
 
-                  String images = group.members!.firstWhere(
-                        (member) => member['uid'] != widget.userId,
-                        orElse: () => null,
-                      )['userImage'] ??
-                      '';
+                  var otherMember = group.members!.firstWhere(
+                    (m) => m['uid'] != widget.userId,
+                    orElse: () => null,
+                  );
+
+                  if (otherMember == null) return const SizedBox();
+
                   return Card(
                     color: Colors.white,
                     child: ListTile(
-                      onLongPress: () {
-                        deleteChatDialog(context, group.id!);
-                      },
-                      onTap: () {
-                        context
+                      onLongPress: () => deleteChatDialog(context, group.id!),
+                      onTap: () async {
+                        await context
                             .read<GroupCubit>()
                             .markAllMessagesAsRead(group.id!, widget.userId);
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MessagingScreen(
-                            userImage: group.members!.firstWhere(
-                                  (member) => member['uid'] != widget.userId,
-                                  orElse: () => null,
-                                )['userImage'] ??
-                                '',
+                          builder: (_) => MessagingScreen(
                             groupId: group.id!,
                             userId: widget.userId,
-                            userName: group.members!.firstWhere(
-                                    (member) => member['uid'] != widget.userId,
-                                    orElse: () => null)['userName'] ??
-                                'No other members',
+                            userName: otherMember['userName'] ?? 'Unknown',
+                            userImage: otherMember['userImage'] ?? '',
                             userCategory: "Resident",
                           ),
                         ));
+
+                        // setState(() {});
                       },
-                      leading: Card(
-                          elevation: 1,
-                          margin: EdgeInsets.zero,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100)),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(25),
-                            child: FadeInImage(
-                              height: 50,
-                              width: 50,
-                              fit: BoxFit.cover,
-                              imageErrorBuilder: (_, child, stackTrash) =>
-                                  Image.asset(ImageAssets.chatImage,
-                                      height: 50.0),
-                              placeholder:
-                                  const AssetImage(ImageAssets.chatImage),
-                              image: NetworkImage(images),
-                            ),
-                          )),
+                      leading: CircleAvatar(
+                        radius: 25,
+                        backgroundImage:
+                            (otherMember['userImage'] ?? '').isEmpty
+                                ? AssetImage(ImageAssets.chatImage)
+                                : NetworkImage(otherMember['userImage'])
+                                    as ImageProvider,
+                      ),
                       title: Text(
-                        group.members!.firstWhere(
-                              (member) => member['uid'] != widget.userId,
-                              orElse: () => null,
-                            )['userName'] ??
-                            'No other members',
+                        otherMember['userName'] ?? 'Unknown',
                         style: GoogleFonts.nunitoSans(
-                          textStyle: const TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                            fontSize: 15, fontWeight: FontWeight.w600),
                       ),
                       subtitle: Text(lastMessageText,
                           maxLines: 1, overflow: TextOverflow.ellipsis),
                       trailing: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(formattedTime,
-                              style: const TextStyle(color: Colors.grey)),
-                          const SizedBox(height: 5.0),
-                          if (senderId == widget.userId) ...[
-                            isReadByOthers
-                                ? Icon(Icons.done_all,
-                                    size: 15.sp, color: AppTheme.primaryColor)
-                                : Icon(Icons.done,
-                                    size: 15.sp, color: AppTheme.primaryColor),
-                          ],
-                          StreamBuilder<int>(
-                            stream: getUnreadMessagesCount(
-                                group.id!, widget.userId),
-                            builder: (context, snapshot) {
-                              final unreadCount = snapshot.data ?? 0;
-                              return unreadCount != 0
-                                  ? Container(
-                                      width: 25.0,
-                                      height: 25.0,
-                                      decoration: BoxDecoration(
-                                          color: AppTheme.primaryColor,
-                                          borderRadius:
-                                              BorderRadius.circular(100.0)),
-                                      child: Center(
-                                        child: Text(
-                                          unreadCount.toString(),
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12.0,
-                                            fontWeight: FontWeight.w600,
+                          if (formattedTime.isNotEmpty)
+                            Text(formattedTime,
+                                style: const TextStyle(color: Colors.grey)),
+                          const SizedBox(height: 5),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (senderId == widget.userId)
+                                Icon(
+                                    isReadByOthers
+                                        ? Icons.done_all
+                                        : Icons.done,
+                                    size: 15.sp,
+                                    color: isReadByOthers
+                                        ? AppTheme.blueColor
+                                        : AppTheme.primaryColor),
+                              SizedBox(width: 5),
+                              StreamBuilder<int>(
+                                stream: getUnreadMessagesCount(
+                                    group.id!, widget.userId),
+                                builder: (_, unreadSnap) {
+                                  int unreadCount = unreadSnap.data ?? 0;
+                                  return unreadCount > 0
+                                      ? Container(
+                                          width: 25,
+                                          height: 25,
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.primaryColor,
+                                            shape: BoxShape.circle,
                                           ),
-                                        ),
-                                      ),
-                                    )
-                                  : const SizedBox();
-                            },
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            unreadCount.toString(),
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        )
+                                      : const SizedBox();
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -250,6 +183,46 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
       ),
     );
   }
+
+  /// helper function -> get lastMessage for each group and sort
+  Stream<List<Map<String, dynamic>>> _getGroupsWithLastMessage(
+      List<GroupModel> groups) async* {
+    while (true) {
+      List<Map<String, dynamic>> list = [];
+      for (var group in groups) {
+        var snap = await FirebaseFirestore.instance
+            .collection('groups')
+            .doc(group.id!)
+            .collection('messages')
+            .orderBy('timestamp', descending: true)
+            .limit(1)
+            .get();
+
+        if (snap.docs.isEmpty) {
+          list.add({
+            'group': group,
+            'lastMessage': null,
+            'lastMessageTime': DateTime(1970),
+          });
+        } else {
+          var lastMsg = snap.docs.first.data();
+          DateTime time = (lastMsg['timestamp'] as Timestamp).toDate();
+
+          list.add({
+            'group': group,
+            'lastMessage': lastMsg,
+            'lastMessageTime': time,
+          });
+        }
+      }
+
+      list.sort((a, b) => (b['lastMessageTime'] as DateTime)
+          .compareTo(a['lastMessageTime'] as DateTime));
+
+      yield list;
+      await Future.delayed(const Duration(seconds: 1));
+    }
+  }
 }
 
 Stream<int> getUnreadMessagesCount(String groupId, String userId) {
@@ -262,7 +235,7 @@ Stream<int> getUnreadMessagesCount(String groupId, String userId) {
     int unreadCount = 0;
     for (var doc in snapshot.docs) {
       List<dynamic> readBy = doc['readBy'] ?? [];
-      if (!readBy.contains(userId)) {
+      if (doc['senderId'] != userId && !readBy.contains(userId)) {
         unreadCount++;
       }
     }

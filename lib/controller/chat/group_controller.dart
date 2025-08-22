@@ -243,19 +243,6 @@ class GroupCubit extends Cubit<void> {
             .toList());
   }
 
-  Stream<List<ChatModel>> getLastMessage(String groupId) {
-    return db
-        .collection("groups")
-        .doc(groupId)
-        .collection("messages")
-        .orderBy("timestamp", descending: true)
-        .limit(1)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => ChatModel.fromJson(doc.data()))
-            .toList());
-  }
-
   Future<void> markAllMessagesAsRead(String chatId, String userId) async {
     CollectionReference messagesRef =
         db.collection("groups").doc(chatId).collection("messages");
@@ -268,14 +255,5 @@ class GroupCubit extends Cubit<void> {
         "readBy": FieldValue.arrayUnion([userId]),
       });
     }
-  }
-
-  Stream<List<QueryDocumentSnapshot>> getAllMessagesStream(String chatId) {
-    return db
-        .collection("groups")
-        .doc(chatId)
-        .collection("messages")
-        .snapshots()
-        .map((snapshot) => snapshot.docs);
   }
 }

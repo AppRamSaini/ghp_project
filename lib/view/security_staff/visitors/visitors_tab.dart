@@ -61,7 +61,8 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent < 300) {
       _visitorsListingCubit.loadMoreVisitorsUsers(
-          context, filterList[selectedIndex].toString(), '', '', '');
+          context, filterList[selectedIndex].toString(), '', '', '',
+          forStaffSide: true);
     }
   }
 

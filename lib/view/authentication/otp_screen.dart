@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -197,19 +200,69 @@ class _OtpScreenState extends State<OtpScreen> with CodeAutoFill {
   }
 
   void _submitOtp(String otp) async {
-    // FirebaseMessaging messaging = FirebaseMessaging.instance;
-    // await messaging.requestPermission(alert: true, badge: true, sound: true);
-    //
-    // String? token;
-    // if (Platform.isIOS) {
-    //   token = await messaging.getAPNSToken();
-    // } else {
-    //   token = await messaging.getToken();
-    // }
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-    context
-        .read<VerifyOtpCubit>()
-        .verifyOtp(widget.phoneNumber, otp, "fcm_token");
+    // 1. iOS/Android Permission Request
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    debugPrint("🔔 Permission status: ${settings.authorizationStatus}");
+
+    // 2. Get FCM Token
+    String? fcmToken = await messaging.getToken();
+    debugPrint("🔥 Initial FCM Token ---> $fcmToken");
+
+    // 3. iOS extra: APNs token check (debug purpose)
+    if (Platform.isIOS) {
+      String? apnsToken = await messaging.getAPNSToken();
+      debugPrint("🍎 APNS Token ---> $apnsToken");
+    }
+
+    // 4. Send token to backend (only if available)
+    if (fcmToken != null) {
+      context.read<VerifyOtpCubit>().verifyOtp(
+            widget.phoneNumber,
+            otp,
+            fcmToken ?? 'fcm',
+          );
+    }
+
+    // 5. Listen for token refresh (sometimes initial null hota hai)
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+      debugPrint("🔄 Token refreshed: $newToken");
+      context.read<VerifyOtpCubit>().verifyOtp(
+            widget.phoneNumber,
+            otp,
+            newToken ?? 'fcm',
+          );
+    });
+
+//
+//
+//     FirebaseMessaging messaging = FirebaseMessaging.instance;
+//
+// // Request permission
+//     NotificationSettings settings = await messaging.requestPermission(
+//         alert: true, badge: true, sound: true);
+//
+// // Get FCM Token (this is the one you use on server)
+//     String? fcmToken = await messaging.getToken();
+//     print("FCM TOKEN ---> $fcmToken");
+//
+// // For debugging APNs token
+//     String? apnsToken = await messaging.getAPNSToken();
+//     print("APNS TOKEN ---> $apnsToken");
+//     //
+//     // if (fcmToken != null) {
+//     //   print("-FCM---------->>>>" + fcmToken);
+//     // }
+//     //
+//     // context
+//     //     .read<VerifyOtpCubit>()
+//     //     .verifyOtp(widget.phoneNumber, otp, fcmToken ?? "fcm_token");
   }
 
   Widget _buildOtpField(PinTheme defaultPinTheme) {

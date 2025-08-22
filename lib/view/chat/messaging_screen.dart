@@ -58,7 +58,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: size.width * 0.28,
+        leadingWidth: size.width * 0.29,
         leading: widget.userImage.isEmpty
             ? Row(
                 mainAxisSize: MainAxisSize.min,

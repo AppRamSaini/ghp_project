@@ -26,7 +26,6 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    print("--------------->>>>>>>>>>>>>>>>>>>>>>${widget.userImage}");
     return Scaffold(
       appBar: appbarWidget(title: 'Chat'),
       floatingActionButton: FloatingActionButton(
@@ -55,59 +54,29 @@ class _ChatScreenState extends State<ChatScreen> {
             }
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
               return const Center(
-                child: Text('No data available.',
-                    style: TextStyle(color: Colors.deepPurpleAccent)),
+                child: Text(
+                  'No data available.',
+                  style: TextStyle(color: Colors.deepPurpleAccent),
+                ),
               );
             }
 
+            // convert groups
             List<GroupModel> groups = snapshot.data!.docs
                 .map((doc) =>
                     GroupModel.fromMap(doc.data() as Map<String, dynamic>))
                 .toList();
 
-            List<Future<Map<String, dynamic>>> lastMessagesFutures =
-                groups.map((group) async {
-              var messageSnapshot = await FirebaseFirestore.instance
-                  .collection('groups')
-                  .doc(group.id!)
-                  .collection('messages')
-                  .orderBy('timestamp', descending: true)
-                  .get();
-
-              if (messageSnapshot.docs.isEmpty) {
-                return {
-                  'group': group,
-                  'lastMessageTimestamp': DateTime(1970),
-                };
-              }
-
-              var lastMessage = messageSnapshot.docs.first.data();
-              DateTime lastMessageTimestamp =
-                  (lastMessage['timestamp'] as Timestamp).toDate();
-
-              return {
-                'group': group,
-                'lastMessageTimestamp': lastMessageTimestamp,
-              };
-            }).toList();
-
-            return FutureBuilder<List<Map<String, dynamic>>>(
-              future: Future.wait(lastMessagesFutures),
-              builder: (context, messagesSnapshot) {
-                if (messagesSnapshot.connectionState ==
-                    ConnectionState.waiting) {
+            return StreamBuilder<List<Map<String, dynamic>>>(
+              stream: _getGroupsWithLastMessage(groups),
+              builder: (context, groupSnapshot) {
+                if (!groupSnapshot.hasData) {
                   return const Center(
-                      child: CircularProgressIndicator.adaptive());
-                }
-                if (!messagesSnapshot.hasData) {
-                  return const Center(child: Text('Error loading chat list.'));
+                    child: CircularProgressIndicator.adaptive(),
+                  );
                 }
 
-                List<Map<String, dynamic>> sortedGroups =
-                    messagesSnapshot.data!;
-                sortedGroups.sort((a, b) =>
-                    (b['lastMessageTimestamp'] as DateTime)
-                        .compareTo(a['lastMessageTimestamp']));
+                var sortedGroups = groupSnapshot.data!;
 
                 return ListView.builder(
                   itemCount: sortedGroups.length,
@@ -116,121 +85,114 @@ class _ChatScreenState extends State<ChatScreen> {
                     GroupModel group = groupData['group'];
                     DateTime timestamp = groupData['lastMessageTimestamp'];
                     String formattedTime =
-                        DateFormat('hh:mm a').format(timestamp);
+                        timestamp.year == 1970 // no message yet
+                            ? ''
+                            : DateFormat('hh:mm a').format(timestamp);
 
-                    return StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('groups')
-                          .doc(group.id!)
-                          .collection('messages')
-                          .orderBy('timestamp', descending: true)
-                          .limit(1)
-                          .snapshots(),
-                      builder: (context, messageSnapshot) {
-                        if (!messageSnapshot.hasData ||
-                            messageSnapshot.data!.docs.isEmpty) {
-                          return const SizedBox();
-                        }
+                    var lastMessage = groupData['lastMessage'];
+                    String lastMessageText =
+                        lastMessage?['message'] ?? 'No messages yet';
+                    String senderId = lastMessage?['senderId'] ?? '';
 
-                        var lastMessage = messageSnapshot.data!.docs.first
-                            .data() as Map<String, dynamic>;
-                        String lastMessageText = lastMessage['message'] ?? '';
-                        String senderId = lastMessage['senderId'] ?? '';
-                        bool isReadByOthers = (lastMessage['readBy'] as List?)
-                                ?.any((id) => id != widget.userId) ??
-                            false;
+                    var otherMember = group.members!.firstWhere(
+                        (m) => m['uid'] != widget.userId,
+                        orElse: () => null);
 
-                        var otherMember = group.members!.firstWhere(
-                            (m) => m['uid'] != widget.userId,
-                            orElse: () => null);
+                    if (otherMember == null) return const SizedBox();
 
-                        if (otherMember == null) return const SizedBox();
-
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Card(
-                            color: Colors.white,
-                            margin: EdgeInsets.zero,
-                            child: ListTile(
-                              onLongPress: () =>
-                                  deleteChatDialog(context, group.id!),
-                              onTap: () {
-                                context
-                                    .read<GroupCubit>()
-                                    .markAllMessagesAsRead(
-                                        group.id!, widget.userId);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (_) => MessagingScreen(
-                                    groupId: group.id!,
-                                    userId: widget.userId,
-                                    userName:
-                                        otherMember['userName'] ?? 'Unknown',
-                                    userImage: otherMember['userImage'] ?? '',
-                                    userCategory:
-                                        otherMember['serviceCategory'] ?? '',
-                                  ),
-                                ));
-                              },
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
-                              dense: true,
-                              leading: CircleAvatar(
-                                radius: 24,
-                                child: otherMember['userImage'] == null ||
-                                        otherMember['userImage'] == ''
-                                    ? Icon(Icons.person,
-                                        color: AppTheme.remainingColor)
-                                    : ClipOval(
-                                        child: FadeInImage(
-                                        placeholder:
-                                            AssetImage(ImageAssets.chatImage),
-                                        image: NetworkImage(
-                                            otherMember['userImage']),
-                                        imageErrorBuilder: (_, v, s) =>
-                                            Image.asset(
-                                          ImageAssets.chatImage,
-                                          fit: BoxFit.cover,
-                                          width: 48,
-                                          height: 48,
-                                        ),
-                                      )),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Card(
+                        color: Colors.white,
+                        margin: EdgeInsets.zero,
+                        child: ListTile(
+                          onLongPress: () =>
+                              deleteChatDialog(context, group.id!),
+                          onTap: () {
+                            context.read<GroupCubit>().markAllMessagesAsRead(
+                                group.id!, widget.userId);
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => MessagingScreen(
+                                groupId: group.id!,
+                                userId: widget.userId,
+                                userName: otherMember['userName'] ?? 'Unknown',
+                                userImage: otherMember['userImage'] ?? '',
+                                userCategory:
+                                    otherMember['serviceCategory'] ?? '',
                               ),
-                              title: Text(
-                                otherMember['userName'] ?? 'Unknown',
-                                style: GoogleFonts.nunitoSans(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              subtitle: Text(
-                                lastMessageText,
-                                style: GoogleFonts.nunitoSans(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              trailing: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    formattedTime,
-                                    style: GoogleFonts.nunitoSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey,
+                            ));
+                          },
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 5),
+                          dense: true,
+                          leading: CircleAvatar(
+                            radius: 24,
+                            child: otherMember['userImage'] == null ||
+                                    otherMember['userImage'] == ''
+                                ? Icon(Icons.person,
+                                    color: AppTheme.remainingColor)
+                                : ClipOval(
+                                    child: FadeInImage(
+                                    placeholder:
+                                        AssetImage(ImageAssets.chatImage),
+                                    image:
+                                        NetworkImage(otherMember['userImage']),
+                                    imageErrorBuilder: (_, v, s) => Image.asset(
+                                      ImageAssets.chatImage,
+                                      fit: BoxFit.cover,
+                                      width: 48,
+                                      height: 48,
                                     ),
+                                  )),
+                          ),
+                          title: Text(
+                            otherMember['userName'] ?? 'Unknown',
+                            style: GoogleFonts.nunitoSans(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          subtitle: Text(
+                            lastMessageText,
+                            style: GoogleFonts.nunitoSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              if (formattedTime.isNotEmpty)
+                                Text(
+                                  formattedTime,
+                                  style: GoogleFonts.nunitoSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey,
                                   ),
-                                  const SizedBox(height: 5),
+                                ),
+                              const SizedBox(height: 5),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
                                   if (senderId == widget.userId)
                                     Icon(
-                                      isReadByOthers
-                                          ? Icons.done_all
-                                          : Icons.done,
-                                      size: 15.sp,
-                                      color: AppTheme.primaryColor,
-                                    ),
+                                        (lastMessage?['readBy'] as List?)?.any(
+                                                    (id) =>
+                                                        id != widget.userId) ??
+                                                false
+                                            ? Icons.done_all
+                                            : Icons.done,
+                                        size: 15.sp,
+                                        color: (lastMessage?['readBy'] as List?)
+                                                    ?.any((id) =>
+                                                        id != widget.userId) ??
+                                                false
+                                            ? AppTheme.blueColor
+                                            : AppTheme.primaryColor),
+                                  const SizedBox(width: 10),
                                   StreamBuilder<int>(
                                     stream: getUnreadMessagesCount(
                                         group.id!, widget.userId),
@@ -259,10 +221,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ),
                                 ],
                               ),
-                            ),
+                            ],
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     );
                   },
                 );
@@ -272,6 +234,45 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
+  }
+
+  /// Real-time sorted groups with last message
+  Stream<List<Map<String, dynamic>>> _getGroupsWithLastMessage(
+      List<GroupModel> groups) {
+    return Stream.periodic(const Duration(seconds: 1)).asyncMap((_) async {
+      List<Map<String, dynamic>> list = [];
+      for (var group in groups) {
+        var messageSnapshot = await FirebaseFirestore.instance
+            .collection('groups')
+            .doc(group.id!)
+            .collection('messages')
+            .orderBy('timestamp', descending: true)
+            .limit(1)
+            .get();
+
+        if (messageSnapshot.docs.isEmpty) {
+          list.add({
+            'group': group,
+            'lastMessage': null,
+            'lastMessageTimestamp': DateTime(1970),
+          });
+        } else {
+          var lastMessage = messageSnapshot.docs.first.data();
+          DateTime lastMessageTimestamp =
+              (lastMessage['timestamp'] as Timestamp).toDate();
+
+          list.add({
+            'group': group,
+            'lastMessage': lastMessage,
+            'lastMessageTimestamp': lastMessageTimestamp,
+          });
+        }
+      }
+
+      list.sort((a, b) => (b['lastMessageTimestamp'] as DateTime)
+          .compareTo(a['lastMessageTimestamp'] as DateTime));
+      return list;
+    });
   }
 
   /// Count unread messages in the group for the current user

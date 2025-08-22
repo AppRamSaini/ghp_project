@@ -65,12 +65,12 @@ class _VisitorsListPageState extends State<VisitorsListPage> {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 300) {
       _visitorsListingCubit.loadMoreVisitorsUsers(
-        context,
-        filterList[widget.index].toString(),
-        searchController.text.toLowerCase().toString(),
-        fromDate.text.toString(),
-        toDate.text.toString(),
-      );
+          context,
+          filterList[widget.index].toString(),
+          searchController.text.toLowerCase().toString(),
+          fromDate.text.toString(),
+          toDate.text.toString(),
+          forStaffSide: true);
     }
   }
 

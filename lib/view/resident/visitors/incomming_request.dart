@@ -194,7 +194,7 @@ class _VisitorsIncomingRequestPageState
                 snackBar(context, state.successMsg.toString(), Icons.done,
                     AppTheme.guestColor);
                 Navigator.of(dialogueContext).pop();
-                // Navigator.pop(context);
+                Navigator.pop(context);
               } else if (state is AcceptRequestFailed) {
                 snackBar(context, state.errorMsg.toString(), Icons.warning,
                     AppTheme.redColor);
@@ -218,7 +218,7 @@ class _VisitorsIncomingRequestPageState
                 snackBar(context, state.successMsg.toString(), Icons.done,
                     AppTheme.guestColor);
                 Navigator.of(dialogueContext).pop();
-                // Navigator.pop(context);
+                Navigator.pop(context);
                 _stopAlerts();
               } else if (state is NotRespondingFailed) {
                 snackBar(context, state.errorMsg.toString(), Icons.warning,
