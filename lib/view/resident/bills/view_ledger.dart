@@ -114,14 +114,25 @@ class _LedgerWebViewScreenState extends State<LedgerWebViewScreen> {
     final DateTime now = DateTime.now();
     final DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
 
+    // safe initial range
+    final DateTimeRange safeInitialRange = (fromDate != null && toDate != null)
+        ? DateTimeRange(
+            start: fromDate!,
+            end: toDate!.isAfter(lastDayOfMonth) ? lastDayOfMonth : toDate!,
+          )
+        : DateTimeRange(
+            start: now,
+            end: now.add(const Duration(days: 3)).isAfter(lastDayOfMonth)
+                ? lastDayOfMonth
+                : now.add(const Duration(days: 3)),
+          );
+
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      firstDate: DateTime(2015, 8),
+      firstDate: DateTime(2020, 8),
       lastDate: lastDayOfMonth,
       initialEntryMode: DatePickerEntryMode.calendarOnly,
-      initialDateRange: fromDate != null && toDate != null
-          ? DateTimeRange(start: fromDate!, end: toDate!)
-          : DateTimeRange(start: now, end: now.add(const Duration(days: 3))),
+      initialDateRange: safeInitialRange,
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData(

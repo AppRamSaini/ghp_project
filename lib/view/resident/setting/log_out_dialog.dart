@@ -1423,7 +1423,7 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                                       : const SizedBox(),
                                   profileDetails.data!.user!.role == 'resident'
                                       ? Text(
-                                          "Tower/Bloc : ${profileDetails.data!.user!.property!.blockName.toString()}/${profileDetails.data!.user!.floorNumber.toString()}\nProperty No: ${profileDetails.data!.user!.aprtNo.toString()}",
+                                          "Tower/Block : ${profileDetails.data!.user!.property!.blockName.toString()}/${profileDetails.data!.user!.floorNumber.toString()}\nProperty No: ${profileDetails.data!.user!.aprtNo.toString()}",
                                           style: GoogleFonts.nunitoSans(
                                               color: Colors.black,
                                               fontSize: 12))

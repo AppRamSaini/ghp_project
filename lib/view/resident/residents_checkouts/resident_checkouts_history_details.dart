@@ -43,13 +43,20 @@ class _ResidentCheckoutsHistoryDetailsState
     final DateTime now = DateTime.now();
     final DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
 
+    // safe initial range
+    final DateTimeRange safeInitialRange = DateTimeRange(
+      start: now,
+      end: now.add(const Duration(days: 3)).isAfter(lastDayOfMonth)
+          ? lastDayOfMonth
+          : now.add(const Duration(days: 3)),
+    );
+
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      firstDate: DateTime(2015, 8),
+      firstDate: DateTime(2020, 8),
       lastDate: lastDayOfMonth,
       initialEntryMode: DatePickerEntryMode.calendarOnly,
-      initialDateRange:
-          DateTimeRange(start: now, end: now.add(const Duration(days: 3))),
+      initialDateRange: safeInitialRange,
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData(
@@ -68,9 +75,8 @@ class _ResidentCheckoutsHistoryDetailsState
           ),
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 100), // Removed extra bottom padding
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 100),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: child ?? const SizedBox(),
@@ -89,9 +95,10 @@ class _ResidentCheckoutsHistoryDetailsState
 
       _residentCheckoutsHistoryDetailsCubit
           .fetchResidentCheckoutsHistoryDetailsApi(
-              userId: widget.userId.toString(),
-              fromDate: fromDate,
-              toDate: toDate);
+        userId: widget.userId.toString(),
+        fromDate: fromDate,
+        toDate: toDate,
+      );
     }
   }
 

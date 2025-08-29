@@ -233,8 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xffEE5366),
-                      ),
+                          backgroundColor: const Color(0xffEE5366)),
                       onPressed: ShowCaseWidget.of(context).dismiss,
                       child: const Text(
                         'Close Showcase',
@@ -256,9 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   TooltipActionButton(
                     backgroundColor: Colors.transparent,
                     type: TooltipDefaultActionType.previous,
-                    padding: EdgeInsets.symmetric(
-                      vertical: 4,
-                    ),
+                    padding: EdgeInsets.symmetric(vertical: 4),
                     textStyle: TextStyle(
                       color: Colors.white,
                     ),
@@ -302,7 +299,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: Image.asset('assets/images/pay_img.png')))),
         appBar: AppBar(
-            leadingWidth: size.width,
+            leadingWidth: size.width * 0.6,
+            bottom: PreferredSize(preferredSize: Size(0, 8), child: SizedBox()),
             leading: BlocBuilder<UserProfileCubit, UserProfileState>(
               builder: (context, state) {
                 if (state is UserProfileLoaded) {
@@ -331,10 +329,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         key: _firstShowcaseWidget,
                         title: "Profile Data",
                         description: 'Your personal details, all in one place.',
-                        titleTextStyle:
-                            customTitle().copyWith(color: Colors.black),
-                        descTextStyle:
-                            customDes().copyWith(color: AppTheme.blueColor),
+                        titleTextStyle: customTitle().copyWith(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500),
+                        descTextStyle: customDes()
+                            .copyWith(color: AppTheme.blueColor, fontSize: 12),
                         onBarrierClick: () {
                           ShowCaseWidget.of(context)
                               .hideFloatingActionWidgetForKeys(
@@ -385,12 +385,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ))),
                     title: Text(
-                        state.userProfile.first.data!.user!.name.toString(),
-                        style: GoogleFonts.nunitoSans(
-                            textStyle: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600))),
+                      state.userProfile.first.data!.user!.name.toString(),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: GoogleFonts.nunitoSans(
+                        textStyle: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                     subtitle: state.userProfile.first.data!.user!.property !=
                             null
                         ? Text(

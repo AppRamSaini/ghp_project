@@ -341,7 +341,7 @@ EdgeInsetsGeometry globalBottomPadding(BuildContext context) =>
 /// scroll management
 
 TextStyle customTitle() => GoogleFonts.montserrat(
-    fontSize: 18, fontWeight: FontWeight.w500, color: AppTheme.white);
+    fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.white);
 
 TextStyle customDes() => GoogleFonts.montserrat(
-    fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.white);
+    fontSize: 12, fontWeight: FontWeight.w500, color: AppTheme.white);
