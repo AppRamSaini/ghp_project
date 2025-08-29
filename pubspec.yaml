@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 1.0.12+13
 
 environment:
-  sdk: ^3.6.1
+  sdk: ^3.5.3
 
 
 dependencies:
@@ -71,9 +71,12 @@ dependencies:
   showcaseview: ^4.0.1
   flutter_sound: ^9.28.0
   carousel_slider: ^5.1.1
-
-
-
+  pdf: ^3.11.3
+  printing: ^5.14.2
+#  agora_rtc_engine: ^6.5.2
+#  zego_uikit: ^2.27.8
+#  zego_uikit_signaling_plugin: ^2.8.3
+#  zego_uikit_prebuilt_call: ^4.15.10
 
 dev_dependencies:
   flutter_test:

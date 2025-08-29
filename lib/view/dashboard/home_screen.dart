@@ -4,14 +4,17 @@ import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/notification/notification_listing/notification_list_cubit.dart';
 import 'package:ghp_society_management/controller/property_listing/property_listing_cubit.dart';
+import 'package:ghp_society_management/controller/visitors/incoming_request/incoming_request_cubit.dart';
 import 'package:ghp_society_management/main.dart';
+import 'package:ghp_society_management/model/incoming_visitors_request_model.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
 import 'package:ghp_society_management/view/dashboard/view_all_features.dart';
-import 'package:ghp_society_management/view/resident/bills/bill_screen.dart';
 import 'package:ghp_society_management/view/resident/bills/home_bill_section.dart';
+import 'package:ghp_society_management/view/resident/bills/my_bill_history.dart';
 import 'package:ghp_society_management/view/resident/complaint/comlaint_page.dart';
 import 'package:ghp_society_management/view/resident/notice_board/notice_board_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
+import 'package:ghp_society_management/view/resident/visitors/incomming_request.dart';
 import 'package:ghp_society_management/view/resident/visitors/visitor_screen.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -157,6 +160,28 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
+        BlocListener<IncomingRequestCubit, IncomingRequestState>(
+          listener: (context, state) {
+            if (state is IncomingRequestLoaded) {
+              print("IncomingRequestLoaded state triggered");
+              IncomingVisitorsModel incomingVisitorsRequest =
+                  state.incomingVisitorsRequest;
+              if (incomingVisitorsRequest.lastCheckinDetail!.status ==
+                  'requested') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VisitorsIncomingRequestPage(
+                      incomingVisitorsRequest: incomingVisitorsRequest,
+                      fromForegroundMsg: true,
+                      setPageValue: (value) {},
+                    ),
+                  ),
+                );
+              }
+            }
+          },
+        ),
         BlocListener<LogoutCubit, LogoutState>(
           listener: (context, state) async {
             if (state is LogoutLoading) {

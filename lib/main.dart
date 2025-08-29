@@ -3,18 +3,29 @@ import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:ghp_society_management/constants/export.dart';
 
-/// Handle Background Notification
+/// Handle Background Notification (Android & iOS)
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  // Initialize Firebase & LocalStorage for background isolate
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await LocalStorage.init();
-  FirebaseNotificationService.startVibrationAndRingtone();
+
+  print("📩 Background message received: ${message.data}");
+
+  // Forward to Notification Service (handle local notification + actions)
+  await FirebaseNotificationService.firebaseMessagingBackgroundHandler(message);
 }
 
 /// Request Notification Permission
 Future<void> requestNotificationPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
-  NotificationSettings settings =
-      await messaging.requestPermission(alert: true, badge: true, sound: true);
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+    criticalAlert: true,
+  );
+
   if (settings.authorizationStatus == AuthorizationStatus.denied) {
     print("🚨 User Denied Notification Permission");
   } else {
@@ -23,23 +34,28 @@ Future<void> requestNotificationPermission() async {
 }
 
 Future<void> main() async {
-  print("App Started");
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Firebase & Local Storage
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await LocalStorage.init();
 
+  // Ask user for notification permission
   await requestNotificationPermission();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  FirebaseNotificationService.initialize(); // InitializeNotificationHandler
 
-  runApp(MyApp());
+  // Register background handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Initialize Notification Service (Local + Firebase)
+  await FirebaseNotificationService.initialize();
+
+  runApp(const MyApp());
 }
 
 late Size size;
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -49,15 +65,40 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
+    // Foreground listener
+    FirebaseMessaging.onMessage.listen((message) {
+      print("Foreground message received: ${message.data}");
+      FirebaseNotificationService.handleMessage(message, isForeground: true);
+    });
+
+    // Background → Foreground (when notification tapped)
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print("Notification tapped: ${message.data}");
+      FirebaseNotificationService.handleMessage(message, isForeground: false);
+    });
+
+    // Terminated state
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        print("App launched from terminated via notification: ${message.data}");
+        FirebaseNotificationService.handleMessage(
+          message,
+          isForeground: false,
+          fromTerminated: true,
+        );
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.sizeOf(context);
+
     return MultiBlocProvider(
       providers: BlocProviders.providers,
       child: ScreenUtilInit(
-        designSize: Size(360, 690), // Set default design size
+        designSize: const Size(360, 690),
         builder: (context, child) {
           return MaterialApp(
             title: "Ghp Society",
@@ -69,11 +110,10 @@ class _MyAppState extends State<MyApp> {
                 titleTextStyle: TextStyle(color: AppTheme.white),
                 backgroundColor: AppTheme.primaryColor,
                 centerTitle: false,
-                iconTheme: IconThemeData(color: Colors.white),
+                iconTheme: const IconThemeData(color: Colors.white),
               ),
             ),
             navigatorKey: navigatorKey,
-            // navigatorObservers: [analyticsObserver],
             home: SplashScreen(),
           );
         },
@@ -81,5 +121,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-/// UPDATE NEW CODE

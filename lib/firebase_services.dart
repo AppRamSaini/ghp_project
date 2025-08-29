@@ -12,21 +12,7 @@ import 'package:vibration/vibration.dart';
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-Future<void> setupLocalNotifications() async {
-  const AndroidInitializationSettings androidInitSettings =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-
-  final InitializationSettings initSettings = InitializationSettings(
-    android: androidInitSettings,
-  );
-
-  await flutterLocalNotificationsPlugin.initialize(initSettings);
-}
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-// FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-// FirebaseAnalyticsObserver analyticsObserver =
-// FirebaseAnalyticsObserver(analytics: analytics);
 
 class FirebaseNotificationService {
   static bool _isRingtonePlaying = false;
@@ -36,7 +22,7 @@ class FirebaseNotificationService {
   static Future<void> initialize() async {
     final messaging = FirebaseMessaging.instance;
 
-    // Request notification permission
+    // Request permission
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       badge: true,
@@ -47,53 +33,60 @@ class FirebaseNotificationService {
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       // Foreground
       FirebaseMessaging.onMessage.listen((message) {
-        print('------->>>>>Foreground message');
-
-        _handleMessage(message, isForeground: true);
+        print('Foreground message: ${message.data}');
+        handleMessage(message, isForeground: true);
       });
 
-      // Background - tapped from system tray
+      // Background tapped
       FirebaseMessaging.onMessageOpenedApp.listen((message) {
-        print('------->>>>> Background - tapped from system tray');
-
-        _handleMessage(message, isForeground: false);
+        print('Background tapped: ${message.data}');
+        handleMessage(message, isForeground: false);
       });
 
-      // Terminated - first time app opened via notification
+      // Terminated -> first launch via notification
       FirebaseMessaging.instance.getInitialMessage().then((message) {
-        print(
-            '------->>>>>Terminated - first time app opened via notification');
-
         if (message != null) {
-          _handleMessage(message, isForeground: false, fromTerminated: true);
+          print('Terminated app launch: ${message.data}');
+          handleMessage(message, isForeground: false, fromTerminated: true);
         }
       });
+
+      // Background handler registration (Android)
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     }
   }
 
-  static void _handleMessage(RemoteMessage message,
+  /// Background handler (runs in separate isolate)
+  @pragma('vm:entry-point')
+  static Future<void> firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
+    print("BG/Terminated message: ${message.data}");
+    await _showLocalNotification(message); //
+  }
+
+  /// Handle message
+  static void handleMessage(RemoteMessage message,
       {bool isForeground = false, bool fromTerminated = false}) {
     final data = message.data;
     final type = data['type'] ?? '';
 
-    print('------------------------------>>>>>>>$data');
-
     if (type == 'incoming_request') {
       LocalStorage.localStorage.setString("visitor_id", data['visitor_id']);
-      if (isForeground) startVibrationAndRingtone();
+      if (isForeground) startVibrationAndRingtone(); // 🔊 foreground ringtone
       _navigateToVisitorsPage(message, isForeground,
           fromTerminated: fromTerminated);
     } else if (type == 'sos_alert') {
-      if (isForeground) startVibrationAndRingtone();
+      if (isForeground) startVibrationAndRingtone(); // 🔊 foreground ringtone
       _navigateToSosPage(message, isForeground);
     }
-    // Optional: Show system tray notification
+
+    // Show system notification (only in foreground, background handled separately)
     if (isForeground) {
       _showLocalNotification(message);
     }
   }
 
-  /// Vibrate and Ring
+  /// Vibrate & ringtone (for foreground only)
   static Future<void> startVibrationAndRingtone() async {
     if (_isRingtonePlaying) return;
     _isRingtonePlaying = true;
@@ -104,7 +97,7 @@ class FirebaseNotificationService {
 
     FlutterRingtonePlayer().play(
       looping: true,
-      asAlarm: true,
+      asAlarm: false,
       fromAsset: "assets/sounds/ringtone.mp3",
     );
 
@@ -121,7 +114,7 @@ class FirebaseNotificationService {
 
   /// Navigate to Visitor Page
   static void _navigateToVisitorsPage(
-      RemoteMessage message, bool fromForeground,
+      RemoteMessage? message, bool fromForeground,
       {bool fromTerminated = false}) {
     navigatorKey.currentState?.push(MaterialPageRoute(
       builder: (_) => VisitorsIncomingRequestPage(
@@ -134,7 +127,7 @@ class FirebaseNotificationService {
   }
 
   /// Navigate to SOS Alert Page
-  static void _navigateToSosPage(RemoteMessage message, bool fromForeground) {
+  static void _navigateToSosPage(RemoteMessage? message, bool fromForeground) {
     navigatorKey.currentState?.push(MaterialPageRoute(
       builder: (_) => SosIncomingAlert(
         message: message,
@@ -144,14 +137,21 @@ class FirebaseNotificationService {
     ));
   }
 
-  /// Local Notification for Action Buttons
-  static void _showLocalNotification(RemoteMessage message) {
+  /// Show local notification (works for foreground + background + terminated)
+  static Future<void> _showLocalNotification(RemoteMessage message) async {
     const androidDetails = AndroidNotificationDetails(
       'visitor_channel_id',
       'Visitor Notifications',
+      channelDescription: 'For incoming visitor requests',
       importance: Importance.max,
       priority: Priority.high,
-      icon: "@mipmap/ic_launcher",
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound('ringtone'),
+      // 🔔 custom ringtone
+      enableVibration: true,
+      fullScreenIntent: true,
+      // like call screen
+      styleInformation: BigTextStyleInformation(''),
       actions: [
         AndroidNotificationAction('ALLOW_ACTION', 'Allow',
             showsUserInterface: true),
@@ -162,7 +162,7 @@ class FirebaseNotificationService {
 
     const details = NotificationDetails(android: androidDetails);
 
-    flutterLocalNotificationsPlugin.show(
+    await flutterLocalNotificationsPlugin.show(
       message.hashCode,
       message.notification?.title ?? 'Incoming Request',
       message.notification?.body ?? 'You have a new request.',
@@ -171,24 +171,7 @@ class FirebaseNotificationService {
     );
   }
 
-  /// Initialize Local Notification Handler
-  static void initializeNotificationHandler() {
-    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const initSettings = InitializationSettings(android: androidInit);
-
-    flutterLocalNotificationsPlugin.initialize(initSettings,
-        onDidReceiveNotificationResponse:
-            (NotificationResponse response) async {
-      if (response.actionId == 'ALLOW_ACTION') {
-        _handleApiCall('allowed');
-      } else if (response.actionId == 'DECLINE_ACTION') {
-        _handleApiCall('not_allowed');
-      }
-      _stopVibrationAndRingtone();
-    });
-  }
-
-  /// API Call for Visitor Approval
+  /// Handle API call on notification action
   static void _handleApiCall(String status) async {
     try {
       final visitorId =

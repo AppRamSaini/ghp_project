@@ -136,4 +136,6 @@ class Routes {
 
   ///<<<----------------NEW MODULE------------------>>>///
   static String propertyListing = '${Config.baseURL}properties/list';
+  static String ledgerBill =
+      '${Config.baseURL}member/ledger/830?from_date=2025-08-01&to_date=2025-08-31';
 }

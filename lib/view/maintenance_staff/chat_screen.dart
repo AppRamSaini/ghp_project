@@ -92,8 +92,8 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                     color: Colors.white,
                     child: ListTile(
                       onLongPress: () => deleteChatDialog(context, group.id!),
-                      onTap: () async {
-                        await context
+                      onTap: () {
+                        context
                             .read<GroupCubit>()
                             .markAllMessagesAsRead(group.id!, widget.userId);
                         Navigator.of(context).push(MaterialPageRoute(
@@ -106,7 +106,7 @@ class _StaffChatScreenState extends State<StaffChatScreen> {
                           ),
                         ));
 
-                        // setState(() {});
+                        setState(() {});
                       },
                       leading: CircleAvatar(
                         radius: 25,

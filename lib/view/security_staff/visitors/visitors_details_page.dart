@@ -91,6 +91,14 @@ class _VisitorsDetailsPage2State extends State<VisitorsDetailsPage2> {
         } else if (lastCheckinDetail.status == 'checked_out') {
           snackBarMsg(context, "The visitor has been already checked");
           onBack(buildContext);
+        } else if (lastCheckinDetail.status == 'not_allowed') {
+          snackBarMsg(context,
+              "This visitor has been not allowed by resident. Please contact to resident");
+          onBack(buildContext);
+        } else if (lastCheckinDetail.status == 'not_responded') {
+          snackBarMsg(context,
+              "This visitor has been not responded by resident. Please contact to resident");
+          onBack(buildContext);
         }
       }
     }

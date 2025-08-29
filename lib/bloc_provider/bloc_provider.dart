@@ -8,6 +8,7 @@ import 'package:ghp_society_management/controller/documents/incoming_documents/i
 import 'package:ghp_society_management/controller/documents/outgoing_documents/outgoing_documents_cubit.dart';
 import 'package:ghp_society_management/controller/documents/send_request/send_request_docs_cubit.dart';
 import 'package:ghp_society_management/controller/download_file/download_document_cubit.dart';
+import 'package:ghp_society_management/controller/ledger_bill/ledger_cubit.dart';
 import 'package:ghp_society_management/controller/members/search_member/search_member_cubit.dart';
 import 'package:ghp_society_management/controller/notification/notification_listing/notification_list_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/checkout_parcel/checkout_parcel_cubit.dart';
@@ -200,5 +201,6 @@ class BlocProviders {
         create: (context) => DailyHelpHistoryDetailsCubit()),
     BlocProvider<PropertyListingCubit>(
         create: (context) => PropertyListingCubit()),
+    BlocProvider<LedgerBillCubit>(create: (context) => LedgerBillCubit()),
   ];
 }

@@ -62,47 +62,45 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
 
   // popup menu filter
   Widget popMenusForFilter({required BuildContext context}) {
-    return CircleAvatar(
-      backgroundColor: AppTheme.white.withOpacity(0.5),
-      child: PopupMenuButton(
-        elevation: 10,
-        padding: EdgeInsets.zero,
-        color: Colors.white,
-        surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-        icon: const Icon(Icons.more_horiz_rounded,
-            color: Colors.deepPurpleAccent, size: 18.0),
-        offset: const Offset(0, 50),
-        itemBuilder: (BuildContext bc) {
-          return filterOptions
-              .map((selectedOption) => PopupMenuItem(
-                  padding: EdgeInsets.zero,
-                  value: selectedOption,
-                  height: 40,
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 10.w, right: 30),
-                      child: Text(selectedOption['menu'] ?? "",
-                          style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w400)))))
-              .toList();
-        },
-        onSelected: (value) async {
-          if (value['menu_id'] == 1) {
-            currentIndex = 0;
-            _parcelListingCubit.fetchParcelListingApi('all');
-          } else if (value['menu_id'] == 2) {
-            currentIndex = 1;
-            _parcelListingCubit.fetchParcelListingApi('pending');
-          } else {
-            currentIndex = 2;
-            _parcelListingCubit.fetchParcelListingApi('delivered');
-          }
+    return PopupMenuButton(
+      icon: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: AppTheme.white.withOpacity(0.5)),
+          child:
+              Text("Select Filter", style: GoogleFonts.roboto(fontSize: 14))),
+      offset: const Offset(0, 50),
+      itemBuilder: (BuildContext bc) {
+        return filterOptions
+            .map((selectedOption) => PopupMenuItem(
+                padding: EdgeInsets.zero,
+                value: selectedOption,
+                height: 40,
+                child: Padding(
+                    padding: EdgeInsets.only(left: 10.w, right: 30),
+                    child: Text(selectedOption['menu'] ?? "",
+                        style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w400)))))
+            .toList();
+      },
+      onSelected: (value) async {
+        if (value['menu_id'] == 1) {
+          currentIndex = 0;
+          _parcelListingCubit.fetchParcelListingApi('all');
+        } else if (value['menu_id'] == 2) {
+          currentIndex = 1;
+          _parcelListingCubit.fetchParcelListingApi('pending');
+        } else {
+          currentIndex = 2;
+          _parcelListingCubit.fetchParcelListingApi('delivered');
+        }
 
-          setState(() {});
-        },
-      ),
+        setState(() {});
+      },
     );
   }
 

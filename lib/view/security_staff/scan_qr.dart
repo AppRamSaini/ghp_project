@@ -59,7 +59,7 @@ class _QrCodeScannerState extends State<QrCodeScanner>
 
   /// Helper Method for Navigation
   void _navigateToVisitorDetails(String visitorId) {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => VisitorsDetailsPage2(
@@ -103,11 +103,10 @@ class _QrCodeScannerState extends State<QrCodeScanner>
               Navigator.of(context, rootNavigator: true).pop();
             }
             snackBar(
-              context,
-              "Scanned visitor QR is different. Please scan the correct visitor QR code.",
-              Icons.warning,
-              AppTheme.redColor,
-            );
+                context,
+                "Scanned visitor QR is different. Please scan the correct visitor QR code.",
+                Icons.warning,
+                AppTheme.redColor);
           } else {
             _navigateToVisitorDetails(scannedVisitorId);
           }

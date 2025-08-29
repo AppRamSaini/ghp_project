@@ -1,7 +1,7 @@
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/view/resident/bills/bill_detail_screen.dart';
-import 'package:ghp_society_management/view/resident/bills/bill_screen.dart';
+import 'package:ghp_society_management/view/resident/bills/my_bill_history.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:shimmer/shimmer.dart';
 

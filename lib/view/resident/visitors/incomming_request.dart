@@ -15,18 +15,19 @@ import 'package:vibration/vibration.dart';
 
 class VisitorsIncomingRequestPage extends StatefulWidget {
   final RemoteMessage? message;
-  IncomingVisitorsModel? incomingVisitorsRequest;
-  bool fromForegroundMsg;
-  String? from;
+  final IncomingVisitorsModel? incomingVisitorsRequest;
+  final bool fromForegroundMsg;
+  final String? from;
   final Function(bool values) setPageValue;
 
-  VisitorsIncomingRequestPage(
-      {super.key,
-      this.message,
-      this.from,
-      this.incomingVisitorsRequest,
-      required this.setPageValue,
-      this.fromForegroundMsg = false});
+  const VisitorsIncomingRequestPage({
+    super.key,
+    this.message,
+    this.from,
+    this.incomingVisitorsRequest,
+    required this.setPageValue,
+    this.fromForegroundMsg = false,
+  });
 
   @override
   State<VisitorsIncomingRequestPage> createState() =>
@@ -45,138 +46,116 @@ class _VisitorsIncomingRequestPageState
   String? visitorsID;
   String? visitorImg;
 
-  static const int timeoutDurationSeconds = 55; // Timeout duration constant
+  static const int timeoutDurationSeconds = 50;
+  late BuildContext dialogueContext;
 
   @override
   void initState() {
     super.initState();
     widget.setPageValue(true);
-    setData();
+    _setVisitorData();
     _startAlerts();
-    _setupTimeouts();
+    _setupTimers();
   }
 
-  void setData() {
+  void _setVisitorData() {
     try {
       if (widget.message != null) {
-        var data = widget.message!.data;
-        setState(() {
-          visitorName = data['name']?.toString();
-          visitorsID = data['visitor_id']?.toString();
-          visitorPhone = data['mob']?.toString();
-          visitorImg = data['img']?.toString();
-        });
-      } else {
-        setState(() {
-          visitorName = widget.incomingVisitorsRequest!.visitorName.toString();
-          visitorsID = widget.incomingVisitorsRequest!.id.toString();
-          visitorPhone = widget.incomingVisitorsRequest!.phone.toString();
-          visitorImg = widget.incomingVisitorsRequest!.image.toString();
-        });
+        final data = widget.message!.data;
+        visitorName = data['name']?.toString();
+        visitorsID = data['visitor_id']?.toString();
+        visitorPhone = data['mob']?.toString();
+        visitorImg = data['img']?.toString();
+      } else if (widget.incomingVisitorsRequest != null) {
+        visitorName = widget.incomingVisitorsRequest!.visitorName.toString();
+        visitorsID = widget.incomingVisitorsRequest!.id.toString();
+        visitorPhone = widget.incomingVisitorsRequest!.phone.toString();
+        visitorImg = widget.incomingVisitorsRequest!.image.toString();
       }
-      print(
-          "${DateTime.now()} - Visitor Data: $visitorName, $visitorsID, $visitorPhone");
     } catch (e) {
-      print("${DateTime.now()} - Error setting data: $e");
+      print("Error setting visitor data: $e");
     }
   }
 
   void _startAlerts() {
     try {
-      print("${DateTime.now()} - Starting Alerts...");
       Vibration.vibrate(pattern: [500, 1000, 500, 1000]);
       FlutterRingtonePlayer().playRingtone();
-      vibrationTimer =
-          Timer(const Duration(seconds: timeoutDurationSeconds), () {
-        _stopAlerts();
-      });
+      vibrationTimer = Timer.periodic(const Duration(seconds: 5),
+          (_) => Vibration.vibrate(pattern: [500, 1000]));
     } catch (e) {
-      print("${DateTime.now()} - Error starting alerts: $e");
+      print("Error starting alerts: $e");
     }
   }
 
-  void _setupTimeouts() {
-    print("${DateTime.now()} - Setting up timeouts...");
-
+  void _setupTimers() {
+    // Action timeout
     actionTimeoutTimer =
-        Timer(const Duration(seconds: timeoutDurationSeconds), () {
-      if (!isActioned) {
-        print("${DateTime.now()} - Action Timeout Reached. Stopping Alerts...");
-        _stopAlerts();
-      }
-    });
-
+        Timer(Duration(seconds: timeoutDurationSeconds), _onTimeout);
+    // Not responding timer
     notRespondingTimer =
-        Timer(const Duration(seconds: timeoutDurationSeconds), () {
-      print("${DateTime.now()} - Not responding timer triggered.");
-      if (!isActioned) {
-        _handleNotResponding(visitorsID ?? "");
-      }
-    });
-
-    print(
-        "${DateTime.now()} - Timeouts Initialized. Action Timer Active: ${actionTimeoutTimer?.isActive}, Not Responding Timer Active: ${notRespondingTimer?.isActive}");
+        Timer(Duration(seconds: timeoutDurationSeconds), _onNotResponding);
   }
 
-  void _handleNotResponding(String visitorsId) {
-    if (visitorsId.isEmpty) {
-      print(
-          "${DateTime.now()} - Error: Visitor ID is empty, skipping API call.");
-      return;
+  void _onTimeout() {
+    if (!isActioned && mounted) {
+      _stopAlerts();
+      _safePop();
     }
-    _stopAlerts();
-    var requestBody = {"visitor_id": visitorsId};
-    print("${DateTime.now()} - Not Responding API Call: $requestBody");
+  }
 
-    context
-        .read<NotRespondingCubit>()
-        .notRespondingAPI(statusBody: requestBody)
-        .then((_) {
-      print("${DateTime.now()} - Not Responding API Call Completed.");
-    }).catchError((error) {
-      print("${DateTime.now()} - API Call Error: $error");
-    });
+  void _onNotResponding() {
+    if (!isActioned && mounted) {
+      _handleNotResponding(visitorsID ?? "");
+    }
   }
 
   void _stopAlerts() {
     try {
       vibrationTimer?.cancel();
       actionTimeoutTimer?.cancel();
+      notRespondingTimer?.cancel();
       FlutterRingtonePlayer().stop();
-    } catch (e) {}
+    } catch (_) {}
   }
 
   void _handleAction(String id, String action) {
-    if (!isActioned) {
+    if (!isActioned && mounted) {
       setState(() => isActioned = true);
       _stopAlerts();
-      actionTimeoutTimer?.cancel();
-      notRespondingTimer?.cancel();
 
-      var requestBody = {"visitor_id": id, "status": action};
-      print(
-          "${DateTime.now()} - Action Taken: $action, API Call: $requestBody");
-
+      final requestBody = {"visitor_id": id, "status": action};
       context
           .read<AcceptRequestCubit>()
           .acceptRequestAPI(statusBody: requestBody)
-          .then((_) {
-        print("${DateTime.now()} - Accept Request API Call Completed.");
-      }).catchError((error) {
-        print("${DateTime.now()} - Accept Request API Call Error: $error");
-      });
+          .then((_) => print("Accept API done"))
+          .catchError((e) => print("Accept API error: $e"));
+    }
+  }
+
+  void _handleNotResponding(String visitorsId) {
+    if (visitorsId.isEmpty || !mounted) return;
+
+    _stopAlerts();
+    final requestBody = {"visitor_id": visitorsId};
+    context
+        .read<NotRespondingCubit>()
+        .notRespondingAPI(statusBody: requestBody)
+        .then((_) => _safePop())
+        .catchError((e) => print("Not Responding API error: $e"));
+  }
+
+  void _safePop() {
+    if (mounted) {
+      Navigator.pop(context);
     }
   }
 
   @override
   void dispose() {
-    vibrationTimer?.cancel();
-    actionTimeoutTimer?.cancel();
-    notRespondingTimer?.cancel();
+    _stopAlerts();
     super.dispose();
   }
-
-  late BuildContext dialogueContext;
 
   @override
   Widget build(BuildContext context) {
@@ -186,21 +165,22 @@ class _VisitorsIncomingRequestPageState
         listeners: [
           BlocListener<AcceptRequestCubit, AcceptRequestState>(
             listener: (context, state) {
+              if (!mounted) return;
               if (state is AcceptRequestLoading) {
-                showLoadingDialog(context, (ctx) {
-                  dialogueContext = ctx;
-                });
+                showLoadingDialog(context, (ctx) => dialogueContext = ctx);
               } else if (state is AcceptRequestSuccessfully) {
-                snackBar(context, state.successMsg.toString(), Icons.done,
+                snackBar(context, state.successMsg ?? '', Icons.done,
                     AppTheme.guestColor);
                 Navigator.of(dialogueContext).pop();
-                Navigator.pop(context);
-              } else if (state is AcceptRequestFailed) {
-                snackBar(context, state.errorMsg.toString(), Icons.warning,
-                    AppTheme.redColor);
-                Navigator.of(dialogueContext).pop();
-              } else if (state is AcceptRequestInternetError) {
-                snackBar(context, 'Internet connection failed', Icons.wifi_off,
+                _safePop();
+              } else if (state is AcceptRequestFailed ||
+                  state is AcceptRequestInternetError) {
+                snackBar(
+                    context,
+                    state is AcceptRequestFailed
+                        ? state.errorMsg ?? ''
+                        : 'Internet connection failed',
+                    Icons.warning,
                     AppTheme.redColor);
                 Navigator.of(dialogueContext).pop();
               } else {
@@ -210,22 +190,22 @@ class _VisitorsIncomingRequestPageState
           ),
           BlocListener<NotRespondingCubit, NotRespondingState>(
             listener: (context, state) {
+              if (!mounted) return;
               if (state is NotRespondingLoading) {
-                showLoadingDialog(context, (ctx) {
-                  dialogueContext = ctx;
-                });
+                showLoadingDialog(context, (ctx) => dialogueContext = ctx);
               } else if (state is NotRespondingSuccessfully) {
-                snackBar(context, state.successMsg.toString(), Icons.done,
+                snackBar(context, state.successMsg ?? '', Icons.done,
                     AppTheme.guestColor);
                 Navigator.of(dialogueContext).pop();
-                Navigator.pop(context);
-                _stopAlerts();
-              } else if (state is NotRespondingFailed) {
-                snackBar(context, state.errorMsg.toString(), Icons.warning,
-                    AppTheme.redColor);
-                Navigator.of(dialogueContext).pop();
-              } else if (state is NotRespondingInternetError) {
-                snackBar(context, 'Internet connection failed', Icons.wifi_off,
+                _safePop();
+              } else if (state is NotRespondingFailed ||
+                  state is NotRespondingInternetError) {
+                snackBar(
+                    context,
+                    state is NotRespondingFailed
+                        ? state.errorMsg ?? ''
+                        : 'Internet connection failed',
+                    Icons.warning,
                     AppTheme.redColor);
                 Navigator.of(dialogueContext).pop();
               } else {
@@ -242,7 +222,7 @@ class _VisitorsIncomingRequestPageState
             const Spacer(flex: 4),
             _buildVisitorInfo(),
             const Spacer(flex: 4),
-            _buildActionButtons(visitorsID.toString()),
+            _buildActionButtons(visitorsID ?? ""),
             const Spacer(flex: 1),
           ],
         ),
@@ -254,34 +234,35 @@ class _VisitorsIncomingRequestPageState
     return Column(
       children: [
         RippleAnimation(
-            color: Colors.deepOrange,
-            delay: const Duration(milliseconds: 300),
-            repeat: true,
-            minRadius: 75,
-            maxRadius: 140,
-            ripplesCount: 6,
-            duration: const Duration(milliseconds: 1800),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(200),
-              child: FadeInImage(
-                  height: 150,
-                  width: 150,
-                  fit: BoxFit.cover,
-                  placeholder: const AssetImage('assets/images/dummy.jpg'),
-                  image: NetworkImage(visitorImg.toString()),
-                  imageErrorBuilder: (_, child, stackTrack) => Image.asset(
-                      'assets/images/dummy.jpg',
-                      height: 150,
-                      width: 150,
-                      fit: BoxFit.cover)),
-            )),
-        const SizedBox(height: 20),
-        Text(visitorName.toString(),
-            style: const TextStyle(color: Colors.white, fontSize: 16)),
-        Text(
-          visitorPhone.toString(),
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          color: Colors.deepOrange,
+          delay: const Duration(milliseconds: 300),
+          repeat: true,
+          minRadius: 75,
+          maxRadius: 140,
+          ripplesCount: 6,
+          duration: const Duration(milliseconds: 1800),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(200),
+            child: FadeInImage(
+              height: 150,
+              width: 150,
+              fit: BoxFit.cover,
+              placeholder: const AssetImage('assets/images/dummy.jpg'),
+              image: NetworkImage(visitorImg ?? ''),
+              imageErrorBuilder: (_, __, ___) => Image.asset(
+                'assets/images/dummy.jpg',
+                height: 150,
+                width: 150,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
         ),
+        const SizedBox(height: 20),
+        Text(visitorName ?? '',
+            style: const TextStyle(color: Colors.white, fontSize: 16)),
+        Text(visitorPhone ?? '',
+            style: const TextStyle(color: Colors.white, fontSize: 16)),
       ],
     );
   }
@@ -292,10 +273,11 @@ class _VisitorsIncomingRequestPageState
       child: Column(
         children: [
           Text(
-              "Incoming Visitors Request from GHP Society Management App"
-                  .toUpperCase(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 16)),
+            "Incoming Visitors Request from GHP Society Management App"
+                .toUpperCase(),
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+          ),
           const SizedBox(height: 5),
           Text(
             '"If you wish to allow this visitor to enter the society, click the "Accept" button. If you do not wish to allow, click "Decline" to reject the request."',
@@ -311,7 +293,7 @@ class _VisitorsIncomingRequestPageState
     );
   }
 
-  Widget _buildActionButtons(String visitorsID) {
+  Widget _buildActionButtons(String visitorId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -319,23 +301,24 @@ class _VisitorsIncomingRequestPageState
           label: "Decline",
           color: Colors.red,
           icon: Icons.clear,
-          onPressed: () => _handleAction(visitorsID, "not_allowed"),
+          onPressed: () => _handleAction(visitorId, "not_allowed"),
         ),
         _buildActionButton(
           label: "Accept",
           color: Colors.green,
           icon: Icons.check,
-          onPressed: () => _handleAction(visitorsID, "allowed"),
+          onPressed: () => _handleAction(visitorId, "allowed"),
         ),
       ],
     );
   }
 
-  Widget _buildActionButton(
-      {required String label,
-      required Color color,
-      required IconData icon,
-      required VoidCallback onPressed}) {
+  Widget _buildActionButton({
+    required String label,
+    required Color color,
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
     return Column(
       children: [
         CircleAvatar(
@@ -346,10 +329,7 @@ class _VisitorsIncomingRequestPageState
             icon: Icon(icon, size: 30, color: Colors.white),
           ),
         ),
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white, fontSize: 16),
-        ),
+        Text(label, style: const TextStyle(color: Colors.white, fontSize: 16)),
       ],
     );
   }
