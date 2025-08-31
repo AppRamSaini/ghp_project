@@ -44,7 +44,7 @@ Future<void> main() async {
   await requestNotificationPermission();
 
   // Register background handler
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  //FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // Initialize Notification Service (Local + Firebase)
   await FirebaseNotificationService.initialize();

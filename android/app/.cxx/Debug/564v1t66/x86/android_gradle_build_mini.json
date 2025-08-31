@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/venugopal/Documents/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/venugopal/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/venugopal/Documents/ghp_project/android/app/.cxx/Debug/564v1t66/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/venugopal/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/venugopal/Documents/ghp_project/android/app/.cxx/Debug/564v1t66/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -50,7 +51,9 @@ class FirebaseNotificationService {
           handleMessage(message, isForeground: false, fromTerminated: true);
         }
       });
+      final token = Platform.isIOS ?  await FirebaseMessaging.instance.getAPNSToken() : await FirebaseMessaging.instance.getToken();
 
+      print("FCM $token");
       // Background handler registration (Android)
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     }
