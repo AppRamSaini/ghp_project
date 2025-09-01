@@ -46,12 +46,16 @@ class FirebaseNotificationService {
 
       // Terminated -> first launch via notification
       FirebaseMessaging.instance.getInitialMessage().then((message) {
-        if (message != null) {
-          print('Terminated app launch: ${message.data}');
-          handleMessage(message, isForeground: false, fromTerminated: true);
-        }
+        // if (message != null) {
+        //   print('Terminated app launch: ${message.data}');
+        //
+        // }
+
+        handleMessage(message!, isForeground: false, fromTerminated: true);
       });
-      final token = Platform.isIOS ?  await FirebaseMessaging.instance.getAPNSToken() : await FirebaseMessaging.instance.getToken();
+      final token = Platform.isIOS
+          ? await FirebaseMessaging.instance.getAPNSToken()
+          : await FirebaseMessaging.instance.getToken();
 
       print("FCM $token");
       // Background handler registration (Android)
@@ -63,8 +67,10 @@ class FirebaseNotificationService {
   @pragma('vm:entry-point')
   static Future<void> firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
-    print("BG/Terminated message: ${message.data}");
+    startVibrationAndRingtone();
     await _showLocalNotification(message); //
+    handleMessage(message, isForeground: true, fromTerminated: true);
+    print("BG/Terminated message: ${message.data}");
   }
 
   /// Handle message
@@ -76,7 +82,7 @@ class FirebaseNotificationService {
     if (type == 'incoming_request') {
       LocalStorage.localStorage.setString("visitor_id", data['visitor_id']);
       if (isForeground) startVibrationAndRingtone(); // 🔊 foreground ringtone
-      _navigateToVisitorsPage(message, isForeground,
+      navigateToVisitorsPage(message, isForeground,
           fromTerminated: fromTerminated);
     } else if (type == 'sos_alert') {
       if (isForeground) startVibrationAndRingtone(); // 🔊 foreground ringtone
@@ -116,7 +122,7 @@ class FirebaseNotificationService {
   }
 
   /// Navigate to Visitor Page
-  static void _navigateToVisitorsPage(
+  static void navigateToVisitorsPage(
       RemoteMessage? message, bool fromForeground,
       {bool fromTerminated = false}) {
     navigatorKey.currentState?.push(MaterialPageRoute(
@@ -174,18 +180,30 @@ class FirebaseNotificationService {
     );
   }
 
-  /// Handle API call on notification action
-  static void _handleApiCall(String status) async {
+  /// Handle API call
+  static void handleApiCall(String status, String? visitorId) async {
     try {
-      final visitorId =
+      final id = visitorId ??
           LocalStorage.localStorage.getString("visitor_id").toString();
-      final data = {"visitor_id": visitorId, "status": status};
-
+      final data = {"visitor_id": id, "status": status};
       navigatorKey.currentState?.context
           .read<AcceptRequestCubit>()
           .acceptRequestAPI(statusBody: data);
     } catch (e) {
       print("API Error: $e");
+    }
+  }
+
+  /// Handle message
+  static void handleNavigatePage(dynamic body) {
+    final type = body['extra']['type'] ?? '';
+
+    if (type == 'incoming_request') {
+      LocalStorage.localStorage
+          .setString("visitor_id", body['extra']['visitor_id']);
+      navigateToVisitorsPage(body['extra'], false, fromTerminated: true);
+    } else if (type == 'sos_alert') {
+      _navigateToSosPage(body['extra'], false);
     }
   }
 }

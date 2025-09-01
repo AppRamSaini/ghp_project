@@ -244,7 +244,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
 
   void _startCountdownAndAPICalls(String visitorsId) {
     const duration = Duration(seconds: 5); // Call API every 5 seconds
-    const totalTime = 59; // Total countdown time in seconds
+    const totalTime = 30; // Total countdown time in seconds
     int remainingTime = totalTime;
 
     // Show the countdown dialog

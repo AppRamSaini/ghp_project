@@ -14,7 +14,6 @@ import 'package:ghp_society_management/model/parcel_listing_model.dart';
 import 'package:ghp_society_management/model/refer_property_model.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
 import 'package:ghp_society_management/model/visitors_listing_model.dart';
-import 'package:ghp_society_management/payment_gateway_service.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_gatepass.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 import 'package:http/http.dart' as http;
@@ -2046,9 +2045,9 @@ Future<void> overDueBillAlertDialog(
                         MaterialButton(
                           onPressed: () {
                             Navigator.pop(context);
-                            payBillFun(
-                                double.parse(myUnpaidBill.amount.toString()),
-                                context);
+                            // payBillFun(
+                            //     double.parse(myUnpaidBill.amount.toString()),
+                            //     context);
                           },
                           color: Colors.red,
                           shape: RoundedRectangleBorder(

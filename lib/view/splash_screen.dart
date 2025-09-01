@@ -109,7 +109,7 @@ class _SplashScreenState extends State<SplashScreen> {
       child: Scaffold(
         body: Center(
           child: Padding(
-            padding: EdgeInsets.all(8.w),
+            padding: EdgeInsets.all(8),
             child: Image.asset(
               ImageAssets.appLogo,
               height: 120.h,

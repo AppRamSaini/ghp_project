@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name="${applicationName}"
@@ -47,17 +47,27 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-        <!-- Flutter Firebase Messaging Service -->
+        <!-- ✅ Flutter Firebase Messaging Service with conflict fix -->
         <service
             android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingService"
             android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"
             tools:replace="android:exported">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <!-- Firebase InstanceId Receiver -->
+        <!-- 🔰 Custom Native FCM Service for CallKit -->
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- ✅ Firebase InstanceId Receiver -->
         <receiver
             android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
             android:exported="true"
@@ -68,10 +78,15 @@
             </intent-filter>
         </receiver>
 
-        <!-- Flutter Plugin Registrant -->
+        <!-- 🔰 Flutter Plugin Registrant -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- ✅ Default Notification Channel -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="ghp_high_priority_channel" />
 
     </application>
 
