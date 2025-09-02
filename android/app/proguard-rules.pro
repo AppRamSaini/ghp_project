@@ -4,4 +4,4 @@
 #-keep class proguard.annotation.KeepClassMembers
 #-dontwarn com.razorpay.**
 
--keep class com.hiennv.flutter_callkit_incoming.** { *; }
+#-keep class com.hiennv.flutter_callkit_incoming.** { *; }
