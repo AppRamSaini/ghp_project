@@ -42,6 +42,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
   String? selectedValue;
   List<File> documentFiles = [];
   String? typeOfVisitor;
+  String? visitorsDescription;
+
   String? visitorFrequency;
   TextEditingController visitorName = TextEditingController();
   TextEditingController residenceController = TextEditingController();
@@ -51,7 +53,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
   TextEditingController? date = TextEditingController();
   TextEditingController? time = TextEditingController();
   TextEditingController? vehicleNumber = TextEditingController();
-  TextEditingController? purposeController = TextEditingController();
+
+  // TextEditingController? purposeController = TextEditingController();
   String? validTill;
   final formkey = GlobalKey<FormState>();
   final formkey2 = GlobalKey<FormState>();
@@ -603,7 +606,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                 underline: Container(color: Colors.transparent),
                                 isExpanded: true,
                                 value: typeOfVisitor,
-                                hint: Text('Select visitors',
+                                hint: Text('Select visitors type',
                                     style: GoogleFonts.nunitoSans(
                                         textStyle: TextStyle(
                                             color: Colors.grey,
@@ -654,7 +657,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                           },
                         ),
                         SizedBox(
-                          height: 10.h,
+                            height: 10.h
                         ),
                         Text('Visiting Frequency ',
                             style: GoogleFonts.nunitoSans(
@@ -1210,7 +1213,9 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                 .of(context)
                                 .size
                                 .width,
-                            child: TextFormField(
+                            child:
+
+                            TextFormField(
 
                                 controller: vehicleNumber,
                                 style: GoogleFonts.nunitoSans(
@@ -1221,11 +1226,10 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                 keyboardType: TextInputType.text,
                                 textInputAction: TextInputAction.done,
 
-                                // inputFormatters: [
-                                //   VehicleNumberFormatter(), // Custom formatter
-                                //   LengthLimitingTextInputFormatter(
-                                //       13), // Max length = 13
-                                // ],
+                                inputFormatters: [
+                                  UpperCaseTextFormatter(),
+                                  LengthLimitingTextInputFormatter(13),
+                                ],
                                 decoration: InputDecoration(
                                     hintText: 'Enter vehicle number',
                                     contentPadding: EdgeInsets.symmetric(
@@ -1258,67 +1262,73 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                         BorderSide(
                                             color: AppTheme.greyColor))))),
                         SizedBox(height: 10.h),
-                        Text('Purpose of Visit ',
+                        Text('Purpose of visiting',
                             style: GoogleFonts.nunitoSans(
                                 textStyle: TextStyle(
                                     color: Colors.black,
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500))),
                         SizedBox(height: 10.h),
-                        SizedBox(
-                            width: MediaQuery
-                                .of(context)
-                                .size
-                                .width,
-                            child: TextFormField(
-                                controller: purposeController,
-                                style: GoogleFonts.nunitoSans(
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500),
-                                maxLines: null,
-                                minLines: 3,
-                                keyboardType: TextInputType.multiline,
-                                validator: (text) {
-                                  if (text == null || text.isEmpty) {
-                                    return 'Please enter purpose of visit';
-                                  }
-                                  return null;
+                        BlocBuilder<VisitorsElementCubit, VisitorsElementState>(
+                          builder: (context, state) {
+                            if (state is VisitorsElementLoaded) {
+                              return DropdownButton2<String>(
+                                underline: Container(color: Colors.transparent),
+                                isExpanded: true,
+                                value: visitorsDescription,
+                                hint: Text('Select visiting reason',
+                                    style: GoogleFonts.nunitoSans(
+                                        textStyle: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.normal))),
+                                items: state.visitorsElement.first.data
+                                    .visitorTypes
+                                    .map((item) =>
+                                    DropdownMenuItem<String>(
+                                      value: item.type,
+                                      child: Text(
+                                        item.type,
+                                        style: const TextStyle(
+                                            fontSize: 14, color: Colors.black),
+                                      ),
+                                    ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    visitorsDescription = value;
+                                  });
                                 },
-                                textInputAction: TextInputAction.done
-                                ,
-                                decoration: InputDecoration(
-                                    hintText: 'Describe the purpose...',
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 12.h, horizontal: 10.0),
-                                    filled: true,
-                                    hintStyle: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.normal),
-                                    fillColor: AppTheme.greyColor,
-                                    errorBorder: OutlineInputBorder(
+                                iconStyleData: const IconStyleData(
+                                    icon: Icon(Icons.arrow_drop_down,
+                                        color: Colors.black45),
+                                    iconSize: 24),
+                                buttonStyleData: ButtonStyleData(
+                                    decoration: BoxDecoration(
+                                        color: AppTheme.greyColor,
                                         borderRadius: BorderRadius.circular(
-                                            15.0),
-                                        borderSide:
-                                        BorderSide(color: AppTheme.greyColor)),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            15.0),
-                                        borderSide:
-                                        BorderSide(color: AppTheme.greyColor)),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            15.0),
-                                        borderSide:
-                                        BorderSide(color: AppTheme.greyColor)),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            15.0),
-                                        borderSide:
-                                        BorderSide(
-                                            color: AppTheme.greyColor))))),
-                        SizedBox(height: 10.h),
+                                            10))),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: MediaQuery
+                                      .sizeOf(context)
+                                      .height / 2,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        10), // Set border radius for dropdown
+                                  ),
+                                ),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                ),
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                        ),
+                        SizedBox(
+                            height: 10.h
+                        ),
                         Text('Valid Till',
                             style: GoogleFonts.nunitoSans(
                                 textStyle: TextStyle(
@@ -1446,6 +1456,9 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                   } else if (croppedImagesList!.isEmpty) {
                     snackBar(context, 'Kindly upload visitors picture',
                         Icons.done, AppTheme.redColor);
+                  } else if (visitorsDescription == null) {
+                    snackBar(context, 'Kindly select purpose on visiting',
+                        Icons.done, AppTheme.redColor);
                   } else {
                     documentFiles.clear();
                     for (int i = 0; i < croppedImagesList!.length; i++) {
@@ -1460,7 +1473,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                         date: date!.text.toString(),
                         vehicleNumber: vehicleNumber!.text.toString(),
                         purposeOfVisit:
-                        purposeController!.text.toString(),
+                        visitorsDescription!.toString(),
                         validTill: validTill.toString(),
                         time: time!.text.toString(),
                         files: documentFiles,
@@ -1490,4 +1503,15 @@ class SearchItem {
     required this.block,
     required this.floor,
     required this.flat});
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue,
+      TextEditingValue newValue) {
+    return newValue.copyWith(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+    );
+  }
 }

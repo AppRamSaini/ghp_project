@@ -290,7 +290,7 @@ class _VisitorsIncomingRequestPageState
 
   Widget _buildVisitorsDataInfo() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+      margin: EdgeInsets.symmetric(horizontal: size.width * 0.05),
       padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -312,6 +312,7 @@ class _VisitorsIncomingRequestPageState
           ),
           5.verticalSpace,
           Text("Visitor Vehicle No - ${visitorVehicle ?? ''}" ?? '',
+              textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(color: Colors.white, fontSize: 16)),
           5.verticalSpace,
           Text("Purpose of visiting - ${visitorDescription ?? ''}",

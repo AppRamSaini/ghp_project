@@ -139,3 +139,115 @@ class Routes {
   static String ledgerBill =
       '${Config.baseURL}member/ledger/830?from_date=2025-08-01&to_date=2025-08-31';
 }
+
+var data = {
+  "status": true,
+  "message": "Form dropdowns retrieved successfully",
+  "data": {
+    "visitor_types": [
+      {"type": "Relatives"},
+      {"type": "Guest"},
+      {"type": "Friend"},
+      {"type": "Delivery Person - Food (Zomato, Swiggy)"},
+      {"type": "Delivery Person - Grocery (Blinkit, BigBasket)"},
+      {"type": "Courier / Parcel Delivery"},
+      {"type": "Cab / Auto Driver (Ola, Uber, Rapido)"},
+      {"type": "Service Provider - Plumber, Electrician etc.."},
+      {"type": "Medical Staff - Doctor, Nurse, Caretaker"},
+      {"type": "Government Official / Inspector"},
+      {"type": "Society Staff / Management"},
+      {"type": "Household Worker"}
+    ],
+    "visiting_frequencies": [
+      {"frequency": "One-Time / Single Visit"},
+      {"frequency": "Daily"},
+      {"frequency": "Weekly"},
+      {"frequency": "Bi-Weekly"},
+      {"frequency": "Monthly"},
+      {"frequency": "Quarterly (3 Months)"},
+      {"frequency": "Yearly"},
+      {"frequency": "Frequently"},
+      {"frequency": "Occasionally"},
+      {"frequency": "Emergency Visit"},
+      {"frequency": "Custom"}
+    ],
+    "visitor_validity": [
+      {"type": "1 Hour"},
+      {"type": "3 Hours"},
+      {"type": "6 Hours"},
+      {"type": "12 Hours"},
+      {"type": "24 Hours"},
+      {"type": "48 Hours (2 Days)"},
+      {"type": "7 Days"},
+      {"type": "15 Days"},
+      {"type": "30 Days"},
+      {"type": "90 Days (3 Months)"},
+      {"type": "180 Days (6 Months)"},
+      {"type": "365 Days (1 Year)"},
+      {"type": "Custom"}
+    ],
+    "visitor_reasons": [
+      {
+        "reason":
+            "Personal Visit - Meeting relatives, friends or family members"
+      },
+      {
+        "reason":
+            "Family Gathering - Attending a function, festival or celebration at home"
+      },
+      {
+        "reason":
+            "Delivery - Food delivery, courier service, grocery or parcel drop"
+      },
+      {
+        "reason":
+            "Maintenance / Repair - Electrician, plumber, carpenter, AC repair etc."
+      },
+      {
+        "reason":
+            "Official Work - Business meeting, documentation, or society-related task"
+      },
+      {
+        "reason":
+            "Bill / Rent Collection - Utility bills, rent collection or EMI pickup"
+      },
+      {
+        "reason":
+            "Health / Medical - Doctor visit, nurse, medical check-up or medicine delivery"
+      },
+      {
+        "reason": "Domestic Help - House help, cook, maid or babysitter arrival"
+      },
+      {
+        "reason":
+            "Child Related - Pick-up or drop for school, tuition, hobby classes"
+      },
+      {
+        "reason":
+            "Festival / Occasion - Attending Diwali, Holi, birthday or anniversary party"
+      },
+      {
+        "reason":
+            "Society Staff - Security, management or committee members meeting"
+      },
+      {
+        "reason":
+            "Official Authority - Police, government officer, or inspection visit"
+      },
+      {
+        "reason":
+            "Other Services - Beautician, tutor, yoga trainer, personal coach etc."
+      },
+      {
+        "reason":
+            "Guest / Friend Stay - Visitors coming for overnight or short stay"
+      },
+      {"reason": "Emergency Help - Ambulance, urgent medical support"},
+      {"reason": "Shopping Delivery - Furniture, electronics, heavy goods"},
+      {"reason": "Society Meeting - RWA/committee meeting attendance"},
+      {"reason": "Driver Pickup / Drop - Car driver reporting for duty"},
+      {"reason": "Event Participation - Marriage, party, cultural event"},
+      {"reason": "Other - Any reason not listed above"}
+    ]
+  }
+};
