@@ -75,19 +75,23 @@ class _LedgerWebViewScreenState extends State<LedgerWebViewScreen> {
       'Authorization': 'Bearer $token'
     };
 
-    final now = DateTime.now();
-    final fromStr = fromDate != null
-        ? DateFormat('yyyy-MM-dd').format(fromDate!)
-        : DateFormat('yyyy-MM-01').format(now);
-    final toStr = toDate != null
-        ? DateFormat('yyyy-MM-dd').format(toDate!)
-        : DateFormat('yyyy-MM-dd').format(now);
+    final fromStr =
+        fromDate != null ? DateFormat('yyyy-MM-dd').format(fromDate!) : null;
+    final toStr =
+        toDate != null ? DateFormat('yyyy-MM-dd').format(toDate!) : null;
 
-    var request = http.MultipartRequest(
-      'GET',
-      Uri.parse(
-          'https://society.ghpjaipur.com/api/user/v1/member/ledger/$propertyId?from_date=$fromStr&to_date=$toStr'),
+    final queryParams = {
+      if (fromStr != null) 'from_date': fromStr,
+      if (toStr != null) 'to_date': toStr,
+    };
+
+    var uri = Uri.https(
+      'society.ghpjaipur.com',
+      '/api/user/v1/member/ledger/$propertyId',
+      queryParams,
     );
+
+    var request = http.MultipartRequest('GET', uri);
     request.headers.addAll(headers);
 
     try {

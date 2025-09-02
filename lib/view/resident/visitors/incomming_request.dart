@@ -4,12 +4,15 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/visitors/visitor_request/accept_request/accept_request_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/visitor_request/not_responding/not_responde_cubit.dart';
+import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/incoming_visitors_request_model.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 import 'package:vibration/vibration.dart';
 
@@ -40,11 +43,13 @@ class _VisitorsIncomingRequestPageState
   Timer? vibrationTimer;
   Timer? actionTimeoutTimer;
   Timer? notRespondingTimer;
-
   String? visitorName;
   String? visitorPhone;
   String? visitorsID;
   String? visitorImg;
+  String? visitorTypes;
+  String? visitorVehicle;
+  String? visitorDescription;
 
   static const int timeoutDurationSeconds = 50;
   late BuildContext dialogueContext;
@@ -66,11 +71,19 @@ class _VisitorsIncomingRequestPageState
         visitorsID = data['visitor_id']?.toString();
         visitorPhone = data['mob']?.toString();
         visitorImg = data['img']?.toString();
+        visitorTypes = data['type_of_visit']?.toString();
+        visitorDescription = data['description']?.toString();
+        visitorVehicle = data['vehicle_number']?.toString();
       } else if (widget.incomingVisitorsRequest != null) {
         visitorName = widget.incomingVisitorsRequest!.visitorName.toString();
         visitorsID = widget.incomingVisitorsRequest!.id.toString();
         visitorPhone = widget.incomingVisitorsRequest!.phone.toString();
         visitorImg = widget.incomingVisitorsRequest!.image.toString();
+        visitorTypes = widget.incomingVisitorsRequest!.typeOfVisitor.toString();
+        visitorDescription =
+            widget.incomingVisitorsRequest!.purposeOfVisit.toString();
+        visitorVehicle =
+            widget.incomingVisitorsRequest!.vehicleNumber.toString();
       }
     } catch (e) {
       print("Error setting visitor data: $e");
@@ -220,6 +233,8 @@ class _VisitorsIncomingRequestPageState
             const Spacer(flex: 3),
             _buildRippleAnimation(),
             const Spacer(flex: 4),
+            _buildVisitorsDataInfo(),
+            const Spacer(flex: 4),
             _buildVisitorInfo(),
             const Spacer(flex: 4),
             _buildActionButtons(visitorsID ?? ""),
@@ -260,10 +275,54 @@ class _VisitorsIncomingRequestPageState
         ),
         const SizedBox(height: 20),
         Text(visitorName ?? '',
-            style: const TextStyle(color: Colors.white, fontSize: 16)),
-        Text(visitorPhone ?? '',
-            style: const TextStyle(color: Colors.white, fontSize: 16)),
+            style: GoogleFonts.montserrat(
+                color: Colors.white,
+                fontSize: 17,
+                fontWeight: FontWeight.w500)),
+        Text("Visitor Mob : +91 ${visitorPhone ?? ''}",
+            style: GoogleFonts.montserrat(
+                color: Colors.white,
+                fontSize: 17,
+                fontWeight: FontWeight.w500)),
       ],
+    );
+  }
+
+  Widget _buildVisitorsDataInfo() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+      padding: EdgeInsets.all(15),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.white.withOpacity(0.3))),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Visitor type - ",
+                  style: GoogleFonts.montserrat(
+                      color: Colors.white, fontSize: 16)),
+              Text(visitorTypes ?? '',
+                  style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500)),
+            ],
+          ),
+          5.verticalSpace,
+          Text("Visitor Vehicle No - ${visitorVehicle ?? ''}" ?? '',
+              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 16)),
+          5.verticalSpace,
+          Text("Purpose of visiting - ${visitorDescription ?? ''}",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                  color: Colors.white.withOpacity(0.8),
+                  fontSize: 13,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w500)),
+        ],
+      ),
     );
   }
 
@@ -272,13 +331,7 @@ class _VisitorsIncomingRequestPageState
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          Text(
-            "Incoming Visitors Request from GHP Society Management App"
-                .toUpperCase(),
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 10),
           Text(
             '"If you wish to allow this visitor to enter the society, click the "Accept" button. If you do not wish to allow, click "Decline" to reject the request."',
             textAlign: TextAlign.center,
@@ -294,31 +347,33 @@ class _VisitorsIncomingRequestPageState
   }
 
   Widget _buildActionButtons(String visitorId) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildActionButton(
-          label: "Decline",
-          color: Colors.red,
-          icon: Icons.clear,
-          onPressed: () => _handleAction(visitorId, "not_allowed"),
-        ),
-        _buildActionButton(
-          label: "Accept",
-          color: Colors.green,
-          icon: Icons.check,
-          onPressed: () => _handleAction(visitorId, "allowed"),
-        ),
-      ],
+    return Padding(
+      padding: globalBottomPadding(context),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildActionButton(
+            label: "Decline",
+            color: Colors.red,
+            icon: Icons.clear,
+            onPressed: () => _handleAction(visitorId, "not_allowed"),
+          ),
+          _buildActionButton(
+            label: "Accept",
+            color: Colors.green,
+            icon: Icons.check,
+            onPressed: () => _handleAction(visitorId, "allowed"),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildActionButton({
-    required String label,
-    required Color color,
-    required IconData icon,
-    required VoidCallback onPressed,
-  }) {
+  Widget _buildActionButton(
+      {required String label,
+      required Color color,
+      required IconData icon,
+      required VoidCallback onPressed}) {
     return Column(
       children: [
         CircleAvatar(

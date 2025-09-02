@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:ghp_society_management/constants/export.dart';
-import 'package:ghp_society_management/controller/visitors/visitor_request/accept_request/accept_request_cubit.dart';
 import 'package:ghp_society_management/view/resident/sos/sos_incoming_alert.dart';
 import 'package:ghp_society_management/view/resident/visitors/incomming_request.dart';
 import 'package:vibration/vibration.dart';
@@ -31,76 +29,96 @@ class FirebaseNotificationService {
       criticalAlert: true,
     );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      // Foreground
-      FirebaseMessaging.onMessage.listen((message) {
-        print('Foreground message: ${message.data}');
-        handleMessage(message, isForeground: true);
-      });
+    print("Notification permission: ${settings.authorizationStatus}");
+    // Initialize local notification
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const iosSettings = DarwinInitializationSettings();
+    const initSettings =
+        InitializationSettings(android: androidSettings, iOS: iosSettings);
+    await flutterLocalNotificationsPlugin.initialize(initSettings,
+        onDidReceiveNotificationResponse: (response) {
+      // Notification tapped
+      print("Notification tapped payload: ${response.payload}");
+      // Here you can navigate if needed
+    });
 
-      // Background tapped
-      FirebaseMessaging.onMessageOpenedApp.listen((message) {
-        print('Background tapped: ${message.data}');
-        handleMessage(message, isForeground: false);
-      });
+    // Foreground
+    FirebaseMessaging.onMessage.listen((message) {
+      print('Foreground message: ${message.data}');
+      handleMessage(message, isForeground: true);
+    });
 
-      // Terminated -> first launch via notification
-      FirebaseMessaging.instance.getInitialMessage().then((message) {
-        // if (message != null) {
-        //   print('Terminated app launch: ${message.data}');
-        //
-        // }
+    // Background tapped
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Background tapped: ${message.data}');
+      handleMessage(message, isForeground: false);
+    });
 
-        handleMessage(message!, isForeground: false, fromTerminated: true);
-      });
-      final token = Platform.isIOS
-          ? await FirebaseMessaging.instance.getAPNSToken()
-          : await FirebaseMessaging.instance.getToken();
+    // Terminated -> first launch via notification
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        handleMessage(message, isForeground: false, fromTerminated: true);
+      }
+    });
 
-      print("FCM $token");
-      // Background handler registration (Android)
-      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-    }
+    // Background handler registration (Android)
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   }
 
   /// Background handler (runs in separate isolate)
   @pragma('vm:entry-point')
   static Future<void> firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
-    startVibrationAndRingtone();
-    await _showLocalNotification(message); //
-    handleMessage(message, isForeground: true, fromTerminated: true);
-    print("BG/Terminated message: ${message.data}");
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
+    await LocalStorage.init();
+    print("BG message received: ${message.data}");
+
+    // Only local notification in background
+    await _showLocalNotification(message);
   }
 
-  /// Handle message
-  static void handleMessage(RemoteMessage message,
+  /// Handle message safely
+  static void handleMessage(RemoteMessage? message,
       {bool isForeground = false, bool fromTerminated = false}) {
-    final data = message.data;
-    final type = data['type'] ?? '';
-
-    if (type == 'incoming_request') {
-      LocalStorage.localStorage.setString("visitor_id", data['visitor_id']);
-      if (isForeground) startVibrationAndRingtone(); // 🔊 foreground ringtone
-      navigateToVisitorsPage(message, isForeground,
-          fromTerminated: fromTerminated);
-    } else if (type == 'sos_alert') {
-      if (isForeground) startVibrationAndRingtone(); // 🔊 foreground ringtone
-      _navigateToSosPage(message, isForeground);
+    if (message == null || message.data.isEmpty) {
+      print("Null or empty message, skipping handleMessage.");
+      return;
     }
 
-    // Show system notification (only in foreground, background handled separately)
-    if (isForeground) {
-      _showLocalNotification(message);
+    final data = message.data;
+    final type = data['type']?.toString() ?? '';
+    final visitorId = data['visitor_id']?.toString() ?? '';
+
+    // Save visitor ID if exists
+    if (type == 'incoming_request' && visitorId.isNotEmpty) {
+      LocalStorage.localStorage.setString("visitor_id", visitorId);
+    }
+
+    // Foreground ringtone & vibration
+    if (isForeground) startVibrationAndRingtone();
+
+    // Show local notification
+    _showLocalNotification(message);
+
+    // Navigate only in foreground or terminated tapped
+    if (isForeground || fromTerminated) {
+      if (type == 'incoming_request') {
+        navigateToVisitorsPage(message, isForeground,
+            fromTerminated: fromTerminated);
+      } else if (type == 'sos_alert') {
+        _navigateToSosPage(message, isForeground);
+      }
     }
   }
 
-  /// Vibrate & ringtone (for foreground only)
+  /// Vibrate & ringtone
   static Future<void> startVibrationAndRingtone() async {
     if (_isRingtonePlaying) return;
     _isRingtonePlaying = true;
 
-    if (await Vibration.hasVibrator()) {
+    if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(pattern: [500, 1000, 500, 1000]);
     }
 
@@ -122,8 +140,7 @@ class FirebaseNotificationService {
   }
 
   /// Navigate to Visitor Page
-  static void navigateToVisitorsPage(
-      RemoteMessage? message, bool fromForeground,
+  static void navigateToVisitorsPage(RemoteMessage message, bool fromForeground,
       {bool fromTerminated = false}) {
     navigatorKey.currentState?.push(MaterialPageRoute(
       builder: (_) => VisitorsIncomingRequestPage(
@@ -135,8 +152,8 @@ class FirebaseNotificationService {
     ));
   }
 
-  /// Navigate to SOS Alert Page
-  static void _navigateToSosPage(RemoteMessage? message, bool fromForeground) {
+  /// Navigate to SOS Page
+  static void _navigateToSosPage(RemoteMessage message, bool fromForeground) {
     navigatorKey.currentState?.push(MaterialPageRoute(
       builder: (_) => SosIncomingAlert(
         message: message,
@@ -146,7 +163,7 @@ class FirebaseNotificationService {
     ));
   }
 
-  /// Show local notification (works for foreground + background + terminated)
+  /// Show local notification
   static Future<void> _showLocalNotification(RemoteMessage message) async {
     const androidDetails = AndroidNotificationDetails(
       'visitor_channel_id',
@@ -155,55 +172,26 @@ class FirebaseNotificationService {
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
-      sound: RawResourceAndroidNotificationSound('ringtone'),
-      // 🔔 custom ringtone
       enableVibration: true,
       fullScreenIntent: true,
-      // like call screen
       styleInformation: BigTextStyleInformation(''),
-      actions: [
-        AndroidNotificationAction('ALLOW_ACTION', 'Allow',
-            showsUserInterface: true),
-        AndroidNotificationAction('DECLINE_ACTION', 'Decline',
-            showsUserInterface: true),
-      ],
     );
 
-    const details = NotificationDetails(android: androidDetails);
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    const platformDetails =
+        NotificationDetails(android: androidDetails, iOS: iosDetails);
 
     await flutterLocalNotificationsPlugin.show(
       message.hashCode,
       message.notification?.title ?? 'Incoming Request',
       message.notification?.body ?? 'You have a new request.',
-      details,
+      platformDetails,
       payload: 'VisitorsIncomingRequestPage',
     );
-  }
-
-  /// Handle API call
-  static void handleApiCall(String status, String? visitorId) async {
-    try {
-      final id = visitorId ??
-          LocalStorage.localStorage.getString("visitor_id").toString();
-      final data = {"visitor_id": id, "status": status};
-      navigatorKey.currentState?.context
-          .read<AcceptRequestCubit>()
-          .acceptRequestAPI(statusBody: data);
-    } catch (e) {
-      print("API Error: $e");
-    }
-  }
-
-  /// Handle message
-  static void handleNavigatePage(dynamic body) {
-    final type = body['extra']['type'] ?? '';
-
-    if (type == 'incoming_request') {
-      LocalStorage.localStorage
-          .setString("visitor_id", body['extra']['visitor_id']);
-      navigateToVisitorsPage(body['extra'], false, fromTerminated: true);
-    } else if (type == 'sos_alert') {
-      _navigateToSosPage(body['extra'], false);
-    }
   }
 }
