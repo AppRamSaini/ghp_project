@@ -612,13 +612,13 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                             color: Colors.grey,
                                             fontSize: 15,
                                             fontWeight: FontWeight.normal))),
-                                items: state.visitorsElement.first.data
-                                    .visitorTypes
+                                items: state.visitorsElement.first.data!
+                                    .visitorTypes!
                                     .map((item) =>
                                     DropdownMenuItem<String>(
                                       value: item.type,
                                       child: Text(
-                                        item.type,
+                                        item.type!,
                                         style: const TextStyle(
                                             fontSize: 14, color: Colors.black),
                                       ),
@@ -685,13 +685,13 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                         ),
                                       )),
                                   items: state
-                                      .visitorsElement.first.data
-                                      .visitingFrequencies
+                                      .visitorsElement.first.data!
+                                      .visitingFrequencies!
                                       .map((item) =>
                                       DropdownMenuItem<String>(
                                         value: item.frequency,
                                         child: Text(
-                                          item.frequency,
+                                          item.frequency!,
                                           style: const TextStyle(
                                               fontSize: 14,
                                               color: Colors.black),
@@ -1282,15 +1282,15 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                             color: Colors.grey,
                                             fontSize: 15,
                                             fontWeight: FontWeight.normal))),
-                                items: state.visitorsElement.first.data
-                                    .visitorTypes
+                                items: state.visitorsElement.first.data!
+                                    .visitorReasons!
                                     .map((item) =>
                                     DropdownMenuItem<String>(
-                                      value: item.type,
+                                      value: item.reason!,
                                       child: Text(
-                                        item.type,
+                                        item.reason!.toString(),
                                         style: const TextStyle(
-                                            fontSize: 14, color: Colors.black),
+                                            fontSize: 12, color: Colors.black),
                                       ),
                                     ))
                                     .toList(),
@@ -1345,12 +1345,12 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                     isExpanded: true,
                                     value: validTill,
                                     items: state
-                                        .visitorsElement.first.data
-                                        .visitorValidity
+                                        .visitorsElement.first.data!
+                                        .visitorValidity!
                                         .map((item) =>
                                         DropdownMenuItem<String>(
                                             value: item.type,
-                                            child: Text(item.type,
+                                            child: Text(item.type!,
                                                 style: const TextStyle(
                                                     fontSize: 14,
                                                     color: Colors.black))))
