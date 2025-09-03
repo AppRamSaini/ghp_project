@@ -53,7 +53,6 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
               MaterialPageRoute(
                 builder: (context) => VisitorsIncomingRequestPage(
                   incomingVisitorsRequest: incomingVisitorsRequest,
-                  fromForegroundMsg: true,
                   setPageValue: (value) {},
                 ),
               ),

@@ -3,33 +3,31 @@ import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/visitors/visitor_request/accept_request/accept_request_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/visitor_request/not_responding/not_responde_cubit.dart';
+import 'package:ghp_society_management/firebase_services.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/incoming_visitors_request_model.dart';
+import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
-import 'package:vibration/vibration.dart';
 
 class VisitorsIncomingRequestPage extends StatefulWidget {
   final RemoteMessage? message;
+  final String? fromPage;
   final IncomingVisitorsModel? incomingVisitorsRequest;
-  final bool fromForegroundMsg;
-  final String? from;
   final Function(bool values) setPageValue;
 
   const VisitorsIncomingRequestPage({
     super.key,
     this.message,
-    this.from,
     this.incomingVisitorsRequest,
+    this.fromPage,
     required this.setPageValue,
-    this.fromForegroundMsg = false,
   });
 
   @override
@@ -40,7 +38,6 @@ class VisitorsIncomingRequestPage extends StatefulWidget {
 class _VisitorsIncomingRequestPageState
     extends State<VisitorsIncomingRequestPage> {
   bool isActioned = false;
-  Timer? vibrationTimer;
   Timer? actionTimeoutTimer;
   Timer? notRespondingTimer;
   String? visitorName;
@@ -59,7 +56,6 @@ class _VisitorsIncomingRequestPageState
     super.initState();
     widget.setPageValue(true);
     _setVisitorData();
-    _startAlerts();
     _setupTimers();
   }
 
@@ -86,28 +82,15 @@ class _VisitorsIncomingRequestPageState
             widget.incomingVisitorsRequest!.vehicleNumber.toString();
       }
     } catch (e) {
-      print("Error setting visitor data: $e");
-    }
-  }
-
-  void _startAlerts() {
-    try {
-      Vibration.vibrate(pattern: [500, 1000, 500, 1000]);
-      FlutterRingtonePlayer().playRingtone();
-      vibrationTimer = Timer.periodic(const Duration(seconds: 5),
-          (_) => Vibration.vibrate(pattern: [500, 1000]));
-    } catch (e) {
-      print("Error starting alerts: $e");
+      print(" Error setting visitor data: $e");
     }
   }
 
   void _setupTimers() {
-    // Action timeout
     actionTimeoutTimer =
-        Timer(Duration(seconds: timeoutDurationSeconds), _onTimeout);
-    // Not responding timer
-    notRespondingTimer =
-        Timer(Duration(seconds: timeoutDurationSeconds), _onNotResponding);
+        Timer(const Duration(seconds: timeoutDurationSeconds), _onTimeout);
+    notRespondingTimer = Timer(
+        const Duration(seconds: timeoutDurationSeconds), _onNotResponding);
   }
 
   void _onTimeout() {
@@ -123,45 +106,51 @@ class _VisitorsIncomingRequestPageState
     }
   }
 
+  ///  Central place to stop ringtone + vibration globally
   void _stopAlerts() {
     try {
-      vibrationTimer?.cancel();
+      FirebaseNotificationService.stopVibrationAndRingtone();
       actionTimeoutTimer?.cancel();
       notRespondingTimer?.cancel();
-      FlutterRingtonePlayer().stop();
     } catch (_) {}
   }
 
+  void _safePop() {
+    if (!mounted) return;
+    _stopAlerts();
+    if (widget.fromPage == 'terminate') {
+      _stopAlerts();
+      navigatorKey.currentState
+          ?.push(MaterialPageRoute(builder: (_) => Dashboard()));
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
   void _handleAction(String id, String action) {
+    _stopAlerts();
     if (!isActioned && mounted) {
       setState(() => isActioned = true);
-      _stopAlerts();
-
       final requestBody = {"visitor_id": id, "status": action};
       context
           .read<AcceptRequestCubit>()
           .acceptRequestAPI(statusBody: requestBody)
-          .then((_) => print("Accept API done"))
-          .catchError((e) => print("Accept API error: $e"));
+          .then((_) {
+        _stopAlerts();
+        print("✅ Accept/Decline API done");
+      }).catchError((e) => print("❌ Accept API error: $e"));
     }
   }
 
   void _handleNotResponding(String visitorsId) {
     if (visitorsId.isEmpty || !mounted) return;
-
     _stopAlerts();
     final requestBody = {"visitor_id": visitorsId};
     context
         .read<NotRespondingCubit>()
         .notRespondingAPI(statusBody: requestBody)
         .then((_) => _safePop())
-        .catchError((e) => print("Not Responding API error: $e"));
-  }
-
-  void _safePop() {
-    if (mounted) {
-      Navigator.pop(context);
-    }
+        .catchError((e) => print("❌ Not Responding API error: $e"));
   }
 
   @override
@@ -176,6 +165,7 @@ class _VisitorsIncomingRequestPageState
       backgroundColor: AppTheme.resolvedButtonColor,
       body: MultiBlocListener(
         listeners: [
+          /// ✅ Accept Request Listener
           BlocListener<AcceptRequestCubit, AcceptRequestState>(
             listener: (context, state) {
               if (!mounted) return;
@@ -201,6 +191,8 @@ class _VisitorsIncomingRequestPageState
               }
             },
           ),
+
+          /// ✅ Not Responding Listener
           BlocListener<NotRespondingCubit, NotRespondingState>(
             listener: (context, state) {
               if (!mounted) return;
@@ -245,6 +237,7 @@ class _VisitorsIncomingRequestPageState
     );
   }
 
+  /// Ripple Image + Name + Phone
   Widget _buildRippleAnimation() {
     return Column(
       children: [
@@ -252,22 +245,22 @@ class _VisitorsIncomingRequestPageState
           color: Colors.deepOrange,
           delay: const Duration(milliseconds: 300),
           repeat: true,
-          minRadius: 75,
-          maxRadius: 140,
+          minRadius: 100,
+          maxRadius: 170,
           ripplesCount: 6,
           duration: const Duration(milliseconds: 1800),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(200),
             child: FadeInImage(
-              height: 150,
-              width: 150,
+              height: 200,
+              width: 200,
               fit: BoxFit.cover,
               placeholder: const AssetImage('assets/images/dummy.jpg'),
               image: NetworkImage(visitorImg ?? ''),
               imageErrorBuilder: (_, __, ___) => Image.asset(
                 'assets/images/dummy.jpg',
-                height: 150,
-                width: 150,
+                height: 200,
+                width: 200,
                 fit: BoxFit.cover,
               ),
             ),
@@ -277,24 +270,26 @@ class _VisitorsIncomingRequestPageState
         Text(visitorName ?? '',
             style: GoogleFonts.montserrat(
                 color: Colors.white,
-                fontSize: 17,
+                fontSize: 16,
                 fontWeight: FontWeight.w500)),
-        Text("Visitor Mob : +91 ${visitorPhone ?? ''}",
+        Text("Guest Mob : +91 ${visitorPhone ?? ''}",
             style: GoogleFonts.montserrat(
                 color: Colors.white,
-                fontSize: 17,
+                fontSize: 14,
                 fontWeight: FontWeight.w500)),
       ],
     );
   }
 
+  /// Visitor Extra Data
   Widget _buildVisitorsDataInfo() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: size.width * 0.05),
-      padding: EdgeInsets.all(15),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.white.withOpacity(0.3))),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white.withOpacity(0.3)),
+      ),
       child: Column(
         children: [
           Row(
@@ -302,7 +297,7 @@ class _VisitorsIncomingRequestPageState
             children: [
               Text("Visitor type - ",
                   style: GoogleFonts.montserrat(
-                      color: Colors.white, fontSize: 16)),
+                      color: Colors.white, fontSize: 15)),
               Text(visitorTypes ?? '',
                   style: GoogleFonts.montserrat(
                       color: Colors.white,
@@ -311,35 +306,20 @@ class _VisitorsIncomingRequestPageState
             ],
           ),
           5.verticalSpace,
-          Text("Visitor Vehicle No - ${visitorVehicle ?? ''}" ?? '',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 16)),
-          5.verticalSpace,
-          Text("Purpose of visiting - ${visitorDescription ?? ''}",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
-                  color: Colors.white.withOpacity(0.8),
-                  fontSize: 13,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w500)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVisitorInfo() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: [
-          const SizedBox(height: 10),
           Text(
-            '"If you wish to allow this visitor to enter the society, click the "Accept" button. If you do not wish to allow, click "Decline" to reject the request."',
+            "Visitor Vehicle No - ${visitorVehicle != null && visitorVehicle!.isNotEmpty ? visitorVehicle : 'Not Have Vehicle'}",
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 14),
+          ),
+          5.verticalSpace,
+          Text(
+            "Purpose of visiting - ${visitorDescription ?? ''}",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
               color: Colors.white.withOpacity(0.8),
-              fontSize: 12,
+              fontSize: 13,
               fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -347,6 +327,23 @@ class _VisitorsIncomingRequestPageState
     );
   }
 
+  /// Info Text
+  Widget _buildVisitorInfo() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Text(
+        '"If you wish to allow this visitor to enter the society, click the "Accept" button. If you do not wish to allow, click "Decline" to reject the request."',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.8),
+          fontSize: 12,
+          fontStyle: FontStyle.italic,
+        ),
+      ),
+    );
+  }
+
+  /// Accept / Decline Buttons
   Widget _buildActionButtons(String visitorId) {
     return Padding(
       padding: globalBottomPadding(context),
@@ -370,11 +367,12 @@ class _VisitorsIncomingRequestPageState
     );
   }
 
-  Widget _buildActionButton(
-      {required String label,
-      required Color color,
-      required IconData icon,
-      required VoidCallback onPressed}) {
+  Widget _buildActionButton({
+    required String label,
+    required Color color,
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
     return Column(
       children: [
         CircleAvatar(

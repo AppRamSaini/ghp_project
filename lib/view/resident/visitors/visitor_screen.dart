@@ -82,7 +82,6 @@ class _VisitorScreenState extends State<VisitorScreen> {
                   MaterialPageRoute(
                       builder: (context) => VisitorsIncomingRequestPage(
                           incomingVisitorsRequest: incomingVisitorsRequest,
-                          fromForegroundMsg: true,
                           setPageValue: (value) {})));
             }
           }

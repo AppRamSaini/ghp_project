@@ -219,9 +219,12 @@ import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/controller/property_listing/property_listing_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/refer_property_element/refer_property_element_cubit.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_element/sos_element_cubit.dart';
+import 'package:ghp_society_management/controller/visitors/incoming_request/incoming_request_cubit.dart';
+import 'package:ghp_society_management/model/incoming_visitors_request_model.dart';
 import 'package:ghp_society_management/view/resident/documents/docuements_page.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:ghp_society_management/view/resident/setting/setting_screen.dart';
+import 'package:ghp_society_management/view/resident/visitors/incomming_request.dart';
 
 import '../resident/daily_helps_member/daily_help_member_resident_side.dart';
 
@@ -263,6 +266,28 @@ class DashboardState extends State<Dashboard> {
       },
       child: MultiBlocListener(
         listeners: [
+          BlocListener<IncomingRequestCubit, IncomingRequestState>(
+            listener: (context, state) {
+              if (state is IncomingRequestLoaded) {
+                IncomingVisitorsModel incomingVisitorsRequest =
+                    state.incomingVisitorsRequest;
+                if (incomingVisitorsRequest.lastCheckinDetail?.status ==
+                    'requested') {
+                  if (ModalRoute.of(context)?.isCurrent ?? false) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VisitorsIncomingRequestPage(
+                          incomingVisitorsRequest: incomingVisitorsRequest,
+                          setPageValue: (value) {},
+                        ),
+                      ),
+                    );
+                  }
+                }
+              }
+            },
+          ),
           BlocListener<PropertyListingCubit, PropertyListingState>(
             listener: (context, state) {
               if (state is PropertyListingLoaded) {

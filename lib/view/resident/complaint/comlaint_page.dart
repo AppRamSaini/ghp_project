@@ -46,7 +46,6 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
               MaterialPageRoute(
                 builder: (context) => VisitorsIncomingRequestPage(
                   incomingVisitorsRequest: incomingVisitorsRequest,
-                  fromForegroundMsg: true,
                   setPageValue: (value) {},
                 ),
               ),

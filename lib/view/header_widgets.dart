@@ -399,8 +399,6 @@ Widget residentSideHeader(BuildContext context) {
           builder: (context, state) {
         if (state is UserProfileLoaded) {
           final user = state.userProfile.first.data?.user;
-
-          print("---------sdsdsd------>>>>>>>>>>>>>>>>>>>>>>${user!.image}");
           return StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('groups')

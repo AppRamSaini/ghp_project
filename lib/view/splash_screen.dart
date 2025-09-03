@@ -95,7 +95,6 @@ class _SplashScreenState extends State<SplashScreen> {
                     MaterialPageRoute(
                       builder: (context) => VisitorsIncomingRequestPage(
                         incomingVisitorsRequest: incomingVisitorsRequest,
-                        fromForegroundMsg: true,
                         setPageValue: (value) {},
                       ),
                     ),

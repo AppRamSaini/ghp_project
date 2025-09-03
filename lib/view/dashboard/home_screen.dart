@@ -163,21 +163,21 @@ class _HomeScreenState extends State<HomeScreen> {
         BlocListener<IncomingRequestCubit, IncomingRequestState>(
           listener: (context, state) {
             if (state is IncomingRequestLoaded) {
-              print("IncomingRequestLoaded state triggered");
               IncomingVisitorsModel incomingVisitorsRequest =
                   state.incomingVisitorsRequest;
-              if (incomingVisitorsRequest.lastCheckinDetail!.status ==
+              if (incomingVisitorsRequest.lastCheckinDetail?.status ==
                   'requested') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => VisitorsIncomingRequestPage(
-                      incomingVisitorsRequest: incomingVisitorsRequest,
-                      fromForegroundMsg: true,
-                      setPageValue: (value) {},
+                if (ModalRoute.of(context)?.isCurrent ?? false) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => VisitorsIncomingRequestPage(
+                        incomingVisitorsRequest: incomingVisitorsRequest,
+                        setPageValue: (value) {},
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               }
             }
           },
