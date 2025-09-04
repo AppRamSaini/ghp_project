@@ -119,7 +119,6 @@ class _VisitorsIncomingRequestPageState
     if (!mounted) return;
     _stopAlerts();
     if (widget.fromPage == 'terminate') {
-      _stopAlerts();
       navigatorKey.currentState
           ?.push(MaterialPageRoute(builder: (_) => Dashboard()));
     } else {
@@ -128,15 +127,14 @@ class _VisitorsIncomingRequestPageState
   }
 
   void _handleAction(String id, String action) {
-    _stopAlerts();
     if (!isActioned && mounted) {
       setState(() => isActioned = true);
+      _stopAlerts();
       final requestBody = {"visitor_id": id, "status": action};
       context
           .read<AcceptRequestCubit>()
           .acceptRequestAPI(statusBody: requestBody)
           .then((_) {
-        _stopAlerts();
         print("✅ Accept/Decline API done");
       }).catchError((e) => print("❌ Accept API error: $e"));
     }
