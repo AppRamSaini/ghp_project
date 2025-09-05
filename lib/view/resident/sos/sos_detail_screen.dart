@@ -33,7 +33,6 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
   String? selectedValue;
   String? sosReasonDes;
   final formkey = GlobalKey<FormState>();
-  final TextEditingController descriptionController = TextEditingController();
   late BuildContext dialogueContext;
   String location = "";
   late SosElementCubit _sosElementCubit;
@@ -157,13 +156,16 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
                         Map<String, String?> sosBody = {
                           "sos_category_id": widget.sosCategory.id.toString(),
                           "area": selectedValue,
-                          "description": descriptionController.text
+                          "description": sosReasonDes.toString()
                         };
 
                         print(selectedValue);
                         if (selectedValue == null) {
                           snackBar(context, 'Please select area', Icons.warning,
                               AppTheme.redColor);
+                        } else if (sosReasonDes == null) {
+                          snackBar(context, 'Please select reason',
+                              Icons.warning, AppTheme.redColor);
                         } else {
                           context.read<SubmitSosCubit>().submitSos(sosBody);
                         }
