@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final visitorElementModel = visitorElementModelFromJson(jsonString);
-
 import 'dart:convert';
 
 VisitorElementModel visitorElementModelFromJson(String str) =>
@@ -11,66 +7,83 @@ String visitorElementModelToJson(VisitorElementModel data) =>
     json.encode(data.toJson());
 
 class VisitorElementModel {
-  bool status;
-  dynamic message;
-  Data data;
+  bool? status;
+  String? message;
+  Data? data;
 
   VisitorElementModel({
-    required this.status,
-    required this.message,
-    required this.data,
+    this.status,
+    this.message,
+    this.data,
   });
 
   factory VisitorElementModel.fromJson(Map<String, dynamic> json) =>
       VisitorElementModel(
         status: json["status"],
         message: json["message"],
-        data: Data.fromJson(json["data"]),
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {
         "status": status,
         "message": message,
-        "data": data.toJson(),
+        "data": data?.toJson(),
       };
 }
 
 class Data {
-  List<Visitor> visitorTypes;
-  List<VisitingFrequency> visitingFrequencies;
-  List<Visitor> visitorValidity;
+  List<Visitor>? visitorTypes;
+  List<VisitingFrequency>? visitingFrequencies;
+  List<Visitor>? visitorValidity;
+  List<VisitorReason>? visitorReasons;
 
   Data({
-    required this.visitorTypes,
-    required this.visitingFrequencies,
-    required this.visitorValidity,
+    this.visitorTypes,
+    this.visitingFrequencies,
+    this.visitorValidity,
+    this.visitorReasons,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-        visitorTypes: List<Visitor>.from(
-            json["visitor_types"].map((x) => Visitor.fromJson(x))),
-        visitingFrequencies: List<VisitingFrequency>.from(
-            json["visiting_frequencies"]
+        visitorTypes: json["visitor_types"] == null
+            ? []
+            : List<Visitor>.from(
+                json["visitor_types"]!.map((x) => Visitor.fromJson(x))),
+        visitingFrequencies: json["visiting_frequencies"] == null
+            ? []
+            : List<VisitingFrequency>.from(json["visiting_frequencies"]!
                 .map((x) => VisitingFrequency.fromJson(x))),
-        visitorValidity: List<Visitor>.from(
-            json["visitor_validity"].map((x) => Visitor.fromJson(x))),
+        visitorValidity: json["visitor_validity"] == null
+            ? []
+            : List<Visitor>.from(
+                json["visitor_validity"]!.map((x) => Visitor.fromJson(x))),
+        visitorReasons: json["visitor_reasons"] == null
+            ? []
+            : List<VisitorReason>.from(
+                json["visitor_reasons"]!.map((x) => VisitorReason.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "visitor_types":
-            List<dynamic>.from(visitorTypes.map((x) => x.toJson())),
-        "visiting_frequencies":
-            List<dynamic>.from(visitingFrequencies.map((x) => x.toJson())),
-        "visitor_validity":
-            List<dynamic>.from(visitorValidity.map((x) => x.toJson())),
+        "visitor_types": visitorTypes == null
+            ? []
+            : List<dynamic>.from(visitorTypes!.map((x) => x.toJson())),
+        "visiting_frequencies": visitingFrequencies == null
+            ? []
+            : List<dynamic>.from(visitingFrequencies!.map((x) => x.toJson())),
+        "visitor_validity": visitorValidity == null
+            ? []
+            : List<dynamic>.from(visitorValidity!.map((x) => x.toJson())),
+        "visitor_reasons": visitorReasons == null
+            ? []
+            : List<dynamic>.from(visitorReasons!.map((x) => x.toJson())),
       };
 }
 
 class VisitingFrequency {
-  String frequency;
+  String? frequency;
 
   VisitingFrequency({
-    required this.frequency,
+    this.frequency,
   });
 
   factory VisitingFrequency.fromJson(Map<String, dynamic> json) =>
@@ -83,11 +96,27 @@ class VisitingFrequency {
       };
 }
 
+class VisitorReason {
+  String? reason;
+
+  VisitorReason({
+    this.reason,
+  });
+
+  factory VisitorReason.fromJson(Map<String, dynamic> json) => VisitorReason(
+        reason: json["reason"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "reason": reason,
+      };
+}
+
 class Visitor {
-  String type;
+  String? type;
 
   Visitor({
-    required this.type,
+    this.type,
   });
 
   factory Visitor.fromJson(Map<String, dynamic> json) => Visitor(

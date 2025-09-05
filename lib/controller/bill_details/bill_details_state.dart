@@ -8,7 +8,10 @@ class BillDetailsLoading extends BillsDetailsState {}
 
 class BillDetailsLoaded extends BillsDetailsState {
   final List<Bill> bills;
+
   BillDetailsLoaded({required this.bills});
 }
+
 class BillDetailsFailed extends BillsDetailsState {}
+
 class BillDetailsInternetError extends BillsDetailsState {}

@@ -1,11 +1,12 @@
 import 'dart:async';
-import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/complants/cancel_complaints_cubit/cancel_complaints_cubit.dart';
 import 'package:ghp_society_management/controller/complants/get_all_complaints/get_all_complaints_cubit.dart';
@@ -13,9 +14,9 @@ import 'package:ghp_society_management/controller/done_service/done_service_cubi
 import 'package:ghp_society_management/controller/start_service/start_service_cubit.dart';
 import 'package:ghp_society_management/model/complaints_model.dart';
 import 'package:ghp_society_management/model/user_model.dart';
+import 'package:ghp_society_management/view/maintenance_staff/home_screen.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:ghp_society_management/view/session_dialogue.dart';
-import 'package:ghp_society_management/view/staff/home_screen.dart';
 import 'package:intl/intl.dart';
 
 class GetAllComplaintScreen extends StatefulWidget {
@@ -131,28 +132,19 @@ class GetAllComplaintScreenState extends State<GetAllComplaintScreen> {
           child: BlocBuilder<GetAllComplaintsCubit, GetAllComplaintsState>(
             bloc: _complaintsCubit,
             builder: (_, state) {
-              if (state is GetAllComplaintsLoading &&
-                  _complaintsCubit.complaintsLIst.isEmpty) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+              if (state is GetAllComplaintsLoading) {
+                return notificationShimmerLoading();
               }
 
               if (state is GetAllComplaintsFailed) {
-                return Center(
-                    child: Text(state.errorMsg.toString(),
-                        style:
-                            const TextStyle(color: Colors.deepPurpleAccent)));
+                return emptyDataWidget(state.errorMsg.toString());
               }
 
               if (state is GetAllComplaintsEmpty) {
-                return const Center(
-                    child: Text("No incoming documents found",
-                        style: TextStyle(color: Colors.deepPurpleAccent)));
+                return emptyDataWidget("Complaints not found!");
               }
               if (state is GetAllComplaintsInternetError) {
-                return Center(
-                    child: Text(state.errorMsg.toString(),
-                        style: const TextStyle(color: Colors.red)));
+                return emptyDataWidget(state.errorMsg.toString());
               }
               var documentsList = _complaintsCubit.complaintsLIst;
               return ListView.builder(
@@ -204,7 +196,7 @@ class GetAllComplaintScreenState extends State<GetAllComplaintScreen> {
         return DateFormat('dd MMMM yyyy, hh:mm a').format(parsedDate);
       }
 
-      return 'N/A';
+      return 'Not Assigned';
     }
 
     return Theme(
@@ -283,7 +275,10 @@ class GetAllComplaintScreenState extends State<GetAllComplaintScreen> {
                                 : Colors.black,
                             fontSize: 10)))),
         tilePadding: EdgeInsets.zero,
-        subtitle: Text(date().toString(),style: TextStyle(fontSize: 12),),
+        subtitle: Text(
+          date().toString(),
+          style: TextStyle(fontSize: 12),
+        ),
         title: Padding(
             padding: const EdgeInsets.only(right: 8),
             child: Text(lst[index].area.toString(),
@@ -340,7 +335,7 @@ class GetAllComplaintScreenState extends State<GetAllComplaintScreen> {
                                       color: Colors.grey, fontSize: 14)),
                               subtitle: Text(
                                   lst[index].assignedTo == null
-                                      ? "N/A"
+                                      ? "Not Assigned"
                                       : lst[index].assignedTo!.name.toString(),
                                   style: const TextStyle(
                                       color: Colors.black,

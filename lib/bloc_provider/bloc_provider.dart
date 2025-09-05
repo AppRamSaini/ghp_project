@@ -8,6 +8,7 @@ import 'package:ghp_society_management/controller/documents/incoming_documents/i
 import 'package:ghp_society_management/controller/documents/outgoing_documents/outgoing_documents_cubit.dart';
 import 'package:ghp_society_management/controller/documents/send_request/send_request_docs_cubit.dart';
 import 'package:ghp_society_management/controller/download_file/download_document_cubit.dart';
+import 'package:ghp_society_management/controller/ledger_bill/ledger_cubit.dart';
 import 'package:ghp_society_management/controller/members/search_member/search_member_cubit.dart';
 import 'package:ghp_society_management/controller/notification/notification_listing/notification_list_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/checkout_parcel/checkout_parcel_cubit.dart';
@@ -20,6 +21,7 @@ import 'package:ghp_society_management/controller/parcel/parcel_element/parcel_e
 import 'package:ghp_society_management/controller/parcel/parcel_listing/parcel_listing_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_pending_counts/parcel_counts_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/receive_parcel/receive_parcel_cubit.dart';
+import 'package:ghp_society_management/controller/property_listing/property_listing_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/create_refer_property/create_refer_property_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/delete_refer_property/delete_refer_property_cubit.dart';
 import 'package:ghp_society_management/controller/refer_property/get_refer_property/get_refer_property_cubit.dart';
@@ -197,5 +199,8 @@ class BlocProviders {
         create: (context) => DailyHelpListingCubit()),
     BlocProvider<DailyHelpHistoryDetailsCubit>(
         create: (context) => DailyHelpHistoryDetailsCubit()),
+    BlocProvider<PropertyListingCubit>(
+        create: (context) => PropertyListingCubit()),
+    BlocProvider<LedgerBillCubit>(create: (context) => LedgerBillCubit()),
   ];
 }

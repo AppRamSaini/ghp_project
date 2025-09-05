@@ -1,14 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ghp_society_management/constants/app_images.dart';
-import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/export.dart';
-import 'package:ghp_society_management/constants/local_storage.dart';
-import 'package:ghp_society_management/controller/select_society/select_society_cubit.dart';
-import 'package:ghp_society_management/view/resident/authentication/login_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:searchbar_animation/searchbar_animation.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
+import 'package:ghp_society_management/view/authentication/login_screen.dart';
 
 class SelectSocietyScreen extends StatefulWidget {
   const SelectSocietyScreen({super.key});
@@ -21,32 +13,37 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
   TextEditingController textController = TextEditingController();
   bool searchBarOpen = false;
   final ScrollController _scrollController = ScrollController();
-  late SelectSocietyCubit _selectSocietyCubit;
 
   @override
   void initState() {
-    _selectSocietyCubit = SelectSocietyCubit()..fetchSocietyList();
-    _scrollController.addListener(_onScroll);
     super.initState();
+    onRefresh();
+    _scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent < 300) {
-      _selectSocietyCubit.loadMoreNotice();
+      context.read<SelectSocietyCubit>().loadMoreSocieties();
     }
   }
 
   Future onRefresh() async {
-    _selectSocietyCubit = SelectSocietyCubit()..fetchSocietyList();
-    setState(() {});
+    context.read<SelectSocietyCubit>().fetchSocietyList();
+    // setState(() {});
   }
 
   @override
   void dispose() {
-    textController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
+
+  List<Color> bgColors = [
+    Color(0xFF4900FF), // Purple
+    Color(0xFF57C8E8), // Blue
+    Color(0xFFFFA1A1), // Pink
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +61,7 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
         onCollapseComplete: () {
           setState(() {
             searchBarOpen = false;
-            _selectSocietyCubit.fetchSocietyList();
+            onRefresh();
             textController.clear();
           });
         },
@@ -74,19 +71,18 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
           });
         },
         onChanged: (value) {
-          _selectSocietyCubit.searchSociety(value);
+          context.read<SelectSocietyCubit>().searchSociety(value);
         },
       ),
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: onRefresh,
-          child: BlocBuilder<SelectSocietyCubit, SelectSocietyState>(
-              bloc: _selectSocietyCubit,
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: RefreshIndicator(
+            onRefresh: onRefresh,
+            child: BlocBuilder<SelectSocietyCubit, SelectSocietyState>(
               builder: (context, state) {
-                if (state is SelectSocietyLoading &&
-                    _selectSocietyCubit.societyList.isEmpty) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
+                if (state is SelectSocietyLoading) {
+                  return dashboardSimmerLoading(context, forHomePage: true);
                 }
                 if (state is SelectSocietyFailed) {
                   return Center(
@@ -115,12 +111,14 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                                   borderRadius: BorderRadius.circular(30),
                                   color:
                                       AppTheme.primaryColor.withOpacity(0.15)),
-                              child: Text('Retry!',
-                                  style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: AppTheme.primaryColor,
-                                        fontSize: 16),
-                                  )),
+                              child: Text(
+                                'Retry!',
+                                style: GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                      color: AppTheme.primaryColor,
+                                      fontSize: 16),
+                                ),
+                              ),
                             ),
                           )
                         ],
@@ -129,22 +127,16 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                   );
                 }
 
-                var societyList = _selectSocietyCubit.societyList;
+                var societyList =
+                    context.read<SelectSocietyCubit>().societyList;
 
                 if (state is SelectSocietySearchedLoaded) {
                   societyList = state.selectedSociety;
                 }
                 if (societyList.isEmpty) {
-                  return const Center(
-                      child: Text('Society Not Found!',
-                          style: TextStyle(color: Colors.deepPurpleAccent)));
+                  return emptyDataWidget('Society Not Found!');
                 }
 
-                List<Color> bgColors = [
-                  Color(0xFF4900FF), // Purple
-                  Color(0xFF57C8E8), // Blue
-                  Color(0xFFFFA1A1), // Pink
-                ];
                 return ListView.builder(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -154,7 +146,8 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                   shrinkWrap: true,
                   itemBuilder: ((context, index) {
                     if (index == societyList.length) {
-                      return _selectSocietyCubit.state is SelectSocietyLoadMore
+                      return context.read<SelectSocietyCubit>().state
+                              is SelectSocietyLoadMore
                           ? const Padding(
                               padding: EdgeInsets.all(16.0),
                               child: Center(
@@ -178,7 +171,7 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                             color: backgroundColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(10)),
                         child: Padding(
-                          padding: const EdgeInsets.all(10.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Row(
                             children: [
                               Padding(
@@ -218,7 +211,9 @@ class _SelectSocietyScreenState extends State<SelectSocietyScreen> {
                     );
                   }),
                 );
-              }),
+              },
+            ),
+          ),
         ),
       ),
     );

@@ -1,17 +1,17 @@
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/parcel/create_parcel/create_parcel_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/delete_parcel/delete_parcel_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_complaint/parcel_complaint_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_listing/parcel_listing_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/receive_parcel/receive_parcel_cubit.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
-import 'package:ghp_society_management/view/resident/bills/my_bills.dart';
+import 'package:ghp_society_management/view/resident/bills/home_bill_section.dart';
 import 'package:ghp_society_management/view/resident/parcel_flow/create_parcel.dart';
 import 'package:ghp_society_management/view/resident/parcel_flow/parcel_management.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:intl/intl.dart';
-import 'package:searchbar_animation/const/colours.dart';
 
 class ParcelListingPage extends StatefulWidget {
   const ParcelListingPage({super.key});
@@ -31,7 +31,6 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
     _parcelListingCubit = ParcelListingCubit()..fetchParcelListingApi('all');
     _scrollController.addListener(_onScroll);
     super.initState();
-    print("UserProfileCubit Called");
     _userProfileCubit = UserProfileCubit();
     _userProfileCubit.fetchUserProfile();
   }
@@ -63,47 +62,45 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
 
   // popup menu filter
   Widget popMenusForFilter({required BuildContext context}) {
-    return CircleAvatar(
-      backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-      child: PopupMenuButton(
-        elevation: 10,
-        padding: EdgeInsets.zero,
-        color: Colors.white,
-        surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-        icon: const Icon(Icons.more_horiz_rounded,
-            color: Colors.deepPurpleAccent, size: 18.0),
-        offset: const Offset(0, 50),
-        itemBuilder: (BuildContext bc) {
-          return filterOptions
-              .map((selectedOption) => PopupMenuItem(
-                  padding: EdgeInsets.zero,
-                  value: selectedOption,
-                  height: 40,
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 10.w, right: 30),
-                      child: Text(selectedOption['menu'] ?? "",
-                          style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w400)))))
-              .toList();
-        },
-        onSelected: (value) async {
-          if (value['menu_id'] == 1) {
-            currentIndex = 0;
-            _parcelListingCubit.fetchParcelListingApi('all');
-          } else if (value['menu_id'] == 2) {
-            currentIndex = 1;
-            _parcelListingCubit.fetchParcelListingApi('pending');
-          } else {
-            currentIndex = 2;
-            _parcelListingCubit.fetchParcelListingApi('delivered');
-          }
+    return PopupMenuButton(
+      icon: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: AppTheme.white.withOpacity(0.5)),
+          child:
+              Text("Select Filter", style: GoogleFonts.roboto(fontSize: 14))),
+      offset: const Offset(0, 50),
+      itemBuilder: (BuildContext bc) {
+        return filterOptions
+            .map((selectedOption) => PopupMenuItem(
+                padding: EdgeInsets.zero,
+                value: selectedOption,
+                height: 40,
+                child: Padding(
+                    padding: EdgeInsets.only(left: 10.w, right: 30),
+                    child: Text(selectedOption['menu'] ?? "",
+                        style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w400)))))
+            .toList();
+      },
+      onSelected: (value) async {
+        if (value['menu_id'] == 1) {
+          currentIndex = 0;
+          _parcelListingCubit.fetchParcelListingApi('all');
+        } else if (value['menu_id'] == 2) {
+          currentIndex = 1;
+          _parcelListingCubit.fetchParcelListingApi('pending');
+        } else {
+          currentIndex = 2;
+          _parcelListingCubit.fetchParcelListingApi('delivered');
+        }
 
-          setState(() {});
-        },
-      ),
+        setState(() {});
+      },
     );
   }
 
@@ -111,17 +108,6 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        // BlocListener<UserProfileCubit, UserProfileState>(
-        //   listenWhen: (previous, current) {
-        //     return current is UserProfileLoaded && !_dialogShown;
-        //   },
-        //   listener: (context, state) {
-        //     if (state is UserProfileLoaded) {
-        //       _dialogShown = true;
-        //
-        //     }
-        //   },
-        // ),
         BlocListener<ParcelManagementCubit, ParcelManagementState>(
             listener: (context, state) {
           if (state is CreateParcelSuccess) {
@@ -251,16 +237,11 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
             );
           },
         ),
-
-        appBar: AppBar(title: Text('Parcels',
-            style: GoogleFonts.nunitoSans(
-                textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600))),actions: [ Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: popMenusForFilter(context: context),
-                    )]),
+        appBar: appbarWidget(title: 'Parcels', actions: [
+          Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: popMenusForFilter(context: context))
+        ]),
         body: RefreshIndicator(
           onRefresh: onRefresh,
           child: BlocBuilder<ParcelListingCubit, ParcelListingState>(
@@ -268,15 +249,11 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
             builder: (context, state) {
               if (state is ParcelListingLoading &&
                   _parcelListingCubit.parcelListing.isEmpty) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+                return dashboardSimmerLoading(context, forHomePage: true);
               }
 
               if (state is ParcelListingFailed) {
-                return Center(
-                    child: Text(state.errorMsg,
-                        style: const TextStyle(
-                            color: Colors.deepPurpleAccent)));
+                return emptyDataWidget(state.errorMsg);
               }
 
               if (state is ParcelListingInternetError) {
@@ -299,8 +276,7 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
                         ? const Padding(
                             padding: EdgeInsets.all(16.0),
                             child: Center(
-                                child: CircularProgressIndicator
-                                    .adaptive()))
+                                child: CircularProgressIndicator.adaptive()))
                         : const SizedBox.shrink();
                   }
 
@@ -310,22 +286,18 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
                   String timeString = parcels.time!;
                   DateTime parsedTime =
                       DateFormat("HH:mm:ss").parse(timeString);
-                  String formattedTime =
-                      DateFormat.jm().format(parsedTime);
+                  String formattedTime = DateFormat.jm().format(parsedTime);
                   String status() {
                     if (parcels.handoverStatus == "pending") {
                       if (parcels.checkinDetail != null) {
-                        if (parcels.checkinDetail!.status ==
-                            'checked_in') {
+                        if (parcels.checkinDetail!.status == 'checked_in') {
                           return "Parcel Arrived";
                         }
-                        return parcels.entryByRole ==
-                                'staff_security_guard'
+                        return parcels.entryByRole == 'staff_security_guard'
                             ? "Received By Staff"
                             : "Not Received";
                       }
-                      return parcels.entryByRole ==
-                              'staff_security_guard'
+                      return parcels.entryByRole == 'staff_security_guard'
                           ? "Received By Staff"
                           : "Pending";
                     } else if (parcels.handoverStatus == 'received') {
@@ -339,26 +311,22 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          border:
-                              Border.all(color: Colors.grey[300]!)),
+                          border: Border.all(color: Colors.grey[300]!)),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(10),
                                     child: FadeInImage(
                                         placeholder: const AssetImage(
                                             "assets/images/default.jpg"),
-                                        imageErrorBuilder: (context,
-                                            error, stackTrace) {
+                                        imageErrorBuilder:
+                                            (context, error, stackTrace) {
                                           return Image.asset(
                                               "assets/images/default.jpg",
                                               height: 70,
@@ -379,25 +347,21 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               GestureDetector(
                                                 onTap: () {
-                                                  if (parcels
-                                                          .parcelComplaint !=
+                                                  if (parcels.parcelComplaint !=
                                                       null) {
                                                     readComplaintDialog(
                                                         context,
-                                                        parcels
-                                                            .parcelComplaint!
+                                                        parcels.parcelComplaint!
                                                             .description
                                                             .toString());
                                                   }
@@ -405,57 +369,47 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
                                                 child: Row(
                                                   children: [
                                                     Text(
-                                                        parcels
-                                                            .parcelid
+                                                        parcels.parcelid
                                                             .toString(),
                                                         style: GoogleFonts.nunitoSans(
                                                             textStyle: TextStyle(
                                                                 color: Colors
                                                                     .deepPurpleAccent,
-                                                                fontSize: 14
-                                                                    .sp,
-                                                                fontWeight: FontWeight
-                                                                    .w500)),
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis),
+                                                                fontSize: 14.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500)),
+                                                        overflow: TextOverflow
+                                                            .ellipsis),
                                                     parcels.parcelComplaint ==
                                                             null
                                                         ? const SizedBox()
                                                         : const Icon(
-                                                            Icons
-                                                                .info_outline,
-                                                            color: Colors
-                                                                .red,
-                                                            size: 12),
+                                                            Icons.info_outline,
+                                                            color: Colors.red,
+                                                            size: 18),
                                                   ],
                                                 ),
                                               ),
                                               SizedBox(height: 2.h),
                                               Text(
-                                                  parcels.parcelName
-                                                      .toString(),
+                                                  parcels.parcelName.toString(),
                                                   style: GoogleFonts.nunitoSans(
                                                       textStyle: TextStyle(
-                                                          color: Colors
-                                                              .black,
-                                                          fontSize:
-                                                              12,
+                                                          color: Colors.black,
+                                                          fontSize: 12,
                                                           fontWeight:
-                                                              FontWeight
-                                                                  .w500)),
+                                                              FontWeight.w500)),
                                                   overflow:
-                                                      TextOverflow
-                                                          .ellipsis),
+                                                      TextOverflow.ellipsis),
                                               SizedBox(height: 2.h),
                                             ],
                                           ),
                                           popMenusForStaff(
-                                              options:
-                                                  parcels.handoverStatus !=
-                                                          'pending'
-                                                      ? optionList0
-                                                      : optionList,
+                                              options: parcels.handoverStatus !=
+                                                      'pending'
+                                                  ? optionList0
+                                                  : optionList,
                                               context: context,
                                               requestData: parcels)
                                         ],
@@ -466,8 +420,7 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
                                             textStyle: TextStyle(
                                                 color: Colors.black54,
                                                 fontSize: 12,
-                                                fontWeight:
-                                                    FontWeight.w400)),
+                                                fontWeight: FontWeight.w400)),
                                       ),
                                     ],
                                   ),
@@ -476,8 +429,7 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
                             ),
                             SizedBox(height: 5.h),
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 3),
+                              padding: const EdgeInsets.symmetric(vertical: 3),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -492,8 +444,7 @@ class _ParcelListingPageState extends State<ParcelListingPage> {
                                     status(),
                                     style: GoogleFonts.nunitoSans(
                                         textStyle: TextStyle(
-                                            color: parcels
-                                                        .handoverStatus ==
+                                            color: parcels.handoverStatus ==
                                                     'pending'
                                                 ? Colors.red
                                                 : parcels.handoverStatus ==

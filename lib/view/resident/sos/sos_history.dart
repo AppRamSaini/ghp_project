@@ -1,11 +1,12 @@
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_history/sos_history_cubit.dart';
-
 import 'package:ghp_society_management/model/sos_history_model.dart';
 import 'package:ghp_society_management/view/resident/sos/sos_history_details.dart';
 
 class SosHistoryPage extends StatefulWidget {
   const SosHistoryPage({super.key});
+
   @override
   State<SosHistoryPage> createState() => SosHistoryPageState();
 }
@@ -40,26 +41,19 @@ class SosHistoryPageState extends State<SosHistoryPage> {
   }
 
   late BuildContext dialogueContext;
+
   @override
   Widget build(BuildContext context) {
     _sosHistoryCubit.fetchSosHistory(context: context);
     return Scaffold(
-      appBar: AppBar(title: Text('SOS History',
-          style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600)))),
+      appBar: appbarWidget(title: 'SOS History'),
       body: RefreshIndicator(
         onRefresh: fetchData,
         child: BlocBuilder<SosHistoryCubit, SosHistoryState>(
             bloc: _sosHistoryCubit,
             builder: (context, state) {
-              if (state is SosHistoryLoading &&
-                  _sosHistoryCubit.sosHistory.isEmpty) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive(
-                        backgroundColor: Colors.deepPurpleAccent));
+              if (state is SosHistoryLoading) {
+                return notificationShimmerLoading();
               }
 
               if (state is SosHistoryFailed) {
@@ -77,10 +71,7 @@ class SosHistoryPageState extends State<SosHistoryPage> {
               var historyList = _sosHistoryCubit.sosHistory;
 
               if (historyList.isEmpty) {
-                return const Center(
-                    child: Text("SOS History Not Found!",
-                        style: TextStyle(
-                            color: Colors.deepPurpleAccent)));
+                return emptyDataWidget("SOS History Not Found!");
               }
 
               return ListView.builder(
@@ -91,12 +82,10 @@ class SosHistoryPageState extends State<SosHistoryPage> {
                 itemCount: historyList.length + 1,
                 itemBuilder: ((context, index) {
                   if (index == historyList.length) {
-                    return _sosHistoryCubit.state
-                            is SosHistoryLoadingMore
+                    return _sosHistoryCubit.state is SosHistoryLoadingMore
                         ? const Padding(
                             padding: EdgeInsets.all(16.0),
-                            child: Center(
-                                child: CircularProgressIndicator()))
+                            child: Center(child: CircularProgressIndicator()))
                         : const SizedBox.shrink();
                   }
 
@@ -104,15 +93,13 @@ class SosHistoryPageState extends State<SosHistoryPage> {
 
                   acknowledgedAt() {
                     if (sosHistory.acknowledgedAt != null) {
-                      return formatDate(
-                          sosHistory.acknowledgedAt.toString());
+                      return formatDate(sosHistory.acknowledgedAt.toString());
                     }
                     return 'N/A';
                   }
 
                   Widget sosStatus() {
-                    return Text(
-                        capitalizeWords(sosHistory.status.toString()),
+                    return Text(capitalizeWords(sosHistory.status.toString()),
                         style: GoogleFonts.nunitoSans(
                             textStyle: TextStyle(
                                 color: sosHistory.status == 'new'
@@ -127,8 +114,8 @@ class SosHistoryPageState extends State<SosHistoryPage> {
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => SosHistoryDetails(
-                                sosHistoryList: sosHistory))),
+                            builder: (_) =>
+                                SosHistoryDetails(sosHistoryList: sosHistory))),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -139,29 +126,25 @@ class SosHistoryPageState extends State<SosHistoryPage> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(100),
+                                      borderRadius: BorderRadius.circular(100),
                                       child: FadeInImage(
                                           placeholder: const AssetImage(
                                               "assets/images/sosi.png"),
-                                          imageErrorBuilder: (context,
-                                              error, stackTrace) {
+                                          imageErrorBuilder:
+                                              (context, error, stackTrace) {
                                             return Image.asset(
                                                 "assets/images/sosi.png",
                                                 height: 60,
                                                 width: 60,
                                                 fit: BoxFit.cover);
                                           },
-                                          image:
-                                              const NetworkImage(''),
+                                          image: const NetworkImage(''),
                                           fit: BoxFit.cover,
                                           height: 60,
                                           width: 60)),
@@ -176,54 +159,43 @@ class SosHistoryPageState extends State<SosHistoryPage> {
                                               .sosCategory!.name
                                               .toString()
                                               .toString()),
-                                          style:
-                                              GoogleFonts.nunitoSans(
+                                          style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                               color: Colors.black,
                                               fontSize: 14,
-                                              fontWeight:
-                                                  FontWeight.w600,
+                                              fontWeight: FontWeight.w600,
                                             ),
                                           ),
-                                          overflow:
-                                              TextOverflow.ellipsis,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                         Wrap(children: [
                                           Text(
                                               'Area : ${sosHistory.area.toString()}',
                                               style: GoogleFonts.nunitoSans(
                                                   textStyle: TextStyle(
-                                                      color: Colors
-                                                          .black54,
-                                                      fontSize:
-                                                          12)))
+                                                      color: Colors.black54,
+                                                      fontSize: 12)))
                                         ]),
 
                                         Text(
                                             'Acknowledged At : ${acknowledgedAt()}',
                                             style: GoogleFonts.nunitoSans(
                                                 textStyle: TextStyle(
-                                                    color: Colors
-                                                        .black54,
+                                                    color: Colors.black54,
                                                     fontSize: 12,
                                                     fontWeight:
-                                                        FontWeight
-                                                            .w400))),
+                                                        FontWeight.w400))),
 
                                         Row(
                                           children: [
                                             Text('Status : ',
                                                 style: GoogleFonts.nunitoSans(
                                                     textStyle: TextStyle(
-                                                        color: Colors
-                                                            .black54,
-                                                        fontSize:
-                                                            12,
+                                                        color: Colors.black54,
+                                                        fontSize: 12,
                                                         fontWeight:
-                                                            FontWeight
-                                                                .w400))),
-                                            SizedBox(
-                                                child: sosStatus()),
+                                                            FontWeight.w400))),
+                                            SizedBox(child: sosStatus()),
                                           ],
                                         ),
                                         // status(visitors),
@@ -232,15 +204,11 @@ class SosHistoryPageState extends State<SosHistoryPage> {
                                   ),
                                 ],
                               ),
-
-                              Divider(
-                                  color:
-                                      Colors.grey.withOpacity(0.2)),
+                              Divider(color: Colors.grey.withOpacity(0.2)),
                               Wrap(
                                 children: [
                                   Text(
-                                    sosHistory.description ??
-                                        ''.toString(),
+                                    sosHistory.description ?? ''.toString(),
                                     style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                         color: Colors.black87,

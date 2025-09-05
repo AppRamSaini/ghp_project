@@ -4,38 +4,17 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/constants/snack_bar.dart';
+import 'package:ghp_society_management/view/resident/resident_profile/edit_profile_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 /// crop image
 Future cropImage(source) async {
   CroppedFile? croppedFile = await ImageCropper().cropImage(
-    sourcePath: source,
-    aspectRatio: const CropAspectRatio(
-        ratioX: 1, ratioY: 1), // Set the aspect ratio for a square image
-    uiSettings: [
-      AndroidUiSettings(
-          toolbarTitle: 'Cropper',
-          toolbarColor: AppTheme.backgroundColor,
-          toolbarWidgetColor: Colors.white,
-          aspectRatioPresets: [
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.square,
-            CropAspectRatioPreset.ratio4x3
-          ],
-          lockAspectRatio: false,
-          hideBottomControls: true),
-      IOSUiSettings(
-          title: 'Cropper',
-          aspectRatioPresets: [
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.square,
-            CropAspectRatioPreset.ratio4x3,
-          ],
-          aspectRatioLockEnabled: true,
-          resetButtonHidden: true)
-    ],
-  );
+      sourcePath: source,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      uiSettings: uiSettings);
 
   return croppedFile;
 }
@@ -59,80 +38,84 @@ void uploadFileWidget(
     context: context,
     enableDrag: false,
     builder: (BuildContext context) {
-      return Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(20),
-          ),
-        ),
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: editProfileOptionList.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      ListTile(
-                          onTap: () {
-                            if (index == 0) {
-                              fromCamera?.call();
-                            } else if (index == 1) {
-                              fromGallery?.call();
-                            }
-                            Navigator.of(context).pop();
-                          },
-                          leading: Icon(editProfileOptionIconsList[index],
-                              color: AppTheme.primaryColor),
-                          title: Text(editProfileOptionList[index],
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w500))),
-                      if (index != editProfileOptionList.length - 1)
-                        Divider(color: Colors.grey[300]),
-                    ],
-                  );
-                },
-              ),
+      return Padding(
+        padding: globalBottomPadding(context),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(20),
             ),
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: AppTheme.primaryColor,
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Cancel',
-                      style: GoogleFonts.nunitoSans(
-                        textStyle: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+          ),
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              const SizedBox(height: 10),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[300]!),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: editProfileOptionList.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        ListTile(
+                            onTap: () {
+                              if (index == 0) {
+                                fromCamera?.call();
+                              } else if (index == 1) {
+                                fromGallery?.call();
+                              }
+                              Navigator.of(context).pop();
+                            },
+                            leading: Icon(editProfileOptionIconsList[index],
+                                color: AppTheme.primaryColor),
+                            title: Text(editProfileOptionList[index],
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500))),
+                        if (index != editProfileOptionList.length - 1)
+                          Divider(color: Colors.grey[300]),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Container(
+                    width: double.infinity,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: AppTheme.primaryColor,
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Cancel',
+                        style: GoogleFonts.nunitoSans(
+                          textStyle: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     },

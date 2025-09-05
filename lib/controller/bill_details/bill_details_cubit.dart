@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:ghp_society_management/constants/config.dart';
@@ -18,33 +19,30 @@ class BillDetailsCubit extends Cubit<BillsDetailsState> {
   /// FETCH MY BILLS (without pagination)
   Future<void> fetchMyBillsDetails(BuildContext context, String id) async {
     if (state is BillDetailsLoading) return;
-
     emit(BillDetailsLoading());
     try {
-      // Make API request
       var response = await apiManager
           .getRequest("${Config.baseURL}${Routes.getBillDetails}$id");
+
       if (response.statusCode == 200) {
-        // Parse response data
         var responseData = jsonDecode(response.body);
 
-        // Map the JSON response to a list of Bill objects
-        var newBills = (responseData['data']['bill'] as List)
-            .map((e) => Bill.fromJson(e))
-            .toList();
+        var newBills = (responseData['data']?['bill'] as List?)
+                ?.map((e) => Bill.fromJson(e))
+                .toList() ??
+            [];
+
         bills = newBills;
         emit(BillDetailsLoaded(bills: bills));
       } else if (response.statusCode == 401) {
-         sessionExpiredDialog(context);
+        sessionExpiredDialog(context);
       } else {
-        // Emit failure if the status code isn't 200
         emit(BillDetailsFailed());
       }
     } on SocketException {
-      // Handle network error
       emit(BillDetailsInternetError());
-    } catch (e) {
-      // Handle any other errors
+    } catch (e, st) {
+      debugPrint("BillDetails Error: $e\n$st");
       emit(BillDetailsFailed());
     }
   }

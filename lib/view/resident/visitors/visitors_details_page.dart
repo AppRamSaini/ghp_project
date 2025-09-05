@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_in/check_in_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_out/check_out_cubit.dart';
@@ -37,12 +38,7 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Visitors Details',
-          style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600)))),
+      appBar: appbarWidget(title: 'Visitors Details'),
       body: MultiBlocListener(
         listeners: [
           BlocListener<VisitorsDetailsCubit, VisitorsDetailsState>(
@@ -92,39 +88,27 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
             },
           ),
         ],
-        child: BlocBuilder<VisitorsDetailsCubit,
-                VisitorsDetailsState>(
+        child: BlocBuilder<VisitorsDetailsCubit, VisitorsDetailsState>(
             bloc: _visitorsDetailsCubit,
             builder: (context, state) {
               if (state is VisitorsDetailsLoading) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive(
-                        backgroundColor:
-                            Colors.deepPurpleAccent));
+                return notificationShimmerLoading();
               } else if (state is VisitorsDetailsLoaded) {
-                List<VisitorsDetails> visitorsData =
-                    state.visitorDetails;
+                List<VisitorsDetails> visitorsData = state.visitorDetails;
                 DateTime parsedTime = DateFormat("HH:mm:ss")
                     .parse(visitorsData.first.time!.toString());
-                String timeOnly =
-                    DateFormat("hh:mm a").format(parsedTime);
+                String timeOnly = DateFormat("hh:mm a").format(parsedTime);
                 String formatDate = DateFormat('dd-MMM-yyyy')
-                    .format(DateTime.parse(
-                        visitorsData.first.date.toString()));
+                    .format(DateTime.parse(visitorsData.first.date.toString()));
 
                 checkIn() {
-                  if (state.visitorDetails.first
-                          .lastCheckinDetail !=
-                      null) {
-                    if (state.visitorDetails.first
-                            .lastCheckinDetail!.checkinAt !=
+                  if (state.visitorDetails.first.lastCheckinDetail != null) {
+                    if (state.visitorDetails.first.lastCheckinDetail!
+                            .checkinAt !=
                         null) {
-                      return DateFormat('dd-MMM-yyyy hh:mm a')
-                          .format(DateTime.parse(state
-                              .visitorDetails
-                              .first
-                              .lastCheckinDetail!
-                              .checkinAt
+                      return DateFormat('dd-MMM-yyyy hh:mm a').format(
+                          DateTime.parse(state
+                              .visitorDetails.first.lastCheckinDetail!.checkinAt
                               .toString()));
                     } else {
                       return '';
@@ -133,18 +117,13 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
                 }
 
                 checkOut() {
-                  if (state.visitorDetails.first
-                          .lastCheckinDetail !=
-                      null) {
-                    if (state.visitorDetails.first
-                            .lastCheckinDetail!.checkoutAt !=
+                  if (state.visitorDetails.first.lastCheckinDetail != null) {
+                    if (state.visitorDetails.first.lastCheckinDetail!
+                            .checkoutAt !=
                         null) {
-                      return DateFormat('dd-MMM-yyyy hh:mm a')
-                          .format(DateTime.parse(state
-                              .visitorDetails
-                              .first
-                              .lastCheckinDetail!
-                              .checkoutAt
+                      return DateFormat('dd-MMM-yyyy hh:mm a').format(
+                          DateTime.parse(state.visitorDetails.first
+                              .lastCheckinDetail!.checkoutAt
                               .toString()));
                     } else {
                       return '';
@@ -153,11 +132,8 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
                 }
 
                 feedBack() {
-                  if (state
-                          .visitorDetails.first.visitorFeedback !=
-                      null) {
-                    return state.visitorDetails.first
-                        .visitorFeedback!.feedback
+                  if (state.visitorDetails.first.visitorFeedback != null) {
+                    return state.visitorDetails.first.visitorFeedback!.feedback
                         .toString();
                   } else {
                     return 'N/A';
@@ -165,362 +141,282 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
                 }
 
                 return SingleChildScrollView(
-
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Column(
                       children: [
-
-                    Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        borderRadius:
-                        BorderRadius.circular(10),
-                        border: Border.all(
-                            color: Colors.grey
-                                .withOpacity(0.1))),
-                    child:  Row(
-                          children: [
-                            Card(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-                              child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(100),
-                                  child: FadeInImage(
-                                      fit: BoxFit.cover,
-                                      height: 60,
-                                      width: 60,
-                                      image: NetworkImage(state
-                                          .visitorDetails.first.image
-                                          .toString()),
-                                      placeholder: const AssetImage(
-                                          'assets/images/default.jpg'),
-                                      imageErrorBuilder: (_, ss, st) => Image.asset(
+                        Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                    color: Colors.grey.withOpacity(0.1))),
+                            child: Row(
+                              children: [
+                                Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(100)),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: FadeInImage(
                                           fit: BoxFit.cover,
                                           height: 60,
                                           width: 60,
-                                          'assets/images/default.jpg'))),
-                            ),  Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
-                              child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                          capitalizeWords(visitorsData
-                                              .first.visitorName
+                                          image: NetworkImage(state
+                                              .visitorDetails.first.image
                                               .toString()),
+                                          placeholder: const AssetImage(
+                                              'assets/images/profile_icon.png'),
+                                          imageErrorBuilder: (_, ss, st) =>
+                                              Image.asset(
+                                                  fit: BoxFit.cover,
+                                                  height: 60,
+                                                  width: 60,
+                                                  'assets/images/profile_icon.png'))),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                              capitalizeWords(visitorsData
+                                                  .first.visitorName
+                                                  .toString()),
+                                              style: GoogleFonts.nunitoSans(
+                                                  textStyle: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500))),
+                                          const SizedBox(width: 5),
+                                          visitorsData.first.status ==
+                                                  "inactive"
+                                              ? const Icon(
+                                                  size: 20,
+                                                  Icons.block,
+                                                  color: Colors.red)
+                                              : const SizedBox()
+                                        ],
+                                      ),
+                                      Text(
+                                          "+91 ${visitorsData.first.phone.toString()}",
                                           style: GoogleFonts.nunitoSans(
                                               textStyle: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 16,
+                                                  fontSize: 12,
                                                   fontWeight:
-                                                  FontWeight.w500))),
-                                      const SizedBox(width: 5),
-                                      visitorsData.first.status ==
-                                          "inactive"
-                                          ? const Icon(
-                                          size: 20,
-                                          Icons.block,
-                                          color: Colors.red)
-                                          : const SizedBox()
+                                                      FontWeight.w500))),
                                     ],
                                   ),
-
-                                  Text(
-                                   "+91 ${visitorsData.first.phone.toString()}",
-                                      style: GoogleFonts.nunitoSans(
-                                          textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12,
-                                              fontWeight:
-                                              FontWeight.w500))),
-                                ],
-                              ),
-                            ),
-                          ],
-                        )),
+                                ),
+                              ],
+                            )),
                         SizedBox(height: 10.h),
-
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: Colors.grey
-                                      .withOpacity(0.1))),
+                                  color: Colors.grey.withOpacity(0.1))),
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Arrive Date : ',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black45,
+                                                color: Colors.black45,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500))),
-                                    Text(
-                                        '$formatDate || $timeOnly',
+                                                fontWeight: FontWeight.w500))),
+                                    Text('$formatDate || $timeOnly',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black87,
+                                                color: Colors.black87,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500)))
+                                                fontWeight: FontWeight.w500)))
                                   ]),
                               Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: 3),
+                                      const EdgeInsets.symmetric(vertical: 3),
                                   child: Divider(
-                                      color: Colors.grey
-                                          .withOpacity(0.1))),
+                                      color: Colors.grey.withOpacity(0.1))),
                               Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Mobile Number : ',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black45,
+                                                color: Colors.black45,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
                                         '+91 ${visitorsData.first.phone.toString()}',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black87,
+                                                color: Colors.black87,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500)))
+                                                fontWeight: FontWeight.w500)))
                                   ]),
                               Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: 3),
+                                      const EdgeInsets.symmetric(vertical: 3),
                                   child: Divider(
-                                      color: Colors.grey
-                                          .withOpacity(0.1))),
+                                      color: Colors.grey.withOpacity(0.1))),
                               Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('No. Of Visitors  :',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black45,
+                                                color: Colors.black45,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
-                                        visitorsData
-                                            .first.noOfVisitors
+                                        visitorsData.first.noOfVisitors
                                             .toString(),
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black87,
+                                                color: Colors.black87,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500)))
+                                                fontWeight: FontWeight.w500)))
                                   ]),
                               Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: 3),
+                                      const EdgeInsets.symmetric(vertical: 3),
                                   child: Divider(
-                                      color: Colors.grey
-                                          .withOpacity(0.1))),
+                                      color: Colors.grey.withOpacity(0.1))),
                               Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Visitor types : ',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black45,
+                                                color: Colors.black45,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
-                                        visitorsData
-                                            .first.typeOfVisitor
+                                        visitorsData.first.typeOfVisitor
                                             .toString(),
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black87,
+                                                color: Colors.black87,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500)))
+                                                fontWeight: FontWeight.w500)))
                                   ]),
                               Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: 3),
+                                      const EdgeInsets.symmetric(vertical: 3),
                                   child: Divider(
-                                      color: Colors.grey
-                                          .withOpacity(0.1))),
+                                      color: Colors.grey.withOpacity(0.1))),
                               Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Check In : ',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black45,
+                                                color: Colors.black45,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
                                         checkIn() != null
                                             ? checkIn().toString()
                                             : 'N/A',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black87,
+                                                color: Colors.black87,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500)))
+                                                fontWeight: FontWeight.w500)))
                                   ]),
                               Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: 3),
+                                      const EdgeInsets.symmetric(vertical: 3),
                                   child: Divider(
-                                      color: Colors.grey
-                                          .withOpacity(0.1))),
+                                      color: Colors.grey.withOpacity(0.1))),
                               Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Check Out : ',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black45,
+                                                color: Colors.black45,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
                                         checkOut() != null
-                                            ? checkOut()
-                                                .toString()
+                                            ? checkOut().toString()
                                             : 'N/A',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black87,
+                                                color: Colors.black87,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500)))
+                                                fontWeight: FontWeight.w500)))
                                   ]),
                               Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: 3),
+                                      const EdgeInsets.symmetric(vertical: 3),
                                   child: Divider(
-                                      color: Colors.grey
-                                          .withOpacity(0.1))),
+                                      color: Colors.grey.withOpacity(0.1))),
                               Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Visiting Frequency : ',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black45,
+                                                color: Colors.black45,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500))),
+                                                fontWeight: FontWeight.w500))),
                                     Text(
-                                        visitorsData.first
-                                            .visitingFrequency
+                                        visitorsData.first.visitingFrequency
                                             .toString(),
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors
-                                                    .black87,
+                                                color: Colors.black87,
                                                 fontSize: 14,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500)))
+                                                fontWeight: FontWeight.w500)))
                                   ]),
-                              Padding(
+                              /*       Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: 3),
+                                      const EdgeInsets.symmetric(vertical: 3),
                                   child: Divider(
-                                      color: Colors.grey
-                                          .withOpacity(0.1))),
+                                      color: Colors.grey.withOpacity(0.1))),
                               Text('With Visitors : ',
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.black45,
                                           fontSize: 14,
-                                          fontWeight:
-                                              FontWeight.w500))),
+                                          fontWeight: FontWeight.w500))),
                               const SizedBox(height: 5),
                               ListView.builder(
-                                itemCount: visitorsData
-                                    .first.bulkVisitors!.length,
+                                itemCount:
+                                    visitorsData.first.bulkVisitors!.length,
                                 shrinkWrap: true,
-                                physics:
-                                    const BouncingScrollPhysics(),
-                                itemBuilder:
-                                    (BuildContext context,
-                                        int index) {
+                                physics: const BouncingScrollPhysics(),
+                                itemBuilder: (BuildContext context, int index) {
                                   List<BulkVisitor> bulkVisitors =
-                                      visitorsData
-                                          .first.bulkVisitors!;
+                                      visitorsData.first.bulkVisitors!;
                                   return Container(
-                                    margin: const EdgeInsets.only(
-                                        top: 5),
+                                    margin: const EdgeInsets.only(top: 5),
                                     decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(
-                                                8),
+                                        borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
-                                            color: Colors.grey
-                                                .withOpacity(
-                                                    0.1))),
+                                            color:
+                                                Colors.grey.withOpacity(0.1))),
                                     child: ListTile(
                                         dense: true,
                                         minLeadingWidth: 30,
@@ -529,16 +425,13 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
                                                 horizontal: 10),
                                         leading: const CircleAvatar(
                                             child: Icon(Icons.person_outline,
-                                                color: Colors
-                                                    .indigoAccent)),
-                                        title: Text(bulkVisitors[index].name.toString(),
+                                                color: Colors.indigoAccent)),
+                                        title: Text(
+                                            bulkVisitors[index].name.toString(),
                                             style: GoogleFonts.nunitoSans(
-                                                color:
-                                                    Colors.black,
+                                                color: Colors.black,
                                                 fontSize: 14.sp,
-                                                fontWeight:
-                                                    FontWeight
-                                                        .w500)),
+                                                fontWeight: FontWeight.w500)),
                                         subtitle: Text(
                                             '+91 ${bulkVisitors[index].phone.toString()}',
                                             style: GoogleFonts.nunitoSans(
@@ -547,55 +440,43 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
                                                 fontWeight: FontWeight.w500))),
                                   );
                                 },
-                              ),
+                              ),*/
                               Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: 3),
+                                      const EdgeInsets.symmetric(vertical: 3),
                                   child: Divider(
-                                      color: Colors.grey
-                                          .withOpacity(0.1))),
+                                      color: Colors.grey.withOpacity(0.1))),
                               Text('Purpose Of Visiting :- ',
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.black45,
                                           fontSize: 14,
-                                          fontWeight:
-                                              FontWeight.w500))),
+                                          fontWeight: FontWeight.w500))),
                               const SizedBox(height: 5),
-                              Text(
-                                  visitorsData
-                                      .first.purposeOfVisit
-                                      .toString(),
+                              Text(visitorsData.first.purposeOfVisit.toString(),
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.black87,
                                           fontSize: 14,
-                                          fontWeight:
-                                              FontWeight.w500))),
+                                          fontWeight: FontWeight.w500))),
                               Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: 3),
+                                      const EdgeInsets.symmetric(vertical: 3),
                                   child: Divider(
-                                      color: Colors.grey
-                                          .withOpacity(0.1))),
+                                      color: Colors.grey.withOpacity(0.1))),
                               Text('Visitor`s Feedback :- ',
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.black45,
                                           fontSize: 14,
-                                          fontWeight:
-                                              FontWeight.w500))),
+                                          fontWeight: FontWeight.w500))),
                               const SizedBox(height: 5),
-                              Text(feedBack().toString()
-                                  ,
+                              Text(feedBack().toString(),
                                   style: GoogleFonts.nunitoSans(
                                       textStyle: TextStyle(
                                           color: Colors.black87,
                                           fontSize: 14,
-                                          fontWeight:
-                                              FontWeight.w500)))
+                                          fontWeight: FontWeight.w500)))
                             ],
                           ),
                         ),
@@ -606,18 +487,17 @@ class _VisitorsDetailsPageState extends State<VisitorsDetailsPage> {
               } else if (state is VisitorsDetailsFailed) {
                 return Center(
                     child: Text(state.errorMsg.toString(),
-                        style: const TextStyle(
-                            color: Colors.deepPurpleAccent)));
+                        style:
+                            const TextStyle(color: Colors.deepPurpleAccent)));
               } else if (state is VisitorsDetailsMessage) {
                 return Center(
                     child: Text(state.msg.toString(),
-                        style: const TextStyle(
-                            color: Colors.deepPurpleAccent)));
+                        style:
+                            const TextStyle(color: Colors.deepPurpleAccent)));
               } else if (state is VisitorsDetailsInternetError) {
                 return Center(
                     child: Text(state.errorMsg.toString(),
-                        style:
-                            const TextStyle(color: Colors.red)));
+                        style: const TextStyle(color: Colors.red)));
               } else {
                 return const SizedBox();
               }

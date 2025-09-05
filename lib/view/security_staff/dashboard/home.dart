@@ -18,8 +18,8 @@ import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart
 import 'package:ghp_society_management/view/resident/sos/sos_screen.dart';
 import 'package:ghp_society_management/view/resident/visitors/add_visitor_screen.dart';
 import 'package:ghp_society_management/view/security_staff/visitors/visitors_tab.dart';
-import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
+import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SecurityGuardHome extends StatefulWidget {
@@ -63,7 +63,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
   List pagesList = [
     MemberScreen(),
     EventScreen(),
-    SosScreen(),
+    SosScreen(forStaffSide: true),
     NoticeBoardScreen(),
   ];
 
@@ -125,8 +125,6 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                             children: [
                               GestureDetector(
                                   onTap: () {
-                                    // Future.delayed(Duration.zero,
-                                    //     () => overDueBillAlertDialog(context));
                                     profileViewAlertDialog(
                                         context, state.userProfile.first);
                                   },
@@ -145,7 +143,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                       : const CircleAvatar(
                                           radius: 22,
                                           backgroundImage: AssetImage(
-                                              'assets/images/default.jpg'))),
+                                              'assets/images/profile_icon.png'))),
                               const SizedBox(width: 10),
                               Flexible(
                                 child: Column(
@@ -157,7 +155,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                             .toString(),
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors.black,
+                                                color: Colors.white,
                                                 fontSize: 15.sp,
                                                 fontWeight: FontWeight.w600,
                                                 overflow:
@@ -166,7 +164,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                     Text('Security Staff',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
-                                                color: Colors.black,
+                                                color: Colors.white,
                                                 fontSize: 10.sp,
                                                 fontWeight: FontWeight.w500)))
                                   ],
@@ -196,15 +194,15 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                             children: [
                               const CircleAvatar(
                                   radius: 22,
-                                  backgroundImage:
-                                      AssetImage('assets/images/default.jpg')),
+                                  backgroundImage: AssetImage(
+                                      'assets/images/profile_icon.png')),
                               const SizedBox(width: 10),
                               Flexible(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("Loading...",
+                                    Text("LOADING...",
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.white,
@@ -213,7 +211,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                                                 overflow:
                                                     TextOverflow.ellipsis))),
                                     const SizedBox(height: 3),
-                                    Text('TOWER LOADING...',
+                                    Text('LOADING...',
                                         style: GoogleFonts.nunitoSans(
                                             textStyle: TextStyle(
                                                 color: Colors.white,
@@ -226,7 +224,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                             ],
                           ),
                         ),
-                        headerWidget(context, '', '', '', isDemo: true)
+                        securityStaffHeaderWidget(context, '', '', '')
                       ],
                     ),
                   );
@@ -246,7 +244,7 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
             padding: EdgeInsets.symmetric(horizontal: size.width * 0.035),
             child: Column(
               children: [
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
                 MasonryGridView.count(
                   crossAxisCount: 4,
                   mainAxisSpacing: 10,
@@ -295,7 +293,6 @@ class _SecurityGuardHomeState extends State<SecurityGuardHome> {
                     );
                   },
                 ),
-                SizedBox(height: size.height * 0.02),
                 const Expanded(
                   child: VisitorsTabBar(),
                 )
