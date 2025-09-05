@@ -181,19 +181,26 @@ class _LedgerWebViewScreenState extends State<LedgerWebViewScreen> {
   Future<void> downloadPdf() async {
     if (currentHtml == null) return;
 
-    await Printing.layoutPdf(
-      dynamicLayout: false,
-      outputType: OutputType.photo,
-      format: PdfPageFormat.undefined,
-      forceCustomPrintPaper: true,
-      onLayout: (format) async {
-        final pdf = await Printing.convertHtml(
-          format: format,
-          html: currentHtml!,
-        );
-        return pdf;
-      },
-    );
+    try {
+      await Printing.layoutPdf(
+        dynamicLayout: false,
+        outputType: OutputType.photo,
+        format: PdfPageFormat.a4,
+        name: "Maintenance Ledger",
+        // iOS में undefined issue fix
+        forceCustomPrintPaper: true,
+        onLayout: (format) async {
+          // Convert HTML to PDF
+          final pdfBytes = await Printing.convertHtml(
+            format: format,
+            html: currentHtml!,
+          );
+          return pdfBytes;
+        },
+      );
+    } catch (e) {
+      debugPrint("PDF Error: $e");
+    }
   }
 
   @override
