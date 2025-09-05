@@ -90,7 +90,6 @@ class _SosScreenState extends State<SosScreen> {
   }
 
   bool _isRefreshing(SosCategoryState state) {
-    // Check if we're in a refresh state (you might need to modify your cubit to track this)
     return false; // Modify based on your state implementation
   }
 

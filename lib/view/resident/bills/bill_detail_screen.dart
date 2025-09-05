@@ -1,4 +1,3 @@
-// ignore_for_file: must_be_immutable
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -116,7 +115,6 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Service & Status
                             Row(
                               children: [
                                 Expanded(
@@ -151,14 +149,14 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
                             buildInfoRow(
                                 'Invoice No :',
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 15),
-                                  child: Text(billDetails.invoiceNumber ?? '-'),
-                                )),
+                                    padding: const EdgeInsets.only(left: 15),
+                                    child: Text(
+                                        billDetails.invoiceNumber ?? '-'))),
                             buildInfoRow('Current Month Payment :',
                                 amountText(billAmount)),
                             buildInfoRow(
                                 'Installment Paid :', amountText(installment)),
-                            buildInfoRow('Previous Month Pending :',
+                            buildInfoRow('Previous Outstanding :',
                                 amountText(prevPending)),
                             buildInfoRow(
                                 'Advance Payment :', amountText(advanceAmount)),

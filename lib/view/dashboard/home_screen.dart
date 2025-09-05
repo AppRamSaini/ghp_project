@@ -129,6 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .read<MyBillsCubit>()
         .fetchMyBills(context: context, billTypes: "all");
     context.read<NotificationListingCubit>().fetchNotifications();
+    context.read<IncomingRequestCubit>().fetchIncomingRequest();
     setState(() {});
   }
 

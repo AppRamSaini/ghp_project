@@ -31,8 +31,8 @@ class SosDetailScreen extends StatefulWidget {
 
 class _SosDetailScreenState extends State<SosDetailScreen> {
   String? selectedValue;
+  String? sosReasonDes;
   final formkey = GlobalKey<FormState>();
-  final TextEditingController descriptionController = TextEditingController();
   late BuildContext dialogueContext;
   String location = "";
   late SosElementCubit _sosElementCubit;
@@ -156,13 +156,16 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
                         Map<String, String?> sosBody = {
                           "sos_category_id": widget.sosCategory.id.toString(),
                           "area": selectedValue,
-                          "description": descriptionController.text
+                          "description": sosReasonDes.toString()
                         };
 
                         print(selectedValue);
                         if (selectedValue == null) {
                           snackBar(context, 'Please select area', Icons.warning,
                               AppTheme.redColor);
+                        } else if (sosReasonDes == null) {
+                          snackBar(context, 'Please select reason',
+                              Icons.warning, AppTheme.redColor);
                         } else {
                           context.read<SubmitSosCubit>().submitSos(sosBody);
                         }
@@ -426,53 +429,43 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
                                           fontSize: 15.sp,
                                           fontWeight: FontWeight.w500))),
                               SizedBox(height: 10.h),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                child: TextFormField(
-                                  controller: descriptionController,
-                                  maxLines: null,
-                                  textInputAction: TextInputAction.done,
-                                  style: GoogleFonts.nunitoSans(
-                                      color: Colors.black,
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.w500),
-                                  keyboardType: TextInputType.multiline,
-                                  validator: (text) {
-                                    if (text == null || text.isEmpty) {
-                                      return 'Please enter description';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    hintText: 'Enter description',
-                                    filled: true,
-                                    hintStyle: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400),
-                                    fillColor: AppTheme.greyColor,
-                                    errorBorder: OutlineInputBorder(
+                              DropdownButton2<String>(
+                                underline: Container(color: Colors.transparent),
+                                isExpanded: true,
+                                value: sosReasonDes,
+                                hint: Text('Select visiting reason',
+                                    style: GoogleFonts.nunitoSans(
+                                        textStyle: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.normal))),
+                                items: sosReasonsDec
+                                    .map((item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(item.toString(),
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black))))
+                                    .toList(),
+                                onChanged: (value) =>
+                                    setState(() => sosReasonDes = value),
+                                iconStyleData: const IconStyleData(
+                                    icon: Icon(Icons.arrow_drop_down,
+                                        color: Colors.black45),
+                                    iconSize: 24),
+                                buttonStyleData: ButtonStyleData(
+                                    decoration: BoxDecoration(
+                                        color: AppTheme.greyColor,
                                         borderRadius:
-                                            BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                            color: AppTheme.greyColor)),
-                                    focusedErrorBorder: OutlineInputBorder(
+                                            BorderRadius.circular(10))),
+                                dropdownStyleData: DropdownStyleData(
+                                    maxHeight:
+                                        MediaQuery.sizeOf(context).height / 2,
+                                    decoration: BoxDecoration(
                                         borderRadius:
-                                            BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                            color: AppTheme.greyColor)),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15.0),
-                                        borderSide: BorderSide(
-                                            color: AppTheme.greyColor)),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      borderSide:
-                                          BorderSide(color: AppTheme.greyColor),
-                                    ),
-                                  ),
+                                            BorderRadius.circular(10))),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
                                 ),
                               ),
                               SizedBox(height: 10.h),
@@ -488,3 +481,18 @@ class _SosDetailScreenState extends State<SosDetailScreen> {
     );
   }
 }
+
+List<String> sosReasonsDec = [
+  "Medical Emergency - Sudden health issue or injury needing urgent medical help.",
+  "Fire Alert - Fire or smoke detected, requires immediate attention.",
+  "Earthquake Tremor - Tremors felt, safety alert needed.",
+  "Flood / Water Logging - Heavy rain causing water accumulation or flooding.",
+  "Suspicious Activity - Unknown person, vehicle, or unusual movement noticed.",
+  "Theft or Burglary - Incident of robbery, theft, or house break-in.",
+  "Domestic Violence - Conflict or violence inside the society premises.",
+  "Gas Leak - Leakage from cylinder or pipeline, risk of fire or blast.",
+  "Animal Threat - Dangerous animal entered society (dog, snake, monkey, etc.).",
+  "Harassment - Resident facing harassment, threat, or misconduct.",
+  "Accident - Road accident, fall, or serious injury in society area.",
+  "Other Emergency - Any other urgent situation needing quick response.",
+];

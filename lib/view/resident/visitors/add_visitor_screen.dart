@@ -430,7 +430,6 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
             if (state is NotRespondingSuccessfully) {
               snackBar(context, state.successMsg.toString(), Icons.warning,
                   AppTheme.redColor);
-              // Navigator.of(dialogueContext).pop();
               Future.delayed(Duration.zero, () {
                 stopTimerDialog();
                 Navigator.pop(context);
@@ -495,10 +494,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
       ],
       child: Scaffold(
         appBar: appbarWidget(title: 'Add Visitors'),
-        body:
-
-
-        Column(
+        body: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
@@ -531,10 +527,12 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                 final result = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => SelectMembers()));
+                                        builder: (context) =>
+                                            SelectMembers()));
 
                                 if (result != null) {
-                                  residenceController.text = result['name'];
+                                  residenceController.text =
+                                  result['name'];
                                   residenceId = result['user_id'];
                                   propertyID = result['property_id'];
                                   setState(() {});
@@ -572,21 +570,25 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                     fontWeight: FontWeight.normal),
                                 fillColor: AppTheme.greyColor,
                                 errorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide:
-                                    BorderSide(color: AppTheme.greyColor)),
+                                    borderRadius:
+                                    BorderRadius.circular(15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor)),
                                 focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide:
-                                    BorderSide(color: AppTheme.greyColor)),
+                                    borderRadius:
+                                    BorderRadius.circular(15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor)),
                                 focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide:
-                                    BorderSide(color: AppTheme.greyColor)),
+                                    borderRadius:
+                                    BorderRadius.circular(15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor)),
                                 enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide:
-                                    BorderSide(color: AppTheme.greyColor)),
+                                    borderRadius:
+                                    BorderRadius.circular(15.0),
+                                    borderSide: BorderSide(
+                                        color: AppTheme.greyColor)),
                               ),
                             ),
                             SizedBox(height: 10.h),
@@ -612,15 +614,16 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                             color: Colors.grey,
                                             fontSize: 15,
                                             fontWeight: FontWeight.normal))),
-                                items: state.visitorsElement.first.data!
-                                    .visitorTypes!
+                                items: state
+                                    .visitorsElement.first.data!.visitorTypes!
                                     .map((item) =>
                                     DropdownMenuItem<String>(
                                       value: item.type,
                                       child: Text(
                                         item.type!,
                                         style: const TextStyle(
-                                            fontSize: 14, color: Colors.black),
+                                            fontSize: 14,
+                                            color: Colors.black),
                                       ),
                                     ))
                                     .toList(),
@@ -636,10 +639,11 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                 buttonStyleData: ButtonStyleData(
                                     decoration: BoxDecoration(
                                         color: AppTheme.greyColor,
-                                        borderRadius: BorderRadius.circular(
-                                            10))),
+                                        borderRadius:
+                                        BorderRadius.circular(10))),
                                 dropdownStyleData: DropdownStyleData(
-                                  maxHeight: MediaQuery
+                                  maxHeight:
+                                  MediaQuery
                                       .sizeOf(context)
                                       .height / 2,
                                   decoration: BoxDecoration(
@@ -656,9 +660,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                             }
                           },
                         ),
-                        SizedBox(
-                            height: 10.h
-                        ),
+                        SizedBox(height: 10.h),
                         Text('Visiting Frequency ',
                             style: GoogleFonts.nunitoSans(
                               textStyle: TextStyle(
@@ -672,8 +674,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                           builder: (context, state) {
                             if (state is VisitorsElementLoaded) {
                               return DropdownButton2<String>(
-                                  underline: Container(
-                                      color: Colors.transparent),
+                                  underline:
+                                  Container(color: Colors.transparent),
                                   isExpanded: true,
                                   value: visitorFrequency,
                                   hint: Text('Select Visitor Frequency',
@@ -684,8 +686,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                           fontWeight: FontWeight.normal,
                                         ),
                                       )),
-                                  items: state
-                                      .visitorsElement.first.data!
+                                  items: state.visitorsElement.first.data!
                                       .visitingFrequencies!
                                       .map((item) =>
                                       DropdownMenuItem<String>(
@@ -710,16 +711,16 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                   buttonStyleData: ButtonStyleData(
                                       decoration: BoxDecoration(
                                           color: AppTheme.greyColor,
-                                          borderRadius: BorderRadius.circular(
-                                              10))),
+                                          borderRadius:
+                                          BorderRadius.circular(10))),
                                   dropdownStyleData: DropdownStyleData(
                                       maxHeight:
                                       MediaQuery
                                           .sizeOf(context)
                                           .height / 2,
                                       decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              10))),
+                                          borderRadius:
+                                          BorderRadius.circular(10))),
                                   menuItemStyleData: const MenuItemStyleData(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 16)));
@@ -733,8 +734,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Visitor Name',
                                         style: GoogleFonts.nunitoSans(
@@ -804,11 +805,14 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                               BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
-                                          focusedErrorBorder: OutlineInputBorder(
+                                          focusedErrorBorder:
+                                          OutlineInputBorder(
                                               borderRadius:
-                                              BorderRadius.circular(15.0),
+                                              BorderRadius.circular(
+                                                  15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme.greyColor)),
+                                                  color:
+                                                  AppTheme.greyColor)),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                               BorderRadius.circular(15.0),
@@ -818,8 +822,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                               borderRadius:
                                               BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme
-                                                      .greyColor))))),
+                                                  color:
+                                                  AppTheme.greyColor))))),
                               SizedBox(height: 10.h),
                               Text('Number',
                                   style: GoogleFonts.nunitoSans(
@@ -884,8 +888,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                               borderRadius:
                                               BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme
-                                                      .greyColor))))),
+                                                  color:
+                                                  AppTheme.greyColor))))),
                               /*       Wrap(
                                     children: List.generate(
                                         usersList.length,
@@ -1092,8 +1096,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                                   _selectDate(context);
                                                 }
                                               },
-                                              child:
-                                              const Icon(Icons.calendar_month)),
+                                              child: const Icon(
+                                                  Icons.calendar_month)),
                                           filled: true,
                                           hintStyle: TextStyle(
                                               color: Colors.grey,
@@ -1105,11 +1109,14 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                               BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
-                                          focusedErrorBorder: OutlineInputBorder(
+                                          focusedErrorBorder:
+                                          OutlineInputBorder(
                                               borderRadius:
-                                              BorderRadius.circular(15.0),
+                                              BorderRadius.circular(
+                                                  15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme.greyColor)),
+                                                  color:
+                                                  AppTheme.greyColor)),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                               BorderRadius.circular(15.0),
@@ -1119,8 +1126,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                               borderRadius:
                                               BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme
-                                                      .greyColor)))))),
+                                                  color:
+                                                  AppTheme.greyColor)))))),
                           SizedBox(width: 10.w),
                           Expanded(
                               child: SizedBox(
@@ -1170,8 +1177,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                                   }
                                                 }
                                               },
-                                              child: const Icon(
-                                                  Icons.timelapse)),
+                                              child:
+                                              const Icon(Icons.timelapse)),
                                           filled: true,
                                           hintStyle: TextStyle(
                                               color: Colors.grey,
@@ -1183,11 +1190,14 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                               BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
                                                   color: AppTheme.greyColor)),
-                                          focusedErrorBorder: OutlineInputBorder(
+                                          focusedErrorBorder:
+                                          OutlineInputBorder(
                                               borderRadius:
-                                              BorderRadius.circular(15.0),
+                                              BorderRadius.circular(
+                                                  15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme.greyColor)),
+                                                  color:
+                                                  AppTheme.greyColor)),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius:
                                               BorderRadius.circular(15.0),
@@ -1197,8 +1207,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                               borderRadius:
                                               BorderRadius.circular(15.0),
                                               borderSide: BorderSide(
-                                                  color: AppTheme
-                                                      .greyColor))))))
+                                                  color:
+                                                  AppTheme.greyColor))))))
                         ]),
                         SizedBox(height: 10.h),
                         Text('Vehicle Number',
@@ -1213,10 +1223,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                 .of(context)
                                 .size
                                 .width,
-                            child:
-
-                            TextFormField(
-
+                            child: TextFormField(
                                 controller: vehicleNumber,
                                 style: GoogleFonts.nunitoSans(
                                   color: Colors.black,
@@ -1225,7 +1232,6 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                 ),
                                 keyboardType: TextInputType.text,
                                 textInputAction: TextInputAction.done,
-
                                 inputFormatters: [
                                   UpperCaseTextFormatter(),
                                   LengthLimitingTextInputFormatter(13),
@@ -1241,25 +1247,24 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                         fontWeight: FontWeight.normal),
                                     fillColor: AppTheme.greyColor,
                                     errorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            15.0),
-                                        borderSide:
-                                        BorderSide(color: AppTheme.greyColor)),
+                                        borderRadius:
+                                        BorderRadius.circular(15.0),
+                                        borderSide: BorderSide(
+                                            color: AppTheme.greyColor)),
                                     focusedErrorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            15.0),
-                                        borderSide:
-                                        BorderSide(color: AppTheme.greyColor)),
+                                        borderRadius:
+                                        BorderRadius.circular(15.0),
+                                        borderSide: BorderSide(
+                                            color: AppTheme.greyColor)),
                                     focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            15.0),
-                                        borderSide:
-                                        BorderSide(color: AppTheme.greyColor)),
+                                        borderRadius:
+                                        BorderRadius.circular(15.0),
+                                        borderSide: BorderSide(
+                                            color: AppTheme.greyColor)),
                                     enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            15.0),
-                                        borderSide:
-                                        BorderSide(
+                                        borderRadius:
+                                        BorderRadius.circular(15.0),
+                                        borderSide: BorderSide(
                                             color: AppTheme.greyColor))))),
                         SizedBox(height: 10.h),
                         Text('Purpose of visiting',
@@ -1282,15 +1287,16 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                             color: Colors.grey,
                                             fontSize: 15,
                                             fontWeight: FontWeight.normal))),
-                                items: state.visitorsElement.first.data!
-                                    .visitorReasons!
+                                items: state
+                                    .visitorsElement.first.data!.visitorReasons!
                                     .map((item) =>
                                     DropdownMenuItem<String>(
                                       value: item.reason!,
                                       child: Text(
                                         item.reason!.toString(),
                                         style: const TextStyle(
-                                            fontSize: 12, color: Colors.black),
+                                            fontSize: 12,
+                                            color: Colors.black),
                                       ),
                                     ))
                                     .toList(),
@@ -1306,10 +1312,11 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                 buttonStyleData: ButtonStyleData(
                                     decoration: BoxDecoration(
                                         color: AppTheme.greyColor,
-                                        borderRadius: BorderRadius.circular(
-                                            10))),
+                                        borderRadius:
+                                        BorderRadius.circular(10))),
                                 dropdownStyleData: DropdownStyleData(
-                                  maxHeight: MediaQuery
+                                  maxHeight:
+                                  MediaQuery
                                       .sizeOf(context)
                                       .height / 2,
                                   decoration: BoxDecoration(
@@ -1326,9 +1333,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                             }
                           },
                         ),
-                        SizedBox(
-                            height: 10.h
-                        ),
+                        SizedBox(height: 10.h),
                         Text('Valid Till',
                             style: GoogleFonts.nunitoSans(
                                 textStyle: TextStyle(
@@ -1344,8 +1349,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                         color: Colors.transparent),
                                     isExpanded: true,
                                     value: validTill,
-                                    items: state
-                                        .visitorsElement.first.data!
+                                    items: state.visitorsElement.first.data!
                                         .visitorValidity!
                                         .map((item) =>
                                         DropdownMenuItem<String>(
@@ -1375,10 +1379,11 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                         decoration: BoxDecoration(
                                             color: AppTheme.greyColor,
                                             // Background color for the button
-                                            borderRadius: BorderRadius.circular(
-                                                10))),
+                                            borderRadius:
+                                            BorderRadius.circular(10))),
                                     dropdownStyleData: DropdownStyleData(
-                                        maxHeight: MediaQuery
+                                        maxHeight:
+                                        MediaQuery
                                             .sizeOf(context)
                                             .height / 2,
                                         decoration: BoxDecoration(
@@ -1413,20 +1418,17 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                                   });
                             },
                             onRemove: (index) {
-                              setState(() =>
-                                  croppedImagesList!.removeAt(index));
+                              setState(
+                                      () => croppedImagesList!.removeAt(index));
                             },
                             croppedImagesList: croppedImagesList),
                         SizedBox(height: 30.h),
-
                       ],
                     ),
                   ),
                 ),
               ),
             ),
-
-
             customBtn(
               onTap: () {
                 if (widget.isTypeResidence) {
@@ -1451,8 +1453,8 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                     snackBar(context, 'Kindly select visitors frequency',
                         Icons.done, AppTheme.redColor);
                   } else if (validTill == null) {
-                    snackBar(context, 'Kindly select valid time',
-                        Icons.done, AppTheme.redColor);
+                    snackBar(context, 'Kindly select valid time', Icons.done,
+                        AppTheme.redColor);
                   } else if (croppedImagesList!.isEmpty) {
                     snackBar(context, 'Kindly upload visitors picture',
                         Icons.done, AppTheme.redColor);
@@ -1472,8 +1474,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                         noOFVisitors: visitorsCount.text.toString(),
                         date: date!.text.toString(),
                         vehicleNumber: vehicleNumber!.text.toString(),
-                        purposeOfVisit:
-                        visitorsDescription!.toString(),
+                        purposeOfVisit: visitorsDescription!.toString(),
                         validTill: validTill.toString(),
                         time: time!.text.toString(),
                         files: documentFiles,

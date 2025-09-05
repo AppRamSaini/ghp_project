@@ -178,11 +178,45 @@ class MyBillsPageState extends State<MyBillsPage> {
                             ? Padding(
                                 padding: const EdgeInsets.only(
                                     bottom: 10, left: 15, right: 10),
-                                child: SizedBox(
-                                    height: 30,
-                                    width: MediaQuery.sizeOf(context).width,
-                                    child: marqueeText(
-                                        "👍Thanks for being a wonderful resident!")))
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                        height: 30,
+                                        width:
+                                            MediaQuery.sizeOf(context).width *
+                                                0.55,
+                                        child: marqueeText(
+                                            "👍Thanks for being a wonderful resident!")),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    BillDetailScreen(
+                                                        billId: bill.id
+                                                            .toString())));
+                                      },
+                                      child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 5),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              color: Colors.green
+                                                  .withOpacity(0.3)),
+                                          child: Text('View Details',
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontWeight:
+                                                      FontWeight.w600))),
+                                    ),
+                                  ],
+                                ),
+                              )
                             : Container(
                                 margin: EdgeInsets.only(
                                     bottom: 10, left: 10, right: 10),
@@ -212,13 +246,6 @@ class MyBillsPageState extends State<MyBillsPage> {
                                                     BillDetailScreen(
                                                         billId: bill.id
                                                             .toString())));
-                                        // await LocalStorage.localStorage
-                                        //     .setString(
-                                        //         'bill_id', bill.id.toString());
-                                        // payBillFun(
-                                        //     double.parse(
-                                        //         bill.amount.toString()),
-                                        //     context);
                                       },
                                       child: Container(
                                           padding: const EdgeInsets.symmetric(
