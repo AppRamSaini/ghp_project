@@ -176,11 +176,11 @@ class _VisitorsIncomingRequestPageState
                   snackBar(context, "Request time out!", Icons.done,
                       AppTheme.guestColor);
                   _safePop();
+                  _stopAlerts();
                 }
               }
             },
           ),
-
           BlocListener<AcceptRequestCubit, AcceptRequestState>(
             listener: (context, state) {
               if (!mounted) return;
@@ -397,13 +397,11 @@ class _VisitorsIncomingRequestPageState
             ripplesCount: 10,
             duration: const Duration(milliseconds: 1800),
             child: CircleAvatar(
-              backgroundColor: color,
-              radius: 30,
-              child: IconButton(
-                onPressed: onPressed,
-                icon: Icon(icon, size: 30, color: Colors.white),
-              ),
-            )),
+                backgroundColor: color,
+                radius: 30,
+                child: IconButton(
+                    onPressed: onPressed,
+                    icon: Icon(icon, size: 30, color: Colors.white)))),
         Text(label, style: const TextStyle(color: Colors.white, fontSize: 16)),
       ],
     );
