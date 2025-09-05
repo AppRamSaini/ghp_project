@@ -59,11 +59,11 @@ void sosTimerCountdownDialog(
                           onChange: onChange)),
                   const Text("SOS Alert Request Sending...",
                       style: TextStyle(color: Colors.black, fontSize: 20)),
-                  const SizedBox(height: 20),
-                  TextButton(
-                      onPressed: onTap,
-                      child: const Text("CANCEL",
-                          style: TextStyle(color: Colors.red, fontSize: 16))),
+                  // const SizedBox(height: 20),
+                  // TextButton(
+                  //     onPressed: onTap,
+                  //     child: const Text("CANCEL",
+                  //         style: TextStyle(color: Colors.red, fontSize: 16))),
                   const SizedBox(height: 60)
                 ],
               ),

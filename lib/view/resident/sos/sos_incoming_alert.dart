@@ -1,24 +1,21 @@
 import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_acknowledge/sos_acknowledged_cubit.dart';
+import 'package:ghp_society_management/firebase_services.dart';
+import 'package:ghp_society_management/view/security_staff/dashboard/bottom_navigation.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
-import 'package:vibration/vibration.dart';
 
 class SosIncomingAlert extends StatefulWidget {
   final RemoteMessage? message;
-  bool fromForegroundMsg;
   final Function(bool values) setPageValue;
-  SosIncomingAlert(
-      {super.key,
-      this.message,
-      required this.setPageValue,
-      this.fromForegroundMsg = false});
+
+  const SosIncomingAlert({super.key, this.message, required this.setPageValue});
 
   @override
   State<SosIncomingAlert> createState() => SosIncomingAlertState();
@@ -26,92 +23,97 @@ class SosIncomingAlert extends StatefulWidget {
 
 class SosIncomingAlertState extends State<SosIncomingAlert> {
   bool isActioned = false;
-  Timer? vibrationTimer;
   Timer? actionTimeoutTimer;
-
   String? name;
   String? mobile;
   String? sosId;
   String? type;
   String? description;
 
-  static const int timeoutDurationSeconds = 50;
+  static const int timeoutDurationSeconds = 30;
 
   @override
   void initState() {
     super.initState();
     widget.setPageValue(true);
     setData();
-    _startAlerts();
-    _setupTimeouts();
+    Future.delayed(Duration(milliseconds: 300), _startAlerts);
   }
 
+  /// Start ringtone + vibration
   void _startAlerts() {
     try {
-      Vibration.vibrate(pattern: [500, 1000, 500, 1000]);
-      FlutterRingtonePlayer().playRingtone();
-      vibrationTimer =
+      FirebaseNotificationService.startVibrationAndRingtone();
+      actionTimeoutTimer =
           Timer(const Duration(seconds: timeoutDurationSeconds), _stopAlerts);
     } catch (e) {
-      print("Error starting alerts: $e");
+      print("❌ Error starting alerts: $e");
     }
   }
 
-  void _setupTimeouts() {
-    actionTimeoutTimer = Timer(Duration(seconds: timeoutDurationSeconds), () {
-      print('✅ Timer completed, executing _stopAlerts()');
-      _stopAlerts();
-    });
-  }
+  /// Stop ringtone + vibration globally
+  void _stopAlerts({bool navigate = true}) {
+    if (!mounted) return;
 
-  void _stopAlerts() {
     try {
-      vibrationTimer?.cancel();
+      FirebaseNotificationService.stopVibrationAndRingtone();
       actionTimeoutTimer?.cancel();
-      FlutterRingtonePlayer().stop();
-      if (mounted) {
-        Future.delayed(const Duration(milliseconds: 200), () {
-          try {
-            Navigator.pop(context);
-          } catch (e) {}
+      actionTimeoutTimer = null;
+      if (navigate && mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => SecurityGuardDashboard()),
+            );
+          }
         });
-      } else {}
-    } catch (e) {}
+      }
+      print("✅ Alerts stopped (ringtone + vibration)");
+    } catch (e) {
+      print("❌ Error stopping alerts: $e");
+    }
   }
 
+  /// Handle user action
   void _handleAction(String id) {
     if (!isActioned) {
       setState(() => isActioned = true);
-      actionTimeoutTimer?.cancel();
+      _stopAlerts();
       context
           .read<AcknowledgedCubit>()
-          .acknowledgedAPI(statusBody: {"sos_id": id}).then((_) {
-        _stopAlerts();
-      }).catchError((error) {
-        print("Accept Request API Call Error: $error");
+          .acknowledgedAPI(statusBody: {"sos_id": id}).catchError((error) {
+        print("❌ Acknowledged API error: $error");
       });
     }
   }
 
+  /// Extract data from notification
   void setData() {
     try {
       if (widget.message != null) {
         var data = widget.message!.data;
-
         setState(() {
           name = data['name']?.toString();
           sosId = data['sos_id']?.toString();
           mobile = data['mob']?.toString();
-          type = widget.message!.notification!.title.toString();
-          description = widget.message!.notification!.body.toString();
+          type = widget.message!.notification?.title ?? "SOS Request";
+          description = widget.message!.notification?.body ?? "";
         });
       }
     } catch (e) {
-      print("${DateTime.now()} - Error setting data: $e");
+      print("${DateTime.now()} - ❌ Error setting data: $e");
     }
   }
 
   late BuildContext dialogueContext;
+
+  @override
+  void dispose() {
+    _stopAlerts(); // ✅ Dispose पर भी ringtone stop
+    widget.setPageValue(false);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,10 +129,9 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
               } else if (state is AcknowledgedSuccessfully) {
                 snackBar(context, state.successMsg.toString(), Icons.done,
                     AppTheme.guestColor);
-                Future.delayed(const Duration(milliseconds: 10), () {
-                  Navigator.of(dialogueContext).pop();
-                  Navigator.pop(context);
-                });
+
+                Navigator.of(dialogueContext).pop();
+                _stopAlerts();
               } else if (state is AcknowledgedFailed) {
                 snackBar(context, state.errorMsg.toString(), Icons.warning,
                     AppTheme.redColor);
@@ -171,32 +172,35 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
     return Column(
       children: [
         RippleAnimation(
-            color: Colors.deepOrange,
-            delay: const Duration(milliseconds: 300),
-            repeat: true,
-            minRadius: 75,
-            maxRadius: 140,
-            ripplesCount: 6,
-            duration: const Duration(milliseconds: 1800),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(200),
-              child: FadeInImage(
-                  height: 150,
-                  width: 150,
-                  fit: BoxFit.cover,
-                  placeholder: const AssetImage('assets/images/sosi.png'),
-                  image: const NetworkImage(''),
-                  imageErrorBuilder: (_, child, stackTrack) => Image.asset(
-                      'assets/images/sosi.png',
-                      height: 150,
-                      width: 150,
-                      fit: BoxFit.cover)),
-            )),
+          color: Colors.deepOrange,
+          delay: const Duration(milliseconds: 300),
+          repeat: true,
+          minRadius: 100,
+          maxRadius: 140,
+          ripplesCount: 6,
+          duration: const Duration(milliseconds: 1800),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(200),
+            child: FadeInImage(
+              height: 180,
+              width: 180,
+              fit: BoxFit.cover,
+              placeholder: const AssetImage('assets/images/sosi.png'),
+              image: const NetworkImage(''),
+              imageErrorBuilder: (_, child, stackTrack) => Image.asset(
+                'assets/images/sosi.png',
+                height: 180,
+                width: 180,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
-        Text(name??'',
+        Text(name ?? '',
             style: const TextStyle(color: Colors.white, fontSize: 16)),
         Text(
-          mobile??'',
+          mobile ?? '',
           style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
       ],
@@ -208,12 +212,14 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          Text(type??'Sos Request',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 16)),
+          Text(
+            type ?? 'SOS Request',
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+          ),
           const SizedBox(height: 5),
           Text(
-            description??'SOS Emergency Request',
+            description ?? 'SOS Emergency Request',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white.withOpacity(0.8),
@@ -231,7 +237,7 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         _buildActionButton(
-          label: "Acknowledged ",
+          label: "Acknowledged",
           color: Colors.green,
           icon: Icons.check,
           onPressed: () => _handleAction(visitorsID),
@@ -240,11 +246,12 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
     );
   }
 
-  Widget _buildActionButton(
-      {required String label,
-      required Color color,
-      required IconData icon,
-      required VoidCallback onPressed}) {
+  Widget _buildActionButton({
+    required String label,
+    required Color color,
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
     return Column(
       children: [
         CircleAvatar(

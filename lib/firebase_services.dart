@@ -14,8 +14,6 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class FirebaseNotificationService {
-  static bool _isRingtonePlaying = false;
-  static bool _isOnIncomingPage = false;
   static Timer? _ringtoneTimer;
 
   /// Initialize Notification Handling
@@ -34,20 +32,22 @@ class FirebaseNotificationService {
 
   /// Handle message safely
   static void handleMessage(RemoteMessage? message,
-      {bool fromTerminated = false}) {
+      {bool fromTerminated = false}) async {
     if (message == null || message.data.isEmpty) return;
 
     final data = message.data;
     final type = data['type']?.toString() ?? '';
     final visitorId = data['visitor_id']?.toString() ?? '';
 
-    // visitorId save
+    // Save visitorId
     if (type == 'incoming_request' && visitorId.isNotEmpty) {
       LocalStorage.localStorage.setString("visitor_id", visitorId);
     }
 
-    // ringtone + vibration शुरू करो
-    startVibrationAndRingtone();
+    // // 🔔 Play alerts
+    // if (type == 'incoming_request' || type == 'sos_alert') {
+    //   startVibrationAndRingtone();
+    // }
 
     // Page navigation
     if (type == 'incoming_request') {
@@ -58,86 +58,56 @@ class FirebaseNotificationService {
   }
 
   /// Vibrate & ringtone
-
-  /// Vibrate & ringtone
   static Future<void> startVibrationAndRingtone() async {
-    stopVibrationAndRingtone();
-    if (_isRingtonePlaying) return; // already playing
-    _isRingtonePlaying = true;
-
     if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(pattern: [500, 1000, 500, 1000], repeat: -1);
     }
-
     FlutterRingtonePlayer().play(
-      ios: IosSounds.glass,
-      fromAsset: "assets/sounds/ringtone.mp3",
+      android: AndroidSounds.ringtone,
+      ios: IosSounds.alarm,
       looping: true,
-      asAlarm: false,
+      volume: 1.0,
+      asAlarm: true, // required for iOS
     );
-    //
-    // Auto stop after 59s
-    _ringtoneTimer = Timer(const Duration(seconds: 20), () {
+    print("▶️ Ringtone & vibration started");
+    _ringtoneTimer = Timer(const Duration(seconds: 15), () {
       stopVibrationAndRingtone();
     });
   }
 
   /// 🔴 Global Stop Function
   static void stopVibrationAndRingtone() {
-    if (!_isRingtonePlaying) return;
-
     FlutterRingtonePlayer().stop();
     Vibration.cancel();
     _ringtoneTimer?.cancel();
     _ringtoneTimer = null;
-    _isRingtonePlaying = false;
-
-    print("🔕 Global ringtone stopped everywhere!");
-  }
-
-  /// Reset flags when page closed
-  static void resetFlags() {
-    _isRingtonePlaying = false;
-    _isOnIncomingPage = false;
+    print("⏹️ Global ringtone & vibration stopped!");
   }
 
   /// Visitors Page
   static void navigateToVisitorsPage(RemoteMessage message) {
-    if (_isOnIncomingPage) return;
-    _isOnIncomingPage = true;
-
     navigatorKey.currentState?.push(MaterialPageRoute(
       builder: (_) => VisitorsIncomingRequestPage(
         message: message,
         setPageValue: (val) {
-          _isOnIncomingPage = val;
-          if (!val) resetFlags();
+          if (val) stopVibrationAndRingtone();
         },
       ),
     ));
-
-    // Page open होने के बाद ringtone stop कर दो
-    Future.delayed(const Duration(seconds: 20), () {
-      stopVibrationAndRingtone();
-    });
+    // _ringtoneTimer = Timer(const Duration(seconds: 10), () {
+    //   stopVibrationAndRingtone();
+    // });
   }
 
   /// SOS Page
   static void _navigateToSosPage(RemoteMessage message) {
-    if (_isOnIncomingPage) return;
-    _isOnIncomingPage = true;
-
     navigatorKey.currentState?.push(MaterialPageRoute(
-      builder: (_) => SosIncomingAlert(
-        message: message,
-        setPageValue: (val) {
-          _isOnIncomingPage = val;
-          if (!val) resetFlags();
-        },
-      ),
-    ));
-
-    Future.delayed(const Duration(seconds: 50), () {
+        builder: (_) => SosIncomingAlert(
+            message: message,
+            setPageValue: (val) {
+              if (val) stopVibrationAndRingtone();
+            })));
+    _ringtoneTimer = Timer(const Duration(seconds: 15), () {
       stopVibrationAndRingtone();
     });
   }

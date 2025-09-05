@@ -13,17 +13,17 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   print("📩 Background message: ${message.data}");
   FirebaseNotificationService.handleMessage(message);
+  if (message.data['type'] == 'incoming_request' ||
+      message.data['type'] == 'sos_alert') {
+    FirebaseNotificationService.startVibrationAndRingtone();
+  }
 }
 
 /// Ask for Notification Permission
 Future<void> requestNotificationPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-    criticalAlert: true,
-  );
+      alert: true, badge: true, sound: true, criticalAlert: true);
 
   print("🔔 Permission: ${settings.authorizationStatus}");
 }
@@ -69,12 +69,20 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.onMessage.listen((message) {
       print("📨 Foreground: ${message.data}");
       FirebaseNotificationService.handleMessage(message);
+      if (message.data['type'] == 'incoming_request' ||
+          message.data['type'] == 'sos_alert') {
+        FirebaseNotificationService.startVibrationAndRingtone();
+      }
     });
 
     // Background → Foreground (tap on notification)
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print("📨 Notification tapped (background): ${message.data}");
       FirebaseNotificationService.handleMessage(message);
+      if (message.data['type'] == 'incoming_request' ||
+          message.data['type'] == 'sos_alert') {
+        FirebaseNotificationService.startVibrationAndRingtone();
+      }
     });
   }
 
@@ -113,19 +121,24 @@ class _MyAppState extends State<MyApp> {
   Widget _getStartPage(RemoteMessage? message) {
     if (message != null && message.data.isNotEmpty) {
       final type = message.data['type'] ?? '';
+
       if (type == 'incoming_request') {
         return VisitorsIncomingRequestPage(
           message: message,
           fromPage: "terminate",
-          setPageValue: (val) {},
+          setPageValue: (val) {
+            if (val) FirebaseNotificationService.stopVibrationAndRingtone();
+          },
         );
       } else if (type == 'sos_alert') {
         return SosIncomingAlert(
           message: message,
-          setPageValue: (_) {},
+          setPageValue: (val) {
+            if (val) FirebaseNotificationService.stopVibrationAndRingtone();
+          },
         );
       }
     }
-    return SplashScreen(); // default page if no notification
+    return SplashScreen(); // default page
   }
 }

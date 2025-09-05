@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
+import 'package:ghp_society_management/controller/visitors/incoming_request/incoming_request_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/visitor_request/accept_request/accept_request_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/visitor_request/not_responding/not_responde_cubit.dart';
 import 'package:ghp_society_management/firebase_services.dart';
@@ -56,7 +57,8 @@ class _VisitorsIncomingRequestPageState
     super.initState();
     widget.setPageValue(true);
     _setVisitorData();
-    _setupTimers();
+    context.read<IncomingRequestCubit>().fetchIncomingRequest();
+    Future.delayed(Duration(milliseconds: 300), _setupTimers);
   }
 
   void _setVisitorData() {
@@ -82,11 +84,12 @@ class _VisitorsIncomingRequestPageState
             widget.incomingVisitorsRequest!.vehicleNumber.toString();
       }
     } catch (e) {
-      print(" Error setting visitor data: $e");
+      print("Error setting visitor data: $e");
     }
   }
 
   void _setupTimers() {
+    FirebaseNotificationService.startVibrationAndRingtone();
     actionTimeoutTimer =
         Timer(const Duration(seconds: timeoutDurationSeconds), _onTimeout);
     notRespondingTimer = Timer(
@@ -109,6 +112,7 @@ class _VisitorsIncomingRequestPageState
   ///  Central place to stop ringtone + vibration globally
   void _stopAlerts() {
     try {
+      widget.setPageValue(true);
       FirebaseNotificationService.stopVibrationAndRingtone();
       actionTimeoutTimer?.cancel();
       notRespondingTimer?.cancel();
@@ -117,7 +121,6 @@ class _VisitorsIncomingRequestPageState
 
   void _safePop() {
     if (!mounted) return;
-    _stopAlerts();
     if (widget.fromPage == 'terminate') {
       navigatorKey.currentState
           ?.push(MaterialPageRoute(builder: (_) => Dashboard()));
@@ -135,8 +138,8 @@ class _VisitorsIncomingRequestPageState
           .read<AcceptRequestCubit>()
           .acceptRequestAPI(statusBody: requestBody)
           .then((_) {
-        print("✅ Accept/Decline API done");
-      }).catchError((e) => print("❌ Accept API error: $e"));
+        print("Accept/Decline API done");
+      }).catchError((e) => print("Accept API error: $e"));
     }
   }
 
@@ -148,7 +151,7 @@ class _VisitorsIncomingRequestPageState
         .read<NotRespondingCubit>()
         .notRespondingAPI(statusBody: requestBody)
         .then((_) => _safePop())
-        .catchError((e) => print("❌ Not Responding API error: $e"));
+        .catchError((e) => print(" Not Responding API error: $e"));
   }
 
   @override
@@ -163,6 +166,21 @@ class _VisitorsIncomingRequestPageState
       backgroundColor: AppTheme.resolvedButtonColor,
       body: MultiBlocListener(
         listeners: [
+          BlocListener<IncomingRequestCubit, IncomingRequestState>(
+            listener: (context, state) {
+              if (state is IncomingRequestLoaded) {
+                IncomingVisitorsModel incomingVisitorsRequest =
+                    state.incomingVisitorsRequest;
+                if (incomingVisitorsRequest.lastCheckinDetail?.status ==
+                    'not_responded') {
+                  snackBar(context, "Request time out!", Icons.done,
+                      AppTheme.guestColor);
+                  _safePop();
+                }
+              }
+            },
+          ),
+
           BlocListener<AcceptRequestCubit, AcceptRequestState>(
             listener: (context, state) {
               if (!mounted) return;
@@ -189,7 +207,7 @@ class _VisitorsIncomingRequestPageState
             },
           ),
 
-          /// ✅ Not Responding Listener
+          ///  Not Responding Listener
           BlocListener<NotRespondingCubit, NotRespondingState>(
             listener: (context, state) {
               if (!mounted) return;
@@ -348,11 +366,10 @@ class _VisitorsIncomingRequestPageState
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildActionButton(
-            label: "Decline",
-            color: Colors.red,
-            icon: Icons.clear,
-            onPressed: () => _handleAction(visitorId, "not_allowed"),
-          ),
+              label: "Decline",
+              color: Colors.red,
+              icon: Icons.clear,
+              onPressed: () => _handleAction(visitorId, "not_allowed")),
           _buildActionButton(
             label: "Accept",
             color: Colors.green,
@@ -364,22 +381,29 @@ class _VisitorsIncomingRequestPageState
     );
   }
 
-  Widget _buildActionButton({
-    required String label,
-    required Color color,
-    required IconData icon,
-    required VoidCallback onPressed,
-  }) {
+  Widget _buildActionButton(
+      {required String label,
+      required Color color,
+      required IconData icon,
+      required VoidCallback onPressed}) {
     return Column(
       children: [
-        CircleAvatar(
-          backgroundColor: color,
-          radius: 30,
-          child: IconButton(
-            onPressed: onPressed,
-            icon: Icon(icon, size: 30, color: Colors.white),
-          ),
-        ),
+        RippleAnimation(
+            color: color,
+            delay: const Duration(milliseconds: 300),
+            repeat: true,
+            minRadius: 30,
+            maxRadius: 30,
+            ripplesCount: 10,
+            duration: const Duration(milliseconds: 1800),
+            child: CircleAvatar(
+              backgroundColor: color,
+              radius: 30,
+              child: IconButton(
+                onPressed: onPressed,
+                icon: Icon(icon, size: 30, color: Colors.white),
+              ),
+            )),
         Text(label, style: const TextStyle(color: Colors.white, fontSize: 16)),
       ],
     );
