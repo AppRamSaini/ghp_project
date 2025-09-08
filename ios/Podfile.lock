@@ -1335,8 +1335,6 @@ PODS:
     - Flutter
     - flutter_sound_core (= 9.28.0)
   - flutter_sound_core (9.28.0)
-  - fluttertoast (0.0.2):
-    - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
     - FlutterMacOS
@@ -1509,10 +1507,6 @@ PODS:
   - printing (1.0.0):
     - Flutter
   - PromisesObjC (2.4.0)
-  - razorpay-pod (1.4.3)
-  - razorpay_flutter (1.1.10):
-    - Flutter
-    - razorpay-pod
   - RecaptchaInterop (101.0.0)
   - SDWebImage (5.21.1):
     - SDWebImage/Core (= 5.21.1)
@@ -1554,7 +1548,6 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_ringtone_player (from `.symlinks/plugins/flutter_ringtone_player/ios`)
   - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
-  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/darwin`)
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -1562,7 +1555,6 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - printing (from `.symlinks/plugins/printing/ios`)
-  - razorpay_flutter (from `.symlinks/plugins/razorpay_flutter/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sms_autofill (from `.symlinks/plugins/sms_autofill/ios`)
@@ -1607,7 +1599,6 @@ SPEC REPOS:
     - MLKitVision
     - nanopb
     - PromisesObjC
-    - razorpay-pod
     - RecaptchaInterop
     - SDWebImage
     - SwiftyGif
@@ -1638,8 +1629,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_ringtone_player/ios"
   flutter_sound:
     :path: ".symlinks/plugins/flutter_sound/ios"
-  fluttertoast:
-    :path: ".symlinks/plugins/fluttertoast/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/darwin"
   image_cropper:
@@ -1654,8 +1643,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   printing:
     :path: ".symlinks/plugins/printing/ios"
-  razorpay_flutter:
-    :path: ".symlinks/plugins/razorpay_flutter/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
@@ -1706,7 +1693,6 @@ SPEC CHECKSUMS:
   flutter_ringtone_player: a77c42464250845611eaa44c27e8714acc800138
   flutter_sound: b9236a5875299aaa4cef1690afd2f01d52a3f890
   flutter_sound_core: 427465f72d07ab8c3edbe8ffdde709ddacd3763c
-  fluttertoast: 2c67e14dce98bbdb200df9e1acf610d7a6264ea1
   geolocator_apple: ab36aa0e8b7d7a2d7639b3b4e48308394e8cef5e
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleMLKit: eff9e23ec1d90ea4157a1ee2e32a4f610c5b3318
@@ -1728,8 +1714,6 @@ SPEC CHECKSUMS:
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
   printing: 54ff03f28fe9ba3aa93358afb80a8595a071dd07
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  razorpay-pod: af9d52abe715ed5cc3eed9fdf6fd74340443d0b9
-  razorpay_flutter: 0e98e4fcaae27ad50e011d85f66d85e0a008754a
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
   SDWebImage: f29024626962457f3470184232766516dee8dfea
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a

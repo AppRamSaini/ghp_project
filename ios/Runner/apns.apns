@@ -1,0 +1,30 @@
+
+
+{
+    "Simulator Target Bundle": "com.fp.ghpsocietyapp",
+    "aps" : {
+        "alert" : {
+            "title": "zheyg",
+            "type": "incoming_request",
+            "body" : "vjhfv",
+        },
+        "payload": {
+            "type": "incoming_request",
+
+                    "aps": {
+                        "content-available": 1,
+                        "category": "NEW_MESSAGE_CATEGORY",
+                        "sound": "announcement_sound.caf",
+                        "priority": 5
+                    }
+                },
+        "content-available": 1,
+        "type": "incoming_request",
+        "badge" : 9,
+        "sound" : "ringtone.caf"
+    },
+    "acme1" : "bar",
+    "acme2" : 42,
+    "type": "incoming_request",
+
+}
