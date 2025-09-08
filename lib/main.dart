@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/view/resident/sos/sos_incoming_alert.dart';
 import 'package:ghp_society_management/view/resident/visitors/incomming_request.dart';
+import 'package:vibration/vibration.dart';
 
 /// Background Notification Handler
 @pragma('vm:entry-point')
@@ -12,11 +14,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await LocalStorage.init();
 
   print("📩 Background message: ${message.data}");
-  FirebaseNotificationService.handleMessage(message);
-  if (message.data['type'] == 'incoming_request' ||
-      message.data['type'] == 'sos_alert') {
-    FirebaseNotificationService.startVibrationAndRingtone();
-  }
+  //FirebaseNotificationService.showCustomNotification(message: message, customSound: "ringtone.caf");
 }
 
 /// Ask for Notification Permission
