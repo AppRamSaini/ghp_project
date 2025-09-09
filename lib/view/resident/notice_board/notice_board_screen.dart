@@ -40,207 +40,186 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<IncomingRequestCubit, IncomingRequestState>(
+    return BlocListener<NoticeModelCubit, NoticeModelState>(
       listener: (context, state) {
-        if (state is IncomingRequestLoaded) {
-          print("IncomingRequestLoaded state triggered");
-          IncomingVisitorsModel incomingVisitorsRequest =
-              state.incomingVisitorsRequest;
-          if (incomingVisitorsRequest.lastCheckinDetail!.status ==
-              'requested') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => VisitorsIncomingRequestPage(
-                  incomingVisitorsRequest: incomingVisitorsRequest,
-                  setPageValue: (value) {},
-                ),
-              ),
-            );
-          }
+        if (state is NoticeModelLogout) {
+          sessionExpiredDialog(context);
         }
       },
-      child: BlocListener<NoticeModelCubit, NoticeModelState>(
-        listener: (context, state) {
-          if (state is NoticeModelLogout) {
-            sessionExpiredDialog(context);
-          }
-        },
-        child: Scaffold(
-          appBar: customAppbar(
-              context: context,
-              title: 'Notice Board',
-              textController: textController,
-              searchBarOpen: searchBarOpen,
-              onExpansionComplete: () {
-                setState(() {
-                  searchBarOpen = true;
-                });
-              },
-              onCollapseComplete: () {
-                setState(() {
-                  searchBarOpen = false;
-                  textController.clear();
-                  _noticeModelCubit.searchNotice('');
-                });
-              },
-              onPressButton: (isSearchBarOpens) {
-                setState(() {
-                  searchBarOpen = true;
-                });
-              },
-              onChanged: (value) {
-                _noticeModelCubit.searchNotice(value);
-              }),
-          body: RefreshIndicator(
-            onRefresh: onRefresh,
-            child: BlocBuilder<NoticeModelCubit, NoticeModelState>(
-              bloc: _noticeModelCubit,
-              builder: (context, state) {
-                if (state is NoticeModelLoading &&
-                    _noticeModelCubit.noticeList.isEmpty) {
-                  return notificationShimmerLoading();
-                }
+      child: Scaffold(
+        appBar: customAppbar(
+            context: context,
+            title: 'Notice Board',
+            textController: textController,
+            searchBarOpen: searchBarOpen,
+            onExpansionComplete: () {
+              setState(() {
+                searchBarOpen = true;
+              });
+            },
+            onCollapseComplete: () {
+              setState(() {
+                searchBarOpen = false;
+                textController.clear();
+                _noticeModelCubit.searchNotice('');
+              });
+            },
+            onPressButton: (isSearchBarOpens) {
+              setState(() {
+                searchBarOpen = true;
+              });
+            },
+            onChanged: (value) {
+              _noticeModelCubit.searchNotice(value);
+            }),
+        body: RefreshIndicator(
+          onRefresh: onRefresh,
+          child: BlocBuilder<NoticeModelCubit, NoticeModelState>(
+            bloc: _noticeModelCubit,
+            builder: (context, state) {
+              if (state is NoticeModelLoading &&
+                  _noticeModelCubit.noticeList.isEmpty) {
+                return notificationShimmerLoading();
+              }
 
-                if (state is NoticeModelFailed) {
-                  return Center(
-                      child: Text(state.errorMsg,
-                          style:
-                              const TextStyle(color: Colors.deepPurpleAccent)));
-                }
-                if (state is NoticeModelInternetError) {
-                  return Center(
-                      child: Text(state.errorMsg.toString(),
-                          style: const TextStyle(color: Colors.red)));
-                }
+              if (state is NoticeModelFailed) {
+                return Center(
+                    child: Text(state.errorMsg,
+                        style:
+                            const TextStyle(color: Colors.deepPurpleAccent)));
+              }
+              if (state is NoticeModelInternetError) {
+                return Center(
+                    child: Text(state.errorMsg.toString(),
+                        style: const TextStyle(color: Colors.red)));
+              }
 
-                var noticeList = _noticeModelCubit.noticeList;
+              var noticeList = _noticeModelCubit.noticeList;
 
-                if (state is NoticeModelSearchedLoaded) {
-                  noticeList = state.noticeModel;
-                }
+              if (state is NoticeModelSearchedLoaded) {
+                noticeList = state.noticeModel;
+              }
 
-                if (noticeList.isEmpty) {
-                  return emptyDataWidget('Notice Not Found!');
-                }
+              if (noticeList.isEmpty) {
+                return emptyDataWidget('Notice Not Found!');
+              }
 
-                return ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: noticeList.length + 1,
-                  shrinkWrap: true,
-                  itemBuilder: ((context, index) {
-                    if (index == noticeList.length) {
-                      return _noticeModelCubit.state is NoticeModelLoadMore
-                          ? const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Center(
-                                  child: CircularProgressIndicator.adaptive()))
-                          : const SizedBox.shrink();
-                    }
+              return ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: noticeList.length + 1,
+                shrinkWrap: true,
+                itemBuilder: ((context, index) {
+                  if (index == noticeList.length) {
+                    return _noticeModelCubit.state is NoticeModelLoadMore
+                        ? const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(
+                                child: CircularProgressIndicator.adaptive()))
+                        : const SizedBox.shrink();
+                  }
 
-                    String formattedDate = DateFormat('dd MMM yyyy')
-                        .format(noticeList[index].date);
-                    String timeString = noticeList[index].time;
-                    DateTime parsedTime =
-                        DateFormat("HH:mm:ss").parse(timeString);
-                    String formattedTime = DateFormat.jm().format(parsedTime);
+                  String formattedDate = DateFormat('dd MMM yyyy')
+                      .format(noticeList[index].date);
+                  String timeString = noticeList[index].time;
+                  DateTime parsedTime =
+                      DateFormat("HH:mm:ss").parse(timeString);
+                  String formattedTime = DateFormat.jm().format(parsedTime);
 
-                    Widget layoutChild() => Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: Colors.grey[300]!)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Image.asset(ImageAssets.noticeBoardImage,
-                                        height: 40.h),
-                                    SizedBox(width: 10.w),
-                                    Expanded(
-                                        child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                          Text(noticeList[index].title,
-                                              style: GoogleFonts.ptSans(
-                                                  textStyle: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500))),
-                                          Text("$formattedDate $formattedTime",
-                                              style: GoogleFonts.ptSans(
-                                                  textStyle: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w400)))
-                                        ])),
-                                    SizedBox(width: 10.w),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: AppTheme.greyColor),
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Icon(
-                                          Icons.navigate_next,
-                                          color: Colors.grey,
-                                        ),
+                  Widget layoutChild() => Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: Colors.grey[300]!)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Image.asset(ImageAssets.noticeBoardImage,
+                                      height: 40.h),
+                                  SizedBox(width: 10.w),
+                                  Expanded(
+                                      child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                        Text(noticeList[index].title,
+                                            style: GoogleFonts.ptSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500))),
+                                        Text("$formattedDate $formattedTime",
+                                            style: GoogleFonts.ptSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w400)))
+                                      ])),
+                                  SizedBox(width: 10.w),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: AppTheme.greyColor),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Icon(
+                                        Icons.navigate_next,
+                                        color: Colors.grey,
                                       ),
                                     ),
-                                  ],
-                                ),
-                                const Divider(thickness: 0.3),
-                                Text(
-                                  noticeList[index].description,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Divider(thickness: 0.3),
+                              Text(
+                                noticeList[index].description,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: GoogleFonts.nunitoSans(
+                                  textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        );
+                        ),
+                      );
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 3),
-                      child: GestureDetector(
-                        onTap: () {
-                          showAlertDialog(
-                            context,
-                            noticeList[index].title,
-                            "$formattedDate $formattedTime",
-                            noticeList[index].description,
-                          );
-                        },
-                        child: getStatus(noticeList[index].createdAt) ==
-                                'newNoticed'
-                            ? Banner(
-                                message:
-                                    getStatus(noticeList[index].createdAt) ==
-                                            'newNoticed'
-                                        ? "New Notice"
-                                        : '',
-                                location: BannerLocation.topStart,
-                                child: layoutChild())
-                            : layoutChild(),
-                      ),
-                    );
-                  }),
-                );
-              },
-            ),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 3),
+                    child: GestureDetector(
+                      onTap: () {
+                        showAlertDialog(
+                          context,
+                          noticeList[index].title,
+                          "$formattedDate $formattedTime",
+                          noticeList[index].description,
+                        );
+                      },
+                      child: getStatus(noticeList[index].createdAt) ==
+                              'newNoticed'
+                          ? Banner(
+                              message:
+                                  getStatus(noticeList[index].createdAt) ==
+                                          'newNoticed'
+                                      ? "New Notice"
+                                      : '',
+                              location: BannerLocation.topStart,
+                              child: layoutChild())
+                          : layoutChild(),
+                    ),
+                  );
+                }),
+              );
+            },
           ),
         ),
       ),

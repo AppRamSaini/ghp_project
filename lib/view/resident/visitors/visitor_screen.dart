@@ -70,22 +70,22 @@ class _VisitorScreenState extends State<VisitorScreen> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<IncomingRequestCubit, IncomingRequestState>(
-            listener: (context, state) {
-          if (state is IncomingRequestLoaded) {
-            IncomingVisitorsModel incomingVisitorsRequest =
-                state.incomingVisitorsRequest;
-            if (incomingVisitorsRequest.lastCheckinDetail!.status ==
-                'requested') {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => VisitorsIncomingRequestPage(
-                          incomingVisitorsRequest: incomingVisitorsRequest,
-                          setPageValue: (value) {})));
-            }
-          }
-        }),
+        // BlocListener<IncomingRequestCubit, IncomingRequestState>(
+        //     listener: (context, state) {
+        //   if (state is IncomingRequestLoaded) {
+        //     IncomingVisitorsModel incomingVisitorsRequest =
+        //         state.incomingVisitorsRequest;
+        //     if (incomingVisitorsRequest.lastCheckinDetail!.status ==
+        //         'requested') {
+        //       Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //               builder: (context) => VisitorsIncomingRequestPage(
+        //                   incomingVisitorsRequest: incomingVisitorsRequest,
+        //                   setPageValue: (value) {})));
+        //     }
+        //   }
+        // }),
         BlocListener<AcceptRequestCubit, AcceptRequestState>(
           listener: (context, state) {
             if (state is AcceptRequestSuccessfully) {

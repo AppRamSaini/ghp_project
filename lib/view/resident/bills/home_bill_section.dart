@@ -113,30 +113,32 @@ class MyBillsPageState extends State<MyBillsPage> {
                             SizedBox(width: 10),
                             Flexible(
                               child: Padding(
-                                padding: const EdgeInsets.only(right: 15),
+                                padding: const EdgeInsets.only(right: 10),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(bill.service!.name.toString(),
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14)),
-                                        bill.status == 'paid'
-                                            ? Text(
-                                                "₹ ${bill.amount} paid On ${delayData()}",
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10))
-                                            : Text("Due On ${delayData()}",
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10))
-                                      ],
+                                    Flexible(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(bill.service!.name.toString(),
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14)),
+                                          bill.status == 'paid'
+                                              ? Text(
+                                                  "₹ ${bill.amount} paid On ${delayData()}",
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 10))
+                                              : Text("Due On ${delayData()}",
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 10))
+                                        ],
+                                      ),
                                     ),
                                     Column(
                                       mainAxisAlignment:

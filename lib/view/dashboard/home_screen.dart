@@ -129,7 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
         .read<MyBillsCubit>()
         .fetchMyBills(context: context, billTypes: "all");
     context.read<NotificationListingCubit>().fetchNotifications();
-    context.read<IncomingRequestCubit>().fetchIncomingRequest();
     setState(() {});
   }
 
@@ -161,28 +160,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<IncomingRequestCubit, IncomingRequestState>(
-          listener: (context, state) {
-            if (state is IncomingRequestLoaded) {
-              IncomingVisitorsModel incomingVisitorsRequest =
-                  state.incomingVisitorsRequest;
-              if (incomingVisitorsRequest.lastCheckinDetail?.status ==
-                  'requested') {
-                if (ModalRoute.of(context)?.isCurrent ?? false) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => VisitorsIncomingRequestPage(
-                        incomingVisitorsRequest: incomingVisitorsRequest,
-                        setPageValue: (value) {},
-                      ),
-                    ),
-                  );
-                }
-              }
-            }
-          },
-        ),
         BlocListener<LogoutCubit, LogoutState>(
           listener: (context, state) async {
             if (state is LogoutLoading) {

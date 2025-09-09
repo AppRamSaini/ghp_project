@@ -1,15 +1,11 @@
 import 'dart:async';
-
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_element/parcel_element_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_pending_counts/parcel_counts_cubit.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_element/sos_element_cubit.dart';
-import 'package:ghp_society_management/controller/visitors/incoming_request/incoming_request_cubit.dart';
-import 'package:ghp_society_management/model/incoming_visitors_request_model.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
 import 'package:ghp_society_management/view/maintenance_staff/bottom_nav_screen.dart';
 import 'package:ghp_society_management/view/resident/onboarding/onboarding_screen.dart';
-import 'package:ghp_society_management/view/resident/visitors/incomming_request.dart';
 import 'package:ghp_society_management/view/security_staff/dashboard/bottom_navigation.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -80,39 +76,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<IncomingRequestCubit, IncomingRequestState>(
-          listener: (context, state) {
-            if (state is IncomingRequestLoaded) {
-              IncomingVisitorsModel incomingVisitorsRequest =
-                  state.incomingVisitorsRequest;
-              if (incomingVisitorsRequest.lastCheckinDetail?.status ==
-                  'requested') {
-                if (ModalRoute.of(context)?.isCurrent ?? false) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => VisitorsIncomingRequestPage(
-                        incomingVisitorsRequest: incomingVisitorsRequest,
-                        setPageValue: (value) {},
-                      ),
-                    ),
-                  );
-                }
-              }
-            }
-          },
-        ),
-      ],
-      child: Scaffold(
-        body: Center(
-          child: Padding(
-            padding: EdgeInsets.all(8),
-            child: Image.asset(
-              ImageAssets.appLogo,
-              height: 120.h,
-            ),
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Image.asset(
+            ImageAssets.appLogo,
+            height: 120.h,
           ),
         ),
       ),
