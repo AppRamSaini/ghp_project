@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/view/resident/sos/sos_incoming_alert.dart';
 import 'package:ghp_society_management/view/resident/visitors/incomming_request.dart';
 import 'package:vibration/vibration.dart';
@@ -272,20 +272,26 @@ class FirebaseNotificationService {
     // final visitorId = data['visitor_id']?.toString() ?? '';
 
     // final data = message.data;
-    final rawMessage = message.data['message'];
-    final Map<String, dynamic> data = jsonDecode(rawMessage);
-    final type = data['data']?['type'].toString() ?? '';
-    final visitorId = data['data']['visitor_id']?.toString() ?? '';
-
-    // Save visitorId
-    if (type == 'incoming_request' && visitorId.isNotEmpty) {
-      LocalStorage.localStorage.setString("visitor_id", visitorId);
-    }
-
+    // final rawMessage = message.data['message'];
+    // final Map<String, dynamic> data = jsonDecode(rawMessage);
+    // final type = data['data']?['type'].toString() ?? '';
+    // final visitorId = data['data']['visitor_id']?.toString() ?? '';
     // // 🔔 Play alerts
     // if (type == 'incoming_request' || type == 'sos_alert') {
     //   startVibrationAndRingtone();
     // }
+
+    final Map<String, dynamic> payload = message.toMap();
+    final data = deepDecode(payload);
+    String? type;
+    if (data['data'] is Map) {
+      type = data['data']?['type']?.toString();
+      if (type == null && data['data']?['data'] is Map) {
+        type = data['data']?['data']?['type']?.toString();
+      }
+    }
+    type = type ?? '';
+    print("📌 Extracted type: $type");
 
     // Page navigation
     if (type == 'incoming_request') {
