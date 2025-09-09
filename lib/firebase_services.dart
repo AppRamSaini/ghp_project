@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -22,9 +23,11 @@ class FirebaseNotificationService {
     const androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const iosSettings = DarwinInitializationSettings(requestSoundPermission: true,
+    const iosSettings = DarwinInitializationSettings(
+      requestSoundPermission: true,
       requestBadgePermission: true,
-      requestAlertPermission: true,);
+      requestAlertPermission: true,
+    );
     const initSettings =
         InitializationSettings(android: androidSettings, iOS: iosSettings);
 
@@ -41,7 +44,7 @@ class FirebaseNotificationService {
     _createNotificationChannels();
     // Check if app was launched by tapping a notification
     final NotificationAppLaunchDetails? notificationAppLaunchDetails =
-    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
     if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
       // Handle the notification that launched the app
@@ -49,14 +52,15 @@ class FirebaseNotificationService {
       flutterLocalNotificationsPlugin.cancelAll();
       flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
     }
-    final token = Platform.isIOS ?  await FirebaseMessaging.instance.getAPNSToken() : await FirebaseMessaging.instance.getToken();
+    final token = Platform.isIOS
+        ? await FirebaseMessaging.instance.getAPNSToken()
+        : await FirebaseMessaging.instance.getToken();
     print("FCM + $token");
   }
 
   static Future<void> _createNotificationChannels() async {
     // Custom channel for intercepted Firebase messages
-    const AndroidNotificationChannel customChannel =
-    AndroidNotificationChannel(
+    const AndroidNotificationChannel customChannel = AndroidNotificationChannel(
       'custom_firebase_channel',
       'Custom Firebase Notifications',
       description: 'Custom handled Firebase notifications',
@@ -68,7 +72,7 @@ class FirebaseNotificationService {
 
     // High priority channel
     const AndroidNotificationChannel priorityChannel =
-    AndroidNotificationChannel(
+        AndroidNotificationChannel(
       'priority_channel',
       'Priority Notifications',
       description: 'High priority custom notifications',
@@ -78,9 +82,9 @@ class FirebaseNotificationService {
       //vibrationPattern: Int64List.fromList([0, 500, 200, 500]),
     );
 
-    final plugin = flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+    final plugin =
+        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
 
     await plugin?.createNotificationChannel(customChannel);
     await plugin?.createNotificationChannel(priorityChannel);
@@ -99,19 +103,26 @@ class FirebaseNotificationService {
 
   static String _getChannelName(String channelId) {
     switch (channelId) {
-      case 'custom_sound_1': return 'Custom Sound 1';
-      case 'custom_sound_2': return 'Custom Sound 2';
-      default: return 'priority_channel';
+      case 'custom_sound_1':
+        return 'Custom Sound 1';
+      case 'custom_sound_2':
+        return 'Custom Sound 2';
+      default:
+        return 'priority_channel';
     }
   }
 
   static String _getChannelDescription(String channelId) {
     switch (channelId) {
-      case 'custom_sound_1': return 'Notifications with custom sound 1';
-      case 'custom_sound_2': return 'Notifications with custom sound 2';
-      default: return 'Default notification channel';
+      case 'custom_sound_1':
+        return 'Notifications with custom sound 1';
+      case 'custom_sound_2':
+        return 'Notifications with custom sound 2';
+      default:
+        return 'Default notification channel';
     }
   }
+
   static Future<void> showCustomNotification({
     required RemoteMessage message,
     String? customTitle,
@@ -119,7 +130,6 @@ class FirebaseNotificationService {
     String? customSound,
     Map<String, dynamic>? customData,
   }) async {
-
     // Extract data from Firebase message or use custom data
     final title = customTitle ??
         message.notification?.title ??
@@ -145,7 +155,9 @@ class FirebaseNotificationService {
       importance: priority == 'high' ? Importance.max : Importance.high,
       priority: priority == 'high' ? Priority.max : Priority.high,
       ticker: title,
-      sound: sound != 'default' ? RawResourceAndroidNotificationSound(sound) : null,
+      sound: sound != 'default'
+          ? RawResourceAndroidNotificationSound(sound)
+          : null,
       enableVibration: true,
       // vibrationPattern: priority == 'high'
       //     ? Int64List.fromList([0, 500, 200, 500])
@@ -170,7 +182,8 @@ class FirebaseNotificationService {
       presentBadge: true,
       presentSound: true,
       subtitle: category,
-      threadIdentifier: category, // Group similar notifications
+      threadIdentifier: category,
+      // Group similar notifications
       // Custom iOS actions
       categoryIdentifier: 'custom_category',
     );
@@ -181,7 +194,8 @@ class FirebaseNotificationService {
     );
 
     // Create unique notification ID
-    int notificationId = DateTime.now().millisecondsSinceEpoch.remainder(100000);
+    int notificationId =
+        DateTime.now().millisecondsSinceEpoch.remainder(100000);
 
     // Store message data for handling taps
     String payload = _createPayload(message, customData);
@@ -197,7 +211,8 @@ class FirebaseNotificationService {
     print('Custom notification shown: $title');
   }
 
-  static String _createPayload(RemoteMessage message, Map<String, dynamic>? customData) {
+  static String _createPayload(
+      RemoteMessage message, Map<String, dynamic>? customData) {
     Map<String, dynamic> payloadData = {
       'messageId': message.messageId,
       'data': message.data,
@@ -216,7 +231,8 @@ class FirebaseNotificationService {
     return 'custom_firebase_channel';
   }
 
-  static List<AndroidNotificationAction>? _getNotificationActions(String category) {
+  static List<AndroidNotificationAction>? _getNotificationActions(
+      String category) {
     switch (category) {
       case 'message':
         return [
@@ -235,20 +251,31 @@ class FirebaseNotificationService {
 
   static Color? _getNotificationColor(String category) {
     switch (category) {
-      case 'urgent': return Colors.red;
-      case 'message': return Colors.blue;
-      case 'reminder': return Colors.orange;
-      default: return null;
+      case 'urgent':
+        return Colors.red;
+      case 'message':
+        return Colors.blue;
+      case 'reminder':
+        return Colors.orange;
+      default:
+        return null;
     }
   }
+
   /// Handle message safely
   static void handleMessage(RemoteMessage? message,
       {bool fromTerminated = false}) async {
     if (message == null || message.data.isEmpty) return;
 
-    final data = message.data;
-    final type = data['type']?.toString() ?? '';
-    final visitorId = data['visitor_id']?.toString() ?? '';
+    // final data = message.data;
+    // final type = data['type']?.toString() ?? '';
+    // final visitorId = data['visitor_id']?.toString() ?? '';
+
+    // final data = message.data;
+    final rawMessage = message.data['message'];
+    final Map<String, dynamic> data = jsonDecode(rawMessage);
+    final type = data['data']?['type'].toString() ?? '';
+    final visitorId = data['data']['visitor_id']?.toString() ?? '';
 
     // Save visitorId
     if (type == 'incoming_request' && visitorId.isNotEmpty) {

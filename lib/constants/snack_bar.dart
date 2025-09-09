@@ -312,9 +312,13 @@ Widget emptyDataWidget(String message) => Center(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(ImageAssets.noImage, width: size.width * 0.6),
-          Text(message,
-              style: GoogleFonts.robotoFlex(
-                  color: Colors.deepPurpleAccent, fontSize: 16)),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.15),
+            child: Text(message,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.robotoFlex(
+                    color: Colors.deepPurpleAccent, fontSize: 16)),
+          ),
         ],
       ),
     );

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,21 +58,22 @@ class _VisitorsIncomingRequestPageState
     super.initState();
     widget.setPageValue(true);
     _setVisitorData();
-    context.read<IncomingRequestCubit>().fetchIncomingRequest();
+    // context.read<IncomingRequestCubit>().fetchIncomingRequest();
     Future.delayed(Duration(milliseconds: 300), _setupTimers);
   }
 
   void _setVisitorData() {
     try {
       if (widget.message != null) {
-        final data = widget.message!.data;
-        visitorName = data['name']?.toString();
-        visitorsID = data['visitor_id']?.toString();
-        visitorPhone = data['mob']?.toString();
-        visitorImg = data['img']?.toString();
-        visitorTypes = data['type_of_visit']?.toString();
-        visitorDescription = data['description']?.toString();
-        visitorVehicle = data['vehicle_number']?.toString();
+        final rawMessage = widget.message!.data['message'];
+        final Map<String, dynamic> data = jsonDecode(rawMessage);
+        visitorName = data['data']['name']?.toString();
+        visitorsID = data['data']['visitor_id']?.toString();
+        visitorPhone = data['data']['mob']?.toString();
+        visitorImg = data['data']['img']?.toString();
+        visitorTypes = data['data']['type_of_visit']?.toString();
+        visitorDescription = data['data']['description']?.toString();
+        visitorVehicle = data['data']['vehicle_number']?.toString();
       } else if (widget.incomingVisitorsRequest != null) {
         visitorName = widget.incomingVisitorsRequest!.visitorName.toString();
         visitorsID = widget.incomingVisitorsRequest!.id.toString();

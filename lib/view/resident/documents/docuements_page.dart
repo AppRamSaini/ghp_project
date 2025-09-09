@@ -120,7 +120,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                 } else if (state is DocumentCountInternetError) {
                   return Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(25),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: size.width * 0.14),
                       child: Text(
                         state.errorMsg,
                         style: const TextStyle(color: Colors.red),

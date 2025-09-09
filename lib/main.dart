@@ -1,11 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/view/resident/sos/sos_incoming_alert.dart';
 import 'package:ghp_society_management/view/resident/visitors/incomming_request.dart';
-import 'package:vibration/vibration.dart';
 
 /// Background Notification Handler
 @pragma('vm:entry-point')
@@ -65,12 +64,24 @@ class _MyAppState extends State<MyApp> {
 
     // Foreground listener
     FirebaseMessaging.onMessage.listen((message) {
-      print("📨 Foreground: ${message.data}");
+      final rawMessage = message.data['message'];
+      final Map<String, dynamic> data = jsonDecode(rawMessage);
+
+      print('Full MSG ----->>>$data');
+      final type = data['type'] ?? data['data']?['type'];
+      print('Message type ----->>> $type');
       FirebaseNotificationService.handleMessage(message);
-      if (message.data['type'] == 'incoming_request' ||
-          message.data['type'] == 'sos_alert') {
+      if (data['data']?['type'] == 'incoming_request' ||
+          data['data']?['type'] == 'sos_alert') {
         FirebaseNotificationService.startVibrationAndRingtone();
       }
+
+      // print("Full message----->>> : ${message.toMap()}");
+      // FirebaseNotificationService.handleMessage(message);
+      // if (message.data['type'] == 'incoming_request' ||
+      //     message.data['type'] == 'sos_alert') {
+      //   FirebaseNotificationService.startVibrationAndRingtone();
+      // }
     });
 
     // Background → Foreground (tap on notification)
@@ -87,7 +98,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.sizeOf(context);
-
     return MultiBlocProvider(
       providers: BlocProviders.providers,
       child: ScreenUtilInit(
@@ -107,7 +117,6 @@ class _MyAppState extends State<MyApp> {
                 iconTheme: const IconThemeData(color: Colors.white),
               ),
             ),
-            // ✅ Decide start page based on terminated notification
             home: _getStartPage(widget.initialMessage),
           );
         },
