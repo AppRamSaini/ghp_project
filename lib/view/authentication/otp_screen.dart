@@ -212,7 +212,7 @@ class _OtpScreenState extends State<OtpScreen> with CodeAutoFill {
     debugPrint("🔔 Permission status: ${settings.authorizationStatus}");
 
     // 2. Get FCM Token
-    String? fcmToken = await messaging.getToken();
+    String? fcmToken = Platform.isIOS ? await messaging.getAPNSToken() : await messaging.getToken();
     debugPrint("🔥 Initial FCM Token ---> $fcmToken");
 
     // 3. iOS extra: APNs token check (debug purpose)

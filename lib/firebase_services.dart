@@ -295,7 +295,7 @@ class FirebaseNotificationService {
 
     // Page navigation
     if (type == 'incoming_request') {
-      navigateToVisitorsPage(message);
+      navigateToVisitorsPage(message, isFromTerminated: true);
     } else if (type == 'sos_alert') {
       _navigateToSosPage(message);
     }
@@ -329,10 +329,11 @@ class FirebaseNotificationService {
   }
 
   /// Visitors Page
-  static void navigateToVisitorsPage(RemoteMessage message) {
+  static void navigateToVisitorsPage(RemoteMessage message, {bool isFromTerminated = false}) {
     navigatorKey.currentState?.push(MaterialPageRoute(
       builder: (_) => VisitorsIncomingRequestPage(
         message: message,
+        fromPage: isFromTerminated ? "terminated" : null,
         setPageValue: (val) {
           if (val) stopVibrationAndRingtone();
         },
