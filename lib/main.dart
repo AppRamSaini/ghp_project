@@ -12,8 +12,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await LocalStorage.init();
 
-  FirebaseNotificationService.showCustomNotification(
-      message: message, customSound: "ringtone.caf");
+  // FirebaseNotificationService.showCustomNotification(
+  //     message: message, customSound: "ringtone.caf");
 
   // final Map<String, dynamic> payload = message.toMap();
   // final decoded = deepDecode(payload);
@@ -191,13 +191,23 @@ class _MyAppState extends State<MyApp> {
   }
 
   /// Decide initial page for terminated state
-  Widget _getStartPage(RemoteMessage? message) {
-    if (message != null && message.data.isNotEmpty) {
-      final type = message.data['type'] ?? '';
-
+  Widget _getStartPage(RemoteMessage? remoteMessage) {
+    if (remoteMessage != null && remoteMessage.data.isNotEmpty) {
+      final Map<String, dynamic> payload = remoteMessage.toMap();
+      final decoded = deepDecode(payload);
+      print("Foreground message received  ----->>> $decoded");
+      String? type;
+      if (decoded['data'] is Map) {
+        if (decoded['data']?['data'] is Map) {
+          type = decoded['data']?['data']?['type'];
+        } else {
+          type = decoded['data']?['type'];
+        }
+      }
+      print("Message type ----->>> $type");
       if (type == 'incoming_request') {
         return VisitorsIncomingRequestPage(
-          message: message,
+          message: remoteMessage,
           fromPage: "terminate",
           setPageValue: (val) {
             if (val) FirebaseNotificationService.stopVibrationAndRingtone();
@@ -205,7 +215,7 @@ class _MyAppState extends State<MyApp> {
         );
       } else if (type == 'sos_alert') {
         return SosIncomingAlert(
-          message: message,
+          message: remoteMessage,
           setPageValue: (val) {
             if (val) FirebaseNotificationService.stopVibrationAndRingtone();
           },
