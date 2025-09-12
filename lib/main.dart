@@ -1,64 +1,32 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/view/resident/sos/sos_incoming_alert.dart';
 import 'package:ghp_society_management/view/resident/visitors/incomming_request.dart';
 
-/// Background Notification Handler
-@pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await LocalStorage.init();
-
-  // FirebaseNotificationService.showCustomNotification(
-  //     message: message, customSound: "ringtone.caf");
-
-  // final Map<String, dynamic> payload = message.toMap();
-  // final decoded = deepDecode(payload);
-  // print("Background MSG Payload ----->>> $decoded");
-  // String? type;
-  // if (decoded['data'] is Map) {
-  //   if (decoded['data']?['data'] is Map) {
-  //     type = decoded['data']?['data']?['type'];
-  //   } else {
-  //     type = decoded['data']?['type'];
-  //   }
-  // }
-  // print("Message type ----->>> $type");
-  // FirebaseNotificationService.handleMessage(message);
-  // if (type == 'incoming_request' || type == 'sos_alert') {
-  //   FirebaseNotificationService.startVibrationAndRingtone();
-  // }
-}
-
-/// Ask for Notification Permission
 Future<void> requestNotificationPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
-      alert: true, badge: true, sound: true, criticalAlert: true);
-
+    alert: true,
+    badge: true,
+    sound: true,
+    criticalAlert: true,
+  );
   print("🔔 Permission: ${settings.authorizationStatus}");
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await LocalStorage.init();
-
   await requestNotificationPermission();
 
-  // Register background handler
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // Init Notification Service
   await FirebaseNotificationService.initialize();
 
-  // ✅ Get initial message for terminated state
   RemoteMessage? initialMessage =
-      await FirebaseMessaging.instance.getInitialMessage();
+  await FirebaseMessaging.instance.getInitialMessage();
 
   runApp(MyApp(initialMessage: initialMessage));
 }
@@ -67,7 +35,6 @@ late Size size;
 
 class MyApp extends StatefulWidget {
   final RemoteMessage? initialMessage;
-
   const MyApp({super.key, this.initialMessage});
 
   @override
@@ -79,85 +46,15 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    /// Foreground notification listener
     FirebaseMessaging.onMessage.listen((message) {
-      final Map<String, dynamic> payload = message.toMap();
-      final decoded = deepDecode(payload);
-      print("Foreground message received  ----->>> $decoded");
-      String? type;
-      if (decoded['data'] is Map) {
-        if (decoded['data']?['data'] is Map) {
-          type = decoded['data']?['data']?['type'];
-        } else {
-          type = decoded['data']?['type'];
-        }
-      }
-      print("Message type ----->>> $type");
-      FirebaseNotificationService.handleMessage(message);
-      if (type == 'incoming_request' || type == 'sos_alert') {
-        FirebaseNotificationService.startVibrationAndRingtone();
-      }
+      FirebaseNotificationService.handleMessage(message, source: "foreground");
+      FirebaseNotificationService.showCustomNotification(message: message);
     });
 
-    // Foreground listener
-    // FirebaseMessaging.onMessage.listen((message) {
-    //   // final rawMessage = message.data['message'];
-    //   // final Map<String, dynamic> data = jsonDecode(rawMessage);
-    //   //
-    //   // print('Full MSG ----->>>$data');
-    //   // final type = data['type'] ?? data['data']?['type'];
-    //   // print('Message type ----->>> $type');
-    //   // FirebaseNotificationService.handleMessage(message);
-    //   // if (data['data']?['type'] == 'incoming_request' ||
-    //   //     data['data']?['type'] == 'sos_alert') {
-    //   //   FirebaseNotificationService.startVibrationAndRingtone();
-    //   // }
-    //
-    //   // final rawMessage = message.data['message'];
-    //   // final Map<String, dynamic> data = jsonDecode(rawMessage);
-    //   // print("Full message----->>> : ${message.toMap()}");
-    //   // FirebaseNotificationService.handleMessage(message);
-    //   // if (message.data['type'] == 'incoming_request' ||
-    //   //     message.data['type'] == 'sos_alert') {
-    //   //   FirebaseNotificationService.startVibrationAndRingtone();
-    //   // }
-    //
-    //   final Map<String, dynamic> payload = message.toMap();
-    //
-    //   final data = deepDecode(payload);
-    //
-    //   print("-----------<<<<<<<<$data");
-    //   FirebaseNotificationService.handleMessage(message);
-    //   if (data['data']['data']?['type'] == 'incoming_request' ||
-    //       data['data']['data']?['type'] == 'sos_alert') {
-    //     FirebaseNotificationService.startVibrationAndRingtone();
-    //   }
-    //   //
-    //   // // Pretty JSON format
-    //   // final prettyJson =
-    //   //     const JsonEncoder.withIndent("  ").convert(decodedPayload);
-    //   //
-    //   // print("📩 Complete Decoded Payload:\n$prettyJson");
-    // });
-
-    // Background → Foreground (tap on notification)
+    /// Background notification listener (user taps)
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print("Notification tapped (background): ${message.data}");
-      final Map<String, dynamic> payload = message.toMap();
-      final decoded = deepDecode(payload);
-      print("Decoded Payload ----->>> $decoded");
-      String? type;
-      if (decoded['data'] is Map) {
-        if (decoded['data']?['data'] is Map) {
-          type = decoded['data']?['data']?['type'];
-        } else {
-          type = decoded['data']?['type'];
-        }
-      }
-      print("Message type ----->>> $type");
-      FirebaseNotificationService.handleMessage(message);
-      if (type == 'incoming_request' || type == 'sos_alert') {
-        FirebaseNotificationService.startVibrationAndRingtone();
-      }
+      FirebaseNotificationService.handleMessage(message, source: "background");
     });
   }
 
@@ -190,21 +87,12 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  /// Decide initial page for terminated state
+  /// Terminated state page handling
   Widget _getStartPage(RemoteMessage? remoteMessage) {
     if (remoteMessage != null && remoteMessage.data.isNotEmpty) {
-      final Map<String, dynamic> payload = remoteMessage.toMap();
-      final decoded = deepDecode(payload);
-      print("Foreground message received  ----->>> $decoded");
-      String? type;
-      if (decoded['data'] is Map) {
-        if (decoded['data']?['data'] is Map) {
-          type = decoded['data']?['data']?['type'];
-        } else {
-          type = decoded['data']?['type'];
-        }
-      }
-      print("Message type ----->>> $type");
+      final type = remoteMessage.data['type'];
+      print("📩 Message type (terminated): $type");
+
       if (type == 'incoming_request') {
         return VisitorsIncomingRequestPage(
           message: remoteMessage,
@@ -222,23 +110,7 @@ class _MyAppState extends State<MyApp> {
         );
       }
     }
+
     return SplashScreen(); // default page
   }
-}
-
-/// Recursive JSON decoder: हर nested JSON string को decode कर देता है
-dynamic deepDecode(dynamic value) {
-  if (value is String) {
-    try {
-      final decoded = jsonDecode(value);
-      return deepDecode(decoded); // दुबारा check करो अंदर और nested तो नहीं
-    } catch (_) {
-      return value; // अगर decode न हुआ तो string ही रहने दो
-    }
-  } else if (value is Map) {
-    return value.map((key, val) => MapEntry(key, deepDecode(val)));
-  } else if (value is List) {
-    return value.map((val) => deepDecode(val)).toList();
-  }
-  return value;
 }

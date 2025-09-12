@@ -57,25 +57,33 @@ class _VisitorsIncomingRequestPageState
     super.initState();
     widget.setPageValue(true);
     _setVisitorData();
-    // context.read<IncomingRequestCubit>().fetchIncomingRequest();
+    context.read<IncomingRequestCubit>().fetchIncomingRequest();
     Future.delayed(Duration(milliseconds: 300), _setupTimers);
   }
 
   void _setVisitorData() {
     try {
       if (widget.message != null) {
-        // final rawMessage = widget.message!.data['message'];
-        // final Map<String, dynamic> data = jsonDecode(rawMessage);
-
-        final Map<String, dynamic> payload = widget.message!.toMap();
-        final data = deepDecode(payload);
-        visitorName = data['data']['data']['name']?.toString();
-        visitorsID = data['data']['data']['visitor_id']?.toString();
-        visitorPhone = data['data']['data']['mob']?.toString();
-        visitorImg = data['data']['data']['img']?.toString();
-        visitorTypes = data['data']['data']['type_of_visit']?.toString();
-        visitorDescription = data['data']['data']['description']?.toString();
-        visitorVehicle = data['data']['data']['vehicle_number']?.toString();
+        final data = widget.message!.data;
+        visitorName = data['name']?.toString();
+        visitorsID = data['visitor_id']?.toString();
+        visitorPhone = data['mob']?.toString();
+        visitorImg = data['img']?.toString();
+        visitorTypes = data['type_of_visit']?.toString();
+        visitorDescription = data['description']?.toString();
+        visitorVehicle = data['vehicle_number']?.toString();
+      /*  // // final rawMessage = widget.message!.data['message'];
+        // // final Map<String, dynamic> data = jsonDecode(rawMessage);
+        //
+        // final Map<String, dynamic> payload = widget.message!.toMap();
+        // final data = deepDecode(payload);
+        // visitorName = data['data']['data']['name']?.toString();
+        // visitorsID = data['data']['data']['visitor_id']?.toString();
+        // visitorPhone = data['data']['data']['mob']?.toString();
+        // visitorImg = data['data']['data']['img']?.toString();
+        // visitorTypes = data['data']['data']['type_of_visit']?.toString();
+        // visitorDescription = data['data']['data']['description']?.toString();
+        // visitorVehicle = data['data']['data']['vehicle_number']?.toString();*/
       } else if (widget.incomingVisitorsRequest != null) {
         visitorName = widget.incomingVisitorsRequest!.visitorName.toString();
         visitorsID = widget.incomingVisitorsRequest!.id.toString();
@@ -148,6 +156,7 @@ class _VisitorsIncomingRequestPageState
   }
 
   void _handleNotResponding(String visitorsId) {
+    context.read<IncomingRequestCubit>().fetchIncomingRequest();
     if (visitorsId.isEmpty || !mounted) return;
     _stopAlerts();
     final requestBody = {"visitor_id": visitorsId};
@@ -398,7 +407,7 @@ class _VisitorsIncomingRequestPageState
             repeat: true,
             minRadius: 30,
             maxRadius: 30,
-            ripplesCount: 10,
+            ripplesCount: 3,
             duration: const Duration(milliseconds: 1800),
             child: CircleAvatar(
                 backgroundColor: color,

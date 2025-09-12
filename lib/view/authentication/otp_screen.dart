@@ -198,72 +198,47 @@ class _OtpScreenState extends State<OtpScreen> with CodeAutoFill {
       txt: "Log In",
     );
   }
-
   void _submitOtp(String otp) async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-    // 1. iOS/Android Permission Request
+    // 1. Request permission (iOS + Android 13+)
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
-
     debugPrint("🔔 Permission status: ${settings.authorizationStatus}");
 
-    // 2. Get FCM Token
-    String? fcmToken = Platform.isIOS ? await messaging.getAPNSToken() : await messaging.getToken();
-    debugPrint("🔥 Initial FCM Token ---> $fcmToken");
+    // 2. Always get FCM token (same for iOS & Android)
+    String? fcmToken = await messaging.getToken();
+    debugPrint("🔥 FCM Token ---> $fcmToken");
 
-    // 3. iOS extra: APNs token check (debug purpose)
-    if (Platform.isIOS) {
-      String? apnsToken = await messaging.getAPNSToken();
-      debugPrint("🍎 APNS Token ---> $apnsToken");
-    }
+    // // 3. iOS extra: APNs token (only for debugging, do not save to backend)
+    // if (Platform.isIOS) {
+    //   String? apnsToken = await messaging.getAPNSToken();
+    //   debugPrint("🍎 APNS Token (debug only) ---> $apnsToken");
+    // }
 
-    // 4. Send token to backend (only if available)
+    // 4. Send FCM token to backend
     if (fcmToken != null) {
       context.read<VerifyOtpCubit>().verifyOtp(
-            widget.phoneNumber,
-            otp,
-            fcmToken ?? 'fcm',
-          );
+        widget.phoneNumber,
+        otp,
+        fcmToken,
+      );
     }
 
-    // 5. Listen for token refresh (sometimes initial null hota hai)
+    // 5. Handle token refresh
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       debugPrint("🔄 Token refreshed: $newToken");
       context.read<VerifyOtpCubit>().verifyOtp(
-            widget.phoneNumber,
-            otp,
-            newToken ?? 'fcm',
-          );
+        widget.phoneNumber,
+        otp,
+        newToken,
+      );
     });
-
-//
-//
-//     FirebaseMessaging messaging = FirebaseMessaging.instance;
-//
-// // Request permission
-//     NotificationSettings settings = await messaging.requestPermission(
-//         alert: true, badge: true, sound: true);
-//
-// // Get FCM Token (this is the one you use on server)
-//     String? fcmToken = await messaging.getToken();
-//     print("FCM TOKEN ---> $fcmToken");
-//
-// // For debugging APNs token
-//     String? apnsToken = await messaging.getAPNSToken();
-//     print("APNS TOKEN ---> $apnsToken");
-//     //
-//     // if (fcmToken != null) {
-//     //   print("-FCM---------->>>>" + fcmToken);
-//     // }
-//     //
-//     // context
-//     //     .read<VerifyOtpCubit>()
-//     //     .verifyOtp(widget.phoneNumber, otp, fcmToken ?? "fcm_token");
   }
+
 
   Widget _buildOtpField(PinTheme defaultPinTheme) {
     return Pinput(
