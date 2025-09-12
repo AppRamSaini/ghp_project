@@ -14,6 +14,7 @@ import 'package:ghp_society_management/firebase_services.dart';
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/incoming_visitors_request_model.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
+import 'package:ghp_society_management/view/resident/visitors/ringplay_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 
@@ -55,9 +56,10 @@ class _VisitorsIncomingRequestPageState
   @override
   void initState() {
     super.initState();
+    context.read<IncomingRequestCubit>().fetchIncomingRequest();
     widget.setPageValue(true);
     _setVisitorData();
-    context.read<IncomingRequestCubit>().fetchIncomingRequest();
+
     Future.delayed(Duration(milliseconds: 300), _setupTimers);
   }
 
@@ -72,7 +74,7 @@ class _VisitorsIncomingRequestPageState
         visitorTypes = data['type_of_visit']?.toString();
         visitorDescription = data['description']?.toString();
         visitorVehicle = data['vehicle_number']?.toString();
-      /*  // // final rawMessage = widget.message!.data['message'];
+        /*  // // final rawMessage = widget.message!.data['message'];
         // // final Map<String, dynamic> data = jsonDecode(rawMessage);
         //
         // final Map<String, dynamic> payload = widget.message!.toMap();
@@ -101,7 +103,7 @@ class _VisitorsIncomingRequestPageState
   }
 
   void _setupTimers() {
-    FirebaseNotificationService.startVibrationAndRingtone();
+    FirebaseNotificationRingServices.startVibrationAndRingtone();
     actionTimeoutTimer =
         Timer(const Duration(seconds: timeoutDurationSeconds), _onTimeout);
     notRespondingTimer = Timer(
@@ -125,7 +127,7 @@ class _VisitorsIncomingRequestPageState
   void _stopAlerts() {
     try {
       widget.setPageValue(true);
-      FirebaseNotificationService.stopVibrationAndRingtone();
+      FirebaseNotificationRingServices.stopVibrationAndRingtone();
       actionTimeoutTimer?.cancel();
       notRespondingTimer?.cancel();
     } catch (_) {}
@@ -156,7 +158,9 @@ class _VisitorsIncomingRequestPageState
   }
 
   void _handleNotResponding(String visitorsId) {
-    context.read<IncomingRequestCubit>().fetchIncomingRequest();
+    setState(() {
+      context.read<IncomingRequestCubit>().fetchIncomingRequest();
+    });
     if (visitorsId.isEmpty || !mounted) return;
     _stopAlerts();
     final requestBody = {"visitor_id": visitorsId};

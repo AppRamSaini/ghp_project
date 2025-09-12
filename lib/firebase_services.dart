@@ -1,123 +1,119 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:ghp_society_management/view/resident/sos/sos_incoming_alert.dart';
 import 'package:ghp_society_management/view/resident/visitors/incomming_request.dart';
-import 'package:vibration/vibration.dart';
+import 'package:ghp_society_management/view/resident/visitors/ringplay_page.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class FirebaseNotificationService {
-  static Timer? _ringtoneTimer;
-
   /// Initialize Notification Handling
   static Future<void> initialize() async {
     const androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosSettings = DarwinInitializationSettings();
     const initSettings =
-    InitializationSettings(android: androidSettings, iOS: iosSettings);
+        InitializationSettings(android: androidSettings, iOS: iosSettings);
 
     await flutterLocalNotificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         final payload = response.payload ?? '';
+        print('Received MSG In onDidReceiveNotificationResponse : - $payload');
         if (payload.isEmpty) return;
 
         final decoded = jsonDecode(payload);
-        final type = decoded['type'] ?? '';
+
         final data = decoded['data'] ?? {};
+        final type = data['type'] ?? '';
         final title = decoded['title'] ?? '';
         final body = decoded['body'] ?? '';
 
-        print("🔔 Notification tapped: type=$type, data=$data");
+        print("🔔 Notification tapped by user: type=$type, data=$data");
 
         final fakeMessage = RemoteMessage(
-          data: Map<String, dynamic>.from(data),
-          notification: RemoteNotification(title: title, body: body),
-        );
-
+            data: Map<String, dynamic>.from(data),
+            notification: RemoteNotification(title: title, body: body));
         if (type == 'incoming_request') {
           navigateToVisitorsPage(fakeMessage);
         } else if (type == 'sos_alert') {
           _navigateToSosPage(fakeMessage);
         }
-        },
+      },
     );
-
     _createNotificationChannels();
   }
 
   /// Notification Channels
   static Future<void> _createNotificationChannels() async {
+    final plugin =
+        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+
+    // 🔔 Ringtone वाला channel
     const AndroidNotificationChannel priorityChannel =
-    AndroidNotificationChannel(
+        AndroidNotificationChannel(
       'priority_channel',
       'Priority Notifications',
-      description: 'High priority notifications with sound',
+      description: 'Incoming requests / SOS alerts with ringtone',
       importance: Importance.max,
       enableVibration: true,
       sound: RawResourceAndroidNotificationSound('ringtone'),
-    );
-
-    const AndroidNotificationChannel customChannel = AndroidNotificationChannel(
-      'custom_firebase_channel',
-      'Custom Firebase Notifications',
-      description: 'Custom handled notifications',
-      importance: Importance.high,
-      enableVibration: true,
       playSound: true,
     );
 
-    final plugin = flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+    // 🤫 Silent वाला channel
+    const AndroidNotificationChannel silentChannel = AndroidNotificationChannel(
+      'silent_channel',
+      'Silent Notifications',
+      description: 'Other notifications without ringtone',
+      importance: Importance.high,
+      playSound: false,
+    );
 
     await plugin?.createNotificationChannel(priorityChannel);
-    await plugin?.createNotificationChannel(customChannel);
+    await plugin?.createNotificationChannel(silentChannel);
   }
 
   /// Show Notification
   static Future<void> showCustomNotification(
-      {required RemoteMessage message, bool playSound = true}) async {
+      {required RemoteMessage message}) async {
+    final type = message.data['type'] ?? '';
     final title = message.notification?.title ?? 'New Message';
     final body = message.notification?.body ?? 'You have a new message';
-    final type = message.data['type'] ?? '';
 
+    // type के हिसाब से channel चुनो
     final channelId = (type == 'incoming_request' || type == 'sos_alert')
         ? 'priority_channel'
-        : 'custom_firebase_channel';
+        : 'silent_channel';
 
-    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    final androidDetails = AndroidNotificationDetails(
       channelId,
       channelId == 'priority_channel'
           ? "Priority Notifications"
-          : "General Notifications",
+          : "Silent Notifications",
       channelDescription: 'App notifications',
       importance: Importance.max,
       priority: Priority.high,
-      playSound: playSound && (type == 'incoming_request' || type == 'sos_alert'),
     );
 
-    DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
-      sound: playSound && (type == 'incoming_request' || type == 'sos_alert')
-          ? "ringtone.caf"
-          : null,
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: playSound && (type == 'incoming_request' || type == 'sos_alert'),
-    );
+    final iosDetails = DarwinNotificationDetails(
+        sound: (type == 'incoming_request' || type == 'sos_alert')
+            ? 'ringtone.caf'
+            : null,
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: type == 'incoming_request' || type == 'sos_alert');
 
-    NotificationDetails details = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
+    final details =
+        NotificationDetails(android: androidDetails, iOS: iosDetails);
 
     final payload = jsonEncode({
       "type": type,
@@ -134,35 +130,7 @@ class FirebaseNotificationService {
       payload: payload,
     );
 
-    print(
-        "✅ Notification shown: $title - type: $type - playSound: $playSound");
-  }
-
-  /// Foreground & Background ringtone
-  static Future<void> startVibrationAndRingtone() async {
-    if (await Vibration.hasVibrator() ?? false) {
-      Vibration.vibrate(pattern: [500, 1000, 500, 1000], repeat: -1);
-    }
-    FlutterRingtonePlayer().play(
-      android: AndroidSounds.ringtone,
-      ios: IosSounds.alarm,
-      looping: true,
-      volume: 1.0,
-      asAlarm: true,
-    );
-    print("▶️ Ringtone & vibration started");
-
-    _ringtoneTimer = Timer(const Duration(seconds: 15), () {
-      stopVibrationAndRingtone();
-    });
-  }
-
-  static void stopVibrationAndRingtone() {
-    FlutterRingtonePlayer().stop();
-    Vibration.cancel();
-    _ringtoneTimer?.cancel();
-    _ringtoneTimer = null;
-    print("⏹️ Ringtone & vibration stopped!");
+    print("✅ Notification shown (type=$type → channel=$channelId)");
   }
 
   /// Navigation
@@ -173,19 +141,19 @@ class FirebaseNotificationService {
     final type = message.data['type'] ?? '';
     print("📩 HandleMessage from: $source | type: $type");
 
-// Navigate
     if (type == 'incoming_request') {
       navigateToVisitorsPage(message);
     } else if (type == 'sos_alert') {
       _navigateToSosPage(message);
     }
   }
+
   static void navigateToVisitorsPage(RemoteMessage message) {
     navigatorKey.currentState?.push(MaterialPageRoute(
       builder: (_) => VisitorsIncomingRequestPage(
         message: message,
         setPageValue: (val) {
-          if (val) stopVibrationAndRingtone();
+          if (val) FirebaseNotificationRingServices.stopVibrationAndRingtone();
         },
       ),
     ));
@@ -196,11 +164,9 @@ class FirebaseNotificationService {
       builder: (_) => SosIncomingAlert(
         message: message,
         setPageValue: (val) {
-          if (val) stopVibrationAndRingtone();
+          if (val) FirebaseNotificationRingServices.stopVibrationAndRingtone();
         },
       ),
     ));
   }
 }
-
-

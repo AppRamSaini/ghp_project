@@ -7,7 +7,7 @@ import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_acknowledge/sos_acknowledged_cubit.dart';
-import 'package:ghp_society_management/firebase_services.dart';
+import 'package:ghp_society_management/view/resident/visitors/ringplay_page.dart';
 import 'package:ghp_society_management/view/security_staff/dashboard/bottom_navigation.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 
@@ -43,7 +43,7 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
   /// Start ringtone + vibration
   void _startAlerts() {
     try {
-      FirebaseNotificationService.startVibrationAndRingtone();
+      FirebaseNotificationRingServices.startVibrationAndRingtone();
       actionTimeoutTimer =
           Timer(const Duration(seconds: timeoutDurationSeconds), _stopAlerts);
     } catch (e) {
@@ -56,7 +56,7 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
     if (!mounted) return;
 
     try {
-      FirebaseNotificationService.stopVibrationAndRingtone();
+      FirebaseNotificationRingServices.stopVibrationAndRingtone();
       actionTimeoutTimer?.cancel();
       actionTimeoutTimer = null;
       if (navigate && mounted) {

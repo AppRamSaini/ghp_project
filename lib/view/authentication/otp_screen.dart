@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -191,13 +189,14 @@ class _OtpScreenState extends State<OtpScreen> with CodeAutoFill {
   Widget _buildLoginButton() {
     return customBtn(
       onTap: () async {
-        if (_otpController.text.isNotEmpty && _otpController.text.length == 4) {
+        if (_otpController.text.isNotEmpty && _otpController.text.length == 6) {
           _submitOtp(_otpController.text);
         }
       },
       txt: "Log In",
     );
   }
+
   void _submitOtp(String otp) async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
@@ -222,42 +221,44 @@ class _OtpScreenState extends State<OtpScreen> with CodeAutoFill {
     // 4. Send FCM token to backend
     if (fcmToken != null) {
       context.read<VerifyOtpCubit>().verifyOtp(
-        widget.phoneNumber,
-        otp,
-        fcmToken,
-      );
+            widget.phoneNumber,
+            otp,
+            fcmToken,
+          );
     }
 
     // 5. Handle token refresh
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       debugPrint("🔄 Token refreshed: $newToken");
       context.read<VerifyOtpCubit>().verifyOtp(
-        widget.phoneNumber,
-        otp,
-        newToken,
-      );
+            widget.phoneNumber,
+            otp,
+            newToken,
+          );
     });
   }
 
-
   Widget _buildOtpField(PinTheme defaultPinTheme) {
-    return Pinput(
-      controller: _otpController,
-      defaultPinTheme: defaultPinTheme,
-      separatorBuilder: (_) => const SizedBox(width: 20),
-      length: 4,
-      keyboardType: TextInputType.number,
-      onCompleted: (pin) => _submitOtp(pin),
-      cursor: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(bottom: 9),
-            width: 25,
-            height: 2,
-            color: AppTheme.primaryColor,
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Pinput(
+        controller: _otpController,
+        defaultPinTheme: defaultPinTheme,
+        separatorBuilder: (_) => const SizedBox(width: 5),
+        length: 6,
+        keyboardType: TextInputType.number,
+        onCompleted: (pin) => _submitOtp(pin),
+        cursor: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(bottom: 9),
+              width: 25,
+              height: 2,
+              color: AppTheme.primaryColor,
+            ),
+          ],
+        ),
       ),
     );
   }
