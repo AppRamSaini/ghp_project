@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:ghp_society_management/constants/config.dart';
+import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/model/visitors_listing_model.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
 import 'package:ghp_society_management/view/session_dialogue.dart';
-import 'package:meta/meta.dart';
+
 part 'visitors_state.dart';
 
 class VisitorsListingCubit extends Cubit<VisitorsListingState> {
@@ -23,14 +25,16 @@ class VisitorsListingCubit extends Cubit<VisitorsListingState> {
   int pastVisitors = 0;
 
   /// Fetch Visitors Listing
-  Future<void> fetchVisitorsListing({
-    required BuildContext context,
-    required String search,
-    required String toDate,
-    required String fromDate,
-    String? filterTypes,
-    bool loadMore = false,
-  }) async {
+  Future<void> fetchVisitorsListing(
+      {required BuildContext context,
+      required String search,
+      required String toDate,
+      required String fromDate,
+      String? filterTypes,
+      bool loadMore = false,
+      bool fotStaffSide = false}) async {
+    var propertyId = LocalStorage.localStorage.getString('property_id');
+
     if (loadMore) {
       if (isLoadingMore || !hasMore) return; // Prevent duplicate calls
       isLoadingMore = true;
@@ -43,7 +47,9 @@ class VisitorsListingCubit extends Cubit<VisitorsListingState> {
 
     try {
       var response = await apiManager.getRequest(
-        "${Config.baseURL}${Routes.visitorsListing(search, toDate, fromDate)}$filterTypes&page=$currentPage",
+        fotStaffSide
+            ? "${Config.baseURL}${Routes.visitorsListingForStaff(search, toDate, fromDate)}$filterTypes&page=$currentPage"
+            : "${Config.baseURL}${Routes.visitorsListing(propertyId.toString(), search, toDate, fromDate)}$filterTypes&page=$currentPage",
       );
 
       var responseData = jsonDecode(response.body);
@@ -107,16 +113,17 @@ class VisitorsListingCubit extends Cubit<VisitorsListingState> {
 
   /// Load more visitors
   void loadMoreVisitorsUsers(BuildContext context, String types, String search,
-      String fromDate, String toDate) {
+      String fromDate, String toDate,
+      {bool forStaffSide = false}) {
     if (state is VisitorsListingLoaded && hasMore) {
       fetchVisitorsListing(
-        toDate: toDate,
-        fromDate: fromDate,
-        search: search,
-        context: context,
-        filterTypes: types,
-        loadMore: true,
-      );
+          toDate: toDate,
+          fromDate: fromDate,
+          search: search,
+          context: context,
+          filterTypes: types,
+          loadMore: true,
+          fotStaffSide: forStaffSide);
     }
   }
 

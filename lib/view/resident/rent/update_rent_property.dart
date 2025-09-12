@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/crop_image.dart';
+import 'package:ghp_society_management/constants/custom_btns.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/rent_or_sell_property/property_element/property_element_cubit.dart';
 import 'package:ghp_society_management/controller/rent_or_sell_property/update_rent_property/update_rent_property_cubit.dart';
@@ -14,14 +17,15 @@ import 'package:ghp_society_management/model/buy_or_rent_property_model.dart';
 import 'package:ghp_society_management/view/resident/rent/create_rent_property_screen.dart';
 import 'package:ghp_society_management/view/resident/rent/manage_existing_property_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import "package:http/http.dart" as http;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import "package:http/http.dart" as http;
 
 class UpdateRentPropertyScreen extends StatefulWidget {
   final PropertyList propertyLis;
+
   const UpdateRentPropertyScreen({super.key, required this.propertyLis});
 
   @override
@@ -134,6 +138,7 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
   }
 
   List<CroppedFile>? croppedImagesList = [];
+
   fromCamera(BuildContext context) async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.camera);
@@ -179,77 +184,40 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
           Navigator.of(dialogueContext!).pop();
         }
       },
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: AppTheme.backgroundColor,
-          body: Form(
-            key: formkey,
-            child: Column(
-              children: [
-                SizedBox(height: 20.h),
-                Row(children: [
-                  SizedBox(width: 10.w),
-                  GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Icon(Icons.arrow_back, color: Colors.white)),
-                  SizedBox(width: 10.w),
-                  Expanded(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                        Text('Update Rent My Property',
-                            style: GoogleFonts.nunitoSans(
-                                textStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.w600)))
-                      ])),
-                  SizedBox(width: 10.w)
-                ]),
-                SizedBox(height: 20.h),
-                Expanded(
-                  child: Container(
-                      width: double.infinity,
-                      decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20))),
-                      child: BlocBuilder<PropertyElementCubit,
-                              PropertyElementState>(
-                          bloc: _propertyElementCubit,
-                          builder: (context, state) {
-                            if (state is PropertyElementLoading) {
-                              return Center(
-                                  child: CircularProgressIndicator.adaptive(
-                                      backgroundColor: AppTheme.primaryColor));
-                            } else if (state is PropertyElementInternetError) {
-                              return Center(
-                                  child: Text('Internet connection error!',
-                                      style: GoogleFonts.nunitoSans(
-                                          textStyle: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.w600))));
-                            } else if (state is PropertyElementLoaded) {
-                              return SingleChildScrollView(
-                                  child: Padding(
+      child: Scaffold(
+        appBar: appbarWidget(title: 'Update Rent My Property'),
+        body: BlocBuilder<PropertyElementCubit, PropertyElementState>(
+            bloc: _propertyElementCubit,
+            builder: (context, state) {
+              if (state is PropertyElementLoading) {
+                return notificationShimmerLoading();
+              } else if (state is PropertyElementInternetError) {
+                return Center(
+                    child: Text('Internet connection error!',
+                        style: GoogleFonts.nunitoSans(
+                            textStyle: TextStyle(
+                                color: Colors.red,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600))));
+              } else if (state is PropertyElementLoaded) {
+                return Column(
+                  children: [
+                    Expanded(
+                      child: Form(
+                          key: formkey,
+                          child: SingleChildScrollView(
+                            child: Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(height: 10.h),
                                       Text('Property Details :',
                                           style: GoogleFonts.nunitoSans(
                                               textStyle: TextStyle(
-                                                  color:
-                                                      Colors.deepPurpleAccent,
+                                                  color: Colors.deepPurpleAccent,
                                                   fontSize: 16.sp,
-                                                  fontWeight:
-                                                      FontWeight.w600))),
+                                                  fontWeight: FontWeight.w600))),
                                       SizedBox(height: 10.h),
                                       Row(
                                         crossAxisAlignment:
@@ -281,8 +249,7 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            valueContainer(
-                                                towerName.toString()),
+                                            valueContainer(towerName.toString()),
                                             const SizedBox(width: 10),
                                             valueContainer(floorNo.toString())
                                           ]),
@@ -386,7 +353,9 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                           fontSize: 15.sp,
                                           fontWeight: FontWeight.w500,
                                         ),
-                                        keyboardType: TextInputType.number,
+                                        keyboardType: TextInputType.text,
+                                        textInputAction: TextInputAction.done,
+
                                         validator: (text) {
                                           if (text == null || text.isEmpty) {
                                             return 'Please enter house price';
@@ -411,8 +380,7 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                               color: AppTheme.greyColor,
                                             ),
                                           ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
+                                          focusedErrorBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                             borderSide: BorderSide(
@@ -457,8 +425,8 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                           fontSize: 15.sp,
                                           fontWeight: FontWeight.w500,
                                         ),
-                                        keyboardType: TextInputType.number,
-                                        validator: (text) {
+                                        keyboardType: TextInputType.text,
+                                        textInputAction: TextInputAction.done,                                        validator: (text) {
                                           if (text == null || text.isEmpty) {
                                             return 'Please enter upfront';
                                           }
@@ -482,8 +450,7 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                               color: AppTheme.greyColor,
                                             ),
                                           ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
+                                          focusedErrorBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                             borderSide: BorderSide(
@@ -559,8 +526,7 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                               color: AppTheme.greyColor,
                                             ),
                                           ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
+                                          focusedErrorBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                             borderSide: BorderSide(
@@ -598,12 +564,11 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                               textStyle: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 15.sp,
-                                                  fontWeight:
-                                                      FontWeight.w500))),
+                                                  fontWeight: FontWeight.w500))),
                                       const SizedBox(height: 10),
                                       DropdownButton2<String>(
-                                        underline: Container(
-                                            color: Colors.transparent),
+                                        underline:
+                                            Container(color: Colors.transparent),
                                         isExpanded: true,
                                         value: selectedAmenities,
                                         hint: Text('--select--',
@@ -613,8 +578,8 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                                     fontSize: 15.sp,
                                                     fontWeight:
                                                         FontWeight.w500))),
-                                        items: state.propertyElementDataList
-                                            .first.amenities
+                                        items: state.propertyElementDataList.first
+                                            .amenities
                                             .map((item) =>
                                                 DropdownMenuItem<String>(
                                                   value: item.name.toString(),
@@ -650,9 +615,9 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                           ),
                                         ),
                                         dropdownStyleData: DropdownStyleData(
-                                          maxHeight: MediaQuery.sizeOf(context)
-                                                  .height /
-                                              2,
+                                          maxHeight:
+                                              MediaQuery.sizeOf(context).height /
+                                                  2,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(
                                                 10), // Set border radius for dropdown
@@ -669,8 +634,7 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                           children: List.generate(
                                         amenitiesList.length,
                                         (index) => amenitiesWidget(
-                                            amenitiesList[index].toString(),
-                                            () {
+                                            amenitiesList[index].toString(), () {
                                           amenitiesList.removeAt(index);
                                           setState(() {});
                                         }),
@@ -732,7 +696,7 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                           fontWeight: FontWeight.w500,
                                         ),
                                         keyboardType: TextInputType.text,
-                                        validator: (text) {
+                                        textInputAction: TextInputAction.done,                                        validator: (text) {
                                           if (text == null || text.isEmpty) {
                                             return 'Please enter name';
                                           }
@@ -756,8 +720,7 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                               color: AppTheme.greyColor,
                                             ),
                                           ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
+                                          focusedErrorBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                             borderSide: BorderSide(
@@ -804,8 +767,8 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                             color: Colors.black,
                                             fontSize: 15.sp,
                                             fontWeight: FontWeight.w500),
-                                        keyboardType: TextInputType.number,
-                                        validator: (text) {
+                                        keyboardType: TextInputType.text,
+                                        textInputAction: TextInputAction.done,                                        validator: (text) {
                                           if (text == null ||
                                               text.isEmpty ||
                                               text.length < 10) {
@@ -832,8 +795,7 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                               color: AppTheme.greyColor,
                                             ),
                                           ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
+                                          focusedErrorBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                             borderSide: BorderSide(
@@ -875,9 +837,8 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                           fontSize: 15.sp,
                                           fontWeight: FontWeight.w500,
                                         ),
-                                        keyboardType:
-                                            TextInputType.emailAddress,
-                                        validator: (text) {
+                                        keyboardType: TextInputType.emailAddress,
+                                        textInputAction: TextInputAction.done,                                        validator: (text) {
                                           if (text == null ||
                                               text.isEmpty ||
                                               !text.contains('@')) {
@@ -902,8 +863,7 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                               color: AppTheme.greyColor,
                                             ),
                                           ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
+                                          focusedErrorBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                             borderSide: BorderSide(
@@ -929,104 +889,82 @@ class UpdateRentPropertyScreenState extends State<UpdateRentPropertyScreen> {
                                       SizedBox(
                                         height: 20.h,
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          if (formkey.currentState!
-                                              .validate()) {
-                                            if (amenitiesList.isEmpty) {
-                                              snackBar(
-                                                  context,
-                                                  'Please select amenities type',
-                                                  Icons.cancel,
-                                                  AppTheme.redColor);
-                                            } else {
-                                              documentFiles.clear();
-                                              for (int i = 0;
-                                                  i < croppedImagesList!.length;
-                                                  i++) {
-                                                documentFiles.add(File(
-                                                    croppedImagesList![i]
-                                                        .path));
-                                              }
-                                              context
-                                                  .read<
-                                                      UpdateRentPropertyCubit>()
-                                                  .updateRentProperty(
-                                                      propertyId: widget
-                                                          .propertyLis.id
-                                                          .toString(),
-                                                      block: blockId.toString(),
-                                                      floor: floorNo.toString(),
-                                                      unitType: propertyType
-                                                          .toString(),
-                                                      unitNumber:
-                                                          aptNo.toString(),
-                                                      bhk: bhkType.toString(),
-                                                      area: areaSt.toString(),
-                                                      rentPerMonth: rentController
-                                                          .text
-                                                          .toString(),
-                                                      securityDeposit:
-                                                          securityDepositController
-                                                              .text
-                                                              .toString(),
-                                                      date:
-                                                          dateController
-                                                              .text
-                                                              .toString(),
-                                                      name: nameController.text
-                                                          .toString(),
-                                                      number: numberController
-                                                          .text
-                                                          .toString(),
-                                                      email: emailController
-                                                          .text
-                                                          .toString(),
-                                                      amenities: amenitiesList,
-                                                      files: documentFiles);
-                                            }
-                                          }
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(12.0),
-                                          child: Container(
-                                            width: double.infinity,
-                                            height: 50.h,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(30),
-                                                color: AppTheme.primaryColor),
-                                            child: Center(
-                                              child: Text('Submit ',
-                                                  style: GoogleFonts.ptSans(
-                                                    textStyle: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14.sp,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  )),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ]),
-                              ));
-                            } else {
-                              return Center(
-                                  child: Text('Data not Loaded!',
-                                      style: GoogleFonts.nunitoSans(
-                                          textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.w600))));
+
+                                    ])),
+                          )),
+                    ),
+
+
+                    customBtn(
+                      onTap: () {
+                        if (formkey.currentState!.validate()) {
+                          if (amenitiesList.isEmpty) {
+                            snackBar(
+                                context,
+                                'Please select amenities type',
+                                Icons.cancel,
+                                AppTheme.redColor);
+                          } else {
+                            documentFiles.clear();
+                            for (int i = 0;
+                            i < croppedImagesList!.length;
+                            i++) {
+                              documentFiles.add(File(
+                                  croppedImagesList![i].path));
                             }
-                          })),
-                ),
-              ],
-            ),
-          ),
-        ),
+                            context
+                                .read<UpdateRentPropertyCubit>()
+                                .updateRentProperty(
+                                propertyId: widget.propertyLis.id
+                                    .toString(),
+                                block: blockId.toString(),
+                                floor: floorNo.toString(),
+                                unitType: propertyType
+                                    .toString(),
+                                unitNumber: aptNo
+                                    .toString(),
+                                bhk: bhkType.toString(),
+                                area: areaSt.toString(),
+                                rentPerMonth: rentController
+                                    .text
+                                    .toString(),
+                                securityDeposit: securityDepositController
+                                    .text
+                                    .toString(),
+                                date: dateController.text
+                                    .toString(),
+                                name: nameController
+                                    .text
+                                    .toString(),
+                                number:
+                                numberController
+                                    .text
+                                    .toString(),
+                                email: emailController.text
+                                    .toString(),
+                                amenities: amenitiesList,
+                                files: documentFiles);
+                          }
+                        }
+                      },
+                      txt: "Submit"
+                    ),
+                  ],
+                );
+              } else {
+                return Center(
+                  child: Text(
+                    'Data not Loaded!',
+                    style: GoogleFonts.nunitoSans(
+                      textStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                );
+              }
+            }),
       ),
     );
   }

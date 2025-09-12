@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:bloc/bloc.dart';
+
 import 'package:ghp_society_management/constants/config.dart';
 import 'package:ghp_society_management/constants/export.dart';
-import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
-import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
+
 // Part file for states
 part 'create_visitors_state.dart';
 
@@ -20,7 +19,8 @@ class CreateVisitorsCubit extends Cubit<CreateVisitorsState> {
 
   /// Function to create visitors
   Future<void> createVisitors(
-      {required String visitorsType,
+      {required String propertyId,
+      required String visitorsType,
       required String visitingFrequency,
       required String noOFVisitors,
       required String date,
@@ -34,16 +34,8 @@ class CreateVisitorsCubit extends Cubit<CreateVisitorsState> {
     emit(CreateVisitorsLoading());
 
     try {
-      // Retrieve the token
       var token = LocalStorage.localStorage.getString('token');
-      if (token == null) {
-        emit(CreateVisitorsFailed(errorMsg: 'Leading'));
-        return;
-      }
-
       var url = Uri.parse(Config.baseURL + Routes.createVisitors);
-
-      // Set headers
       var headers = {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token'
@@ -52,6 +44,7 @@ class CreateVisitorsCubit extends Cubit<CreateVisitorsState> {
       // Prepare the multipart request
       var request = http.MultipartRequest('POST', url)
         ..headers.addAll(headers)
+        ..fields['property_id'] = propertyId.toString()
         ..fields['type_of_visitor'] = visitorsType
         ..fields['visiting_frequency'] = visitingFrequency
         ..fields['no_of_visitors'] = noOFVisitors
@@ -71,9 +64,7 @@ class CreateVisitorsCubit extends Cubit<CreateVisitorsState> {
           request.files.add(multipartFile);
         }
       }
-
       print("Payload fields: ${request.fields}");
-
       final responseStream = await request.send();
       final response = await http.Response.fromStream(responseStream);
 
@@ -103,7 +94,6 @@ class CreateVisitorsCubit extends Cubit<CreateVisitorsState> {
     } on SocketException {
       emit(CreateVisitorsInternetError());
     } catch (e) {
-      print("Exception caught: $e");
       emit(CreateVisitorsFailed(errorMsg: 'Something went wrong: $e'));
     }
   }

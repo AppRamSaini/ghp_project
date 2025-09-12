@@ -7,3 +7,13 @@ class LocalStorage {
     localStorage = await SharedPreferences.getInstance();
   }
 }
+
+Future<bool> hasSeenShowcase() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('hasSeenShowcase') ?? false;
+}
+
+Future<void> setShowcaseSeen() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('hasSeenShowcase', true);
+}

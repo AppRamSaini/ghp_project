@@ -1,46 +1,41 @@
 import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/view/resident/sos/sos_incoming_alert.dart';
+import 'package:ghp_society_management/view/resident/visitors/incomming_request.dart';
 
-
-/// Handle Background Notification
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  await LocalStorage.init();
-  FirebaseNotificationService.startVibrationAndRingtone();
-}
-
-/// Request Notification Permission
 Future<void> requestNotificationPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
-  NotificationSettings settings =
-      await messaging.requestPermission(alert: true, badge: true, sound: true);
-  if (settings.authorizationStatus == AuthorizationStatus.denied) {
-    print("🚨 User Denied Notification Permission");
-  } else {
-    print("✅ Notification Permission Granted");
-  }
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+    criticalAlert: true,
+  );
+  print("🔔 Permission: ${settings.authorizationStatus}");
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await LocalStorage.init();
-
   await requestNotificationPermission();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  /// Local Notification + Foreground Notification Setup
-  FirebaseNotificationService.initialize(); // InitializeNotificationHandler
+  await FirebaseNotificationService.initialize();
 
-  runApp(MyApp());
+  RemoteMessage? initialMessage =
+  await FirebaseMessaging.instance.getInitialMessage();
+
+  runApp(MyApp(initialMessage: initialMessage));
 }
 
 late Size size;
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final RemoteMessage? initialMessage;
+  const MyApp({super.key, this.initialMessage});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -50,6 +45,17 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
+    /// Foreground notification listener
+    FirebaseMessaging.onMessage.listen((message) {
+      FirebaseNotificationService.handleMessage(message, source: "foreground");
+      FirebaseNotificationService.showCustomNotification(message: message);
+    });
+
+    /// Background notification listener (user taps)
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      FirebaseNotificationService.handleMessage(message, source: "background");
+    });
   }
 
   @override
@@ -58,25 +64,53 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: BlocProviders.providers,
       child: ScreenUtilInit(
-        designSize: Size(360, 690), // Set default design size
+        designSize: const Size(360, 690),
         builder: (context, child) {
           return MaterialApp(
+            title: "Ghp Society",
             debugShowCheckedModeBanner: false,
+            navigatorKey: navigatorKey,
             theme: ThemeData(
               scaffoldBackgroundColor: Colors.white,
               useMaterial3: true,
-              appBarTheme: const AppBarTheme(
-                backgroundColor: Colors.white,
+              appBarTheme: AppBarTheme(
+                titleTextStyle: TextStyle(color: AppTheme.white),
+                backgroundColor: AppTheme.primaryColor,
                 centerTitle: false,
-                iconTheme: IconThemeData(color: Colors.black),
+                iconTheme: const IconThemeData(color: Colors.white),
               ),
             ),
-            navigatorKey: navigatorKey,
-            // navigatorObservers: [analyticsObserver],
-            home: SplashScreen(),
+            home: _getStartPage(widget.initialMessage),
           );
         },
       ),
     );
+  }
+
+  /// Terminated state page handling
+  Widget _getStartPage(RemoteMessage? remoteMessage) {
+    if (remoteMessage != null && remoteMessage.data.isNotEmpty) {
+      final type = remoteMessage.data['type'];
+      print("📩 Message type (terminated): $type");
+
+      if (type == 'incoming_request') {
+        return VisitorsIncomingRequestPage(
+          message: remoteMessage,
+          fromPage: "terminate",
+          setPageValue: (val) {
+            if (val) FirebaseNotificationService.stopVibrationAndRingtone();
+          },
+        );
+      } else if (type == 'sos_alert') {
+        return SosIncomingAlert(
+          message: remoteMessage,
+          setPageValue: (val) {
+            if (val) FirebaseNotificationService.stopVibrationAndRingtone();
+          },
+        );
+      }
+    }
+
+    return SplashScreen(); // default page
   }
 }
