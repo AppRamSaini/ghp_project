@@ -57,20 +57,18 @@ class FirebaseNotificationService {
         flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
 
-    // 🔔 Ringtone वाला channel
-    const AndroidNotificationChannel priorityChannel =
-        AndroidNotificationChannel(
-      'priority_channel',
-      'Priority Notifications',
-      description: 'Incoming requests / SOS alerts with ringtone',
-      importance: Importance.max,
-      enableVibration: true,
-      sound: RawResourceAndroidNotificationSound('ringtone'),
-      playSound: true,
-    );
+    // 🔔 Priority Channel (dynamic sound)
+    final AndroidNotificationChannel priorityChannel =
+        AndroidNotificationChannel('priority_channel', 'Priority Notifications',
+            description: 'Incoming requests / SOS alerts with ringtone',
+            importance: Importance.max,
+            enableVibration: true,
+            playSound: true,
+            sound: const RawResourceAndroidNotificationSound('ringtone'));
 
-    // 🤫 Silent वाला channel
-    const AndroidNotificationChannel silentChannel = AndroidNotificationChannel(
+    // 🤫 Silent Channel
+    final AndroidNotificationChannel silentChannel =
+        const AndroidNotificationChannel(
       'silent_channel',
       'Silent Notifications',
       description: 'Other notifications without ringtone',
@@ -80,14 +78,16 @@ class FirebaseNotificationService {
 
     await plugin?.createNotificationChannel(priorityChannel);
     await plugin?.createNotificationChannel(silentChannel);
+
+    print("🔔 Channels created)");
   }
 
   /// Show Notification
   static Future<void> showCustomNotification(
       {required RemoteMessage message}) async {
     final type = message.data['type'] ?? '';
-    final title = message.notification?.title ?? 'New Message';
-    final body = message.notification?.body ?? 'You have a new message';
+    final title = message.data['title'] ?? 'New Message';
+    final body = message.data['body'] ?? 'You have a new message';
 
     // type के हिसाब से channel चुनो
     final channelId = (type == 'incoming_request' || type == 'sos_alert')

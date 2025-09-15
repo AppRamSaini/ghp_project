@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
 
     FirebaseMessaging.onMessage.listen((message) {
       print("🔔 Foreground MSG Received: ${message.toMap()}");
-      FirebaseNotificationService.handleMessage(message, source: "foreground");
+      // FirebaseNotificationService.handleMessage(message, source: "foreground");
       FirebaseNotificationService.showCustomNotification(message: message);
     });
 
@@ -59,6 +59,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.sizeOf(context);
+    fetchFCM();
     return MultiBlocProvider(
       providers: BlocProviders.providers,
       child: ScreenUtilInit(

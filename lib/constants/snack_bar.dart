@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
@@ -349,3 +350,21 @@ TextStyle customTitle() => GoogleFonts.montserrat(
 
 TextStyle customDes() => GoogleFonts.montserrat(
     fontSize: 12, fontWeight: FontWeight.w500, color: AppTheme.white);
+
+// fetch FCM
+
+fetchFCM() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // 1. Request permission (iOS + Android 13+)
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  debugPrint("🔔 Permission status: ${settings.authorizationStatus}");
+
+  // 2. Always get FCM token (same for iOS & Android)
+  String? fcmToken = await messaging.getToken();
+  debugPrint("🔥 FCM Token ---> $fcmToken");
+}
