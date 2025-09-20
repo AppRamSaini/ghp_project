@@ -142,14 +142,14 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
         final formattedTimeString =
             "${formattedTime.hour.toString().padLeft(2, '0')}:"
             "${formattedTime.minute.toString().padLeft(
-            2, '0')}:00"; // Always add seconds as 00
+            2, '0')}:00";
         time?.text = formattedTimeString;
       });
     }
   }
 
   late BuildContext dialogueContext;
-  List<SearchItem> searchDataList = []; // List of SearchItem objects
+  List<SearchItem> searchDataList = [];
 
 /*  Future<List<SearchItem>> fetchData(String query) async {
     try {

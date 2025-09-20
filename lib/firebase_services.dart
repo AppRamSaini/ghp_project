@@ -51,22 +51,34 @@ class FirebaseNotificationService {
     _createNotificationChannels();
   }
 
-  /// Notification Channels
   static Future<void> _createNotificationChannels() async {
     final plugin =
         flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
 
-    // 🔔 Priority Channel (dynamic sound)
-    final AndroidNotificationChannel priorityChannel =
-        AndroidNotificationChannel('priority_channel', 'Priority Notifications',
-            description: 'Incoming requests / SOS alerts with ringtone',
-            importance: Importance.max,
-            enableVibration: true,
-            playSound: true,
-            sound: const RawResourceAndroidNotificationSound('ringtone'));
+    // 🔹 Delete old channels to enforce sound update
+    final channels = await plugin?.getNotificationChannels();
+    for (var ch in channels ?? []) {
+      if (ch.id == 'priority_channel' || ch.id == 'silent_channel') {
+        await plugin?.deleteNotificationChannel(ch.id);
+        print("🔔 Deleted old channel: ${ch.id}");
+      }
+    }
 
-    // 🤫 Silent Channel
+    // 🔹 Priority Channel (with ringtone)
+    final AndroidNotificationChannel priorityChannel =
+        AndroidNotificationChannel(
+      'priority_channel',
+      'Priority Notifications',
+      description: 'Incoming requests / SOS alerts with ringtone',
+      importance: Importance.max,
+      enableVibration: true,
+      playSound: true,
+      sound: const RawResourceAndroidNotificationSound(
+          'ringtone'), // res/raw/ringtone.mp3
+    );
+
+    // 🔹 Silent Channel
     final AndroidNotificationChannel silentChannel =
         const AndroidNotificationChannel(
       'silent_channel',
@@ -78,18 +90,18 @@ class FirebaseNotificationService {
 
     await plugin?.createNotificationChannel(priorityChannel);
     await plugin?.createNotificationChannel(silentChannel);
-
-    print("🔔 Channels created)");
+    print("🔔 Channels recreated ✅");
   }
 
-  /// Show Notification
   static Future<void> showCustomNotification(
       {required RemoteMessage message}) async {
     final type = message.data['type'] ?? '';
     final title = message.data['title'] ?? 'New Message';
     final body = message.data['body'] ?? 'You have a new message';
 
-    // type के हिसाब से channel चुनो
+    // 🔹 हर notification से पहले channel recreate करें
+    await _createNotificationChannels();
+
     final channelId = (type == 'incoming_request' || type == 'sos_alert')
         ? 'priority_channel'
         : 'silent_channel';
@@ -102,15 +114,21 @@ class FirebaseNotificationService {
       channelDescription: 'App notifications',
       importance: Importance.max,
       priority: Priority.high,
+      playSound: channelId == 'priority_channel',
+      sound: channelId == 'priority_channel'
+          ? const RawResourceAndroidNotificationSound('ringtone')
+          : null,
+      enableVibration: true,
     );
 
     final iosDetails = DarwinNotificationDetails(
-        sound: (type == 'incoming_request' || type == 'sos_alert')
-            ? 'ringtone.caf'
-            : null,
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: type == 'incoming_request' || type == 'sos_alert');
+      sound: (type == 'incoming_request' || type == 'sos_alert')
+          ? 'ringtone.caf'
+          : null,
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: type == 'incoming_request' || type == 'sos_alert',
+    );
 
     final details =
         NotificationDetails(android: androidDetails, iOS: iosDetails);

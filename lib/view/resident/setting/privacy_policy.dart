@@ -1,13 +1,12 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:ghp_society_management/constants/config.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
-
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 class PrivacyPolicyScreen extends StatefulWidget {
@@ -20,13 +19,12 @@ class PrivacyPolicyScreen extends StatefulWidget {
 class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   bool isLoading = true;
   late final WebViewController _controller;
+
   Future<void> _launchInWebView(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.inAppWebView,
-      webViewConfiguration: const WebViewConfiguration(
-          headers: <String, String>{'my_header_key': 'my_header_value'}),
-    )) {
+    if (!await launchUrl(url,
+        mode: LaunchMode.inAppWebView,
+        webViewConfiguration: const WebViewConfiguration(
+            headers: <String, String>{'my_header_key': 'my_header_value'}))) {
       throw Exception('Could not launch $url');
     }
   }
@@ -46,7 +44,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
     }
 
     final WebViewController controller =
-    WebViewController.fromPlatformCreationParams(params);
+        WebViewController.fromPlatformCreationParams(params);
     // #enddocregion platform_features
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -66,13 +64,10 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               isLoading = false;
             });
           },
-          onWebResourceError: (WebResourceError error) {
-
-          },
+          onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
             if (Platform.isAndroid) {
-              if (request.url.startsWith(
-                  Routes.privacyPolicyPage)) {
+              if (request.url.startsWith(Routes.privacyPolicyPage)) {
                 // Play Store links you can open externally if needed.
                 _launchInWebView(Uri.parse(request.url));
                 return NavigationDecision.prevent;

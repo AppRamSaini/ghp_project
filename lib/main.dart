@@ -51,7 +51,6 @@ class _MyAppState extends State<MyApp> {
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print("🔔 Tapped on MSG Received: ${message.toMap()}");
-
       FirebaseNotificationService.handleMessage(message, source: "background");
     });
   }
