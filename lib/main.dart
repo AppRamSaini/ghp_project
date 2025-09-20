@@ -10,6 +10,8 @@ Future<void> requestNotificationPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
       alert: true, badge: true, sound: true, criticalAlert: true);
+  // await messaging.setForegroundNotificationPresentationOptions(
+  //     alert: true, badge: true, sound: true);
   print("🔔 Permission: ${settings.authorizationStatus}");
 }
 
@@ -58,7 +60,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.sizeOf(context);
-    fetchFCM();
+    // fetchFCM();
     return MultiBlocProvider(
       providers: BlocProviders.providers,
       child: ScreenUtilInit(
