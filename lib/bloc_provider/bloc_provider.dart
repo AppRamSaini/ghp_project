@@ -36,6 +36,7 @@ import 'package:ghp_society_management/controller/sos_management/sos_acknowledge
 import 'package:ghp_society_management/controller/sos_management/sos_category/sos_category_cubit.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_element/sos_element_cubit.dart';
 import 'package:ghp_society_management/controller/sos_management/submit_sos/submit_sos_cubit.dart';
+import 'package:ghp_society_management/controller/update_device_token/update_fcm_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_in/check_in_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_out/check_out_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/visitors_scan/scan_visitors_cubit.dart';
@@ -202,5 +203,6 @@ class BlocProviders {
     BlocProvider<PropertyListingCubit>(
         create: (context) => PropertyListingCubit()),
     BlocProvider<LedgerBillCubit>(create: (context) => LedgerBillCubit()),
+    BlocProvider<UpdateFCMCubit>(create: (context) => UpdateFCMCubit()),
   ];
 }

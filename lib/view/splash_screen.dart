@@ -1,8 +1,10 @@
 import 'dart:async';
+
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_element/parcel_element_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_pending_counts/parcel_counts_cubit.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_element/sos_element_cubit.dart';
+import 'package:ghp_society_management/fcm_services.dart';
 import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
 import 'package:ghp_society_management/view/maintenance_staff/bottom_nav_screen.dart';
 import 'package:ghp_society_management/view/resident/onboarding/onboarding_screen.dart';
@@ -32,6 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _startTimer() {
+    FCMTokenService.initFCMToken();
     Future.delayed(const Duration(seconds: 2), () {
       _decideNextScreen();
     });
