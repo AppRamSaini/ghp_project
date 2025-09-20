@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter_html/flutter_html.dart';
 import 'package:ghp_society_management/constants/crop_image.dart';
@@ -14,6 +15,7 @@ import 'package:ghp_society_management/model/parcel_listing_model.dart';
 import 'package:ghp_society_management/model/refer_property_model.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
 import 'package:ghp_society_management/model/visitors_listing_model.dart';
+import 'package:ghp_society_management/view/resident/bills/bill_detail_screen.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_gatepass.dart';
 import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
 import 'package:http/http.dart' as http;
@@ -2008,8 +2010,8 @@ Future<void> overDueBillAlertDialog(
                                     fontWeight: FontWeight.w600)),
                             Text(
                               fromStaffSide
-                                  ? 'Entry restricted due to pending maintenance bill :  ₹${myUnpaidBill.amount.toString()}.'
-                                  : 'Your maintenance bill has been due on $formattedDueDate.Please pay ₹${myUnpaidBill.amount.toString()}',
+                                  ? 'Entry restricted due to pending maintenance bill : ₹${max(0, parseNum(myUnpaidBill.amount) + parseNum(myUnpaidBill.prevMonthPending) - (parseNum(myUnpaidBill.installment) + parseNum(myUnpaidBill.advanceAmount)))}.'
+                                  : 'Your maintenance bill has been due on $formattedDueDate.Please pay ₹${max(0, parseNum(myUnpaidBill.amount) + parseNum(myUnpaidBill.prevMonthPending) - (parseNum(myUnpaidBill.installment) + parseNum(myUnpaidBill.advanceAmount)))}',
                               style: GoogleFonts.nunitoSans(
                                 color: Colors.red,
                                 fontSize: 13.sp,
