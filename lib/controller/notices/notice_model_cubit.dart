@@ -30,7 +30,7 @@ class NoticeModelCubit extends Cubit<NoticeModelState> {
 
     try {
       var response = await apiManager
-          .getRequest("${Config.baseURL}${Routes.notice}?page=$currentPage");
+          .getRequest("${Config.baseURL}${Routes.notice}?page=$currentPage",usePropertyID: true);
 
       var responseData = jsonDecode(response.body.toString());
       if (response.statusCode == 200) {

@@ -14,7 +14,7 @@ class DeleteRequestCubit extends Cubit<DeleteRequestState> {
     emit(DeleteRequestLoading());
     try {
       var responseData = await apiManager
-          .deleteRequest("${Config.baseURL + Routes.deleteRequest}$documentId");
+          .deleteRequest("${Config.baseURL + Routes.deleteRequest}$documentId",usePropertyID: true);
       var data = json.decode((responseData.body.toString()));
       print(data);
       print(responseData.statusCode);

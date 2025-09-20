@@ -1,6 +1,9 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ghp_society_management/constants/app_images.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:marquee/marquee.dart';
@@ -209,29 +212,26 @@ String formatShiftTime(String shiftTime) {
   return DateFormat('hh:mm a').format(dateTime); // Convert to AM/PM format
 }
 
-
-
 // CUSTOM APPBAR
 AppBar customAppbar(
     {required BuildContext context,
-      required String title,
-      bool searchBarOpen = false,
-      required TextEditingController textController,
-      Function()? onExpansionComplete,
-      Function()? onCollapseComplete,
-      Function(bool)? onPressButton,
-      String hintText = "Search Here",
-      Function? onChanged}) {
+    required String title,
+    bool searchBarOpen = false,
+    required TextEditingController textController,
+    Function()? onExpansionComplete,
+    Function()? onCollapseComplete,
+    Function(bool)? onPressButton,
+    String hintText = "Search Here",
+    Function? onChanged}) {
   return AppBar(
-    iconTheme: const IconThemeData(color: Colors.black),
     title: searchBarOpen
         ? const SizedBox()
         : Text(title,
-        style: GoogleFonts.nunitoSans(
-            textStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600))),
+            style: GoogleFonts.nunitoSans(
+                textStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600))),
     actions: [
       SearchBarAnimation(
         searchBoxColour: AppTheme.white,
@@ -243,12 +243,11 @@ AppBar customAppbar(
         enableKeyboardFocus: true,
         hintTextColour: AppTheme.primaryColor,
         trailingWidget:
-        Icon(Icons.search, size: 20, color: AppTheme.primaryColor),
+            Icon(Icons.search, size: 20, color: AppTheme.primaryColor),
         secondaryButtonWidget:
-        const Icon(Icons.close, size: 20, color: Colors.white),
+            const Icon(Icons.close, size: 20, color: Colors.white),
         buttonWidget: Icon(Icons.search, size: 20, color: AppTheme.white),
         searchBoxWidth: MediaQuery.of(context).size.width / 1.1,
-
         enteredTextStyle: GoogleFonts.nunitoSans(
             textStyle: TextStyle(
                 color: AppTheme.primaryColor,
@@ -264,8 +263,6 @@ AppBar customAppbar(
   );
 }
 
-
-
 String formatTimeToAMPM(String time) {
   final inputFormat = DateFormat("HH:mm:ss");
   final outputFormat = DateFormat("hh:mm a");
@@ -273,8 +270,6 @@ String formatTimeToAMPM(String time) {
   final dateTime = inputFormat.parse(time);
   return outputFormat.format(dateTime);
 }
-
-
 
 String convertDateTimeFormat(DateTime inputDate) {
   String formattedDate = DateFormat('dd MMMM, y').format(inputDate);
@@ -296,19 +291,80 @@ String convertTimeFormat(DateTime inputDate) {
   return formattedTime;
 }
 
+Widget marqueeText(String text) => Marquee(
+      text: text,
+      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+      scrollAxis: Axis.horizontal,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      blankSpace: 10.0,
+      velocity: 50.0,
+      pauseAfterRound: Duration(seconds: 0),
+      startPadding: 10.0,
+      accelerationDuration: Duration(seconds: 1),
+      accelerationCurve: Curves.linear,
+      decelerationDuration: Duration(milliseconds: 500),
+      decelerationCurve: Curves.easeOut,
+    );
 
-Widget marqueeText(String text)=>Marquee(
-  text: text,
-  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-  scrollAxis: Axis.horizontal,
-  crossAxisAlignment: CrossAxisAlignment.start,
-  blankSpace: 10.0,
-  velocity: 50.0,
-  pauseAfterRound: Duration(seconds: 0),
-  startPadding: 10.0,
-  accelerationDuration: Duration(seconds: 1),
-  accelerationCurve: Curves.linear,
-  decelerationDuration: Duration(milliseconds: 500),
-  decelerationCurve: Curves.easeOut,
-);
+/// emptyData
+Widget emptyDataWidget(String message) => Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(ImageAssets.noImage, width: size.width * 0.6),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.15),
+            child: Text(message,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.robotoFlex(
+                    color: Colors.deepPurpleAccent, fontSize: 16)),
+          ),
+        ],
+      ),
+    );
 
+/// Appbar widget
+AppBar appbarWidget({required String title, List<Widget>? actions}) => AppBar(
+    title: Text(
+      title,
+      style: GoogleFonts.nunitoSans(
+        textStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
+    actions: actions);
+
+/// global padding data
+
+EdgeInsetsGeometry globalBottomPadding(BuildContext context) =>
+    EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom);
+
+/// scroll management
+
+TextStyle customTitle() => GoogleFonts.montserrat(
+    fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.white);
+
+TextStyle customDes() => GoogleFonts.montserrat(
+    fontSize: 12, fontWeight: FontWeight.w500, color: AppTheme.white);
+
+// fetch FCM
+
+fetchFCM() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // 1. Request permission (iOS + Android 13+)
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  debugPrint("🔔 Permission status: ${settings.authorizationStatus}");
+
+  // 2. Always get FCM token (same for iOS & Android)
+  String? fcmToken = await messaging.getToken();
+  debugPrint("🔥 FCM Token ---> $fcmToken");
+}

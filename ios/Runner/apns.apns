@@ -1,0 +1,20 @@
+
+
+{
+    "Simulator Target Bundle": "com.fp.ghpsocietyapp",
+    "aps" : {
+        "alert" : {
+            "title": "zheyg",
+            "type": "incoming_request",
+            "body" : "vjhfv"
+        },
+        "content-available": 1,
+        "type": "incoming_request",
+        "sound" : "ringtone.caf",
+    },
+    "gcm.message_id": "123",
+    "acme2" : 42,
+    "type": "incoming_request",
+    "data": "{\"type\":\"incoming_request\",\"name\":\"Bhim\",\"mob\":\"7777777777\",\"visitor_id\":223,\"img\":\"https://society.ghpjaipur.com/public/storage/visitor_images/Cs0efwVyvztEBX1NJvkBaJHubOS9IqYntKnWJ3Fx.jpg\",\"description\":\"Domestic Help - House help, cook, maid or babysitter arrival\",\"type_of_visit\":\"Friend\",\"vehicle_number\":\"BHJJ\",\"time\":\"03:55PM\"}"
+
+}

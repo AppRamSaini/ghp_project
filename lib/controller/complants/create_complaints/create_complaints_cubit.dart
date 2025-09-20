@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:ghp_society_management/constants/config.dart';
@@ -14,23 +15,23 @@ class CreateComplaintsCubit extends Cubit<CreateComplaintsState> {
 
   final ApiManager apiManager = ApiManager();
 
-  Future<void> createComplaints({
-    required String area,
-    required String serviceCategoryId,
-    required String description,
-    List<File>? imageList,
-    List<File>? videoList,
-    List<File>? audioList,
-  }) async {
+  Future<void> createComplaints(
+      {required String area,
+      required String serviceCategoryId,
+      required String description,
+      List<File>? imageList,
+      List<File>? videoList,
+      List<File>? audioList}) async {
     emit(CreateComplaintsLoading());
 
     try {
       final token = LocalStorage.localStorage.getString('token');
-      print('--------------------$serviceCategoryId');
+      final propertyId = LocalStorage.localStorage.getString('property_id');
       final request = http.MultipartRequest(
           'POST', Uri.parse(Config.baseURL + Routes.createComplaints))
         ..headers['Authorization'] = 'Bearer $token'
         ..headers['Accept'] = 'application/json'
+        ..fields['property_id'] = '$propertyId'
         ..fields['complaint_category_id'] = serviceCategoryId.toString()
         ..fields['area'] = area
         ..fields['description'] = description;
@@ -46,9 +47,10 @@ class CreateComplaintsCubit extends Cubit<CreateComplaintsState> {
 
       // Decoding the response
       final data = jsonDecode(utf8.decode(response.bodyBytes));
+      print('--------${response.statusCode}------>>>>>>>${request.fields}');
+      print(Config.baseURL + Routes.createComplaints);
+      print('-------------------->>>>>>$data');
 
-      print(data);
-      print(response.statusCode);
       if (response.statusCode == 201) {
         emit(CreateComplaintsSuccessfully(msg: data['message']));
       } else if (response.statusCode == 401) {
@@ -80,4 +82,3 @@ class CreateComplaintsCubit extends Cubit<CreateComplaintsState> {
     }
   }
 }
-

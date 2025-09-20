@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/constants/custom_btns.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/parcel/create_parcel/create_parcel_cubit.dart';
@@ -13,6 +14,7 @@ import 'package:intl/intl.dart';
 
 class CreateParcelPage extends StatefulWidget {
   const CreateParcelPage({super.key});
+
   @override
   State<CreateParcelPage> createState() => _CreateParcelPageState();
 }
@@ -97,6 +99,8 @@ class _CreateParcelPageState extends State<CreateParcelPage> {
 
   late BuildContext dialogueContext;
 
+  ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -114,7 +118,6 @@ class _CreateParcelPageState extends State<CreateParcelPage> {
         } else if (state is CreateParcelSuccess) {
           snackBar(context, state.successMsg.toString(), Icons.done,
               AppTheme.guestColor);
-          // context.read<ViewVisitorsCubit>().fetchViewVisitors();
           Navigator.of(dialogueContext).pop();
           Navigator.of(context).pop();
         } else if (state is CreateParcelFailed) {
@@ -132,232 +135,211 @@ class _CreateParcelPageState extends State<CreateParcelPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppTheme.backgroundColor,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                  padding: EdgeInsets.only(top: 20.h, left: 6.h, bottom: 20.h),
-                  child: Row(children: [
-                    GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child:
-                            const Icon(Icons.arrow_back, color: Colors.white)),
-                    SizedBox(width: 10.w),
-                    Text('Add Parcel Info',
-                        style: GoogleFonts.nunitoSans(
-                            textStyle: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.w600)))
-                  ])),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20))),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Form(
-                        key: _formkey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 10.h),
-                            Text('Parcel ID',
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w500))),
-                            SizedBox(height: 10.h),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: TextFormField(
-                                controller: parcelIDController,
-                                style: GoogleFonts.nunitoSans(
-                                  color: Colors.black,
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                keyboardType: TextInputType.text,
-                                validator: (text) {
-                                  if (text == null || text.isEmpty) {
-                                    return 'Please enter parcel ID';
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  hintText: 'Enter parcel ID',
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 12.h, horizontal: 10.0),
-                                  filled: true,
-                                  hintStyle: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.normal),
-                                  fillColor: AppTheme.greyColor,
-                                  errorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.greyColor)),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.greyColor)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.greyColor)),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide: BorderSide(
-                                      color: AppTheme.greyColor,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
-                            Text('Parcel Name',
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w500))),
-                            SizedBox(height: 10.h),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: TextFormField(
-                                controller: nameController,
-                                style: GoogleFonts.nunitoSans(
-                                  color: Colors.black,
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                keyboardType: TextInputType.text,
-                                validator: (text) {
-                                  if (text == null || text.isEmpty) {
-                                    return 'Please enter parcel name';
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  hintText: 'Enter parcel name',
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 12.h, horizontal: 10.0),
-                                  filled: true,
-                                  hintStyle: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.normal),
-                                  fillColor: AppTheme.greyColor,
-                                  errorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.greyColor)),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.greyColor)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.greyColor)),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide: BorderSide(
-                                      color: AppTheme.greyColor,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
-                            Text('Brands Name',
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w500))),
-                            SizedBox(height: 10.h),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: TextFormField(
-                                controller: senderNameController,
-                                style: GoogleFonts.nunitoSans(
-                                  color: Colors.black,
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                keyboardType: TextInputType.text,
-                                validator: (text) {
-                                  if (text == null || text.isEmpty) {
-                                    return 'Please enter Brands Name';
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  hintText: 'Enter Brands Name',
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 12.h, horizontal: 10.0),
-                                  filled: true,
-                                  hintStyle: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.normal),
-                                  fillColor: AppTheme.greyColor,
-                                  errorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.greyColor)),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.greyColor)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(
-                                          color: AppTheme.greyColor)),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide: BorderSide(
-                                      color: AppTheme.greyColor,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
-                            Text('Type of Parcel',
-                                style: GoogleFonts.nunitoSans(
-                                  textStyle: TextStyle(
+        appBar: appbarWidget(title: 'Add Parcel Info'),
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Form(
+                    key: _formkey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 10.h),
+                        Text('Order ID',
+                            style: GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
                                     color: Colors.black,
                                     fontSize: 15.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )),
-                            SizedBox(height: 10.h),
-                            BlocBuilder<ParcelElementsCubit,
-                                ParcelElementsState>(
-                              builder: (context, state) {
-                                if (state is ParcelElementLoaded) {
-                                  return DropdownButton2<String>(
-                                    underline:
-                                        Container(color: Colors.transparent),
-                                    isExpanded: true,
-                                    value: parcelTypes,
-                                    hint: Text('Select Parcel type',
-                                        style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 15.sp))),
-                                    items: state
-                                        .parcelElement.first.data!.parcelTypes!
+                                    fontWeight: FontWeight.w500))),
+                        SizedBox(height: 10.h),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: TextFormField(
+                            textInputAction: TextInputAction.done,
+                            controller: parcelIDController,
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            keyboardType: TextInputType.text,
+                            validator: (text) {
+                              if (text == null || text.isEmpty) {
+                                return 'Please enter order ID';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Enter order id',
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 12.h, horizontal: 10.0),
+                              filled: true,
+                              hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.normal),
+                              fillColor: AppTheme.greyColor,
+                              errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
+                              focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
+                        Text('Parcel Name',
+                            style: GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500))),
+                        SizedBox(height: 10.h),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: TextFormField(
+                            textInputAction: TextInputAction.done,
+                            controller: nameController,
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            keyboardType: TextInputType.text,
+                            validator: (text) {
+                              if (text == null || text.isEmpty) {
+                                return 'Please enter parcel name';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Enter parcel name',
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 12.h, horizontal: 10.0),
+                              filled: true,
+                              hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.normal),
+                              fillColor: AppTheme.greyColor,
+                              errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
+                              focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
+                        Text('Brands Name',
+                            style: GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500))),
+                        SizedBox(height: 10.h),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: TextFormField(
+                            textInputAction: TextInputAction.done,
+                            controller: senderNameController,
+                            style: GoogleFonts.nunitoSans(
+                              color: Colors.black,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            keyboardType: TextInputType.text,
+                            validator: (text) {
+                              if (text == null || text.isEmpty) {
+                                return 'Please enter Brands Name';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Enter Brands Name',
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 12.h, horizontal: 10.0),
+                              filled: true,
+                              hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.normal),
+                              fillColor: AppTheme.greyColor,
+                              errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
+                              focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderSide:
+                                      BorderSide(color: AppTheme.greyColor)),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                borderSide: BorderSide(
+                                  color: AppTheme.greyColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
+                        Text('Type of Parcel',
+                            style: GoogleFonts.nunitoSans(
+                              textStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )),
+                        SizedBox(height: 10.h),
+                        BlocBuilder<ParcelElementsCubit, ParcelElementsState>(
+                          builder: (context, state) {
+                            if (state is ParcelElementLoaded) {
+                              return DropdownButton2<String>(
+                                underline: Container(color: Colors.transparent),
+                                isExpanded: true,
+                                value: parcelTypes,
+                                hint: Text('Select Parcel type',
+                                    style: GoogleFonts.nunitoSans(
+                                        textStyle: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 15.sp))),
+                                items:
+                                    state.parcelElement.first.data!.parcelTypes!
                                         .map((item) => DropdownMenuItem<String>(
                                               value: item.name,
                                               child: Text(
@@ -368,323 +350,293 @@ class _CreateParcelPageState extends State<CreateParcelPage> {
                                               ),
                                             ))
                                         .toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        parcelTypes = value;
-                                      });
-                                    },
-                                    iconStyleData: const IconStyleData(
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.black45,
-                                      ),
-                                      iconSize: 24,
-                                    ),
-                                    buttonStyleData: ButtonStyleData(
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.greyColor,
-                                        // Background color for the button
-                                        borderRadius: BorderRadius.circular(
-                                            10), // Set border radius
-                                        // Optional border
-                                      ),
-                                    ),
-                                    dropdownStyleData: DropdownStyleData(
-                                      maxHeight:
-                                          MediaQuery.sizeOf(context).height / 2,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            10), // Set border radius for dropdown
-                                      ),
-                                    ),
-                                    menuItemStyleData: const MenuItemStyleData(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 16),
-                                    ),
-                                  );
-                                } else {
-                                  return const SizedBox();
-                                }
-                              },
-                            ),
-                            SizedBox(height: 10.h),
-                            Text('No. of parcel',
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w500))),
-                            SizedBox(height: 10.h),
-                            DropdownButton2<String>(
-                                underline: Container(color: Colors.transparent),
-                                isExpanded: true,
-                                value: numberOfParcel,
-                                hint: Text('Select no. of parcels',
-                                    style: GoogleFonts.nunitoSans(
-                                        textStyle: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 15.sp,
-                                            fontWeight: FontWeight.normal))),
-                                items: visitorsNumbers
-                                    .map((item) => DropdownMenuItem<String>(
-                                        value: item,
-                                        child: Text(item,
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black))))
-                                    .toList(),
                                 onChanged: (value) {
                                   setState(() {
-                                    numberOfParcel =
-                                        value; // Update selected value
+                                    parcelTypes = value;
                                   });
                                 },
                                 iconStyleData: const IconStyleData(
-                                    icon: Icon(Icons.arrow_drop_down,
-                                        color: Colors.black45),
-                                    iconSize: 24),
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black45,
+                                  ),
+                                  iconSize: 24,
+                                ),
                                 buttonStyleData: ButtonStyleData(
-                                    decoration: BoxDecoration(
-                                        color: AppTheme.greyColor,
-                                        borderRadius:
-                                            BorderRadius.circular(10))),
-                                dropdownStyleData: DropdownStyleData(
-                                    maxHeight:
-                                        MediaQuery.sizeOf(context).height / 2,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(10))),
-                                menuItemStyleData: const MenuItemStyleData(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 16))),
-                            SizedBox(height: 10.h),
-                            Row(children: [
-                              Expanded(
-                                  child: Text('Date',
-                                      style: GoogleFonts.nunitoSans(
-                                          textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.w500)))),
-                              Expanded(
-                                  child: Text('Time',
-                                      style: GoogleFonts.nunitoSans(
-                                          textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.sp,
-                                              fontWeight: FontWeight.w500))))
-                            ]),
-                            SizedBox(height: 10.h),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: SizedBox(
-                                    child: TextFormField(
-                                      onTap: () {
-                                        _selectDate(context);
-                                      },
-                                      readOnly: true,
-                                      controller: date,
-                                      style: GoogleFonts.nunitoSans(
-                                        color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      keyboardType: TextInputType.text,
-                                      validator: (text) {
-                                        if (text == null || text.isEmpty) {
-                                          return 'Please enter date';
-                                        }
-                                        return null;
-                                      },
-                                      decoration: InputDecoration(
-                                        hintText: 'Select Date',
-                                        contentPadding: EdgeInsets.symmetric(
-                                            vertical: 12.h, horizontal: 10.0),
-                                        prefixIcon: GestureDetector(
-                                            onTap: () {
-                                              _selectDate(context);
-                                            },
-                                            child: const Icon(
-                                                Icons.calendar_month)),
-                                        filled: true,
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 15.sp,
-                                            fontWeight: FontWeight.normal),
-                                        fillColor: AppTheme.greyColor,
-                                        errorBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15.0),
-                                            borderSide: BorderSide(
-                                                color: AppTheme.greyColor)),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15.0),
-                                            borderSide: BorderSide(
-                                                color: AppTheme.greyColor)),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15.0),
-                                            borderSide: BorderSide(
-                                                color: AppTheme.greyColor)),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                          borderSide: BorderSide(
-                                            color: AppTheme.greyColor,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 10.w),
-                                Expanded(
-                                  child: SizedBox(
-                                    child: TextFormField(
-                                      readOnly: true,
-                                      controller: time,
-                                      style: GoogleFonts.nunitoSans(
-                                        color: Colors.black,
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      keyboardType: TextInputType.text,
-                                      validator: (text) {
-                                        if (text == null || text.isEmpty) {
-                                          return 'Please enter time';
-                                        }
-                                        return null;
-                                      },
-                                      decoration: InputDecoration(
-                                        hintText: 'Select Time',
-                                        contentPadding: EdgeInsets.symmetric(
-                                            vertical: 12.h, horizontal: 10.0),
-                                        prefixIcon: GestureDetector(
-                                            onTap: () {
-                                              if (date!.text.isEmpty) {
-                                                snackBar(
-                                                    context,
-                                                    'Kindly select first date!',
-                                                    Icons.info,
-                                                    AppTheme.redColor);
-                                              } else {
-                                                _selectTime(context);
-                                              }
-                                            },
-                                            child: const Icon(Icons.timelapse)),
-                                        filled: true,
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 15.sp,
-                                            fontWeight: FontWeight.normal),
-                                        fillColor: AppTheme.greyColor,
-                                        errorBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15.0),
-                                            borderSide: BorderSide(
-                                                color: AppTheme.greyColor)),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15.0),
-                                            borderSide: BorderSide(
-                                                color: AppTheme.greyColor)),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15.0),
-                                            borderSide: BorderSide(
-                                                color: AppTheme.greyColor)),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15.0),
-                                          borderSide: BorderSide(
-                                            color: AppTheme.greyColor,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 50),
-                            GestureDetector(
-                              onTap: () {
-                                if (_formkey.currentState!.validate()) {
-                                  if (parcelTypes == null) {
-                                    snackBar(
-                                        context,
-                                        'Kindly select type of parcels',
-                                        Icons.done,
-                                        AppTheme.redColor);
-                                  } else if (numberOfParcel == null) {
-                                    snackBar(
-                                        context,
-                                        'Kindly select no. of parcels',
-                                        Icons.done,
-                                        AppTheme.redColor);
-                                  } else {
-                                    // var parcelBody = {
-                                    //   "parcelid":
-                                    //       parcelIDController.text.toString(),
-                                    //   "parcel_company_name":
-                                    //       senderNameController.text.toString(),
-                                    //   "parcel_name":
-                                    //       nameController.text.toString(),
-                                    //   "no_of_parcel": numberOfParcel.toString(),
-                                    //   "parcel_type": parcelTypes.toString(),
-                                    //   "date": date!.text,
-                                    //   "time": time!.text
-                                    // };
-                                    context
-                                        .read<ParcelManagementCubit>()
-                                        .createParcelAPI(
-                                            parcelId: parcelIDController.text
-                                                .toString(),
-                                            parcelName:
-                                                nameController.text.toString(),
-                                            parcelType: parcelTypes.toString(),
-                                            numberOfParcel:
-                                                numberOfParcel.toString(),
-                                            date: date!.text,
-                                            time: time!.text,
-                                            senderName: senderNameController
-                                                .text
-                                                .toString());
-                                  }
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 50.h,
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: AppTheme.primaryColor),
-                                  child: Center(
-                                    child: Text('Submit',
-                                        style: GoogleFonts.nunitoSans(
-                                          textStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        )),
+                                    color: AppTheme.greyColor,
+                                    // Background color for the button
+                                    borderRadius: BorderRadius.circular(
+                                        10), // Set border radius
+                                    // Optional border
+                                  ),
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight:
+                                      MediaQuery.sizeOf(context).height / 2,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        10), // Set border radius for dropdown
+                                  ),
+                                ),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                ),
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                        ),
+                        SizedBox(height: 10.h),
+                        Text('No. of parcel',
+                            style: GoogleFonts.nunitoSans(
+                                textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500))),
+                        SizedBox(height: 10.h),
+                        DropdownButton2<String>(
+                            underline: Container(color: Colors.transparent),
+                            isExpanded: true,
+                            value: numberOfParcel,
+                            hint: Text('Select no. of parcels',
+                                style: GoogleFonts.nunitoSans(
+                                    textStyle: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.normal))),
+                            items: visitorsNumbers
+                                .map((item) => DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Text(item,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black))))
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                numberOfParcel = value; // Update selected value
+                              });
+                            },
+                            iconStyleData: const IconStyleData(
+                                icon: Icon(Icons.arrow_drop_down,
+                                    color: Colors.black45),
+                                iconSize: 24),
+                            buttonStyleData: ButtonStyleData(
+                                decoration: BoxDecoration(
+                                    color: AppTheme.greyColor,
+                                    borderRadius: BorderRadius.circular(10))),
+                            dropdownStyleData: DropdownStyleData(
+                                maxHeight:
+                                    MediaQuery.sizeOf(context).height / 2,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10))),
+                            menuItemStyleData: const MenuItemStyleData(
+                                padding: EdgeInsets.symmetric(horizontal: 16))),
+                        SizedBox(height: 10.h),
+                        Row(children: [
+                          Expanded(
+                              child: Text('Date',
+                                  style: GoogleFonts.nunitoSans(
+                                      textStyle: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w500)))),
+                          Expanded(
+                              child: Text('Time',
+                                  style: GoogleFonts.nunitoSans(
+                                      textStyle: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w500))))
+                        ]),
+                        SizedBox(height: 10.h),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                child: TextFormField(
+                                  onTap: () {
+                                    _selectDate(context);
+                                  },
+                                  readOnly: true,
+                                  controller: date,
+                                  style: GoogleFonts.nunitoSans(
+                                    color: Colors.black,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  keyboardType: TextInputType.text,
+                                  validator: (text) {
+                                    if (text == null || text.isEmpty) {
+                                      return 'Please enter date';
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: 'Select Date',
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 12.h, horizontal: 10.0),
+                                    prefixIcon: GestureDetector(
+                                        onTap: () {
+                                          _selectDate(context);
+                                        },
+                                        child:
+                                            const Icon(Icons.calendar_month)),
+                                    filled: true,
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.normal),
+                                    fillColor: AppTheme.greyColor,
+                                    errorBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                        borderSide: BorderSide(
+                                            color: AppTheme.greyColor)),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                        borderSide: BorderSide(
+                                            color: AppTheme.greyColor)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                        borderSide: BorderSide(
+                                            color: AppTheme.greyColor)),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(
+                                        color: AppTheme.greyColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: SizedBox(
+                                child: TextFormField(
+                                  onTap: () {
+                                    if (date!.text.isEmpty) {
+                                      snackBar(
+                                          context,
+                                          'Kindly select first date!',
+                                          Icons.info,
+                                          AppTheme.redColor);
+                                    } else {
+                                      _selectTime(context);
+                                    }
+                                  },
+                                  readOnly: true,
+                                  controller: time,
+                                  style: GoogleFonts.nunitoSans(
+                                    color: Colors.black,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  keyboardType: TextInputType.text,
+                                  validator: (text) {
+                                    if (text == null || text.isEmpty) {
+                                      return 'Please enter time';
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: 'Select Time',
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 12.h, horizontal: 10.0),
+                                    prefixIcon: GestureDetector(
+                                        onTap: () {
+                                          if (date!.text.isEmpty) {
+                                            snackBar(
+                                                context,
+                                                'Kindly select first date!',
+                                                Icons.info,
+                                                AppTheme.redColor);
+                                          } else {
+                                            _selectTime(context);
+                                          }
+                                        },
+                                        child: const Icon(Icons.timelapse)),
+                                    filled: true,
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.normal),
+                                    fillColor: AppTheme.greyColor,
+                                    errorBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                        borderSide: BorderSide(
+                                            color: AppTheme.greyColor)),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                        borderSide: BorderSide(
+                                            color: AppTheme.greyColor)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                        borderSide: BorderSide(
+                                            color: AppTheme.greyColor)),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(
+                                        color: AppTheme.greyColor,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                      ),
+                        const SizedBox(height: 50),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+            customBtn(
+              onTap: () {
+                if (_formkey.currentState!.validate()) {
+                  if (parcelTypes == null) {
+                    snackBar(context, 'Kindly select type of parcels',
+                        Icons.done, AppTheme.redColor);
+                  } else if (numberOfParcel == null) {
+                    snackBar(context, 'Kindly select no. of parcels',
+                        Icons.done, AppTheme.redColor);
+                  } else {
+                    // var parcelBody = {
+                    //   "parcelid":
+                    //       parcelIDController.text.toString(),
+                    //   "parcel_company_name":
+                    //       senderNameController.text.toString(),
+                    //   "parcel_name":
+                    //       nameController.text.toString(),
+                    //   "no_of_parcel": numberOfParcel.toString(),
+                    //   "parcel_type": parcelTypes.toString(),
+                    //   "date": date!.text,
+                    //   "time": time!.text
+                    // };
+                    context.read<ParcelManagementCubit>().createParcelAPI(
+                        parcelId: parcelIDController.text.toString(),
+                        parcelName: nameController.text.toString(),
+                        parcelType: parcelTypes.toString(),
+                        numberOfParcel: numberOfParcel.toString(),
+                        date: date!.text,
+                        time: time!.text,
+                        senderName: senderNameController.text.toString());
+                  }
+                }
+              },
+              txt: "Submit",
+            ),
+          ],
         ),
       ),
     );
