@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/view/resident/event/event_detail_screen.dart';
@@ -152,19 +151,15 @@ class _EventScreenState extends State<EventScreen> {
                             borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(10),
                                 topRight: Radius.circular(10)),
-                            child: CachedNetworkImage(
-                              imageUrl: eventsList[index].image,
+                            child: FadeInImage(
+                              image: NetworkImage(eventsList[index].image),
                               height: 175.h,
                               width: double.infinity,
                               fit: BoxFit.cover,
-                              progressIndicatorBuilder:
-                                  (context, url, progress) => Center(
-                                      child: Image.asset(
-                                          height: 175.h,
-                                          width: double.infinity,
-                                          'assets/images/default.jpg',
-                                          fit: BoxFit.cover)),
-                              errorWidget: (context, url, error) => Container(
+                              placeholder:
+                                  AssetImage('assets/images/default.jpg'),
+                              imageErrorBuilder: (context, url, error) =>
+                                  Container(
                                 height: 175.h,
                                 width: double.infinity,
                                 color: Colors.grey[300],

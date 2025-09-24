@@ -10,6 +10,7 @@ import 'package:ghp_society_management/view/security_staff/parcel_flow_security_
 import 'package:ghp_society_management/view/security_staff/resident_checkouts/resident_checkouts.dart';
 import 'package:ghp_society_management/view/security_staff/scan_qr.dart';
 import 'package:ghp_society_management/view/security_staff/settings.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SecurityGuardDashboard extends StatefulWidget {
   int? index = 0;
@@ -27,6 +28,7 @@ class SecurityGuardDashboardState extends State<SecurityGuardDashboard> {
   @override
   void initState() {
     super.initState();
+    _requestCameraPermission();
     context.read<VisitorsElementCubit>().fetchVisitorsElement();
     context.read<NotificationListingCubit>().fetchNotifications();
     context.read<ParcelElementsCubit>().fetchParcelElement();
@@ -39,6 +41,19 @@ class SecurityGuardDashboardState extends State<SecurityGuardDashboard> {
         });
       }
     });
+  }
+
+  Future<void> _requestCameraPermission() async {
+    var status = await Permission.camera.status;
+
+    if (status.isDenied || status.isPermanentlyDenied) {
+      await Permission.camera.request();
+      setState(() {});
+    }
+
+    if (await Permission.camera.isGranted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -237,7 +252,8 @@ class SecurityGuardDashboardState extends State<SecurityGuardDashboard> {
         Image.asset(icon,
             color:
                 currentIndex == index ? Colors.deepPurpleAccent : Colors.black,
-            height: 18),   5.verticalSpace,
+            height: 18),
+        5.verticalSpace,
         Text(
           label,
           style: GoogleFonts.montserrat(

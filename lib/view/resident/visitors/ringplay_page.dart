@@ -11,13 +11,13 @@ class FirebaseNotificationRingServices {
     if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(pattern: [500, 1000, 500, 1000], repeat: -1);
     }
+    // double systemVolume = await FlutterVolumeController.getVolume();
     FlutterRingtonePlayer().play(
-      android: AndroidSounds.ringtone,
-      ios: IosSounds.alarm,
-      looping: true,
-      volume: 1.0,
-      asAlarm: true,
-    );
+        android: AndroidSounds.ringtone,
+        ios: IosSounds.alarm,
+        looping: true,
+        asAlarm: false);
+
     print("▶️ Ringtone & vibration started");
   }
 

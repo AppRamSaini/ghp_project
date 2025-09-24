@@ -13,9 +13,11 @@ import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 
 class SosIncomingAlert extends StatefulWidget {
   final RemoteMessage? message;
+  final String? fromPage;
   final Function(bool values) setPageValue;
 
-  const SosIncomingAlert({super.key, this.message, required this.setPageValue});
+  const SosIncomingAlert(
+      {super.key, this.message, required this.setPageValue, this.fromPage});
 
   @override
   State<SosIncomingAlert> createState() => SosIncomingAlertState();
@@ -30,7 +32,7 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
   String? type;
   String? description;
 
-  static const int timeoutDurationSeconds = 30;
+  static const int timeoutDurationSeconds = 40;
 
   @override
   void initState() {
@@ -43,7 +45,9 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
   /// Start ringtone + vibration
   void _startAlerts() {
     try {
-      FirebaseNotificationRingServices.startVibrationAndRingtone();
+      if (widget.fromPage == 'terminate') {
+        FirebaseNotificationRingServices.startVibrationAndRingtone();
+      }
       actionTimeoutTimer =
           Timer(const Duration(seconds: timeoutDurationSeconds), _stopAlerts);
     } catch (e) {
@@ -76,15 +80,13 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
 
   /// Handle user action
   void _handleAction(String id) {
-    if (!isActioned) {
-      setState(() => isActioned = true);
-      _stopAlerts();
-      context
-          .read<AcknowledgedCubit>()
-          .acknowledgedAPI(statusBody: {"sos_id": id}).catchError((error) {
-        print("❌ Acknowledged API error: $error");
-      });
-    }
+    setState(() => isActioned = true);
+    _stopAlerts();
+    context
+        .read<AcknowledgedCubit>()
+        .acknowledgedAPI(statusBody: {"sos_id": id}).catchError((error) {
+      print("❌ Acknowledged API error: $error");
+    });
   }
 
   /// Extract data from notification
@@ -109,7 +111,7 @@ class SosIncomingAlertState extends State<SosIncomingAlert> {
 
   @override
   void dispose() {
-    _stopAlerts(); // ✅ Dispose पर भी ringtone stop
+    _stopAlerts();
     widget.setPageValue(false);
     super.dispose();
   }

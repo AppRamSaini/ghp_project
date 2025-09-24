@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/view/resident/service_provider/service_provider_detail_screen.dart';
@@ -87,23 +86,17 @@ class _ServiceProviderScreenState extends State<ServiceProviderScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             ClipOval(
-                              child: CachedNetworkImage(
-                                imageUrl: state.serviceCategories.first.data
-                                    .serviceCategories[index].image
-                                    .toString(),
+                              child: FadeInImage(
+                                image: NetworkImage(state.serviceCategories
+                                    .first.data.serviceCategories[index].image
+                                    .toString()),
                                 width: 90,
                                 height: 90,
                                 fit: BoxFit.cover,
-                                progressIndicatorBuilder:
-                                    (context, url, progress) => Center(
-                                  child: Image.asset(
-                                    width: 90,
-                                    height: 90,
-                                    'assets/images/default.jpg',
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) => Container(
+                                placeholder:
+                                    AssetImage('assets/images/default.jpg'),
+                                imageErrorBuilder: (context, url, error) =>
+                                    Container(
                                   width: 90,
                                   height: 90,
                                   color: Colors.grey[300],
@@ -159,23 +152,16 @@ class _ServiceProviderScreenState extends State<ServiceProviderScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 ClipOval(
-                                  child: CachedNetworkImage(
-                                    imageUrl: state
+                                  child: FadeInImage(
+                                    image: NetworkImage(state
                                         .serviceCategories[index].image
-                                        .toString(),
+                                        .toString()),
                                     width: 90,
                                     height: 90,
                                     fit: BoxFit.cover,
-                                    progressIndicatorBuilder:
-                                        (context, url, progress) => Center(
-                                      child: Image.asset(
-                                        width: 90,
-                                        height: 90,
-                                        'assets/images/default.jpg',
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    errorWidget: (context, url, error) =>
+                                    placeholder:
+                                        AssetImage('assets/images/default.jpg'),
+                                    imageErrorBuilder: (context, url, error) =>
                                         Container(
                                       width: 90,
                                       height: 90,

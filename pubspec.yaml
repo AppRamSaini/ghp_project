@@ -3,7 +3,7 @@ description: "A new Flutter project."
 
 publish_to: 'none'
 
-version: 1.0.20+21
+version: 1.0.21+22
 
 environment:
   sdk: ^3.5.3
@@ -22,14 +22,12 @@ dependencies:
   shared_preferences: ^2.0.15
   google_fonts: ^6.2.1
   pinput: ^5.0.0
-  bottom_navy_bar: ^6.1.0
   dropdown_button2: ^2.3.9
   dotted_border: ^2.1.0
   image_picker: ^1.1.2
   searchbar_animation: ^0.0.4
   intl: ^0.20.2
   syncfusion_flutter_pdfviewer: ^28.2.12
-  #  file_picker: ^9.0.0
   image_cropper: ^9.0.0
   flutter_file_dialog: ^3.0.2
   path_provider: ^2.1.2
@@ -37,10 +35,7 @@ dependencies:
   permission_handler: ^11.3.1
   share_plus: ^10.0.0
   flutter_polls: ^0.1.6
-  #  video_thumbnail: ^0.5.3
-  uuid: ^4.5.1
   qr_flutter: ^4.1.0
-  textfield_search: ^0.11.1
   simple_ripple_animation: ^0.1.0
   vibration: ^3.1.3
   flutter_ringtone_player: ^4.0.0+3
@@ -48,13 +43,10 @@ dependencies:
   circular_countdown_timer: ^0.2.3
   rxdart: ^0.28.0
   geolocator: ^13.0.3
-  cached_network_image: ^3.4.1
   screenshot: ^3.0.0
-  #  flutter_document_picker: ^5.2.3
   flutter_html: ^3.0.0
   firebase_core: ^3.10.1
-  #  cloud_firestore: ^5.5.1
-  firebase_messaging: ^15.2.4
+  firebase_messaging:
   file_picker: ^10.1.2
   flutter_staggered_grid_view: ^0.7.0
   mobile_scanner: ^6.0.10
@@ -66,12 +58,12 @@ dependencies:
   image: ^4.5.4
   firebase_storage: ^12.4.10
   sms_autofill: ^2.4.1
-  firebase_auth: ^5.7.0
   showcaseview: ^4.0.1
   flutter_sound: ^9.28.0
   carousel_slider: ^5.1.1
   pdf: ^3.11.3
   printing: ^5.14.2
+#  upgrader: ^11.3.1
 
 
 dev_dependencies:

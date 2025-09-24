@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_images.dart';
@@ -35,19 +34,13 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            CachedNetworkImage(
-                imageUrl: widget.image.toString(),
+            FadeInImage(
+                image: NetworkImage(widget.image.toString()),
                 height: 200.h,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                progressIndicatorBuilder: (context, url, progress) => Center(
-                        child: Image.asset(
-                      height: 180.h,
-                      width: double.infinity,
-                      'assets/images/default.jpg',
-                      fit: BoxFit.cover,
-                    )),
-                errorWidget: (context, url, error) => Container(
+                placeholder: AssetImage('assets/images/default.jpg'),
+                imageErrorBuilder: (context, url, error) => Container(
                     height: 200.h,
                     width: double.infinity,
                     color: Colors.grey[300],

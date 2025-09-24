@@ -105,6 +105,7 @@ class _MyAppState extends State<MyApp> {
       } else if (type == 'sos_alert') {
         return SosIncomingAlert(
           message: remoteMessage,
+          fromPage: "terminate",
           setPageValue: (val) {
             if (val)
               FirebaseNotificationRingServices.stopVibrationAndRingtone();

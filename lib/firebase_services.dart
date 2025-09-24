@@ -166,10 +166,12 @@ class FirebaseNotificationService {
     }
   }
 
-  static void navigateToVisitorsPage(RemoteMessage message) {
+  static void navigateToVisitorsPage(RemoteMessage message,
+      {String? fromPage}) {
     navigatorKey.currentState?.push(MaterialPageRoute(
       builder: (_) => VisitorsIncomingRequestPage(
         message: message,
+        fromPage: fromPage,
         setPageValue: (val) {
           if (val) FirebaseNotificationRingServices.stopVibrationAndRingtone();
         },
