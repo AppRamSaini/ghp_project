@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+
 import 'package:flutter_html/flutter_html.dart';
 import 'package:ghp_society_management/constants/crop_image.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/parcel/parcel_complaint/parcel_complaint_cubit.dart';
 import 'package:ghp_society_management/controller/parcel/receive_parcel/receive_parcel_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/visitors_feedback/visitors_feedback_cubit.dart';
@@ -11,18 +15,18 @@ import 'package:ghp_society_management/model/parcel_listing_model.dart';
 import 'package:ghp_society_management/model/refer_property_model.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
 import 'package:ghp_society_management/model/visitors_listing_model.dart';
-import 'package:ghp_society_management/payment_gateway_service.dart';
+import 'package:ghp_society_management/view/resident/bills/bill_detail_screen.dart';
 import 'package:ghp_society_management/view/resident/resident_profile/resident_gatepass.dart';
+import 'package:ghp_society_management/view/select_society/select_society_screen.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart' as picker;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
 import 'package:qr_flutter/qr_flutter.dart';
-import 'dart:async';
 
 /// LOG OUT DIALOG
-void logOutPermissionDialog(BuildContext context, {bool isLogout = true,}) =>
+void logOutPermissionDialog(BuildContext context, {bool isLogout = true}) =>
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -58,7 +62,14 @@ void logOutPermissionDialog(BuildContext context, {bool isLogout = true,}) =>
                     GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
-                        context.read<LogoutCubit>().logout();
+                        LocalStorage.localStorage.clear();
+                        // context.read<LogoutCubit>().logout();
+
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (builder) =>
+                                    const SelectSocietyScreen()),
+                            (route) => false);
                       },
                       child: Text(
                         isLogout ? 'LOGOUT' : 'YES , CHANGE',
@@ -77,19 +88,16 @@ void logOutPermissionDialog(BuildContext context, {bool isLogout = true,}) =>
       },
     );
 
-
-
 /// delete account
 
-void deleteAccountPermissionDialog(BuildContext context) =>
-    showDialog(
+void deleteAccountPermissionDialog(BuildContext context) => showDialog(
       barrierDismissible: false,
       context: context,
       builder: (ctx) {
         return Dialog(
           backgroundColor: Colors.white,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: Padding(
             padding: const EdgeInsets.all(15),
             child: Column(
@@ -113,7 +121,13 @@ void deleteAccountPermissionDialog(BuildContext context) =>
                     GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
-                        context.read<LogoutCubit>().logout();
+                        LocalStorage.localStorage.clear();
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (builder) =>
+                                    const SelectSocietyScreen()),
+                            (route) => false);
+                        // context.read<LogoutCubit>().logout();
                       },
                       child: Text(
                         'DELETE',
@@ -224,11 +238,11 @@ void visitorsFeedbackDialog(BuildContext context, VisitorsListing visitors) {
                             borderRadius: BorderRadius.circular(100),
                             child: FadeInImage(
                                 placeholder: const AssetImage(
-                                    "assets/images/default.jpg"),
+                                    "assets/images/profile_icon.png"),
                                 imageErrorBuilder:
                                     (context, error, stackTrace) {
                                   return Image.asset(
-                                      "assets/images/default.jpg",
+                                      "assets/images/profile_icon.png",
                                       height: 60,
                                       width: 60,
                                       fit: BoxFit.cover);
@@ -276,6 +290,7 @@ void visitorsFeedbackDialog(BuildContext context, VisitorsListing visitors) {
                         maxLines: 5,
                         minLines: null,
                         keyboardType: TextInputType.multiline,
+                        textInputAction: TextInputAction.done,
                         decoration: InputDecoration(
                           counter: const SizedBox(),
                           hintText: 'Describe feedback here...',
@@ -568,11 +583,14 @@ void memberDetailsDialog(BuildContext context, PropertyNumber members) {
                       leading: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
                           child: FadeInImage(
-                              placeholder:
-                                  const AssetImage("assets/images/default.jpg"),
+                              placeholder: const AssetImage(
+                                  "assets/images/profile_icon.png"),
                               imageErrorBuilder: (context, error, stackTrace) {
-                                return Image.asset("assets/images/default.jpg",
-                                    height: 50, width: 50, fit: BoxFit.cover);
+                                return Image.asset(
+                                    "assets/images/profile_icon.png",
+                                    height: 50,
+                                    width: 50,
+                                    fit: BoxFit.cover);
                               },
                               image: NetworkImage(''),
                               fit: BoxFit.cover,
@@ -955,7 +973,7 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                         child: const Icon(Icons.clear,
                                             color: Colors.black)))),
                             Divider(color: Colors.grey.withOpacity(0.3)),
-                            Text('Parcel ID',
+                            Text('Order ID',
                                 style: GoogleFonts.nunitoSans(
                                     color: Colors.black,
                                     fontSize: 14,
@@ -975,6 +993,7 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                 return null;
                               },
                               keyboardType: TextInputType.multiline,
+                              textInputAction: TextInputAction.done,
                               decoration: InputDecoration(
                                 counter: const SizedBox(),
                                 hintText: 'Describe reason here...',
@@ -1030,7 +1049,8 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                 }
                                 return null;
                               },
-                              keyboardType: TextInputType.multiline,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.done,
                               decoration: InputDecoration(
                                 counter: const SizedBox(),
                                 hintText: 'Deliver name',
@@ -1069,13 +1089,16 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                               ),
                             ),
                             const SizedBox(height: 5),
-                            Text('Deliver contact numbe',
+                            Text('Deliver contact number',
                                 style: GoogleFonts.nunitoSans(
                                     color: Colors.black,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500)),
                             TextFormField(
                               controller: phone,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
                               style: GoogleFonts.nunitoSans(
                                   color: Colors.black,
                                   fontSize: 14,
@@ -1088,7 +1111,8 @@ void parcelReceiveDialog(BuildContext context, ParcelListing requestData) {
                                 }
                                 return null;
                               },
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.done,
                               maxLength: 10,
                               decoration: InputDecoration(
                                 counter: const SizedBox(),
@@ -1232,56 +1256,57 @@ void readComplaintDialog(BuildContext context, String data) => showDialog(
       context: context,
       builder: (ctx) {
         return Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(15),
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
-                  width: MediaQuery.sizeOf(context).width,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                            height: 40,
-                            child: ListTile(
-                                dense: true,
-                                contentPadding: EdgeInsets.zero,
-                                title: Text('Parcel Complaint',
-                                    style: GoogleFonts.nunitoSans(
-                                        color: Colors.black,
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w600)),
-                                trailing: GestureDetector(
-                                    onTap: () => Navigator.pop(context),
-                                    child: const Icon(Icons.clear,
-                                        color: Colors.black)))),
-                        Divider(color: Colors.grey.withOpacity(0.3)),
-                        SizedBox(
-                          height: 150,
-                          child: Text(
-                            data.toString(),
-                            style: GoogleFonts.nunitoSans(
-                              color: Colors.black,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
+          backgroundColor: Colors.transparent,
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                margin: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15)),
+                width: MediaQuery.sizeOf(context).width,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                          height: 40,
+                          child: ListTile(
+                              dense: true,
+                              contentPadding: EdgeInsets.zero,
+                              title: Text('Parcel Complaint',
+                                  style: GoogleFonts.nunitoSans(
+                                      color: Colors.black,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600)),
+                              trailing: GestureDetector(
+                                  onTap: () => Navigator.pop(context),
+                                  child: const Icon(Icons.clear,
+                                      color: Colors.black)))),
+                      Divider(color: Colors.grey.withOpacity(0.3)),
+                      SizedBox(
+                        height: 150,
+                        child: Text(
+                          data.toString(),
+                          style: GoogleFonts.nunitoSans(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ));
+              ),
+            ],
+          ),
+        );
       },
     );
 
@@ -1317,13 +1342,14 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                           Text("Profile Overview",
                               style: GoogleFonts.nunitoSans(
                                   color: Colors.black,
-                                  fontSize: 16,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w600)),
                           GestureDetector(
                               onTap: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Icon(Icons.close))
+                              child:
+                                  const Icon(Icons.close, color: Colors.black))
                         ])),
                 Divider(color: Colors.grey.withOpacity(0.2)),
                 Padding(
@@ -1335,15 +1361,42 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                         child: Row(
                           children: [
                             profileDetails.data!.user!.image != null
-                                ? CircleAvatar(
-                                    radius: 30,
-                                    backgroundImage: NetworkImage(profileDetails
-                                        .data!.user!.image
-                                        .toString()))
-                                : const CircleAvatar(
-                                    radius: 30,
-                                    backgroundImage: AssetImage(
-                                        'assets/images/default.jpg')),
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: FadeInImage(
+                                      height: 70,
+                                      width: 70,
+                                      fit: BoxFit.fill,
+                                      placeholder: AssetImage(
+                                          'assets/images/profile_icon.png'),
+                                      image: NetworkImage(profileDetails
+                                          .data!.user!.image
+                                          .toString()),
+                                      imageErrorBuilder: (_, child, st) =>
+                                          Image.asset(
+                                              'assets/images/profile_icon.png',
+                                              height: 70,
+                                              width: 70,
+                                              fit: BoxFit.fill),
+                                    ),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: FadeInImage(
+                                      height: 70,
+                                      width: 70,
+                                      fit: BoxFit.fill,
+                                      placeholder: AssetImage(
+                                          'assets/images/profile_icon.png'),
+                                      image: AssetImage(''),
+                                      imageErrorBuilder: (_, child, st) =>
+                                          Image.asset(
+                                              'assets/images/profile_icon.png',
+                                              height: 70,
+                                              width: 70,
+                                              fit: BoxFit.fill),
+                                    ),
+                                  ),
                             SizedBox(width: 10.w),
                             Flexible(
                               child: Column(
@@ -1371,10 +1424,10 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                                       : const SizedBox(),
                                   profileDetails.data!.user!.role == 'resident'
                                       ? Text(
-                                          "Tower/Floor: ${profileDetails.data!.user!.blockName.toString()}/${profileDetails.data!.user!.floorNumber.toString()}\nFlat No: ${profileDetails.data!.user!.aprtNo.toString()}",
+                                          "Tower/Block : ${profileDetails.data!.user!.property!.blockName.toString()}/${profileDetails.data!.user!.floorNumber.toString()}\nProperty No: ${profileDetails.data!.user!.aprtNo.toString()}",
                                           style: GoogleFonts.nunitoSans(
                                               color: Colors.black,
-                                              fontSize: 10))
+                                              fontSize: 12))
                                       : const SizedBox(),
                                 ],
                               ),
@@ -1407,7 +1460,6 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                               ),
                             )
                           : const SizedBox(),
-                      
                     ],
                   ),
                 ),
@@ -1429,7 +1481,6 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Status :',
-
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.black,
                                       fontSize: 14,
@@ -1470,7 +1521,7 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
                                       color: Colors.black,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500)),
-                              Text(profileDetails.data!.user!.email.toString(),
+                              Text(profileDetails.data!.user!.email ?? 'NIL',
                                   style: GoogleFonts.nunitoSans(
                                       color: Colors.black,
                                       fontSize: 14,
@@ -1540,6 +1591,7 @@ profileViewAlertDialog(BuildContext context, UserProfileModel profileDetails) {
 void privacyPolicyDialog(
     BuildContext context, Function(bool values) setPageValue) {
   context.read<PrivacyPolicyCubit>().fetchPrivacyPolicyAPI();
+
   showDialog(
     barrierDismissible: false,
     context: context,
@@ -1558,32 +1610,27 @@ void privacyPolicyDialog(
               child: Column(
                 children: [
                   Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child:
-                          BlocBuilder<PrivacyPolicyCubit, PrivacyPolicyState>(
-                        builder: (context, state) {
-                          if (state is PrivacyPolicyLoading) {
-                            return const Center(
-                                child: CircularProgressIndicator.adaptive(
-                                    backgroundColor: Colors.deepPurpleAccent));
-                          } else if (state is PrivacyPolicyLoaded) {
-                            final htmlData = state.privacyPolicyModel.data;
-                            return SingleChildScrollView(
-                                child: Html(
-                                  data:  htmlData.privacyPolicy.content.toString()));
-                          } else if (state is PrivacyPolicyFailed) {
-                            return Center(
-                                child: Text(state.errorMessage.toString(),
-                                    style: const TextStyle(color: Colors.red)));
-                          } else if (state is PrivacyPolicyInternetError) {
-                            return Center(
-                                child: Text(state.errorMessage.toString(),
-                                    style: const TextStyle(color: Colors.red)));
-                          }
-                          return const SizedBox();
-                        },
-                      ),
+                    child: BlocBuilder<PrivacyPolicyCubit, PrivacyPolicyState>(
+                      builder: (context, state) {
+                        if (state is PrivacyPolicyLoading) {
+                          return notificationShimmerLoading();
+                        } else if (state is PrivacyPolicyLoaded) {
+                          final htmlData = state.privacyPolicyModel.data;
+                          return SingleChildScrollView(
+                              child: Html(
+                                  data: htmlData.privacyPolicy.content
+                                      .toString()));
+                        } else if (state is PrivacyPolicyFailed) {
+                          return Center(
+                              child: Text(state.errorMessage.toString(),
+                                  style: const TextStyle(color: Colors.red)));
+                        } else if (state is PrivacyPolicyInternetError) {
+                          return Center(
+                              child: Text(state.errorMessage.toString(),
+                                  style: const TextStyle(color: Colors.red)));
+                        }
+                        return const SizedBox();
+                      },
                     ),
                   ),
                   Divider(color: Colors.grey.withOpacity(0.3)),
@@ -1774,8 +1821,7 @@ void referPropertyDialog(
                             child: Text(referPropertyList.remark.toString(),
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 14))),
+                                        color: Colors.black87, fontSize: 14))),
                           )
                         ]),
                     Divider(color: Colors.grey.withOpacity(0.1)),
@@ -1783,7 +1829,6 @@ void referPropertyDialog(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Location : ',
-
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
                                       color: Colors.black45, fontSize: 14))),
@@ -1965,8 +2010,8 @@ Future<void> overDueBillAlertDialog(
                                     fontWeight: FontWeight.w600)),
                             Text(
                               fromStaffSide
-                                  ? 'Entry restricted due to pending maintenance bill :  ₹${myUnpaidBill.amount.toString()}.'
-                                  : 'Your maintenance bill has been due on $formattedDueDate.Please pay ₹${myUnpaidBill.amount.toString()}',
+                                  ? 'Entry restricted due to pending maintenance bill : ₹${max(0, parseNum(myUnpaidBill.amount) + parseNum(myUnpaidBill.prevMonthPending) - (parseNum(myUnpaidBill.installment) + parseNum(myUnpaidBill.advanceAmount)))}.'
+                                  : 'Your maintenance bill has been due on $formattedDueDate.Please pay ₹${max(0, parseNum(myUnpaidBill.amount) + parseNum(myUnpaidBill.prevMonthPending) - (parseNum(myUnpaidBill.installment) + parseNum(myUnpaidBill.advanceAmount)))}',
                               style: GoogleFonts.nunitoSans(
                                 color: Colors.red,
                                 fontSize: 13.sp,
@@ -2002,9 +2047,9 @@ Future<void> overDueBillAlertDialog(
                         MaterialButton(
                           onPressed: () {
                             Navigator.pop(context);
-                            payBillFun(
-                                double.parse(myUnpaidBill.amount.toString()),
-                                context);
+                            // payBillFun(
+                            //     double.parse(myUnpaidBill.amount.toString()),
+                            //     context);
                           },
                           color: Colors.red,
                           shape: RoundedRectangleBorder(

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:ghp_society_management/constants/config.dart';
 import 'package:ghp_society_management/constants/local_storage.dart';
@@ -17,11 +18,16 @@ class SubmitSosCubit extends Cubit<SubmitSosState> {
     emit(SubmitSosLoading());
     try {
       var token = LocalStorage.localStorage.getString('token');
+      var propertyId = LocalStorage.localStorage.getString('property_id');
 
-      var responseData = await apiManager.postRequest(
-          sosBody,
-          Config.baseURL + Routes.submitSos,
-          {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
+      var responseData = await apiManager
+          .postRequest(sosBody, Config.baseURL + Routes.submitSos, {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+        'x-property-id': '$propertyId',
+      });
+
+      print("------->>>>>>>>>>>>${responseData.statusCode}");
 
       var data = json.decode(responseData.body.toString());
       if (responseData.statusCode == 201) {
@@ -33,8 +39,6 @@ class SubmitSosCubit extends Cubit<SubmitSosState> {
         } else {
           emit(SubmitSosFailed(errorMsg: data['message'].toString()));
         }
-      } else if (responseData.statusCode == 401) {
-        emit(SubmitSosLogout());
       } else {
         emit(SubmitSosFailed(errorMsg: data['message'].toString()));
       }

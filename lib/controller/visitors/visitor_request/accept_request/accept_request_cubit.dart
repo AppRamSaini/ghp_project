@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:ghp_society_management/constants/config.dart';
 import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
 import 'package:meta/meta.dart';
+
 part 'accept_request_state.dart';
 
 class AcceptRequestCubit extends Cubit<AcceptRequestState> {
   AcceptRequestCubit() : super(AcceptRequestInitial());
   ApiManager apiManager = ApiManager();
+
   acceptRequestAPI({var statusBody}) async {
     emit(AcceptRequestLoading());
 
@@ -21,8 +24,8 @@ class AcceptRequestCubit extends Cubit<AcceptRequestState> {
           {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
 
       var data = json.decode((responseData.body.toString()));
-      print(statusBody);
-      print('-accept------------>>>>>$data');
+      print('ACTION_BODY---->>>$statusBody');
+      print('RES------------>>>>>$data');
 
       if (responseData.statusCode == 201) {
         if (data['status']) {

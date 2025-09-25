@@ -1,3 +1,4 @@
+import 'package:ghp_society_management/constants/custom_btns.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 
@@ -21,17 +22,13 @@ class _DeleteUserAccountState extends State<DeleteUserAccount> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(
-          "Delete Account",
-          style: TextStyle(fontSize: 16),
-        ),
-      ),
+      appBar: appbarWidget(title: "Delete Account"),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0),
         child: Column(
           children: [
-            Image.asset(ImageAssets.appLogo, height: 160.h),
+            SizedBox(height: 20),
+            Image.asset(ImageAssets.appLogo, height: 150.h),
             SizedBox(height: 20),
             Text('Delete your account ',
                 style: TextStyle(color: Colors.black, fontSize: 25)),
@@ -93,7 +90,7 @@ class _DeleteUserAccountState extends State<DeleteUserAccount> {
               ),
             ),
             Spacer(),
-            GestureDetector(
+            customBtn(
               onTap: () {
                 if (selectedValue != null) {
                   deleteAccountPermissionDialog(context);
@@ -102,19 +99,8 @@ class _DeleteUserAccountState extends State<DeleteUserAccount> {
                       Colors.red);
                 }
               },
-              child: Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.deepPurpleAccent),
-                child: Center(
-                  child: Text(
-                    'Delete Account',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-              ),
+              txt: "Delete Account",
+
             ),
             SizedBox(height: 20),
           ],

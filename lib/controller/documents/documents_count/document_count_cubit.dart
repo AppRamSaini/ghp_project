@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:ghp_society_management/constants/config.dart';
 import 'package:ghp_society_management/constants/export.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
@@ -8,39 +9,56 @@ part 'document_count_state.dart';
 
 class DocumentCountCubit extends Cubit<DocumentCountState> {
   DocumentCountCubit() : super(DocumentCountInitial());
-  ApiManager apiManager = ApiManager();
+
+  final ApiManager apiManager = ApiManager();
 
   int outGoingCounts = 0;
   int incomingCounts = 0;
 
-  documentCountType() async {
+  Future<void> documentCountType() async {
     emit(DocumentCountLoading());
+
     try {
-      var responseData =
-          await apiManager.getRequest(Config.baseURL + Routes.documentsCounts);
-      var data = json.decode((responseData.body.toString()));
+      final response = await apiManager.getRequest(
+        Config.baseURL + Routes.documentsCounts,
+        usePropertyID: true,
+      );
 
-      print(responseData.statusCode);
+      final data = json.decode(response.body.toString());
 
-      if (responseData.statusCode == 200) {
-        outGoingCounts = data['data']['outgoing_request_count'] as int;
-        incomingCounts = data['data']['incoming_request_count'] as int;
+      if (response.statusCode == 200) {
+        if (data['status'] == true) {
+          outGoingCounts = data['data']['outgoing_request_count'] ?? 0;
+          incomingCounts = data['data']['incoming_request_count'] ?? 0;
 
-        if (data['status']) {
-          print(data);
           emit(DocumentCountLoaded(
-              outGoingRequestCount: outGoingCounts,
-              incomingRequestCount: incomingCounts));
+            outGoingRequestCount: outGoingCounts,
+            incomingRequestCount: incomingCounts,
+          ));
         } else {
-          emit(DocumentCountFailed(errorMsg: data['message'].toString()));
+          emit(DocumentCountFailed(
+            errorMsg: data['message'] ?? "Failed to fetch document counts.",
+          ));
         }
+      } else if (response.statusCode == 401) {
+        emit(UnAuthenticatedUser());
       } else {
-        emit(DocumentCountFailed(errorMsg: data['message'].toString()));
+        emit(DocumentCountFailed(
+          errorMsg: data['message'] ?? "Server error (${response.statusCode})",
+        ));
       }
     } on SocketException {
-      emit(DocumentCountInternetError(errorMsg: 'Internet connection failed!'));
+      emit(DocumentCountInternetError(
+          errorMsg:
+              "No Internet connection. Please check your network and try again."));
+    } on FormatException {
+      emit(DocumentCountFailed(
+          errorMsg:
+              "Data parsing error. Please try again later or contact support."));
     } catch (e) {
-      emit(DocumentCountFailed(errorMsg: e.toString()));
+      emit(DocumentCountFailed(
+          errorMsg:
+              "An unexpected error occurred. Please try again later.\nError: ${e.toString()}"));
     }
   }
 }

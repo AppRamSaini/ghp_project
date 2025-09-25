@@ -1,18 +1,20 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
+import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/sos_management/sos_category/sos_category_cubit.dart';
-import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/view/resident/sos/sos_detail_screen.dart';
 import 'package:ghp_society_management/view/resident/sos/sos_history.dart';
 import 'package:ghp_society_management/view/session_dialogue.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SosScreen extends StatefulWidget {
-  const SosScreen({super.key});
+  bool forStaffSide;
+
+  SosScreen({super.key, this.forStaffSide = false});
 
   @override
   State<SosScreen> createState() => _SosScreenState();
@@ -20,7 +22,7 @@ class SosScreen extends StatefulWidget {
 
 class _SosScreenState extends State<SosScreen> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-  GlobalKey<RefreshIndicatorState>();
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -45,29 +47,14 @@ class _SosScreenState extends State<SosScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'SOS',
-            style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
+        appBar: appbarWidget(title: 'SOS'),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: AppTheme.primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(100),
-          ),
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const SosHistoryPage()),
-          ),
-          child: const Icon(Icons.history, color: Colors.white),
-        ),
+            backgroundColor: AppTheme.primaryColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100)),
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const SosHistoryPage())),
+            child: const Icon(Icons.history, color: Colors.white)),
         body: RefreshIndicator(
           key: _refreshIndicatorKey,
           onRefresh: _onRefresh,
@@ -86,7 +73,7 @@ class _SosScreenState extends State<SosScreen> {
     return BlocBuilder<SosCategoryCubit, SosCategoryState>(
       builder: (context, state) {
         if (state is SosCategoryLoading && !_isRefreshing(state)) {
-          return const Center(child: CircularProgressIndicator());
+          return notificationShimmerLoading();
         } else if (state is SosCategorySearchLoaded) {
           return _buildSearchResults(state);
         } else if (state is SosCategoryLoaded) {
@@ -103,21 +90,20 @@ class _SosScreenState extends State<SosScreen> {
   }
 
   bool _isRefreshing(SosCategoryState state) {
-    // Check if we're in a refresh state (you might need to modify your cubit to track this)
     return false; // Modify based on your state implementation
   }
 
   Widget _buildSearchResults(SosCategorySearchLoaded state) {
     return state.sosCategory.isEmpty
         ? Center(
-      child: Text(
-        'Category Not Found!',
-        style: TextStyle(
-          color: Colors.deepPurpleAccent,
-          fontSize: 16.sp,
-        ),
-      ),
-    )
+            child: Text(
+              'Category Not Found!',
+              style: TextStyle(
+                color: Colors.deepPurpleAccent,
+                fontSize: 16.sp,
+              ),
+            ),
+          )
         : _buildMasonryGrid(state.sosCategory);
   }
 
@@ -140,65 +126,49 @@ class _SosScreenState extends State<SosScreen> {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (builder) => SosDetailScreen(sosCategory: item),
+                builder: (builder) => SosDetailScreen(
+                    sosCategory: item, forStaffSide: widget.forStaffSide),
               ),
             );
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-          Container(
-          decoration: BoxDecoration(
-          color: Colors.white,
-            borderRadius: BorderRadius.circular(100),
-            boxShadow: const [
-            BoxShadow(
-              color: Colors.black45,
-              blurRadius: 5,
-              offset: Offset(1, 1)),
-              ],
-            ),
-            child: ClipOval(
-              child: CachedNetworkImage(
-                imageUrl: item.image,
-                width: 90,
-                height: 90,
-                fit: BoxFit.cover,
-                progressIndicatorBuilder: (context, url, progress) => Center(
-                  child: Image.asset(
+              ClipRRect(
+                borderRadius: BorderRadius.circular(200),
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(200)),
+                  child: FadeInImage(
+                    image: NetworkImage(item.image),
                     width: 90,
                     height: 90,
-                    'assets/images/default.jpg',
                     fit: BoxFit.cover,
-                  ),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  width: 90,
-                  height: 90,
-                  color: Colors.grey[300],
-                  child: Icon(
-                    Icons.broken_image,
-                    color: Colors.grey[600],
-                    size: 50,
+                    placeholder: AssetImage('assets/images/default.jpg'),
+                    imageErrorBuilder: (context, url, error) => Image.asset(
+                      width: 90,
+                      height: 90,
+                      'assets/images/default.jpg',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            item.name,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
+              SizedBox(height: 8.h),
+              Text(
+                item.name,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.nunitoSans(
+                  textStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-          ],
-        ),
         );
       },
     );
@@ -231,10 +201,8 @@ class _SosScreenState extends State<SosScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'Internet connection error',
-            style: TextStyle(color: Colors.red),
-          ),
+          const Text('Internet connection error',
+              style: TextStyle(color: Colors.red)),
           SizedBox(height: 16.h),
           ElevatedButton(
             onPressed: _onRefresh,

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -11,31 +12,51 @@ part 'create_refer_property_state.dart';
 class CreateReferPropertyCubit extends Cubit<CreateReferPropertyState> {
   CreateReferPropertyCubit() : super(CreateReferPropertyInitial());
 
-  ApiManager apiManager = ApiManager();
+  final ApiManager _apiManager = ApiManager();
 
   /// CREATE REFER PROPERTY
-  createReferProperty(referPropertyBody) async {
+  Future<void> createReferProperty(Map<String, dynamic> referPropertyBody) async {
     emit(CreateReferPropertyLoading());
+
     try {
-      var token = LocalStorage.localStorage.getString('token');
+      final token = LocalStorage.localStorage.getString('token');
+      final propertyId = LocalStorage.localStorage.getString('property_id');
 
-      var responseData = await apiManager.postRequest(
-          referPropertyBody,
-          Config.baseURL + Routes.createReferProperty,
-          {'Authorization': 'Bearer $token', 'Accept': 'application/json'});
+      if (token == null || token.isEmpty || propertyId == null || propertyId.isEmpty) {
+        emit(CreateReferPropertyFailed(message: "Token or Property ID not found"));
+        return;
+      }
 
-      if (responseData.statusCode == 201) {
-        emit(CreateReferPropertysuccessfully());
-      } else if (responseData.statusCode == 401) {
-        emit(CreateReferPropertyLogout());
-      } else {
-        emit(CreateReferPropertyFailed());
+      final response = await _apiManager.postRequest(
+        referPropertyBody,
+        "${Config.baseURL}${Routes.createReferProperty}",
+        {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'x-property-id': propertyId,
+        },
+      );
+
+      final decodedData = json.decode(response.body);
+      print('Status: ${response.statusCode}, Response: $decodedData');
+
+      switch (response.statusCode) {
+        case 201:
+          emit(CreateReferPropertysuccessfully());
+          break;
+        case 401:
+          emit(CreateReferPropertyLogout());
+          break;
+        default:
+          emit(CreateReferPropertyFailed(message: decodedData['message'] ?? "Something went wrong"));
+          break;
       }
     } on SocketException {
       emit(CreateReferPropertyInternetError());
-    } catch (e) {
-      print(e);
-      emit(CreateReferPropertyFailed());
+    } catch (e, stackTrace) {
+      print('CreateReferProperty Error: $e');
+      print(stackTrace);
+      emit(CreateReferPropertyFailed(message: e.toString()));
     }
   }
 }

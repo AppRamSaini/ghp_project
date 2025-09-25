@@ -3,13 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghp_society_management/constants/app_theme.dart';
 import 'package:ghp_society_management/constants/dialog.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/constants/snack_bar.dart';
 import 'package:ghp_society_management/controller/resident_checkout_log/resident_check-in/resident_check_in_cubit.dart';
 import 'package:ghp_society_management/controller/resident_checkout_log/resident_check-out/resident_checkout_cubit.dart';
 import 'package:ghp_society_management/controller/user_profile/user_profile_cubit.dart';
 import 'package:ghp_society_management/model/user_profile_model.dart';
-import 'package:ghp_society_management/view/dashboard/bottom_nav_screen.dart';
-import 'package:ghp_society_management/view/resident/bills/my_bills.dart';
+import 'package:ghp_society_management/view/resident/bills/home_bill_section.dart';
 import 'package:ghp_society_management/view/resident/setting/log_out_dialog.dart';
 import 'package:ghp_society_management/view/security_staff/dashboard/bottom_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,6 +20,7 @@ class ResidentProfileDetails extends StatefulWidget {
   bool forResident;
 
   final Map<String, dynamic>? residentId;
+
   ResidentProfileDetails(
       {super.key,
       this.residentId,
@@ -37,12 +38,18 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
   @override
   void initState() {
     super.initState();
+    onRefresh();
+  }
+
+  Future onRefresh() async {
     _userProfileCubit = UserProfileCubit();
     if (widget.forDetails) {
       _userProfileCubit.fetchUserProfile();
     } else {
       fetchDetails();
     }
+
+    setState(() {});
   }
 
   fetchDetails() {
@@ -63,12 +70,12 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
   late BuildContext dialogueContext;
 
   Future<bool> onCallBack() async {
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-            builder: (_) =>
-                widget.forResident ? Dashboard() : SecurityGuardDashboard()),
-        (route) => false);
+    // Navigator.pushAndRemoveUntil(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (_) =>
+    //             widget.forResident ? Dashboard() : SecurityGuardDashboard()),
+    //     (route) => false);
     return true;
   }
 
@@ -82,17 +89,14 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
   }
 
   /// verify the user
-  void verifyTheUser(BuildContext buildContext, User userInfo) {
-    if (userInfo.status == 'inactive') {
+  void verifyTheUser(BuildContext buildContext, UserProfileData userInfo) {
+    if (userInfo.user!.status == 'inactive') {
       snackBarMsg(
           context, "User has been blocked by Admin. Please contact the Admin");
       onBack(buildContext);
-
       return;
     }
-
-    // Step 2: Check if unpaid bills exist and any are overdue
-    final unpaidBills = userInfo.myUnpaidBills;
+    final unpaidBills = userInfo.unpaidBills!;
     if (unpaidBills != null && unpaidBills.isNotEmpty) {
       final billStatus = checkBillStatus(context, unpaidBills.first);
       print('------------->>>> $billStatus');
@@ -106,15 +110,14 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
 
         return;
       } else {
-        lastChecking(buildContext, userInfo);
+        lastChecking(buildContext, userInfo.user!);
       }
     } else {
-      lastChecking(buildContext, userInfo);
+      lastChecking(buildContext, userInfo.user!);
     }
   }
 
   lastChecking(BuildContext buildContext, User userInfo) {
-    // Step 3: Handle check-in or check-out
     final checkInData = {
       "user_id": userInfo.id.toString(),
       "entry_type": widget.forQRPage ? "qr" : 'manual'
@@ -139,7 +142,6 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
               .checkInAPI(statusBody: checkInData);
           break;
         default:
-          // Optional: Handle unknown status
           snackBarMsg(context, "Unknown check-in status.");
           break;
       }
@@ -195,309 +197,371 @@ class _ResidentProfileDetailsState extends State<ResidentProfileDetails> {
       child: WillPopScope(
         onWillPop: onCallBack,
         child: Scaffold(
-          appBar: AppBar(
-              title: Text('Profile Details',
-                  style: GoogleFonts.nunitoSans(
-                      textStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600)))),
+          appBar: appbarWidget(title: 'Profile Details'),
           body: BlocBuilder<UserProfileCubit, UserProfileState>(
               bloc: _userProfileCubit,
               builder: (context, state) {
                 if (state is UserProfileLoading) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive(
-                          backgroundColor: Colors.deepPurpleAccent));
+                  return notificationShimmerLoading();
                 } else if (state is UserProfileLoaded) {
                   User usersData = state.userProfile.first.data!.user!;
                   if (!widget.forDetails) {
-                    verifyTheUser(context, usersData);
+                    verifyTheUser(context, state.userProfile.first.data!);
                   }
 
-                  return SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 10.h),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              children: [
-                                usersData.image != null
-                                    ? CircleAvatar(
-                                        radius: 32.h,
-                                        backgroundImage: NetworkImage(
-                                            usersData.image.toString()),
-                                        onBackgroundImageError:
-                                            (error, stack) => const AssetImage(
-                                                'assets/images/default.jpg'))
-                                    : CircleAvatar(
-                                        radius: 35.h,
-                                        backgroundImage: const AssetImage(
-                                            'assets/images/default.jpg')),
-                                const SizedBox(width: 10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        capitalizeWords(
-                                            usersData.name.toString()),
-                                        style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16.sp,
-                                                fontWeight: FontWeight.w500))),
-                                    Text(usersData.email.toString(),
-                                        style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                                color: Colors.black54,
-                                                fontSize: 12.sp))),
-                                    Text(
-                                        capitalizeWords(
-                                            usersData.status.toString()),
-                                        style: GoogleFonts.nunitoSans(
-                                            textStyle: TextStyle(
-                                                color: Colors.green,
-                                                fontSize: 12.sp))),
-                                  ],
-                                ),
-                                const SizedBox(width: 5)
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 20.h),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    color: Colors.grey.withOpacity(0.1))),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                  return RefreshIndicator(
+                    onRefresh: onRefresh,
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 10.h),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: Colors.grey.withOpacity(0.1))),
+                              child: Row(
+                                children: [
+                                  usersData.image != null
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: FadeInImage(
+                                            height: 70,
+                                            width: 70,
+                                            fit: BoxFit.fill,
+                                            placeholder: AssetImage(
+                                                'assets/images/profile_icon.png'),
+                                            image: NetworkImage(
+                                                usersData.image.toString()),
+                                            imageErrorBuilder: (_, child, st) =>
+                                                Image.asset(
+                                                    'assets/images/profile_icon.png',
+                                                    height: 70,
+                                                    width: 70,
+                                                    fit: BoxFit.fill),
+                                          ),
+                                        )
+                                      : ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: FadeInImage(
+                                            height: 70,
+                                            width: 70,
+                                            fit: BoxFit.fill,
+                                            placeholder: AssetImage(
+                                                'assets/images/profile_icon.png'),
+                                            image: AssetImage(''),
+                                            imageErrorBuilder: (_, child, st) =>
+                                                Image.asset(
+                                                    'assets/images/profile_icon.png',
+                                                    height: 70,
+                                                    width: 70,
+                                                    fit: BoxFit.fill),
+                                          ),
+                                        ),
+                                  const SizedBox(width: 10),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text('Date : ',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black45,
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                      FontWeight.w500))),
                                       Text(
-                                          formatDate(
-                                              usersData.createdAt.toString()),
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500)))
-                                    ]),
-                                Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 3),
-                                    child: Divider(
-                                        color: Colors.grey.withOpacity(0.1))),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Mobile Number : ',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black45,
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                      FontWeight.w500))),
-                                      Text('+91 ${usersData.phone.toString()}',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500)))
-                                    ]),
-                                Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 3),
-                                    child: Divider(
-                                        color: Colors.grey.withOpacity(0.1))),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Society Name',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black45,
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                      FontWeight.w500))),
-                                      Text(usersData.societyName.toString(),
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500)))
-                                    ]),
-                                Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 3),
-                                    child: Divider(
-                                        color: Colors.grey.withOpacity(0.1))),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Tower Name : ',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black45,
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                      FontWeight.w500))),
-                                      Text(usersData.blockName ?? 'N/A',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500)))
-                                    ]),
-                                Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 3),
-                                    child: Divider(
-                                        color: Colors.grey.withOpacity(0.1))),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Floor No : ',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black45,
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                      FontWeight.w500))),
-                                      Text(usersData.floorNumber ?? 'N/A',
+                                          capitalizeWords(
+                                              usersData.name.toString()),
                                           style: GoogleFonts.nunitoSans(
                                               textStyle: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600)))
-                                    ]),
-                                Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 3),
-                                    child: Divider(
-                                        color: Colors.grey.withOpacity(0.1))),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Property No : ',
-                                          style: GoogleFonts.nunitoSans(
-                                              textStyle: TextStyle(
-                                                  color: Colors.black45,
-                                                  fontSize: 14,
+                                                  fontSize: 16.sp,
                                                   fontWeight:
                                                       FontWeight.w500))),
-                                      Text(usersData.aprtNo ?? 'N/A',
+                                      Text(
+                                          usersData.email ??
+                                              'Email Not Provided!',
                                           style: GoogleFonts.nunitoSans(
                                               textStyle: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500)))
-                                    ]),
-                                usersData.lastCheckinDetail != null
-                                    ? Column(
-                                        children: [
-                                          Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 3),
-                                              child: Divider(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.1))),
-                                          Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text('Last Check-IN : ',
-                                                    style: GoogleFonts.nunitoSans(
-                                                        textStyle: TextStyle(
-                                                            color:
-                                                                Colors.black45,
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500))),
-                                                Text(
-                                                    formatDate(usersData
-                                                        .lastCheckinDetail!
-                                                        .checkinAt
-                                                        .toString()),
-                                                    style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500)))
-                                              ]),
-                                          Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 3),
-                                              child: Divider(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.1))),
-                                          Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text('Last Check-Out : ',
-                                                    style: GoogleFonts.nunitoSans(
-                                                        textStyle: TextStyle(
-                                                            color:
-                                                                Colors.black45,
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500))),
-                                                Text(
-                                                    usersData.lastCheckinDetail!
-                                                                .checkoutAt !=
-                                                            null
-                                                        ? formatDate(usersData
-                                                            .lastCheckinDetail!
-                                                            .checkoutAt
-                                                            .toString())
-                                                        : 'N/A',
-                                                    style:
-                                                        GoogleFonts.nunitoSans(
-                                                            textStyle: TextStyle(
-                                                                color: Colors
-                                                                    .black87,
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500)))
-                                              ]),
-                                        ],
-                                      )
-                                    : const SizedBox()
-                              ],
+                                                  color: Colors.black54,
+                                                  fontSize: 12.sp))),
+                                      Text(
+                                          capitalizeWords(
+                                              usersData.status.toString()),
+                                          style: GoogleFonts.nunitoSans(
+                                              textStyle: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 12.sp))),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 5)
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                            SizedBox(height: 10.h),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: Colors.grey.withOpacity(0.1))),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Date : ',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black45,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500))),
+                                        Text(
+                                            formatDate(
+                                                usersData.createdAt.toString()),
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black87,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500)))
+                                      ]),
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 3),
+                                      child: Divider(
+                                          color: Colors.grey.withOpacity(0.1))),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Mobile Number : ',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black45,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500))),
+                                        Text(
+                                            '+91 ${usersData.phone.toString()}',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black87,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500)))
+                                      ]),
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 3),
+                                      child: Divider(
+                                          color: Colors.grey.withOpacity(0.1))),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Society Name',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black45,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500))),
+                                        Text(usersData.societyName.toString(),
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.deepPurple,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w500)))
+                                      ]),
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 3),
+                                      child: Divider(
+                                          color: Colors.grey.withOpacity(0.1))),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Property No : ',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black45,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500))),
+                                        Text(usersData.aprtNo ?? 'N/A',
+                                            style: GoogleFonts.nunitoSans(
+                                                textStyle: TextStyle(
+                                                    color: Colors.black87,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500)))
+                                      ]),
+                                  widget.forResident
+                                      ? Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 3),
+                                          child: Divider(
+                                              color:
+                                                  Colors.grey.withOpacity(0.1)))
+                                      : SizedBox(),
+                                  widget.forResident
+                                      ? Column(
+                                          children: [
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text('Tower / Block : ',
+                                                      style: GoogleFonts.nunitoSans(
+                                                          textStyle: TextStyle(
+                                                              color: Colors
+                                                                  .black45,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500))),
+                                                  Text(
+                                                      usersData.property!
+                                                              .blockName ??
+                                                          'N/A',
+                                                      style: GoogleFonts.nunitoSans(
+                                                          textStyle: TextStyle(
+                                                              color: Colors
+                                                                  .black87,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500)))
+                                                ]),
+                                            Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 3),
+                                                child: Divider(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.1))),
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text('Unit Type : ',
+                                                      style: GoogleFonts.nunitoSans(
+                                                          textStyle: TextStyle(
+                                                              color: Colors
+                                                                  .black45,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500))),
+                                                  Text(
+                                                      capitalizeWords(
+                                                          usersData.unitType ??
+                                                              'N/A'),
+                                                      style: GoogleFonts.nunitoSans(
+                                                          textStyle: TextStyle(
+                                                              color: Colors
+                                                                  .black87,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500)))
+                                                ]),
+                                          ],
+                                        )
+                                      : SizedBox(),
+                                  usersData.lastCheckinDetail != null
+                                      ? Column(
+                                          children: [
+                                            Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 3),
+                                                child: Divider(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.1))),
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text('Last Check-IN : ',
+                                                      style: GoogleFonts.nunitoSans(
+                                                          textStyle: TextStyle(
+                                                              color: Colors
+                                                                  .black45,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500))),
+                                                  Text(
+                                                      formatDate(usersData
+                                                          .lastCheckinDetail!
+                                                          .checkinAt
+                                                          .toString()),
+                                                      style: GoogleFonts.nunitoSans(
+                                                          textStyle: TextStyle(
+                                                              color: Colors
+                                                                  .black87,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500)))
+                                                ]),
+                                            Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 3),
+                                                child: Divider(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.1))),
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text('Last Check-Out : ',
+                                                      style: GoogleFonts.nunitoSans(
+                                                          textStyle: TextStyle(
+                                                              color: Colors
+                                                                  .black45,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500))),
+                                                  Text(
+                                                      usersData.lastCheckinDetail!
+                                                                  .checkoutAt !=
+                                                              null
+                                                          ? formatDate(usersData
+                                                              .lastCheckinDetail!
+                                                              .checkoutAt
+                                                              .toString())
+                                                          : 'N/A',
+                                                      style: GoogleFonts.nunitoSans(
+                                                          textStyle: TextStyle(
+                                                              color: Colors
+                                                                  .black87,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500)))
+                                                ]),
+                                          ],
+                                        )
+                                      : const SizedBox()
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:ghp_society_management/constants/config.dart';
+import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
 import 'package:ghp_society_management/view/session_dialogue.dart';
 
@@ -23,13 +24,14 @@ class MyBillsCubit extends Cubit<MyBillsState> {
   /// FETCH MY BILLS
   Future<void> fetchMyBills(
       {required BuildContext context, String? billTypes, int page = 1}) async {
-    if (state is MyBillsLoading || !hasMore) return;
+    final propertyId = LocalStorage.localStorage.getString('property_id');
 
+    // if (state is MyBillsLoading || !hasMore) return;
     emit(MyBillsLoading());
     try {
       // Fetching the response from the API
       var response = await apiManager.getRequest(
-          "${Config.baseURL}${Routes.getMyBills(billTypes.toString())}?page=$page");
+          "${Config.baseURL}${Routes.getMyBills(propertyId.toString(),billTypes.toString())}?page=$page",usePropertyID: true);
       var responseData = json.decode(response.body);
 
       if (response.statusCode == 200) {

@@ -33,7 +33,7 @@ class IncomingDocumentsCubit extends Cubit<IncomingDocumentsState> {
 
     try {
       final response = await apiManager.getRequest(
-          "${Config.baseURL + Routes.getIncomingDocuments}${filter ?? ''}&page=$currentPage");
+          "${Config.baseURL + Routes.getIncomingDocuments}${filter ?? ''}&page=$currentPage",usePropertyID: true);
 
       final responseData = json.decode(response.body);
 

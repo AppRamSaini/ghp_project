@@ -14,7 +14,7 @@ class UpdateNotificationSettingsCubit
 
   ApiManager apiManager = ApiManager();
 
-  updateNotificationSettingsAPI(notificationBody) async {
+  Future<bool> updateNotificationSettingsAPI(notificationBody) async {
     print(notificationBody);
     emit(UpdateNotificationSettingsLoading());
     try {
@@ -28,16 +28,20 @@ class UpdateNotificationSettingsCubit
       if (responseData.statusCode == 200) {
         emit(UpdateNotificationSettingsSuccessfully(
             message: 'Setting update successfully'));
+        return     true;
       } else {
         emit(UpdateNotificationSettingsFailed(
             errorMessage: 'Failed update setting'));
+        return false;
       }
     } on SocketException {
       emit(UpdateNotificationSettingsInternetError(
           errorMessage: 'Internet connection error'));
+      return false;
     } catch (e) {
       emit(UpdateNotificationSettingsFailed(
           errorMessage: 'An error occurred $e '));
+      return false;
     }
   }
 }

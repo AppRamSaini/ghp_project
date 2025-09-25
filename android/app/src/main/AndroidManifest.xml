@@ -1,87 +1,89 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        package="com.fp.ghpsocietyapp">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.fp.ghpsocietyapp">
 
-        <!-- ✅ Required Permissions -->
-        <uses-permission android:name="android.permission.INTERNET" />
-        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-        <uses-permission android:name="android.permission.CAMERA" />
-        <uses-permission android:name="android.permission.VIBRATE" />
-        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-        <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-        <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-        <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <!-- ✅ Required Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
-        <application
-            android:name="${applicationName}"
-            android:label="Ghp Society"
-            android:icon="@mipmap/ic_launcher"
-            android:theme="@style/LaunchTheme">
 
-            <!-- 🔰 Flutter Main Activity -->
-            <activity
-                android:name=".MainActivity"
-                android:exported="true"
-                android:launchMode="singleTop"
-                android:theme="@style/LaunchTheme"
-                android:windowSoftInputMode="adjustResize"
-                android:configChanges="orientation|screenSize|keyboardHidden|keyboard|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-                android:hardwareAccelerated="true">
-                <intent-filter>
-                    <action android:name="android.intent.action.MAIN" />
-                    <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
+    <application
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Ghp Society"
+        android:theme="@style/LaunchTheme">
 
-                <meta-data
-                    android:name="io.flutter.embedding.android.NormalTheme"
-                    android:resource="@style/NormalTheme" />
-            </activity>
+        <!-- 🔰 Flutter Main Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:enableOnBackInvokedCallback="true"
+            android:exported="true"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTop"
+            android:theme="@style/LaunchTheme"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
-            <!-- Optional UCrop Activity -->
-            <activity
-                android:name="com.yalantis.ucrop.UCropActivity"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-                android:screenOrientation="portrait" />
-
-            <!-- Flutter Firebase Messaging Service -->
-            <service
-                android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingService"
-                android:exported="true"
-                tools:replace="android:exported">
-                <intent-filter>
-                    <action android:name="com.google.firebase.MESSAGING_EVENT" />
-                </intent-filter>
-            </service>
-
-            <!-- Firebase InstanceId Receiver -->
-            <receiver
-                android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
-                android:exported="true"
-                android:permission="com.google.android.c2dm.permission.SEND">
-                <intent-filter>
-                    <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                    <category android:name="${applicationId}" />
-                </intent-filter>
-            </receiver>
-
-            <!-- Flutter Plugin Registrant -->
             <meta-data
-                android:name="flutterEmbedding"
-                android:value="2" />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+        </activity>
 
-        </application>
+        <!-- Optional UCrop Activity -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-        <!-- Optional: Required if using text sharing or dial intent -->
-        <queries>
-            <intent>
-                <action android:name="android.intent.action.PROCESS_TEXT" />
-                <data android:mimeType="text/plain" />
-            </intent>
-            <intent>
-                <action android:name="android.intent.action.VIEW" />
-                <data android:scheme="tel" />
-            </intent>
-        </queries>
-    </manifest>
+        <!-- Flutter Firebase Messaging Service -->
+        <service
+            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingService"
+            android:exported="true"
+            tools:replace="android:exported">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- Firebase InstanceId Receiver -->
+        <receiver
+            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="${applicationId}" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Flutter Plugin Registrant -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+    </application>
+
+    <!-- Optional: Required if using text sharing or dial intent -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="tel" />
+        </intent>
+    </queries>
+</manifest>

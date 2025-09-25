@@ -2,89 +2,105 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
-	<string>Ghp App</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>ghp_society_management</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>$(DEVELOPMENT_LANGUAGE)</string>
+    <key>CFBundleDisplayName</key>
+    <string>Ghp Society</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>ghp_society_management</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>$(FLUTTER_BUILD_NAME)</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleVersion</key>
+    <string>$(FLUTTER_BUILD_NUMBER)</string>
 
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>sms</string>
-		<string>tel</string>
-	</array>
+    <!-- Firebase -->
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <false/>
 
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
+    <!-- URL Schemes -->
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>sms</string>
+        <string>tel</string>
+    </array>
 
-	<!-- ✅ KEEP only the background modes you actually use -->
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>audio</string>                <!-- For SOS ringtone -->
-		<string>fetch</string>                <!-- For background data fetch -->
-		<string>remote-notification</string>  <!-- For Firebase Notifications -->
-	</array>
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
 
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
+    <!-- App Transport Security -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
 
-	<!-- Permissions -->
-	<key>NSLocationWhenInUseUsageDescription</key>
-    <string>We need your location to provide better services.</string>
+    <!-- Permissions -->
+    <key>NSCameraUsageDescription</key>
+    <string>This app uses the camera to scan QR codes, take profile pictures, and capture images for product listings and service requests.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>We need your location to provide real-time tracking.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>We need access to your camera to capture images.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>We need access to your microphone for video recording.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>We need access to save photos/videos to your library.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photo library to select images.</string>
-	<key>NSUserNotificationUsageDescription</key>
-	<string>We need permission to send notifications.</string>
+    <string>This app uses your location to enable real-time driver tracking, service management, and safety features.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Your location helps us provide nearby service suggestions, real-time updates, and track delivery personnel.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>The microphone is used for audio recording during video capture, support calls, or voice-based commands.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>This app saves photos, videos, or PDFs (like profile pictures, service evidence, or documents) to your device library.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app allows you to select images from your library to update profile pictures or attach images in service requests.</string>
+    <key>NSUserNotificationUsageDescription</key>
+    <string>Notifications help you stay updated with booking status, alerts, offers, and reminders.</string>
 
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
+    <!-- Input & Background -->
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>audio</string>
+        <string>fetch</string>
+        <string>remote-notification</string>
+    </array>
 
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
+    <!-- File sharing -->
+    <key>UIFileSharingEnabled</key>
+    <true/>
 
-	<!-- Orientation -->
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
+    <!-- Storyboard -->
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+    <key>UIMainStoryboardFile</key>
+    <string>Main</string>
 
-	<key>com.apple.developer.siri</key>
-	<true/>
+    <!-- Supported orientations -->
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <!-- Siri -->
+    <key>com.apple.developer.siri</key>
+    <true/>
 </dict>
 </plist>

@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:ghp_society_management/constants/dialog.dart';
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/notification/notification_listing/notification_list_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_in/check_in_cubit.dart';
 import 'package:ghp_society_management/controller/visitors/chek_in_check_out/check_out/check_out_cubit.dart';
@@ -10,10 +12,9 @@ import 'package:ghp_society_management/controller/visitors/visitor_request/resen
 import 'package:ghp_society_management/main.dart';
 import 'package:ghp_society_management/model/visitors_listing_model.dart';
 import 'package:ghp_society_management/timer_countdown.dart';
-import 'package:ghp_society_management/view/security_staff/dashboard/home.dart';
 import 'package:ghp_society_management/view/security_staff/scan_qr.dart';
-import 'package:ghp_society_management/view/security_staff/visitors/visitors_details_page.dart';
 import 'package:ghp_society_management/view/security_staff/visitors/visitors_list_page.dart';
+import 'package:ghp_society_management/view/security_staff/visitors/visitors_management.dart';
 import 'package:intl/intl.dart';
 
 class VisitorsTabBar extends StatefulWidget {
@@ -50,7 +51,8 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
         toDate: '',
         search: '',
         filterTypes: filterList[selectedIndex],
-        context: context);
+        context: context,
+        fotStaffSide: true);
 
     setState(() {});
   }
@@ -59,7 +61,8 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent < 300) {
       _visitorsListingCubit.loadMoreVisitorsUsers(
-          context, filterList[selectedIndex].toString(), '', '', '');
+          context, filterList[selectedIndex].toString(), '', '', '',
+          forStaffSide: true);
     }
   }
 
@@ -72,6 +75,7 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
   }
 
   Timer? periodicTimer;
+
   void _startCountdownAndAPICalls(String visitorsId) {
     const duration = Duration(seconds: 4); // Call API every 5 seconds
     const totalTime = 59; // Total countdown time in seconds
@@ -140,6 +144,7 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
   }
 
   late BuildContext dialogueContext;
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -255,117 +260,31 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                 bloc: _visitorsListingCubit,
                 builder: (context, state) {
                   if (state is VisitorsListingLoaded) {
-                    return
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
                           onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => const VisitorsListPage(
-                                          index: 0, type: 'T_V'))),
-                            child: Container(
-                                width: size.width * 0.44,
-                                margin: EdgeInsets.only(bottom: 5),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: AppTheme.color1,
-                                    border:
-                                    Border.all(color: AppTheme.color1, width: 2)),
-                                child:
-
-                                Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(state.todayVisitors.toString(),
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 26.sp,
-                                                fontWeight: FontWeight.w600)),
-                                        Image.asset(ImageAssets.visitors1,
-                                            height: size.height * 0.08),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10,bottom: 10),
-                                      child: Text('Today visitors',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w600)),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                          GestureDetector(
-
-                  onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const VisitorsListPage(index: 1, type: 'P_V'),
-                          ),
-                        ),
-                            child: Container(
-                                width: size.width * 0.44,
-                                margin: EdgeInsets.only(bottom: 5),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: AppTheme.color3,
-                                    border:
-                                    Border.all(color: AppTheme.color3, width: 2)),
-                                child:
-                                Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(state.pastVisitors.toString(),
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 26.sp,
-                                                fontWeight: FontWeight.w600)),
-                                        Image.asset(ImageAssets.visitors1,
-                                            height: size.height * 0.08),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10,bottom: 10),
-                                      child: Text('Past visitors',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w600)),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                        ],
-                      );
-                  } else {
-                    return
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const VisitorsListPage(
+                                      index: 0, type: 'T_V'))),
+                          child: Container(
                               width: size.width * 0.44,
                               margin: EdgeInsets.only(bottom: 5),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   color: AppTheme.color1,
-                                  border:
-                                  Border.all(color: AppTheme.color1, width: 2)),
-                              child:
-                              Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                  border: Border.all(
+                                      color: AppTheme.color1, width: 2)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      Text('0',
+                                      Text(state.todayVisitors.toString(),
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 26.sp,
@@ -375,7 +294,8 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                                     ],
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 10,bottom: 10),
+                                    padding: const EdgeInsets.only(
+                                        left: 10, bottom: 10),
                                     child: Text('Today visitors',
                                         style: TextStyle(
                                             color: Colors.black,
@@ -384,21 +304,31 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                                   ),
                                 ],
                               )),
-                          Container(
+                        ),
+                        GestureDetector(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  const VisitorsListPage(index: 1, type: 'P_V'),
+                            ),
+                          ),
+                          child: Container(
                               width: size.width * 0.44,
                               margin: EdgeInsets.only(bottom: 5),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   color: AppTheme.color3,
-                                  border:
-                                  Border.all(color: AppTheme.color3, width: 2)),
-                              child:
-                              Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                  border: Border.all(
+                                      color: AppTheme.color3, width: 2)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      Text('0',
+                                      Text(state.pastVisitors.toString(),
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 26.sp,
@@ -408,7 +338,8 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                                     ],
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 10,bottom: 10),
+                                    padding: const EdgeInsets.only(
+                                        left: 10, bottom: 10),
                                     child: Text('Past visitors',
                                         style: TextStyle(
                                             color: Colors.black,
@@ -417,15 +348,91 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                                   ),
                                 ],
                               )),
-                        ],
-                      );
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                            width: size.width * 0.44,
+                            margin: EdgeInsets.only(bottom: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: AppTheme.color1,
+                                border: Border.all(
+                                    color: AppTheme.color1, width: 2)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text('0',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 26.sp,
+                                            fontWeight: FontWeight.w600)),
+                                    Image.asset(ImageAssets.visitors1,
+                                        height: size.height * 0.08),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, bottom: 10),
+                                  child: Text('Today visitors',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w600)),
+                                ),
+                              ],
+                            )),
+                        Container(
+                            width: size.width * 0.44,
+                            margin: EdgeInsets.only(bottom: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: AppTheme.color3,
+                                border: Border.all(
+                                    color: AppTheme.color3, width: 2)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text('0',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 26.sp,
+                                            fontWeight: FontWeight.w600)),
+                                    Image.asset(ImageAssets.visitors1,
+                                        height: size.height * 0.08),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, bottom: 10),
+                                  child: Text('Past visitors',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w600)),
+                                ),
+                              ],
+                            )),
+                      ],
+                    );
                   }
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 5),
               TabBar(
                 isScrollable: true,
-
                 tabAlignment: TabAlignment.start,
                 automaticIndicatorColorAdjustment: true,
                 physics: const BouncingScrollPhysics(),
@@ -447,11 +454,8 @@ class _VisitorsTabBarState extends State<VisitorsTabBar> {
                 child: BlocBuilder<VisitorsListingCubit, VisitorsListingState>(
                   bloc: _visitorsListingCubit,
                   builder: (context, state) {
-                    if (state is VisitorsListingLoading &&
-                        _visitorsListingCubit.visitorsListing.isEmpty) {
-                      return const Center(
-                          child: CircularProgressIndicator.adaptive(
-                              backgroundColor: Colors.deepPurpleAccent));
+                    if (state is VisitorsListingLoading) {
+                      return notificationShimmerLoading();
                     }
 
                     if (state is VisitorsListingFailed) {
@@ -577,9 +581,10 @@ Widget customVisitorsWidget(
           leading: ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: FadeInImage(
-                  placeholder: const AssetImage("assets/images/default.jpg"),
+                  placeholder:
+                      const AssetImage("assets/images/profile_icon.png"),
                   imageErrorBuilder: (context, error, stackTrace) {
-                    return Image.asset("assets/images/default.jpg",
+                    return Image.asset("assets/images/profile_icon.png",
                         height: 50, width: 50, fit: BoxFit.cover);
                   },
                   image: NetworkImage(visitorsData.image.toString()),
@@ -621,14 +626,6 @@ Widget customVisitorsWidget(
                   : const SizedBox()
             ],
           ),
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => VisitorsDetailsPage2(visitorsId: {
-                          "visitor_id": visitorsData.id.toString()
-                        })));
-          },
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -671,20 +668,10 @@ Widget customVisitorsWidget(
                         ),
                       ),
                     ),
-              status == 'Requested' ||
-                      // status == 'Completed' ||
-                      status == 'Not Arrived'
-                  ? const SizedBox()
-                  : GestureDetector(
-                      onTap: () => phoneCallLauncher(visitorsData.member == null
-                          ? visitorsData.phone.toString()
-                          : visitorsData.member!.phone.toString()),
-                      child: const CircleAvatar(
-                          backgroundColor: Colors.blue,
-                          radius: 18,
-                          child:
-                              Icon(Icons.call, size: 15, color: Colors.white)),
-                    )
+              popMenusForStaffVisitors(
+                  options: status == 'Re Send' ? optionList1 : optionList2,
+                  visitorsData: visitorsData,
+                  context: context)
             ],
           ),
         ),
@@ -693,10 +680,9 @@ Widget customVisitorsWidget(
             : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
-                    "Arrived At : ${visitorsDate.toString()} $formattedTime",
+                    "Arriving At : ${visitorsDate.toString()} $formattedTime",
                     style:
-                        const TextStyle(color: Colors.black45, fontSize: 12)),
-              ),
+                        const TextStyle(color: Colors.black45, fontSize: 12))),
         Divider(color: Colors.grey.withOpacity(0.2)),
         visitorsData.member == null
             ? const SizedBox()
@@ -711,58 +697,56 @@ Widget customVisitorsWidget(
                           Text('Name',
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
-                                      color: Colors.black54, fontSize: 14.sp))),
+                                      color: Colors.black54, fontSize: 12))),
                           Text(visitorsData.member!.name.toString(),
                               style: GoogleFonts.nunitoSans(
                                   textStyle: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 12.sp,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.w600))),
                         ],
                       ),
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text('Tower Name ',
+                            Text('Tower/Block',
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 12.sp))),
+                                        color: Colors.black54, fontSize: 12))),
                             Text(visitorsData.member!.blockName.toString(),
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
                                         color: Colors.black,
-                                        fontSize: 12.sp,
+                                        fontSize: 12,
                                         fontWeight: FontWeight.w600)))
                           ]),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text('Floor ',
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 12.sp))),
-                            Text(visitorsData.member!.floorNumber.toString(),
-                                style: GoogleFonts.nunitoSans(
-                                    textStyle: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w600)))
-                          ]),
+                      // Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.center,
+                      //     children: [
+                      //       Text('Floor ',
+                      //           style: GoogleFonts.nunitoSans(
+                      //               textStyle: TextStyle(
+                      //                   color: Colors.black54,
+                      //                   fontSize: 12.sp))),
+                      //       Text(visitorsData.member!.floorNumber.toString(),
+                      //           style: GoogleFonts.nunitoSans(
+                      //               textStyle: TextStyle(
+                      //                   color: Colors.black,
+                      //                   fontSize: 12.sp,
+                      //                   fontWeight: FontWeight.w600)))
+                      //     ]),
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text('Property No',
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 12.sp))),
+                                        color: Colors.black54, fontSize: 12))),
                             Text(visitorsData.member!.aprtNo.toString(),
                                 style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
                                         color: Colors.black,
-                                        fontSize: 12.sp,
+                                        fontSize: 12,
                                         fontWeight: FontWeight.w600)))
                           ]),
                     ]),
@@ -775,6 +759,7 @@ Widget customVisitorsWidget(
 
 class VisitorActionsHandler {
   final Map<String, int> resendAttempts = {};
+
   void handleTap({
     required BuildContext context,
     required String status,
@@ -800,7 +785,9 @@ class VisitorActionsHandler {
       } else {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => QrCodeScanner()),
+          MaterialPageRoute(
+              builder: (_) =>
+                  QrCodeScanner(visitorId: visitorsData.id.toString())),
         );
       }
     } else if (status == 'Check OUT') {

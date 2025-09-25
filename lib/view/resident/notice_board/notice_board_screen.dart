@@ -1,5 +1,8 @@
-
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
+import 'package:ghp_society_management/controller/visitors/incoming_request/incoming_request_cubit.dart';
+import 'package:ghp_society_management/model/incoming_visitors_request_model.dart';
+import 'package:ghp_society_management/view/resident/visitors/incomming_request.dart';
 import 'package:intl/intl.dart';
 
 class NoticeBoardScreen extends StatefulWidget {
@@ -44,12 +47,16 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
         }
       },
       child: Scaffold(
-
-        appBar: customAppbar(context: context, title: 'Notice Board', textController: textController,searchBarOpen: searchBarOpen,onExpansionComplete: () {
-          setState(() {
-            searchBarOpen = true;
-          });
-        },
+        appBar: customAppbar(
+            context: context,
+            title: 'Notice Board',
+            textController: textController,
+            searchBarOpen: searchBarOpen,
+            onExpansionComplete: () {
+              setState(() {
+                searchBarOpen = true;
+              });
+            },
             onCollapseComplete: () {
               setState(() {
                 searchBarOpen = false;
@@ -66,22 +73,20 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
               _noticeModelCubit.searchNotice(value);
             }),
         body: RefreshIndicator(
-
-
           onRefresh: onRefresh,
           child: BlocBuilder<NoticeModelCubit, NoticeModelState>(
             bloc: _noticeModelCubit,
             builder: (context, state) {
               if (state is NoticeModelLoading &&
                   _noticeModelCubit.noticeList.isEmpty) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+                return notificationShimmerLoading();
               }
+
               if (state is NoticeModelFailed) {
                 return Center(
                     child: Text(state.errorMsg,
-                        style: const TextStyle(
-                            color: Colors.deepPurpleAccent)));
+                        style:
+                            const TextStyle(color: Colors.deepPurpleAccent)));
               }
               if (state is NoticeModelInternetError) {
                 return Center(
@@ -96,10 +101,7 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
               }
 
               if (noticeList.isEmpty) {
-                return const Center(
-                    child: Text('Notice Not Found!',
-                        style: TextStyle(
-                            color: Colors.deepPurpleAccent)));
+                return emptyDataWidget('Notice Not Found!');
               }
 
               return ListView.builder(
@@ -108,13 +110,11 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
                 shrinkWrap: true,
                 itemBuilder: ((context, index) {
                   if (index == noticeList.length) {
-                    return _noticeModelCubit.state
-                            is NoticeModelLoadMore
+                    return _noticeModelCubit.state is NoticeModelLoadMore
                         ? const Padding(
                             padding: EdgeInsets.all(16.0),
                             child: Center(
-                                child: CircularProgressIndicator
-                                    .adaptive()))
+                                child: CircularProgressIndicator.adaptive()))
                         : const SizedBox.shrink();
                   }
 
@@ -123,51 +123,41 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
                   String timeString = noticeList[index].time;
                   DateTime parsedTime =
                       DateFormat("HH:mm:ss").parse(timeString);
-                  String formattedTime =
-                      DateFormat.jm().format(parsedTime);
+                  String formattedTime = DateFormat.jm().format(parsedTime);
 
                   Widget layoutChild() => Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(6),
-                            border:
-                                Border.all(color: Colors.grey[300]!)),
+                            border: Border.all(color: Colors.grey[300]!)),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 children: [
-                                  Image.asset(
-                                      ImageAssets.noticeBoardImage,
+                                  Image.asset(ImageAssets.noticeBoardImage,
                                       height: 40.h),
                                   SizedBox(width: 10.w),
                                   Expanded(
                                       child: Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment
-                                                  .start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                         Text(noticeList[index].title,
                                             style: GoogleFonts.ptSans(
                                                 textStyle: TextStyle(
-                                                    color:
-                                                        Colors.black,
+                                                    color: Colors.black,
                                                     fontSize: 14,
                                                     fontWeight:
-                                                        FontWeight
-                                                            .w500))),
-                                        Text(
-                                            "$formattedDate $formattedTime",
+                                                        FontWeight.w500))),
+                                        Text("$formattedDate $formattedTime",
                                             style: GoogleFonts.ptSans(
                                                 textStyle: TextStyle(
-                                                    color:
-                                                        Colors.black,
+                                                    color: Colors.black,
                                                     fontSize: 12,
                                                     fontWeight:
-                                                        FontWeight
-                                                            .w400)))
+                                                        FontWeight.w400)))
                                       ])),
                                   SizedBox(width: 10.w),
                                   Container(
@@ -217,11 +207,11 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
                       child: getStatus(noticeList[index].createdAt) ==
                               'newNoticed'
                           ? Banner(
-                              message: getStatus(noticeList[index]
-                                          .createdAt) ==
-                                      'newNoticed'
-                                  ? "New Notice"
-                                  : '',
+                              message:
+                                  getStatus(noticeList[index].createdAt) ==
+                                          'newNoticed'
+                                      ? "New Notice"
+                                      : '',
                               location: BannerLocation.topStart,
                               child: layoutChild())
                           : layoutChild(),
@@ -256,7 +246,7 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
       context: context,
       builder: (BuildContext context) {
         return Padding(
-          padding: EdgeInsets.all(10.w),
+          padding: EdgeInsets.all(30),
           child: AlertDialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

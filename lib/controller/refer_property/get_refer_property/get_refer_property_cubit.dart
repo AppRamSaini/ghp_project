@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:ghp_society_management/constants/config.dart';
+import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/model/refer_property_model.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
 import 'package:meta/meta.dart';
@@ -18,6 +19,8 @@ class GetReferPropertyCubit extends Cubit<GetReferPropertyState> {
 
   /// for get all parcels
   fetchGetReferProperty({bool loadMore = false}) async {
+    var propertyId = LocalStorage.localStorage.getString('property_id');
+
     if (loadMore) {
       if (isLoadingMore || !hasMore) return; // Prevent duplicate calls
       isLoadingMore = true;
@@ -28,9 +31,10 @@ class GetReferPropertyCubit extends Cubit<GetReferPropertyState> {
       emit(GetReferPropertyLoading());
     }
 
+
     try {
       var response = await apiManager
-          .getRequest(Config.baseURL + Routes.referPropertyList);
+          .getRequest("${Config.baseURL + Routes.referPropertyList}/$propertyId");
       var responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
         if (responseData['status']) {

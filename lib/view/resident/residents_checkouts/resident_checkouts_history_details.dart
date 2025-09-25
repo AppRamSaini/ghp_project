@@ -1,6 +1,5 @@
-import 'dart:ui';
-
 import 'package:ghp_society_management/constants/export.dart';
+import 'package:ghp_society_management/constants/simmer_loading.dart';
 import 'package:ghp_society_management/controller/resident_checkout_log/resident_checkouts_history_details/resident_checkouts_details_cubit.dart';
 import 'package:ghp_society_management/model/resident_checkout_history_details_model.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +7,7 @@ import 'package:intl/intl.dart';
 class ResidentCheckoutsHistoryDetails extends StatefulWidget {
   bool forResident;
   final String userId;
+
   ResidentCheckoutsHistoryDetails(
       {super.key, this.forResident = false, required this.userId});
 
@@ -43,13 +43,20 @@ class _ResidentCheckoutsHistoryDetailsState
     final DateTime now = DateTime.now();
     final DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
 
+    // safe initial range
+    final DateTimeRange safeInitialRange = DateTimeRange(
+      start: now,
+      end: now.add(const Duration(days: 3)).isAfter(lastDayOfMonth)
+          ? lastDayOfMonth
+          : now.add(const Duration(days: 3)),
+    );
+
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      firstDate: DateTime(2015, 8),
+      firstDate: DateTime(2020, 8),
       lastDate: lastDayOfMonth,
       initialEntryMode: DatePickerEntryMode.calendarOnly,
-      initialDateRange:
-          DateTimeRange(start: now, end: now.add(const Duration(days: 3))),
+      initialDateRange: safeInitialRange,
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData(
@@ -68,9 +75,8 @@ class _ResidentCheckoutsHistoryDetailsState
           ),
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 100), // Removed extra bottom padding
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 100),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: child ?? const SizedBox(),
@@ -89,9 +95,10 @@ class _ResidentCheckoutsHistoryDetailsState
 
       _residentCheckoutsHistoryDetailsCubit
           .fetchResidentCheckoutsHistoryDetailsApi(
-              userId: widget.userId.toString(),
-              fromDate: fromDate,
-              toDate: toDate);
+        userId: widget.userId.toString(),
+        fromDate: fromDate,
+        toDate: toDate,
+      );
     }
   }
 
@@ -112,24 +119,15 @@ class _ResidentCheckoutsHistoryDetailsState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Checkout History',
-          style: GoogleFonts.nunitoSans(
-              textStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600)))),
+      appBar: appbarWidget(title: 'Checkout History'),
       body: BlocBuilder<ResidentCheckoutsHistoryDetailsCubit,
               ResidentCheckoutsHistoryDetailsState>(
           bloc: _residentCheckoutsHistoryDetailsCubit,
           builder: (context, state) {
             if (state is ResidentCheckoutsHistoryDetailsLoading) {
-              return const Center(
-                  child: CircularProgressIndicator.adaptive(
-                      backgroundColor: Colors.deepPurpleAccent));
-            } else if (state
-                is ResidentCheckoutsHistoryDetailsLoaded) {
-              ResidentCheckoutsHistoryDetailsData
-                  residentsCheckoutsData =
+              return notificationShimmerLoading();
+            } else if (state is ResidentCheckoutsHistoryDetailsLoaded) {
+              ResidentCheckoutsHistoryDetailsData residentsCheckoutsData =
                   state.residentCheckoutsHistoryDetailsModal.data!;
 
               return RefreshIndicator(
@@ -137,115 +135,149 @@ class _ResidentCheckoutsHistoryDetailsState
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: ListView(
-                    // crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                                color:
-                                    Colors.grey.withOpacity(0.15))),
+                                color: Colors.grey.withOpacity(0.15))),
                         child: Column(
                           children: [
                             ListTile(
                                 contentPadding:
-                                    const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                leading: CircleAvatar(
-                                    radius: 30.h,
-                                    backgroundImage: NetworkImage(
-                                        residentsCheckoutsData
-                                            .user!.imageUrl
-                                            .toString()),
-                                    onBackgroundImageError:
-                                        (error, stack) =>
-                                            const AssetImage(
-                                                'assets/images/default.jpg')),
-                                title: Text(capitalizeWords(residentsCheckoutsData.user!.name.toString()),
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                leading: residentsCheckoutsData.user!.imageUrl !=
+                                        null
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: FadeInImage(
+                                          height: 70,
+                                          width: 60,
+                                          fit: BoxFit.fill,
+                                          placeholder: AssetImage(
+                                              'assets/images/profile_icon.png'),
+                                          image: NetworkImage(
+                                              residentsCheckoutsData
+                                                  .user!.imageUrl
+                                                  .toString()),
+                                          imageErrorBuilder: (_, child, st) =>
+                                              Image.asset(
+                                                  'assets/images/profile_icon.png',
+                                                  height: 70,
+                                                  width: 60,
+                                                  fit: BoxFit.fill),
+                                        ),
+                                      )
+                                    : ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: FadeInImage(
+                                          height: 70,
+                                          width: 70,
+                                          fit: BoxFit.fill,
+                                          placeholder: AssetImage(
+                                              'assets/images/profile_icon.png'),
+                                          image: AssetImage(''),
+                                          imageErrorBuilder: (_, child, st) =>
+                                              Image.asset(
+                                                  'assets/images/profile_icon.png',
+                                                  height: 70,
+                                                  width: 70,
+                                                  fit: BoxFit.fill),
+                                        ),
+                                      ),
+                                title:
+                                    Text(capitalizeWords(residentsCheckoutsData.user!.name.toString()),
+                                        style: GoogleFonts.nunitoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w500))),
+                                subtitle: Text(
+                                    "+91 ${residentsCheckoutsData.user!.phone.toString()}",
                                     style: GoogleFonts.nunitoSans(
                                         textStyle: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16.sp,
+                                            color: Colors.green,
+                                            fontSize: 14.sp,
                                             fontWeight: FontWeight.w500))),
-                                subtitle: Text("+91 ${residentsCheckoutsData.user!.phone.toString()}", style: GoogleFonts.nunitoSans(textStyle: TextStyle(color: Colors.green, fontSize: 14.sp, fontWeight: FontWeight.w500))),
-                                trailing: GestureDetector(child: SizedBox(height: 100, width: 80, child: Image.asset('assets/images/qr-image.png')))),
-                            Divider(
-                                color: Colors.grey.withOpacity(0.2)),
-                            residentsCheckoutsData
-                                .user!.member!=null?       Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 10, right: 10, bottom: 8),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    children: [
-                                      Text(
-                                          residentsCheckoutsData
-                                              .user!.member!.blockName
-                                              .toString(),
-                                          style: const TextStyle(
-                                              color: Colors.black,
-                                              fontWeight:
-                                                  FontWeight.w500,
-                                              fontSize: 12)),
-                                      const Text(
-                                        "Tower Name",
-                                        style: TextStyle(
-                                            color: Colors.black54,
-                                            fontSize: 12),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      Text(
-                                          residentsCheckoutsData.user!
-                                              .member!.floorNumber
-                                              .toString(),
-                                          style: const TextStyle(
-                                              color: Colors.black,
-                                              fontWeight:
-                                                  FontWeight.w500,
-                                              fontSize: 12)),
-                                      const Text(
-                                        "Floor No",
-                                        style: TextStyle(
-                                            color: Colors.black54,
-                                            fontSize: 12),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      Text(
-                                          residentsCheckoutsData
-                                              .user!.member!.aprtNo
-                                              .toString(),
-                                          style: const TextStyle(
-                                              color: Colors.black,
-                                              fontWeight:
-                                                  FontWeight.w500,
-                                              fontSize: 12)),
-                                      const Text(
-                                        "Property No",
-                                        style: TextStyle(
-                                            color: Colors.black54,
-                                            fontSize: 12),
-                                      ),
-                                    ],
+                                trailing: GestureDetector(
+                                    child: SizedBox(
+                                        height: 100,
+                                        width: 80,
+                                        child:
+                                            Image.asset('assets/images/qr-image.png')))),
+                            Divider(color: Colors.grey.withOpacity(0.2)),
+                            residentsCheckoutsData.user!.member != null
+                                ? Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10, bottom: 8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Text(
+                                              "Tower/Block : ",
+                                              style: TextStyle(
+                                                  color: Colors.black54,
+                                                  fontSize: 12),
+                                            ),
+                                            Text(
+                                                residentsCheckoutsData
+                                                    .user!.member!.blockName
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 12)),
+                                          ],
+                                        ),
+                                        // Column(
+                                        //   children: [
+                                        //     Text(
+                                        //         residentsCheckoutsData
+                                        //             .user!.member!.floorNumber
+                                        //             .toString(),
+                                        //         style: const TextStyle(
+                                        //             color: Colors.black,
+                                        //             fontWeight: FontWeight.w500,
+                                        //             fontSize: 12)),
+                                        //     const Text(
+                                        //       "",
+                                        //       style: TextStyle(
+                                        //           color: Colors.black54,
+                                        //           fontSize: 12),
+                                        //     ),
+                                        //   ],
+                                        // ),
+                                        Row(
+                                          children: [
+                                            const Text(
+                                              "Property No : ",
+                                              style: TextStyle(
+                                                  color: Colors.black54,
+                                                  fontSize: 12),
+                                            ),
+                                            Text(
+                                                residentsCheckoutsData
+                                                    .user!.member!.aprtNo
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 12)),
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   )
-                                ],
-                              ),
-                            ):SizedBox()
+                                : SizedBox()
                           ],
                         ),
                       ),
                       const SizedBox(height: 15),
                       Row(
-                        mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Center(
                               child: Text("Checkout info",
@@ -253,21 +285,18 @@ class _ResidentCheckoutsHistoryDetailsState
                                       textStyle: TextStyle(
                                           color: Colors.black,
                                           fontSize: 16.sp,
-                                          fontWeight:
-                                              FontWeight.w500)))),
+                                          fontWeight: FontWeight.w500)))),
                           GestureDetector(
                             onTap: () {
                               selectDateRange(context);
                             },
                             child: Container(
-                              margin: const EdgeInsets.only(
-                                  left: 5, bottom: 5),
+                              margin: const EdgeInsets.only(left: 5, bottom: 5),
                               decoration: BoxDecoration(
                                   color: Colors.transparent,
                                   border: Border.all(
                                       color: const Color(0xFFD9D9D9)),
-                                  borderRadius:
-                                      BorderRadius.circular(6.r)),
+                                  borderRadius: BorderRadius.circular(6.r)),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 10.0.w, vertical: 8),
@@ -291,17 +320,14 @@ class _ResidentCheckoutsHistoryDetailsState
                       const SizedBox(height: 10),
                       residentsCheckoutsData.logs!.isEmpty
                           ? const Center(
-                              child: Text(
-                                  'Check-outs History Not Found!',
+                              child: Text('Check-outs History Not Found!',
                                   style: TextStyle(
                                       fontSize: 14,
-                                      color:
-                                          Colors.deepPurpleAccent)))
+                                      color: Colors.deepPurpleAccent)))
                           : ListView.builder(
                               shrinkWrap: true,
                               physics: const BouncingScrollPhysics(),
-                              itemCount:
-                                  residentsCheckoutsData.logs!.length,
+                              itemCount: residentsCheckoutsData.logs!.length,
                               itemBuilder: (_, index) {
                                 checkOut() {
                                   DateTime outTime;
@@ -334,35 +360,29 @@ class _ResidentCheckoutsHistoryDetailsState
                                 }
 
                                 return Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     index == 0
                                         ? Text(
                                             'Date : ${formatDateOnly(residentsCheckoutsData.logs![0].checkinAt!.toString())}',
                                             style: const TextStyle(
-                                                fontWeight:
-                                                    FontWeight.bold,
+                                                fontWeight: FontWeight.bold,
                                                 fontSize: 14))
                                         : const SizedBox(),
                                     const SizedBox(height: 10),
                                     Container(
                                         decoration: BoxDecoration(
                                             borderRadius:
-                                                BorderRadius.circular(
-                                                    8),
+                                                BorderRadius.circular(8),
                                             border: Border.all(
                                                 color: Colors.grey
-                                                    .withOpacity(
-                                                        0.2))),
+                                                    .withOpacity(0.2))),
                                         child: ListTile(
                                             dense: true,
                                             title: Text(
                                                 'In-Time : ${checkIn()}',
                                                 style: const TextStyle(
-                                                    fontWeight:
-                                                        FontWeight
-                                                            .bold,
+                                                    fontWeight: FontWeight.bold,
                                                     fontSize: 12)),
                                             subtitle: Text(
                                                 'Entry By : ${residentsCheckoutsData.logs![index].checkinType ?? ''}',
@@ -370,27 +390,20 @@ class _ResidentCheckoutsHistoryDetailsState
                                                     fontSize: 12)),
                                             trailing: Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .center,
+                                                  MainAxisAlignment.center,
                                               children: [
-                                                Text(
-                                                    'Out-Time : ${checkOut()}',
+                                                Text('Out-Time : ${checkOut()}',
                                                     style: const TextStyle(
                                                         fontWeight:
-                                                            FontWeight
-                                                                .bold,
-                                                        fontSize:
-                                                            12)),
-                                                const SizedBox(
-                                                    height: 4),
+                                                            FontWeight.bold,
+                                                        fontSize: 12)),
+                                                const SizedBox(height: 4),
                                                 Text(
                                                     'Exited By : ${residentsCheckoutsData.logs![index].checkoutType ?? ''}',
                                                     style: const TextStyle(
                                                         fontWeight:
-                                                            FontWeight
-                                                                .normal,
-                                                        fontSize:
-                                                            12)),
+                                                            FontWeight.normal,
+                                                        fontSize: 12)),
                                               ],
                                             ))),
                                   ],
@@ -400,12 +413,10 @@ class _ResidentCheckoutsHistoryDetailsState
                   ),
                 ),
               );
-            } else if (state
-                is ResidentCheckoutsHistoryDetailsError) {
+            } else if (state is ResidentCheckoutsHistoryDetailsError) {
               return Center(
                   child: Text(state.errorMsg.toString(),
-                      style: const TextStyle(
-                          color: Colors.deepPurpleAccent)));
+                      style: const TextStyle(color: Colors.deepPurpleAccent)));
             } else {
               return const SizedBox();
             }

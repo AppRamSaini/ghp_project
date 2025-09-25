@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:ghp_society_management/constants/config.dart';
+import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/model/parcel_listing_model.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
+
 part 'parcel_listing_state.dart';
 
 class ParcelListingCubit extends Cubit<ParcelListingState> {
@@ -16,7 +19,13 @@ class ParcelListingCubit extends Cubit<ParcelListingState> {
   bool isLoadingMore = false;
 
   /// for get all parcels
-  fetchParcelListingApi(String type, {bool loadMore = false}) async {
+  fetchParcelListingApi(
+    String type, {
+    bool loadMore = false,
+    bool forStaffSide = false,
+  }) async {
+    var propertyId = LocalStorage.localStorage.getString('property_id');
+
     if (loadMore) {
       if (isLoadingMore || !hasMore) return; // Prevent duplicate calls
       isLoadingMore = true;
@@ -28,8 +37,8 @@ class ParcelListingCubit extends Cubit<ParcelListingState> {
     }
 
     try {
-      var response = await apiManager
-          .getRequest("${Config.baseURL + Routes.getAllParcel}$type");
+      var response = await apiManager.getRequest(
+          "${"${Config.baseURL}${forStaffSide ? "parcel/all?filter_type=" : Routes.getAllParcel(propertyId.toString())}"}$type");
       var responseData = jsonDecode(response.body);
 
       print(response.statusCode);

@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:ghp_society_management/constants/config.dart';
+import 'package:ghp_society_management/constants/local_storage.dart';
 import 'package:ghp_society_management/network/api_manager.dart';
+
 import '../../../model/buy_or_rent_property_model.dart';
 
 part 'buy_or_rent_property_state.dart';
@@ -19,6 +22,8 @@ class BuyRentPropertyCubit extends Cubit<BuyRentPropertyState> {
   /// FETCH MY properyies
   Future<void> fetchProperty(
       {String? propertyType, String? type, bool loadMore = false}) async {
+    final propertyId = LocalStorage.localStorage.getString('property_id');
+
     if (isLoadingMore || !hasMore) {
       isLoadingMore = true;
       emit(BuyRentPropertyLoadingMore());
@@ -30,9 +35,9 @@ class BuyRentPropertyCubit extends Cubit<BuyRentPropertyState> {
 
     String url() {
       if (propertyType == 'myProperty') {
-        return "${Config.baseURL}${Routes.myListingProperty(type.toString())}$currentPage";
+        return "${Config.baseURL}${Routes.myListingProperty(propertyId.toString(), type.toString())}$currentPage";
       } else {
-        return "${Config.baseURL}${Routes.rentOrSellProperty(type.toString())}$currentPage";
+        return "${Config.baseURL}${Routes.rentOrSellProperty(propertyId.toString(), type.toString())}$currentPage";
       }
     }
 
@@ -49,6 +54,7 @@ class BuyRentPropertyCubit extends Cubit<BuyRentPropertyState> {
           currentPage = responseData['data']['properties']['current_page'];
           int lastPage = responseData['data']['properties']['last_page'];
           hasMore = currentPage < lastPage;
+          propertyList.clear();
           if (loadMore) {
             propertyList = newProperty;
           } else {
